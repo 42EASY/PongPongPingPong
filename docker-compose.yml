@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+  backend:
+    pull_policy: never
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+    networks:
+      - transcendence
+    command: python /app/transcendence/manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-bullseye
+    container_name: postgresql
+    volumes:
+      - type: bind
+        source: ./volume/postgres-data
+        target: /var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - transcendence
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    command: -p "${POSTGRES_PORT}"
+
+  nginx:
+    pull_policy: never
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports: 
+      - 443:443
+    env_file:
+      - .env
+    networks:
+      - transcendence
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+
+networks:
+  transcendence:
+    driver: bridge
