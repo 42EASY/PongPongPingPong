@@ -19,11 +19,11 @@ export default function Login() {
     "/register": Register,
   };
 
+  //로그인 버튼 클릭 이벤트
   const changeUrl = (requestedUrl) => {
     history.pushState(null, null, requestedUrl);
     console.log(requestedUrl);
     routes[requestedUrl]();
-    // Register();
   };
 
   window.addEventListener("click", (e) => {
