@@ -1,5 +1,6 @@
 import Title from "../components/Login/Title.js";
 import LoginButton from "../components/Login/LoginButton.js";
+import Register from "./Register.js";
 
 export default function Login() {
   const $app = document.querySelector(".App");
@@ -13,19 +14,25 @@ export default function Login() {
   const $loginButton = LoginButton();
   $app.appendChild($loginButton);
 
-  // const changeUrl = (requestedUrl) => {
-  //   history.pushState(null, null, requestedUrl);
-  //   currentComponent = routes[requestedUrl];
-  //   currentComponent();
-  // };
+  const routes = {
+    "/login": Login,
+    "/register": Register,
+  };
 
-  // window.addEventListener("click", (e) => {
-  //   if (e.target.classList.contains("loginButton")) {
-  //     changeUrl("/login");
-  //   }
-  // });
+  const changeUrl = (requestedUrl) => {
+    history.pushState(null, null, requestedUrl);
+    console.log(requestedUrl);
+    routes[requestedUrl]();
+    // Register();
+  };
 
-  // window.addEventListener("popstate", () => {
-  //   changeUrl(window.location.pathname);
-  // });
+  window.addEventListener("click", (e) => {
+    if (e.target.classList.contains("loginButton")) {
+      changeUrl("/register");
+    }
+  });
+
+  window.addEventListener("popstate", () => {
+    changeUrl(window.location.pathname);
+  });
 }
