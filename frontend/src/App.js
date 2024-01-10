@@ -16,9 +16,11 @@ const routes = {
 $app.innerHTML = routes["/"]();
 
 export const changeUrl = (requestedUrl) => {
+  const path = `./src/styles${requestedUrl}.css`;
+  document.getElementById("styles").setAttribute("href", path);
   history.pushState(null, null, requestedUrl);
   currentComponent = routes[requestedUrl];
-  $app.innerHTML = currentComponent();
+  currentComponent();
 };
 
 window.addEventListener("click", (e) => {
