@@ -1,6 +1,7 @@
 import Title from "../components/Register/Title.js";
 import UproadImage from "../components/Register/UproadImage.js";
 import Email from "../components/Register/Email.js";
+import Nickname from "../components/Register/Nickname.js";
 
 export default function Register() {
   const $app = document.querySelector(".App");
@@ -17,4 +18,8 @@ export default function Register() {
   //이메일
   const $email = Email();
   $app.appendChild($email);
+
+  //닉네임
+  const $nickname = Nickname();
+  $app.appendChild($nickname);
 }
