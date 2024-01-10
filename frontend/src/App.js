@@ -18,7 +18,7 @@ $app.innerHTML = routes["/"]();
 export const changeUrl = (requestedUrl) => {
   history.pushState(null, null, requestedUrl);
   currentComponent = routes[requestedUrl];
-  $app.innerHTML = currentComponent();
+  currentComponent();
 };
 
 window.addEventListener("click", (e) => {
