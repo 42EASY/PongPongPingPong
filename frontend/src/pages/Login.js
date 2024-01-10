@@ -1,9 +1,7 @@
-class Login {
-  template() {
-    return `
-      <div>Home Page</div>
-      <button class="moveToAboutPageBtn">Go to About Page</button>
-      `;
-  }
+export default function Login() {
+  return `
+    <div>
+      <h1>Login Page</h1>
+    </div>
+  `;
 }
-export default new Login();
