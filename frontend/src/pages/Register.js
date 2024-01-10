@@ -1,5 +1,6 @@
 import Title from "../components/Register/Title.js";
 import UproadImage from "../components/Register/UproadImage.js";
+import Email from "../components/Register/Email.js";
 
 export default function Register() {
   const $app = document.querySelector(".App");
@@ -12,4 +13,8 @@ export default function Register() {
   //이미지 업로드
   const $uproadImage = UproadImage();
   $app.appendChild($uproadImage);
+
+  //이메일
+  const $email = Email();
+  $app.appendChild($email);
 }
