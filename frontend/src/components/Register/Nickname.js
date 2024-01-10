@@ -17,6 +17,7 @@ export default function Nickname() {
 
   $Nickname.appendChild($NicknameText);
   $Nickname.appendChild($NicknameInput);
+  $Nickname.appendChild($NicknameCheck);
 
   return $Nickname;
 }
