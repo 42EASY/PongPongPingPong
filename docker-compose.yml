@@ -1,6 +1,25 @@
 version: "3"
 
 services:
+  db:
+    image: postgres:15-bullseye
+    container_name: postgresql
+    volumes:
+      - type: bind
+        source: ./volume/postgres-data
+        target: /var/lib/postgresql/data
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - transcendence
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    command: -p "${POSTGRES_PORT}"
+
+
   backend:
     pull_policy: never
     build:
@@ -16,23 +35,6 @@ services:
     command: python /app/transcendence/manage.py runserver 0.0.0.0:8000
     depends_on:
       - db
-
-  db:
-    image: postgres:15-bullseye
-    container_name: postgresql
-    volumes:
-      - type: bind
-        source: ./volume/postgres-data
-        target: /var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    networks:
-      - transcendence
-    ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
-    command: -p "${POSTGRES_PORT}"
 
   nginx:
     pull_policy: never

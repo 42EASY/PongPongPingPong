@@ -28,7 +28,7 @@ class Participant(models.Model):
         LOSE = 'LOSE', 'Lose'
         # 추가 결과 필요 시 여기에 정의
 
-    user_id = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    user_id = models.ForeignKey('members.Members', on_delete=models.CASCADE)
     game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
     score = models.IntegerField(null=True)
     result = models.CharField(max_length=50, choices=Result.choices)
