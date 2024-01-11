@@ -24,8 +24,9 @@ export default function Login() {
 
   //로그인 버튼 클릭 이벤트
   const changeUrl = (requestedUrl) => {
+    const path = `./src/styles${requestedUrl}.css`;
+    document.getElementById("styles").setAttribute("href", path);
     history.pushState(null, null, requestedUrl);
-    console.log(requestedUrl);
     routes[requestedUrl]();
   };
 
