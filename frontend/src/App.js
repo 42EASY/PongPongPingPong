@@ -2,6 +2,7 @@ import Login from "./pages/Login.js";
 import Main from "./pages/Main.js";
 import Game from "./pages/Game.js";
 import Test from "./pages/Test.js";
+import GameRoom from "./pages/GameRoom.js";
 
 const $app = document.querySelector(".App");
 let currentComponent = Login;
@@ -11,6 +12,7 @@ const routes = {
   "/login": Login,
   "/main": Main, //임의,,
   "/game": Game, //임의,,
+  "/gameroom": GameRoom,
 };
 
 $app.innerHTML = routes["/"]();
@@ -33,6 +35,9 @@ window.addEventListener("click", (e) => {
   } else if (e.target.classList.contains("moveToGamePageBtn")) {
     // Game 페이지의 버튼이 클릭된 경우
     changeUrl("/game");
+  } else if (e.target.classList.contains("moveToGameRoomPageBtn")) {
+    // GameRoom 페이지의 버튼이 클릭된 경우
+    changeUrl("/gameroom");
   }
 });
 
