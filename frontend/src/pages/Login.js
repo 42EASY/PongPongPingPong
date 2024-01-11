@@ -29,12 +29,6 @@ export default function Login() {
     routes[requestedUrl]();
   };
 
-  // window.addEventListener("click", (e) => {
-  //   if (e.target.classList.contains("loginButton")) {
-  //     changeUrl("/register");
-  //   }
-  // });
-
   window.addEventListener("popstate", () => {
     changeUrl(window.location.pathname);
   });
