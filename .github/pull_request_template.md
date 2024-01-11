@@ -9,8 +9,8 @@
 
 ## 📰 관련 이슈
 <!---- 아래에 주소에 이슈번호를 넣어주세요! ---->
-<!---- ex) https://github.com/webservEASY/webserv/issues/1 ---->
-https://github.com/webservEASY/webserv/issues/
+<!---- ex) https://github.com/42EASY/PongPongPingPong/issues/1 ---->
+- https://github.com/42EASY/PongPongPingPong/issues/
 
 ## 📝 PR 내용
 <!---- 해당 PR에 어떤 작업을 하였는지 설명해주세요. ---->
