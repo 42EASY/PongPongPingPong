@@ -12,6 +12,9 @@ export default function Login() {
 
   //로그인 버튼
   const $loginButton = LoginButton();
+  $loginButton.onclick = () => {
+    changeUrl("/register");
+  };
   $app.appendChild($loginButton);
 
   const routes = {
@@ -26,11 +29,11 @@ export default function Login() {
     routes[requestedUrl]();
   };
 
-  window.addEventListener("click", (e) => {
-    if (e.target.classList.contains("loginButton")) {
-      changeUrl("/register");
-    }
-  });
+  // window.addEventListener("click", (e) => {
+  //   if (e.target.classList.contains("loginButton")) {
+  //     changeUrl("/register");
+  //   }
+  // });
 
   window.addEventListener("popstate", () => {
     changeUrl(window.location.pathname);
