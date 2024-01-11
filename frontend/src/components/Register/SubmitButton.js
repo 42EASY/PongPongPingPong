@@ -1,7 +1,8 @@
-export default function SubmitButton() {
-  const $SubmitButton = document.createElement("button");
+export default function SubmitButton(text) {
+  const $SubmitButton = document.createElement("div");
   $SubmitButton.classList.add("submitButton");
-  $SubmitButton.innerHTML = "계정 만들기";
+  $SubmitButton.innerHTML = text;
+  //todo: 계정 만들기 버튼 클릭 시 회원가입 기능 구현
 
   return $SubmitButton;
 }
