@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class User(models.Model):
+class Members(models.Model):
     key = models.BigAutoField(primary_key=True)
     nickname = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
@@ -13,4 +13,5 @@ class User(models.Model):
     deleted_at = models.DateTimeField(null=True)
 
     class Meta:
-        db_table = 'user'
+        db_table = 'members'
+        app_label = 'members'
