@@ -1,7 +1,7 @@
 export default function Title(contents) {
-  const $Title = document.createElement("div");
-  $Title.classList.add("title");
-  $Title.innerHTML = contents;
+  const $title = document.createElement("div");
+  $title.classList.add("title");
+  $title.innerHTML = contents;
 
-  return $Title;
+  return $title;
 }

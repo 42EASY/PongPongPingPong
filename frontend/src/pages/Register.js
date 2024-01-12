@@ -10,32 +10,32 @@ export default function Register() {
   $app.innerHTML = "";
 
   //전체 영역
-  const $area = document.createElement("div");
-  $area.classList.add("area");
+  const $registerWrapper = document.createElement("div");
+  $registerWrapper.classList.add("registerWrapper");
 
   //타이틀
   const $title = Title("퐁퐁핑퐁 가입하기"); //or 프로필 편집
-  $area.appendChild($title);
+  $registerWrapper.appendChild($title);
 
   //이미지 업로드
   const $uproadImage = UproadImage();
-  $area.appendChild($uproadImage);
+  $registerWrapper.appendChild($uproadImage);
 
   //이메일
   const $email = Email();
-  $area.appendChild($email);
+  $registerWrapper.appendChild($email);
 
   //닉네임
   const $nickname = Nickname(); //어떤 페이지인지 인자로 넘겨주기
-  $area.appendChild($nickname);
+  $registerWrapper.appendChild($nickname);
 
   //2차인증
   const $twoFactorAuth = TwoFactorAuth();
-  $area.appendChild($twoFactorAuth);
+  $registerWrapper.appendChild($twoFactorAuth);
 
   //계정만들기 버튼
   const $submitButton = SubmitButton("계정 만들기"); //or 수정하기
-  $area.appendChild($submitButton);
+  $registerWrapper.appendChild($submitButton);
 
-  $app.appendChild($area);
+  $app.appendChild($registerWrapper);
 }

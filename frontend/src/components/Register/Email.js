@@ -1,30 +1,30 @@
 export default function Email() {
-  const $EmailWrapper = document.createElement("div");
-  $EmailWrapper.classList.add("emailWrapper");
+  const $emailWrapper = document.createElement("div");
+  $emailWrapper.classList.add("emailWrapper");
 
-  const $EmailText = document.createElement("div");
-  $EmailText.classList.add("emailText");
-  $EmailText.innerHTML = "이메일";
+  const $emailText = document.createElement("div");
+  $emailText.classList.add("emailText");
+  $emailText.innerHTML = "이메일";
 
-  const $EmailContentWrapper = document.createElement("div");
-  $EmailContentWrapper.classList.add("emailContentWrapper");
+  const $emailContentWrapper = document.createElement("div");
+  $emailContentWrapper.classList.add("emailContentWrapper");
 
-  const $EmailContent = document.createElement("div");
-  $EmailContent.classList.add("emailContent");
+  const $emailContent = document.createElement("div");
+  $emailContent.classList.add("emailContent");
 
-  const $EmailIcon = document.createElement("i");
-  $EmailIcon.classList.add("bi", "bi-envelope-fill");
-  const $EmailContentText = document.createElement("div");
-  $EmailContentText.classList.add("emailContentText");
-  $EmailContentText.innerHTML = "test@gmail.com";
+  const $emailIcon = document.createElement("i");
+  $emailIcon.classList.add("bi", "bi-envelope-fill");
+  const $emailContentText = document.createElement("div");
+  $emailContentText.classList.add("emailContentText");
+  $emailContentText.innerHTML = "test@gmail.com";
 
-  $EmailContent.appendChild($EmailIcon);
-  $EmailContent.appendChild($EmailContentText);
+  $emailContent.appendChild($emailIcon);
+  $emailContent.appendChild($emailContentText);
 
-  $EmailContentWrapper.appendChild($EmailContent);
+  $emailContentWrapper.appendChild($emailContent);
 
-  $EmailWrapper.appendChild($EmailText);
-  $EmailWrapper.appendChild($EmailContentWrapper);
+  $emailWrapper.appendChild($emailText);
+  $emailWrapper.appendChild($emailContentWrapper);
 
-  return $EmailWrapper;
+  return $emailWrapper;
 }

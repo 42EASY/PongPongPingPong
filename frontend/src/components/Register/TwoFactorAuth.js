@@ -1,65 +1,65 @@
 export default function TwoFactorAuth() {
-  const $TwoFactorAuthWrapper = document.createElement("div");
-  $TwoFactorAuthWrapper.classList.add("twoFactorAuthWrapper");
+  const $twoFactorAuthWrapper = document.createElement("div");
+  $twoFactorAuthWrapper.classList.add("twoFactorAuthWrapper");
 
-  const $TwoFactorAuthText = document.createElement("div");
-  $TwoFactorAuthText.classList.add("twoFactorAuthText");
-  $TwoFactorAuthText.innerHTML = "2차 인증";
+  const $twoFactorAuthText = document.createElement("div");
+  $twoFactorAuthText.classList.add("twoFactorAuthText");
+  $twoFactorAuthText.innerHTML = "2차 인증";
 
-  const $TwoFactorAuthContentWrapper = document.createElement("div");
-  $TwoFactorAuthContentWrapper.classList.add("twoFactorAuthContentWrapper");
+  const $twoFactorAuthContentWrapper = document.createElement("div");
+  $twoFactorAuthContentWrapper.classList.add("twoFactorAuthContentWrapper");
 
-  const $TwoFactorAuthContent = document.createElement("div");
-  $TwoFactorAuthContent.classList.add("twoFactorAuthContent");
+  const $twoFactorAuthContent = document.createElement("div");
+  $twoFactorAuthContent.classList.add("twoFactorAuthContent");
 
-  const $TwoFactorAuthContentInfo = document.createElement("div");
-  $TwoFactorAuthContentInfo.classList.add("twoFactorAuthContentInfo");
-  $TwoFactorAuthContentInfo.innerHTML = "Googl e Authentication";
+  const $twoFactorAuthContentInfo = document.createElement("div");
+  $twoFactorAuthContentInfo.classList.add("twoFactorAuthContentInfo");
+  $twoFactorAuthContentInfo.innerHTML = "Googl e Authentication";
 
-  $TwoFactorAuthContent.appendChild($TwoFactorAuthContentInfo);
+  $twoFactorAuthContent.appendChild($twoFactorAuthContentInfo);
 
-  const $TwoFactorAuthContentSelectBlock = document.createElement("div");
-  $TwoFactorAuthContentSelectBlock.classList.add(
+  const $twoFactorAuthContentSelectBlock = document.createElement("div");
+  $twoFactorAuthContentSelectBlock.classList.add(
     "twoFactorAuthContentSelectBlock"
   );
 
-  const $TwoFactorAuthDeactive = document.createElement("div");
+  const $twoFactorAuthDeactive = document.createElement("div");
   //초기 화면에서는 비활성화 선택
-  $TwoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
-  $TwoFactorAuthDeactive.classList.add("twoFactorAuthDeactive");
-  $TwoFactorAuthDeactive.innerHTML = "비활성화";
+  $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
+  $twoFactorAuthDeactive.classList.add("twoFactorAuthDeactive");
+  $twoFactorAuthDeactive.innerHTML = "비활성화";
 
-  const $TwoFactorAuthActive = document.createElement("div");
-  $TwoFactorAuthActive.classList.add("twoFactorAuthUnSelect");
-  $TwoFactorAuthActive.classList.add("twoFactorAuthActive");
-  $TwoFactorAuthActive.innerHTML = "활성화";
+  const $twoFactorAuthActive = document.createElement("div");
+  $twoFactorAuthActive.classList.add("twoFactorAuthUnSelect");
+  $twoFactorAuthActive.classList.add("twoFactorAuthActive");
+  $twoFactorAuthActive.innerHTML = "활성화";
 
-  $TwoFactorAuthContentSelectBlock.appendChild($TwoFactorAuthDeactive);
-  $TwoFactorAuthContentSelectBlock.appendChild($TwoFactorAuthActive);
+  $twoFactorAuthContentSelectBlock.appendChild($twoFactorAuthDeactive);
+  $twoFactorAuthContentSelectBlock.appendChild($twoFactorAuthActive);
 
-  $TwoFactorAuthContent.appendChild($TwoFactorAuthContentSelectBlock);
+  $twoFactorAuthContent.appendChild($twoFactorAuthContentSelectBlock);
 
-  $TwoFactorAuthContentWrapper.appendChild($TwoFactorAuthContent);
+  $twoFactorAuthContentWrapper.appendChild($twoFactorAuthContent);
 
-  $TwoFactorAuthWrapper.appendChild($TwoFactorAuthText);
-  $TwoFactorAuthWrapper.appendChild($TwoFactorAuthContentWrapper);
+  $twoFactorAuthWrapper.appendChild($twoFactorAuthText);
+  $twoFactorAuthWrapper.appendChild($twoFactorAuthContentWrapper);
 
   //비활성화 클릭 이벤트
-  $TwoFactorAuthDeactive.onclick = () => {
-    $TwoFactorAuthDeactive.classList.remove("twoFactorAuthUnSelect");
-    $TwoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
-    $TwoFactorAuthActive.classList.remove("twoFactorAuthSelect");
-    $TwoFactorAuthActive.classList.add("twoFactorAuthUnSelect");
+  $twoFactorAuthDeactive.onclick = () => {
+    $twoFactorAuthDeactive.classList.remove("twoFactorAuthUnSelect");
+    $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
+    $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
+    $twoFactorAuthActive.classList.add("twoFactorAuthUnSelect");
   };
 
   //활성화 클릭 이벤트
   //todo: 활성화 클릭 시, 확인 모달 띄우기
-  $TwoFactorAuthActive.onclick = () => {
-    $TwoFactorAuthActive.classList.remove("twoFactorAuthUnSelect");
-    $TwoFactorAuthActive.classList.add("twoFactorAuthSelect");
-    $TwoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
-    $TwoFactorAuthDeactive.classList.add("twoFactorAuthUnSelect");
+  $twoFactorAuthActive.onclick = () => {
+    $twoFactorAuthActive.classList.remove("twoFactorAuthUnSelect");
+    $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
+    $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
+    $twoFactorAuthDeactive.classList.add("twoFactorAuthUnSelect");
   };
 
-  return $TwoFactorAuthWrapper;
+  return $twoFactorAuthWrapper;
 }

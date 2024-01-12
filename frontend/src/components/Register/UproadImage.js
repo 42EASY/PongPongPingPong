@@ -1,35 +1,35 @@
 export default function UproadImage() {
-  const $UproadImageWrapper = document.createElement("div");
-  $UproadImageWrapper.classList.add("uproadImageWrapper");
+  const $uproadImageWrapper = document.createElement("div");
+  $uproadImageWrapper.classList.add("uproadImageWrapper");
 
-  const $PreviewImage = document.createElement("img");
-  $PreviewImage.classList.add("previewImage");
+  const $previewImage = document.createElement("img");
+  $previewImage.classList.add("previewImage");
   //todo: 이미지 업로드 시 미리보기 기능 구현
-  $PreviewImage.setAttribute("src", "../../images/none_profile.png");
-  $PreviewImage.setAttribute("alt", "프로필 이미지");
+  $previewImage.setAttribute("src", "../../images/none_profile.png");
+  $previewImage.setAttribute("alt", "프로필 이미지");
 
-  const $UproadImageButton = document.createElement("div");
-  $UproadImageButton.classList.add("uproadImageButton");
+  const $uproadImageButton = document.createElement("div");
+  $uproadImageButton.classList.add("uproadImageButton");
 
-  const $UproadImageIcon = document.createElement("i");
-  $UproadImageIcon.classList.add("bi", "bi-upload");
+  const $uproadImageIcon = document.createElement("i");
+  $uproadImageIcon.classList.add("bi", "bi-upload");
 
-  const $UproadImageText = document.createElement("div");
-  $UproadImageText.classList.add("uproadImageText");
-  $UproadImageText.innerHTML = "이미지 업로드";
+  const $uproadImageText = document.createElement("div");
+  $uproadImageText.classList.add("uproadImageText");
+  $uproadImageText.innerHTML = "이미지 업로드";
 
-  const $UproadImageNotice = document.createElement("div");
-  $UproadImageNotice.classList.add("uproadImageNotice");
-  $UproadImageNotice.innerHTML =
+  const $uproadImageNotice = document.createElement("div");
+  $uproadImageNotice.classList.add("uproadImageNotice");
+  $uproadImageNotice.innerHTML =
     "10MB 이하의 jpg, jpeg, png 파일만 가능합니다.";
   //todo: 이미지 업로드 클릭이벤트 추가
 
-  $UproadImageButton.appendChild($UproadImageIcon);
-  $UproadImageButton.appendChild($UproadImageText);
+  $uproadImageButton.appendChild($uproadImageIcon);
+  $uproadImageButton.appendChild($uproadImageText);
 
-  $UproadImageWrapper.appendChild($PreviewImage);
-  $UproadImageWrapper.appendChild($UproadImageButton);
-  $UproadImageWrapper.appendChild($UproadImageNotice);
+  $uproadImageWrapper.appendChild($previewImage);
+  $uproadImageWrapper.appendChild($uproadImageButton);
+  $uproadImageWrapper.appendChild($uproadImageNotice);
 
-  return $UproadImageWrapper;
+  return $uproadImageWrapper;
 }
