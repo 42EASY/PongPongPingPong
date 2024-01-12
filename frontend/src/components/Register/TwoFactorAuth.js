@@ -1,48 +1,50 @@
 export default function TwoFactorAuth() {
-  const $TwoFactorAuth = document.createElement("div");
-  $TwoFactorAuth.classList.add("twoFactorAuth");
+  const $TwoFactorAuthWrapper = document.createElement("div");
+  $TwoFactorAuthWrapper.classList.add("twoFactorAuthWrapper");
 
   const $TwoFactorAuthText = document.createElement("div");
   $TwoFactorAuthText.classList.add("twoFactorAuthText");
   $TwoFactorAuthText.innerHTML = "2차 인증";
 
-  const $TwoFactorAuthPlace = document.createElement("div");
-  $TwoFactorAuthPlace.classList.add("twoFactorAuthPlace");
+  const $TwoFactorAuthContentWrapper = document.createElement("div");
+  $TwoFactorAuthContentWrapper.classList.add("twoFactorAuthContentWrapper");
 
-  const $TwoFactorAuthBlock = document.createElement("div");
-  $TwoFactorAuthBlock.classList.add("twoFactorAuthBlock");
+  const $TwoFactorAuthContent = document.createElement("div");
+  $TwoFactorAuthContent.classList.add("twoFactorAuthContent");
 
-  const $TwoFactorAuthNotice = document.createElement("div");
-  $TwoFactorAuthNotice.classList.add("twoFactorAuthNotice");
-  $TwoFactorAuthNotice.innerHTML = "Google Authentication";
+  const $TwoFactorAuthContentInfo = document.createElement("div");
+  $TwoFactorAuthContentInfo.classList.add("twoFactorAuthContentInfo");
+  $TwoFactorAuthContentInfo.innerHTML = "Google Authentication";
 
-  $TwoFactorAuthBlock.appendChild($TwoFactorAuthNotice);
+  $TwoFactorAuthContent.appendChild($TwoFactorAuthContentInfo);
 
-  const $TwoFactorAuthSelectBlock = document.createElement("div");
-  $TwoFactorAuthSelectBlock.classList.add("twoFactorAuthSelectBlock");
+  const $TwoFactorAuthContentSelectBlock = document.createElement("div");
+  $TwoFactorAuthContentSelectBlock.classList.add(
+    "twoFactorAuthContentSelectBlock"
+  );
 
   //todo: 비활성화/활성화 클릭 이벤트 추가
-  const $TwoFactorAuthUnSelect = document.createElement("div");
-  $TwoFactorAuthUnSelect.classList.add("twoFactorAuthUnSelect");
+  const $TwoFactorAuthDeactive = document.createElement("div");
+  $TwoFactorAuthDeactive.classList.add("twoFactorAuthUnSelect");
   //선택 취소 시 twoFactorAuthSelect 클래스 삭제 및 twoFactorAuthUnSelect 클래스 추가
-  $TwoFactorAuthUnSelect.classList.add("twoFactorAuthDeactive");
-  $TwoFactorAuthUnSelect.innerHTML = "비활성화";
+  $TwoFactorAuthDeactive.classList.add("twoFactorAuthDeactive");
+  $TwoFactorAuthDeactive.innerHTML = "비활성화";
 
-  const $TwoFactorAuthSelect = document.createElement("div");
+  const $TwoFactorAuthActive = document.createElement("div");
   //선택 시 twoFactorAuthUnSelect 클래스 삭제 및 twoFactorAuthSelect 클래스 추가
-  $TwoFactorAuthSelect.classList.add("twoFactorAuthSelect");
-  $TwoFactorAuthSelect.classList.add("twoFactorAuthActive");
-  $TwoFactorAuthSelect.innerHTML = "활성화";
+  $TwoFactorAuthActive.classList.add("twoFactorAuthSelect");
+  $TwoFactorAuthActive.classList.add("twoFactorAuthActive");
+  $TwoFactorAuthActive.innerHTML = "활성화";
 
-  $TwoFactorAuthSelectBlock.appendChild($TwoFactorAuthUnSelect);
-  $TwoFactorAuthSelectBlock.appendChild($TwoFactorAuthSelect);
+  $TwoFactorAuthContentSelectBlock.appendChild($TwoFactorAuthDeactive);
+  $TwoFactorAuthContentSelectBlock.appendChild($TwoFactorAuthActive);
 
-  $TwoFactorAuthBlock.appendChild($TwoFactorAuthSelectBlock);
+  $TwoFactorAuthContent.appendChild($TwoFactorAuthContentSelectBlock);
 
-  $TwoFactorAuthPlace.appendChild($TwoFactorAuthBlock);
+  $TwoFactorAuthContentWrapper.appendChild($TwoFactorAuthContent);
 
-  $TwoFactorAuth.appendChild($TwoFactorAuthText);
-  $TwoFactorAuth.appendChild($TwoFactorAuthPlace);
+  $TwoFactorAuthWrapper.appendChild($TwoFactorAuthText);
+  $TwoFactorAuthWrapper.appendChild($TwoFactorAuthContentWrapper);
 
-  return $TwoFactorAuth;
+  return $TwoFactorAuthWrapper;
 }

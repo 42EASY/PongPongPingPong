@@ -1,30 +1,30 @@
 export default function Email() {
-  const $Email = document.createElement("div");
-  $Email.classList.add("email");
+  const $EmailWrapper = document.createElement("div");
+  $EmailWrapper.classList.add("emailWrapper");
 
   const $EmailText = document.createElement("div");
   $EmailText.classList.add("emailText");
   $EmailText.innerHTML = "이메일";
 
-  const $EmailInput = document.createElement("div");
-  $EmailInput.classList.add("emailPlace");
+  const $EmailContentWrapper = document.createElement("div");
+  $EmailContentWrapper.classList.add("emailContentWrapper");
 
-  const $Emailblock = document.createElement("div");
-  $Emailblock.classList.add("emailblock");
+  const $EmailContent = document.createElement("div");
+  $EmailContent.classList.add("emailContent");
 
   const $EmailIcon = document.createElement("i");
   $EmailIcon.classList.add("bi", "bi-envelope-fill");
-  const $EmailInputArea = document.createElement("div");
-  $EmailInputArea.classList.add("emailInputArea");
-  $EmailInputArea.innerHTML = "test@gmail.com";
+  const $EmailContentText = document.createElement("div");
+  $EmailContentText.classList.add("emailContentText");
+  $EmailContentText.innerHTML = "test@gmail.com";
 
-  $Emailblock.appendChild($EmailIcon);
-  $Emailblock.appendChild($EmailInputArea);
+  $EmailContent.appendChild($EmailIcon);
+  $EmailContent.appendChild($EmailContentText);
 
-  $EmailInput.appendChild($Emailblock);
+  $EmailContentWrapper.appendChild($EmailContent);
 
-  $Email.appendChild($EmailText);
-  $Email.appendChild($EmailInput);
+  $EmailWrapper.appendChild($EmailText);
+  $EmailWrapper.appendChild($EmailContentWrapper);
 
-  return $Email;
+  return $EmailWrapper;
 }

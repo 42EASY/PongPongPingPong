@@ -1,6 +1,6 @@
 export default function UproadImage() {
-  const $UproadImage = document.createElement("div");
-  $UproadImage.classList.add("uproadImage");
+  const $UproadImageWrapper = document.createElement("div");
+  $UproadImageWrapper.classList.add("uproadImageWrapper");
 
   const $PreviewImage = document.createElement("img");
   $PreviewImage.classList.add("previewImage");
@@ -8,8 +8,8 @@ export default function UproadImage() {
   $PreviewImage.setAttribute("src", "../../images/none_profile.png");
   $PreviewImage.setAttribute("alt", "프로필 이미지");
 
-  const $TextArea = document.createElement("div");
-  $TextArea.classList.add("textArea");
+  const $UproadImageButton = document.createElement("div");
+  $UproadImageButton.classList.add("uproadImageButton");
 
   const $UproadImageIcon = document.createElement("i");
   $UproadImageIcon.classList.add("bi", "bi-upload");
@@ -20,11 +20,11 @@ export default function UproadImage() {
   //todo: 확장자 안내문구 및 파일크기 안내문구 추가
   //todo: 이미지 업로드 클릭이벤트 추가
 
-  $TextArea.appendChild($UproadImageIcon);
-  $TextArea.appendChild($UproadImageText);
+  $UproadImageButton.appendChild($UproadImageIcon);
+  $UproadImageButton.appendChild($UproadImageText);
 
-  $UproadImage.appendChild($PreviewImage);
-  $UproadImage.appendChild($TextArea);
+  $UproadImageWrapper.appendChild($PreviewImage);
+  $UproadImageWrapper.appendChild($UproadImageButton);
 
-  return $UproadImage;
+  return $UproadImageWrapper;
 }
