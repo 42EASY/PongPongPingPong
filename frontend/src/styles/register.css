@@ -52,6 +52,7 @@
   justify-content: center;
   align-items: center;
   font-size: 12px;
+  font-weight: bold;
   margin-top: 10px;
 }
 
@@ -61,6 +62,14 @@
   justify-content: center;
   align-items: center;
   margin-left: 10px;
+}
+
+.uproadImageNotice {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
 }
 
 .emailWrapper {

@@ -17,7 +17,11 @@ export default function UproadImage() {
   const $UproadImageText = document.createElement("div");
   $UproadImageText.classList.add("uproadImageText");
   $UproadImageText.innerHTML = "이미지 업로드";
-  //todo: 확장자 안내문구 및 파일크기 안내문구 추가
+
+  const $UproadImageNotice = document.createElement("div");
+  $UproadImageNotice.classList.add("uproadImageNotice");
+  $UproadImageNotice.innerHTML =
+    "10MB 이하의 jpg, jpeg, png 파일만 가능합니다.";
   //todo: 이미지 업로드 클릭이벤트 추가
 
   $UproadImageButton.appendChild($UproadImageIcon);
@@ -25,6 +29,7 @@ export default function UproadImage() {
 
   $UproadImageWrapper.appendChild($PreviewImage);
   $UproadImageWrapper.appendChild($UproadImageButton);
+  $UproadImageWrapper.appendChild($UproadImageNotice);
 
   return $UproadImageWrapper;
 }
