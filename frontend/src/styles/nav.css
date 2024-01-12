@@ -1,0 +1,89 @@
+:root {
+  --darkGray: #adadad;
+  --lightGray: #e5e7eb;
+  --green: #3ec70b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0px;
+}
+
+#navBar {
+  width: 100%;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8% 0 8%;
+}
+
+.navBrand {
+  color: black;
+  display: flex;
+  align-items: center;
+  font-size: 25px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.navBrandImage {
+  width: 43px;
+  height: 47px;
+  margin-right: 8px;
+}
+
+.navBtns {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+.navProfileBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 70%;
+  overflow: hidden;
+  background-color: var(--lightGray);
+}
+
+.navProfileBtnImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  text-decoration: none;
+  color: black;
+}
+
+.navVerticalLine {
+  width: 1.2px;
+  height: 32px;
+  background-color: var(--lightGray);
+  margin: 0px 16px 0px 16px;
+}
+
+.navTextBtn {
+  color: var(--green);
+  font-size: 16px;
+  text-decoration: none;
+  margin-right: 16px;
+}
+
+.navGameBtn {
+  width: 149px;
+  height: 40px;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: var(--green);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.navGameBtnIcon {
+  font-size: 24px;
+}
