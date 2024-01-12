@@ -251,6 +251,7 @@ input:focus {
   justify-content: center;
   align-items: center;
   border-radius: 8px 0px 0px 8px;
+  cursor: pointer;
 }
 
 .twoFactorAuthActive {
@@ -260,6 +261,7 @@ input:focus {
   justify-content: center;
   align-items: center;
   border-radius: 0px 8px 8px 0px;
+  cursor: pointer;
 }
 
 .twoFactorAuthUnSelect {
