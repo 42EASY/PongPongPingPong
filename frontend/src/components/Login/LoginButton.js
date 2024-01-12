@@ -3,7 +3,7 @@ export default function LoginButton() {
   $loginButton.classList.add("loginButton");
 
   const $image = document.createElement("img");
-  $image.src = "../../images/42_logo.png";
+  $image.src = "./src/images/42_logo.png";
   $image.alt = "42 logo";
   $image.classList.add("image42");
 
