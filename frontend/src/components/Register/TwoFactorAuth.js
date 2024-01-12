@@ -23,16 +23,13 @@ export default function TwoFactorAuth() {
     "twoFactorAuthContentSelectBlock"
   );
 
-  //todo: 비활성화/활성화 클릭 이벤트 추가
   const $TwoFactorAuthDeactive = document.createElement("div");
   //초기 화면에서는 비활성화 선택
   $TwoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
-  //선택 취소 시 twoFactorAuthSelect 클래스 삭제 및 twoFactorAuthUnSelect 클래스 추가
   $TwoFactorAuthDeactive.classList.add("twoFactorAuthDeactive");
   $TwoFactorAuthDeactive.innerHTML = "비활성화";
 
   const $TwoFactorAuthActive = document.createElement("div");
-  //선택 시 twoFactorAuthUnSelect 클래스 삭제 및 twoFactorAuthSelect 클래스 추가
   $TwoFactorAuthActive.classList.add("twoFactorAuthUnSelect");
   $TwoFactorAuthActive.classList.add("twoFactorAuthActive");
   $TwoFactorAuthActive.innerHTML = "활성화";
@@ -47,6 +44,7 @@ export default function TwoFactorAuth() {
   $TwoFactorAuthWrapper.appendChild($TwoFactorAuthText);
   $TwoFactorAuthWrapper.appendChild($TwoFactorAuthContentWrapper);
 
+  //비활성화 클릭 이벤트
   $TwoFactorAuthDeactive.onclick = () => {
     $TwoFactorAuthDeactive.classList.remove("twoFactorAuthUnSelect");
     $TwoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
@@ -54,6 +52,8 @@ export default function TwoFactorAuth() {
     $TwoFactorAuthActive.classList.add("twoFactorAuthUnSelect");
   };
 
+  //활성화 클릭 이벤트
+  //todo: 활성화 클릭 시, 확인 모달 띄우기
   $TwoFactorAuthActive.onclick = () => {
     $TwoFactorAuthActive.classList.remove("twoFactorAuthUnSelect");
     $TwoFactorAuthActive.classList.add("twoFactorAuthSelect");
