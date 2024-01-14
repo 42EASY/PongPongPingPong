@@ -20,7 +20,7 @@ $app.innerHTML = routes["/"]();
 export const changeUrl = (requestedUrl) => {
   const path = `./src/styles${requestedUrl}.css`;
   document.getElementById("styles").setAttribute("href", path);
-  history.pushState(null, null, requestedUrl);
+  history.pushState(null, null, window.location.pathname);
   currentComponent = routes[requestedUrl];
   currentComponent();
 };

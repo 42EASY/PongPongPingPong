@@ -1,6 +1,10 @@
+import Nav from "../components/Nav/Nav.js";
 import WaitingPlayer from "../components/GameRoom/WaitingPlayer.js";
 
 export default function GameRoom() {
+  const $navbar = document.querySelector(".nav");
+  $navbar.innerHTML = Nav().innerHTML;
+
   const $page = document.createElement("div");
   const $gameRoom = document.createElement("div");
   const $waitingPlayers = document.createElement("div");
