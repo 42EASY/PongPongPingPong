@@ -45,5 +45,6 @@ urlpatterns = [
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('api/v1/block/', include(('social.urls'))),
     path('api/v1/auth/', include(('members.auth_urls'))),
+    path('api/v1/token/', include(('myjwt.urls'))),
 ]
 
