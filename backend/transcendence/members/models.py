@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Members(models.Model):
-    key = models.BigAutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     nickname = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     is_2fa = models.BooleanField(null=True)
