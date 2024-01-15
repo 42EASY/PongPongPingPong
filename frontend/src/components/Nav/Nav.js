@@ -51,6 +51,5 @@ export default function Nav() {
   $navGameBtn.appendChild($navGameBtnIcon);
   $navGameBtn.append("게임하러 가기");
 
-  document.querySelector(".App").innerHTML = $navWrapper.innerHTML;
   return $navWrapper;
 }
