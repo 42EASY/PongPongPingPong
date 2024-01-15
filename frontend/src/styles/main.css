@@ -1,0 +1,175 @@
+:root {
+  --darkGray: #adadad;
+  --lightGray: #e5e7eb;
+  --green: #3ec70b;
+  --red: #f05252;
+  --loseBg: #fde8e8;
+  --loseTxt: #e02424;
+  --winBg: #e1effe;
+  --winTxt: #1c64f2;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0px;
+}
+
+.main {
+  padding-top: 100px;
+}
+
+#profileWrapper {
+  width: 100%;
+  height: 194px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileImageBox {
+  width: 144px;
+  height: 144px;
+  border-radius: 70%;
+  overflow: hidden;
+  background-color: var(--lightGray);
+  margin-right: 5%;
+}
+
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileInfoBox {
+  width: 310px;
+  height: 144px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.profileNameBox {
+  display: flex;
+}
+
+.profileName {
+  font-size: 20px;
+  text-align: center;
+  padding-right: 16px;
+}
+
+.btnWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.mainBtn {
+  height: 34px;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: var(--lightGray);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-right: 8px;
+}
+
+.friendStatusIcon {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+.statusNotFriend {
+  color: white;
+  background-color: var(--green);
+}
+
+.statusBlocked {
+  color: white;
+  background-color: var(--red);
+}
+
+.moreFunctionBtn {
+  font-size: 20px;
+  color: var(--darkGray);
+  background-color: white;
+  padding: 0px;
+}
+
+.moreMenuWrapper {
+  width: 224px;
+  box-shadow: 4px 4px 4px var(--lightGray);
+  border-radius: 8px;
+  display: absolute;
+  top: 60px;
+  background-color: white;
+}
+
+.moreMenu {
+  /* display: none; */
+  list-style-type: none;
+  font-size: 14px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.moreMenuList {
+  height: 45px;
+  color: black;
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  border-bottom: 1px solid var(--lightGray);
+}
+
+.menuListRed {
+  color: var(--red);
+}
+
+.menuIcon {
+  font-size: 18px;
+  margin-right: 12px;
+}
+
+#gameCountWrapper {
+  width: 100%;
+  height: 24px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+#percentageBarWrapper {
+  width: 100%;
+  height: 31px;
+  display: flex;
+  background-color: var(--lightGray);
+  border-radius: 8px;
+}
+
+.percentageBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+#percentageBarWin {
+  background-color: var(--winBg);
+  color: var(--winTxt);
+  border-radius: 8px 0px 0px 8px;
+}
+
+#percentageBarLose {
+  background-color: var(--loseBg);
+  color: var(--loseTxt);
+  border-radius: 0px 8px 8px 0px;
+}
