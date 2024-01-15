@@ -81,3 +81,27 @@ class LoginView(APIView):
 					'access_token': access_token,
 				}
 			}, status=200)
+
+			
+class LogoutView(APIView):
+	def post(self, request):
+		try:
+			# token에서 id를 가져와야함
+			id = 0 # 개발을 위해 하드 코딩
+
+			member = Members.objects.get(id=id)
+
+			member.refresh_token = None
+			member.save()
+
+			return JsonResponse({
+				'code':200,
+				'message':'ok',
+				'result':{}
+			}, status=200)
+		except Exception as e:
+			# exception이 생길만한 상황들 고려
+			return JsonResponse({
+				'code': 404,
+				'message':'Not Found'
+			}, status=404)
