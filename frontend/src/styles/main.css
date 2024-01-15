@@ -173,3 +173,102 @@
   color: var(--loseTxt);
   border-radius: 0px 8px 8px 0px;
 }
+
+.resultWrapper {
+  width: 100%;
+  height: 120px;
+  background-color: var(--winBg);
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.resultWrapperLose {
+  background-color: var(--loseBg);
+}
+
+.resultMark {
+  width: 10px;
+  height: 100%;
+  background-color: var(--winTxt);
+}
+
+.resultMarkLose {
+  background-color: var(--loseTxt);
+}
+
+.resultInfoBox {
+  width: 76px;
+  height: 100%;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-evenly;
+  padding-left: 10px;
+}
+
+.resultInfoBold {
+  font-weight: bold;
+}
+
+.divLine {
+  width: 100%;
+  height: 0.8px;
+  background-color: var(--darkGray);
+}
+
+.resultPlayerBox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.resultPlayerName {
+  width: 120px;
+  font-size: 20px;
+}
+.resultPlayer1Name {
+  text-align: end;
+}
+
+.resultPlayerImageBox {
+  width: 80px;
+  height: 80px;
+  border-radius: 70%;
+  overflow: hidden;
+  background-color: var(--lightGray);
+  margin: 0px 10px;
+}
+
+.resultPlayerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.resultPlayerScore {
+  width: 80px;
+  height: 34px;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  background-color: var(--green);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 10px;
+}
+
+.tournamentWrapper {
+  width: 100%;
+  height: 395px;
+  border: 2px solid var(--darkGray);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  border-radius: 12px;
+  padding: 5px 10px;
+}
