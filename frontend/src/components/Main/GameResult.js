@@ -11,9 +11,11 @@ export default function GameResult(data) {
 
   const $ResultPlayerBox = document.createElement("div");
   const $ResultPlayer1Name = document.createElement("div");
+  const $ResultPlayer1MedalBox = document.createElement("div");
   const $ResultPlayer1ImageBox = document.createElement("div");
   const $ResultPlayer1Image = document.createElement("img");
   const $ResultPlayerScore = document.createElement("div");
+  const $ResultPlayer2MedalBox = document.createElement("div");
   const $ResultPlayer2ImageBox = document.createElement("div");
   const $ResultPlayer2Image = document.createElement("img");
   const $ResultPlayer2Name = document.createElement("div");
@@ -29,10 +31,12 @@ export default function GameResult(data) {
   $ResultInfoBox.appendChild($ResultInfoPlaytime);
 
   $ResultPlayerBox.appendChild($ResultPlayer1Name);
-  $ResultPlayerBox.appendChild($ResultPlayer1ImageBox);
+  $ResultPlayerBox.appendChild($ResultPlayer1MedalBox);
+  $ResultPlayer1MedalBox.appendChild($ResultPlayer1ImageBox);
   $ResultPlayer1ImageBox.appendChild($ResultPlayer1Image);
   $ResultPlayerBox.appendChild($ResultPlayerScore);
-  $ResultPlayerBox.appendChild($ResultPlayer2ImageBox);
+  $ResultPlayerBox.appendChild($ResultPlayer2MedalBox);
+  $ResultPlayer2MedalBox.appendChild($ResultPlayer2ImageBox);
   $ResultPlayer2ImageBox.appendChild($ResultPlayer2Image);
   $ResultPlayerBox.appendChild($ResultPlayer2Name);
 
@@ -60,6 +64,7 @@ export default function GameResult(data) {
   $ResultPlayer1Name.classList.add("resultPlayerName");
   $ResultPlayer1Name.classList.add("resultPlayer1Name");
   $ResultPlayer1Name.innerHTML = data.player_one.nickname;
+  $ResultPlayer1MedalBox.classList.add("resultPlayerMedalBox");
   $ResultPlayer1ImageBox.classList.add("resultPlayerImageBox");
   $ResultPlayer1Image.classList.add("resultPlayerImage");
   $ResultPlayer1Image.setAttribute("src", data.player_one.image_url);
@@ -69,10 +74,27 @@ export default function GameResult(data) {
   $ResultPlayerScore.innerHTML = score;
   $ResultPlayer2Name.classList.add("resultPlayerName");
   $ResultPlayer2Name.innerHTML = data.player_two.nickname;
+  $ResultPlayer2MedalBox.classList.add("resultPlayerMedalBox");
   $ResultPlayer2ImageBox.classList.add("resultPlayerImageBox");
   $ResultPlayer2Image.classList.add("resultPlayerImage");
   $ResultPlayer2Image.setAttribute("src", data.player_two.image_url);
   $ResultPlayer2Image.setAttribute("alt", "player_two_image");
+
+  if (data.option === "결승") {
+    const $MedalImageBox = document.createElement("div");
+    const $MedalImage = document.createElement("img");
+    $MedalImageBox.appendChild($MedalImage);
+    $MedalImageBox.classList.add("medalImageBox");
+    $MedalImage.classList.add("medalImage");
+    $MedalImage.setAttribute("src", "./src/images/medal.png");
+    $MedalImage.setAttribute("alt", "medal_image");
+
+    if (data.result === "WIN") {
+      $ResultPlayer1MedalBox.appendChild($MedalImageBox);
+    } else {
+      $ResultPlayer2MedalBox.appendChild($MedalImageBox);
+    }
+  }
 
   return $ResultWrapper;
 }
