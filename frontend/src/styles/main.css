@@ -1,5 +1,6 @@
 :root {
-  --darkGray: #adadad;
+  --darkGray: #6b7280;
+  --gray: #adadad;
   --lightGray: #e5e7eb;
   --green: #3ec70b;
   --red: #f05252;
@@ -32,7 +33,7 @@
   border-radius: 70%;
   overflow: hidden;
   background-color: var(--lightGray);
-  margin-right: 5%;
+  margin: 0 5%;
 }
 
 .profileImage {
@@ -97,7 +98,7 @@
 
 .moreFunctionBtn {
   font-size: 20px;
-  color: var(--darkGray);
+  color: var(--gray);
   background-color: white;
   padding: 0px;
 }
@@ -174,8 +175,76 @@
   border-radius: 0px 8px 8px 0px;
 }
 
-.resultWrapper {
+.historyWrapper {
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.historyNav {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px;
+  border-top: 1px solid var(--lightGray);
+}
+
+.historyBtn {
+  width: 120px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--dartGray);
+  font-size: 15px;
+  margin-top: -2px;
+}
+
+.historyBtnSelected {
+  border-top: 3px solid var(--green);
+  color: var(--green);
+  border-radius: 2px 2px 0px 0px;
+}
+
+.historyBoard {
+  display: flex;
+  flex-direction: column;
+}
+
+.noHistoryWrapper {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 30px;
+  font-weight: 600;
+  margin-top: 40px;
+}
+
+.noHistoryIcon {
+  width: 96px;
+  height: 96px;
+  font-size: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  border: 3px solid black;
+  border-radius: 70%;
+}
+
+.noHistorySubTxt {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.resultWrapper {
+  width: 672px;
   height: 120px;
   background-color: var(--winBg);
   display: flex;
@@ -215,7 +284,7 @@
 .divLine {
   width: 100%;
   height: 0.8px;
-  background-color: var(--darkGray);
+  background-color: var(--gray);
 }
 
 .resultPlayerBox {
@@ -233,16 +302,34 @@
   text-align: end;
 }
 
+.resultPlayerMedalBox {
+  position: relative;
+  margin: 0px 14px;
+}
+
 .resultPlayerImageBox {
   width: 80px;
   height: 80px;
   border-radius: 70%;
   overflow: hidden;
   background-color: var(--lightGray);
-  margin: 0px 10px;
 }
 
 .resultPlayerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.medalImageBox {
+  width: 48px;
+  height: 48px;
+  position: absolute;
+  top: -8px;
+  left: -16px;
+}
+
+.medalImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -271,4 +358,5 @@
   justify-content: space-around;
   border-radius: 12px;
   padding: 5px 10px;
+  margin-bottom: 16px;
 }
