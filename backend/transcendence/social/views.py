@@ -12,7 +12,6 @@ from social.models import Block
 class BlockView(APIView):
     permissions_classes = [permissions.AllowAny]
 
-    #TODO: swagger 연동 확인
     def post(self, request, user_id, base_user_id):
         #TODO: base_user_id 사용 대신 토큰 사용으로 변경
         try:
