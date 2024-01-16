@@ -12,8 +12,6 @@ export default function MoreMenu() {
   $MoreMenu.appendChild($InviteGameOption);
   $InviteGameOption.classList.add("moreMenuList");
   $InviteGameOption.appendChild($InviteGameIcon);
-  // icon 의견 물어보기
-  $InviteGameIcon.classList.add("bi", "bi-caret-right", "menuIcon");
   $InviteGameIcon.classList.add("bi", "bi-envelope-open", "menuIcon");
   $InviteGameOption.append("게임초대");
   $MoreMenu.appendChild($BlockOption);
