@@ -9,7 +9,6 @@ clean :
 
 fclean : clean
 	sh clean.sh
-	rm -rf ./volume
 
 re : fclean
 	$(MAKE) all
