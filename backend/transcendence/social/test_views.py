@@ -40,4 +40,18 @@ class BlockViewTest(TestCase):
         self.assertEquals(response.status_code, 400)
 
 
+    #base_user가 차단한 target을 차단 해제 성공 테스트
+    #TODO: 토큰 미적용하여 /api/v1/block/{user-id}/{base-user-id}로 사용, 추후 /api/v1/block/{user-id}로 변경 예정
+    def test_delete_block_success(self):
+        user_model = Members.objects.get(nickname = 'base_user')
+        target_model = Members.objects.get(nickname = 'target')
+
+        block = Block.objects.create(user = user_model, target = target_model)
+
+        url = reverse('block:delete', kwargs = {'user_id' : target_model.id, 'base_user_id' : user_model.id })
+        response = client.delete(url)
+
+        self.assertEquals(response.json()['code'], 200)
+        self.assertEquals(response.status_code, 200)
+
 
