@@ -1,5 +1,6 @@
 :root {
-  --darkGray: #adadad;
+  --darkGray: #6b7280;
+  --gray: #adadad;
   --lightGray: #e5e7eb;
   --green: #3ec70b;
   --red: #f05252;
@@ -32,7 +33,7 @@
   border-radius: 70%;
   overflow: hidden;
   background-color: var(--lightGray);
-  margin-right: 5%;
+  margin: 0 5%;
 }
 
 .profileImage {
@@ -97,7 +98,7 @@
 
 .moreFunctionBtn {
   font-size: 20px;
-  color: var(--darkGray);
+  color: var(--gray);
   background-color: white;
   padding: 0px;
 }
@@ -172,4 +173,190 @@
   background-color: var(--loseBg);
   color: var(--loseTxt);
   border-radius: 0px 8px 8px 0px;
+}
+
+.historyWrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.historyNav {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px;
+  border-top: 1px solid var(--lightGray);
+}
+
+.historyBtn {
+  width: 120px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--dartGray);
+  font-size: 15px;
+  margin-top: -2px;
+}
+
+.historyBtnSelected {
+  border-top: 3px solid var(--green);
+  color: var(--green);
+  border-radius: 2px 2px 0px 0px;
+}
+
+.historyBoard {
+  display: flex;
+  flex-direction: column;
+}
+
+.noHistoryWrapper {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 30px;
+  font-weight: 600;
+  margin-top: 40px;
+}
+
+.noHistoryIcon {
+  width: 96px;
+  height: 96px;
+  font-size: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  border: 3px solid black;
+  border-radius: 70%;
+}
+
+.noHistorySubTxt {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.resultWrapper {
+  width: 672px;
+  height: 120px;
+  background-color: var(--winBg);
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.resultWrapperLose {
+  background-color: var(--loseBg);
+}
+
+.resultMark {
+  width: 10px;
+  height: 100%;
+  background-color: var(--winTxt);
+}
+
+.resultMarkLose {
+  background-color: var(--loseTxt);
+}
+
+.resultInfoBox {
+  width: 76px;
+  height: 100%;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-evenly;
+  padding-left: 10px;
+}
+
+.resultInfoBold {
+  font-weight: bold;
+}
+
+.divLine {
+  width: 100%;
+  height: 0.8px;
+  background-color: var(--gray);
+}
+
+.resultPlayerBox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.resultPlayerName {
+  width: 120px;
+  font-size: 20px;
+}
+.resultPlayer1Name {
+  text-align: end;
+}
+
+.resultPlayerMedalBox {
+  position: relative;
+  margin: 0px 14px;
+}
+
+.resultPlayerImageBox {
+  width: 80px;
+  height: 80px;
+  border-radius: 70%;
+  overflow: hidden;
+  background-color: var(--lightGray);
+}
+
+.resultPlayerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.medalImageBox {
+  width: 48px;
+  height: 48px;
+  position: absolute;
+  top: -8px;
+  left: -16px;
+}
+
+.medalImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.resultPlayerScore {
+  width: 80px;
+  height: 34px;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  background-color: var(--green);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 10px;
+}
+
+.tournamentWrapper {
+  width: 100%;
+  height: 395px;
+  border: 2px solid var(--darkGray);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  border-radius: 12px;
+  padding: 5px 10px;
+  margin-bottom: 16px;
 }
