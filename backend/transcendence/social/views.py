@@ -16,8 +16,8 @@ class BlockView(APIView):
         #TODO: base_user_id 사용 대신 토큰 사용으로 변경
         try:
             #TODO: key를 id로 변경
-            target_user = Members.objects.get(key = user_id)
-            base_user = Members.objects.get(key = base_user_id)
+            target_user = Members.objects.get(id = user_id)
+            base_user = Members.objects.get(id = base_user_id)
 
             Block.objects.create(user = base_user, target = target_user)
         

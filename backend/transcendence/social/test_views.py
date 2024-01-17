@@ -1,5 +1,6 @@
 from django.test import TestCase, Client 
 from members.models import Members
+from social.models import Block
 from django.urls import reverse
 
 client = Client()
@@ -21,7 +22,7 @@ class BlockViewTest(TestCase):
         target_model = Members.objects.get(nickname = 'target')
 
         #TODO: key를 id로 변경
-        url = reverse('block:post', kwargs = {'user_id' : target_model.key, 'base_user_id' : user_model.key })
+        url = reverse('block:post', kwargs = {'user_id' : target_model.id, 'base_user_id' : user_model.id })
         response = client.post(url)
 
         self.assertEquals(response.json()['code'], 201)
@@ -34,7 +35,7 @@ class BlockViewTest(TestCase):
         user_model = Members.objects.get(nickname = 'base_user')
 
         #TODO: key를 id로 변경
-        url = reverse('block:post', kwargs = {'user_id' : 100, 'base_user_id' : user_model.key})
+        url = reverse('block:post', kwargs = {'user_id' : 100, 'base_user_id' : user_model.id})
         response = client.post(url)
 
         self.assertEquals(response.json()['code'], 400)
