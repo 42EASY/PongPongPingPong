@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from members.models import Members
 from social.models import Block
 from django.urls import reverse
+from urllib.parse import urlencode
 
 client = Client()
 
@@ -54,4 +55,29 @@ class BlockViewTest(TestCase):
         self.assertEquals(response.json()['code'], 200)
         self.assertEquals(response.status_code, 200)
 
+    #user의 차단 목록 반환 테스트(keyword x)
+    #TODO: /api/v1/block?keyword={keyword}&page={page}&size={size}&user_id={user_id} 에서 user_id 삭제 예정
+    def test_get_block_list_no_keyword(self):
+        user_model = Members.objects.get(nickname = 'base_user')
 
+        for i in range(5):
+            dummy_nickname = 'dummy' + str(i)
+            dummy_email = 'dummy' + str(i) + '@test.com'
+            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
+            Block.objects.create(user = user_model, target = dummy)
+
+        query_params = {
+           'keyword': '',
+           'page': 1,
+           'size': 5,
+           'user_id': user_model.id,
+        }
+
+        query_string = urlencode(query_params)
+    
+        url = reverse('block:get') + '?' + query_string
+        response = client.get(url)
+
+        self.assertEquals(response.json()['code'], 200)
+        self.assertEquals(response.status_code, 200)
+        print(response.json()['result'])
