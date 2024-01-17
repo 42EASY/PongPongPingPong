@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from members.models import Members
+from myjwt.views import login_required
 from rest_framework_simplejwt.tokens import RefreshToken
 import datetime
 import environ
@@ -44,7 +45,6 @@ class LoginView(APIView):
 		user_info = user_info_response.json()
 
 		user_data = {
-			'id':user_info.get('id'),
 			'nickname': user_info.get('login'),
 			'email': user_info.get('email'),
 			'is_2fa': False,
@@ -70,6 +70,9 @@ class LoginView(APIView):
 				'result': {
 					'refresh_token': str(refresh),
 					'access_token': access_token,
+					'user_id': member.id,
+					'email':member.email,
+					'is_2fa':member.is_2fa,
 				}
 			}, status=201)
 		else:
@@ -79,16 +82,17 @@ class LoginView(APIView):
 				'result': {
 					'refresh_token': str(refresh),
 					'access_token': access_token,
+					'user_id': member.id,
+					'is_2fa':member.is_2fa,
 				}
 			}, status=200)
 
 			
 class LogoutView(APIView):
+	@login_required
 	def post(self, request):
+		id = request.user.id
 		try:
-			# token에서 id를 가져와야함
-			id = 0 # 개발을 위해 하드 코딩
-
 			member = Members.objects.get(id=id)
 
 			member.refresh_token = None
