@@ -21,7 +21,6 @@ class BlockViewTest(TestCase):
         user_model = Members.objects.get(nickname = 'base_user')
         target_model = Members.objects.get(nickname = 'target')
 
-        #TODO: key를 id로 변경
         url = reverse('block:post', kwargs = {'user_id' : target_model.id, 'base_user_id' : user_model.id })
         response = client.post(url)
 
@@ -34,7 +33,6 @@ class BlockViewTest(TestCase):
     def test_post_block_no_user(self):
         user_model = Members.objects.get(nickname = 'base_user')
 
-        #TODO: key를 id로 변경
         url = reverse('block:post', kwargs = {'user_id' : 100, 'base_user_id' : user_model.id})
         response = client.post(url)
 

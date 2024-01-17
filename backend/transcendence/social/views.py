@@ -15,7 +15,6 @@ class BlockView(APIView):
     def post(self, request, user_id, base_user_id):
         #TODO: base_user_id 사용 대신 토큰 사용으로 변경
         try:
-            #TODO: key를 id로 변경
             target_user = Members.objects.get(id = user_id)
             base_user = Members.objects.get(id = base_user_id)
 
