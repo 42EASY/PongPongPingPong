@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from members.models import Members
-from myjwt.views import login_required
+from security.views import login_required
 from rest_framework_simplejwt.tokens import RefreshToken
 import datetime
 import environ

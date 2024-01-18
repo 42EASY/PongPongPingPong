@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class MyjwtConfig(AppConfig):
+class SecurityConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'myjwt'
+    name = 'security'
