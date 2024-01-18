@@ -45,7 +45,11 @@ INSTALLED_APPS = [
     'social',
     'tournaments',
     'members',
+    'security',
     'rest_framework_simplejwt',
+    'rest_framework',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
 ]
 
 AUTHENTICATION_BACKENDS = (
