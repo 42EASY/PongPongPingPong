@@ -55,6 +55,7 @@ class BlockViewTest(TestCase):
         self.assertEquals(response.json()['code'], 200)
         self.assertEquals(response.status_code, 200)
 
+
     #user의 차단 목록 반환 테스트(keyword x)
     #TODO: /api/v1/block?keyword={keyword}&page={page}&size={size}&user_id={user_id} 에서 user_id 삭제 예정
     def test_get_block_list_no_keyword(self):

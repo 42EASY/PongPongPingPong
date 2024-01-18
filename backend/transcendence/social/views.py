@@ -151,4 +151,3 @@ class BlockView(APIView):
 		# 		'message':'Bad Request'
 		# 	}, status = 400)
         
-
