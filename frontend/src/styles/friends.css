@@ -43,9 +43,13 @@
   display: flex;
   justify-content: center;
   padding: 10px;
-  background-color: #ffffff;
+
   border-radius: 15px 15px 0px 0px;
   cursor: pointer;
+}
+
+.titleSelect {
+  background-color: #ffffff;
 }
 
 .closeButton {
