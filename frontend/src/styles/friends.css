@@ -1,0 +1,57 @@
+:root {
+  --lightGray: #e5e7eb;
+}
+
+.App {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.friendsWrapper {
+  height: 100%;
+  width: 419px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.titleWrapper {
+  height: 48px;
+  width: 100%;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  padding-left: 16px;
+  padding-right: 16px;
+  background-color: var(--lightGray);
+}
+
+.title {
+  height: 43px;
+  display: flex;
+  align-items: end;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.titleList {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 15px 15px 0px 0px;
+  cursor: pointer;
+}
+
+.closeButton {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
