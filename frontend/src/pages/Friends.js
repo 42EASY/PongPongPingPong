@@ -1,4 +1,5 @@
 import Title from "../components/Friends/Title.js";
+import Search from "../components/Friends/Search.js";
 
 export default function Friends() {
   const $app = document.querySelector(".App");
@@ -11,6 +12,10 @@ export default function Friends() {
   //타이틀
   const $title = Title();
   $friendsWrapper.appendChild($title);
+
+  //검색
+  const $search = Search();
+  $friendsWrapper.appendChild($search);
 
   $app.appendChild($friendsWrapper);
 }
