@@ -1,6 +1,9 @@
 :root {
+  --green: #3ec70b;
   --lightGray: #e5e7eb;
   --darkGray: #d1d5db;
+  --yellow: #fede53;
+  --white: #ffffff;
 }
 
 .App {
@@ -49,7 +52,7 @@
 }
 
 .titleSelect {
-  background-color: #ffffff;
+  background-color: var(--white);
 }
 
 .closeButton {
@@ -85,4 +88,65 @@
 
 input:focus {
   outline: none;
+}
+
+.friendWrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.friendInfo {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 8px;
+}
+
+.friendImage {
+  height: 32px;
+  width: 32px;
+  border-radius: 4px;
+}
+
+.friendName {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.friendStatus {
+  width: 8px;
+  height: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--green);
+}
+
+.online {
+  background-color: var(--green);
+}
+
+.inGame {
+  background-color: var(--yellow);
+}
+
+.offline {
+  background-color: var(--darkGray);
+}
+
+.friendButton {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }

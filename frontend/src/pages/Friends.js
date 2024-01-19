@@ -1,5 +1,6 @@
 import Title from "../components/Friends/Title.js";
 import Search from "../components/Friends/Search.js";
+import List from "../components/Friends/List.js";
 
 export default function Friends() {
   const $app = document.querySelector(".App");
@@ -16,6 +17,10 @@ export default function Friends() {
   //검색
   const $search = Search();
   $friendsWrapper.appendChild($search);
+
+  //친구 목록
+  const $list = List();
+  $friendsWrapper.appendChild($list);
 
   $app.appendChild($friendsWrapper);
 }
