@@ -47,5 +47,6 @@ urlpatterns = [
     path('api/v1/block', include(('social.block_urls'))),
     path('api/v1/auth/', include(('members.auth_urls'))),
     path('api/v1/token/', include(('myjwt.urls'))),
+    path('api/v1/friends', include(('social.friends_urls'))),
 ]
 
