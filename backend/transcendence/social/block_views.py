@@ -8,7 +8,6 @@ from django.core.paginator import Paginator
 
 # Rest of your import statements
 
-#TODO: block_view로 파일명 변경 및 분리하기
 # Create your views here.
 class BlockView(APIView):
     permissions_classes = [permissions.AllowAny]
