@@ -28,13 +28,14 @@ class FriendsViewTest(TestCase):
         self.assertEquals(response.status_code, 201)
 
 
-    #base_user가 없는 유저 친구 추가 실패 테스트    
+    #target user가 없는 유저 친구 추가 실패 테스트    
     #TODO: 토큰 미적용하여 /api/v1/friends/{user-id}/{base-user-id}로 사용, 추후 /api/v1/friends/{user-id}로 변경 예정
-    def test_post_friends_no_user(self):
+    def test_post_friends_no_target_user(self):
         user_model = Members.objects.get(nickname = 'base_user')
 
         url = reverse('friends:post', kwargs = {'user_id' : 100, 'base_user_id' : user_model.id})
         response = client.post(url)
 
-        self.assertEquals(response.json()['code'], 400)
-        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.json()['code'], 404)
+        self.assertEquals(response.status_code, 404)
+

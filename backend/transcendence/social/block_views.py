@@ -17,7 +17,14 @@ class BlockView(APIView):
         try:
             target_user = Members.objects.get(id = user_id)
             base_user = Members.objects.get(id = base_user_id)
-
+        
+        except:
+            return JsonResponse({
+				'code': 404,
+				'message':'Bad Request'
+			}, status = 404)
+        
+        try:
             Block.objects.create(user = base_user, target = target_user)
         
         except:
@@ -41,6 +48,13 @@ class BlockView(APIView):
             target_user = Members.objects.get(id = user_id)
             base_user = Members.objects.get(id = base_user_id)
 
+        except:
+            return JsonResponse({
+				'code': 404,
+				'message':'Bad Request'
+			}, status = 404)
+        
+        try:
             block = Block.objects.get(user = base_user, target = target_user)
 
             block.delete()
@@ -143,10 +157,3 @@ class BlockView(APIView):
             'message': 'ok',
             'result' : result
         }, status = 200)
-
-        # except:
-        #     return JsonResponse({
-		# 	    'code': 400,
-		# 		'message':'Bad Request'
-		# 	}, status = 400)
-        

@@ -15,6 +15,13 @@ class FriendsView(APIView):
             target_user = Members.objects.get(id = user_id)
             base_user = Members.objects.get(id = base_user_id)
 
+        except:
+            return JsonResponse({
+                'code': 404,
+                'message': 'Bad Request'
+            }, status = 404)
+  
+        try:
             Friend.objects.create(user = base_user, target = target_user)
         
         except:
