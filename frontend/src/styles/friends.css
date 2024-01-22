@@ -90,12 +90,18 @@ input:focus {
   outline: none;
 }
 
-.friendWrapper {
+.listWrapper {
   height: 100%;
   width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
+}
+
+.friendWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: start;
   padding-top: 12px;
   padding-bottom: 12px;
   padding-left: 16px;
@@ -149,4 +155,29 @@ input:focus {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+.noFriendWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.noFriendIcon{
+  font-size: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.noFriendText{
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.noFriendDetail{
+  font-size: 14px;
+  font-weight: 400;
 }

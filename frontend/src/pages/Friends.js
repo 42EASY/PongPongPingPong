@@ -19,6 +19,7 @@ export default function Friends() {
   $friendsWrapper.appendChild($search);
 
   //친구 목록
+  //todo: 타이틀 클릭 이벤트에 따라 친구 목록/차단 목록 보여주기
   const $list = List();
   $friendsWrapper.appendChild($list);
 
