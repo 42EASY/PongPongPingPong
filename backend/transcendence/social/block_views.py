@@ -8,7 +8,6 @@ from django.core.paginator import Paginator
 
 # Rest of your import statements
 
-#TODO: block_view로 파일명 변경 및 분리하기
 # Create your views here.
 class BlockView(APIView):
     permissions_classes = [permissions.AllowAny]
@@ -18,7 +17,14 @@ class BlockView(APIView):
         try:
             target_user = Members.objects.get(id = user_id)
             base_user = Members.objects.get(id = base_user_id)
-
+        
+        except:
+            return JsonResponse({
+				'code': 404,
+				'message':'Not Found'
+			}, status = 404)
+        
+        try:
             Block.objects.create(user = base_user, target = target_user)
         
         except:
@@ -42,6 +48,13 @@ class BlockView(APIView):
             target_user = Members.objects.get(id = user_id)
             base_user = Members.objects.get(id = base_user_id)
 
+        except:
+            return JsonResponse({
+				'code': 404,
+				'message':'Not Found'
+			}, status = 404)
+        
+        try:
             block = Block.objects.get(user = base_user, target = target_user)
 
             block.delete()
@@ -144,10 +157,3 @@ class BlockView(APIView):
             'message': 'ok',
             'result' : result
         }, status = 200)
-
-        # except:
-        #     return JsonResponse({
-		# 	    'code': 400,
-		# 		'message':'Bad Request'
-		# 	}, status = 400)
-        

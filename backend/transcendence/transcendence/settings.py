@@ -45,7 +45,11 @@ INSTALLED_APPS = [
     'social',
     'tournaments',
     'members',
+    'security',
     'rest_framework_simplejwt',
+    'rest_framework',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -154,7 +158,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30), # 토큰 유효 시간
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=14), # 토큰 유효 시간 # TODO: 유효기간 바꾸기
     'REFRESH_TOKEN_LIFETIME': timedelta(days=14), # refresh token 유효 기간
 
     'ALGORITHM': 'HS256',
@@ -171,4 +175,14 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken','rest_framework_simplejwt.tokens.RefreshToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
     'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
 }

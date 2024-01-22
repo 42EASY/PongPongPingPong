@@ -5,6 +5,7 @@ export default function Test() {
           <button class="moveToLoginPageBtn">Go to Login</button>
           <button class="moveToMainPageBtn">Go to Main</button>
           <button class="moveToGamePageBtn">Go to Game</button>
+          <button class="moveToEndGamePageBtn">Go to EndGame</button>
           <button class="moveToGameRoomPageBtn">Go to GameRoom</button>
         </div>
       `;
