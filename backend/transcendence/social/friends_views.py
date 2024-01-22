@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from members.models import Members
 from social.models import Friend
+from social.models import Block
 from django.core.paginator import Paginator
 
 class FriendsView(APIView):
@@ -15,6 +16,12 @@ class FriendsView(APIView):
             target_user = Members.objects.get(id = user_id)
             base_user = Members.objects.get(id = base_user_id)
 
+            if (Block.objects.filter(user = base_user, target = target_user).count() > 0):
+                return JsonResponse({
+                    'code': 409,
+                    'message': 'Conflict'
+                }, status = 409)
+      
         except:
             return JsonResponse({
                 'code': 404,
