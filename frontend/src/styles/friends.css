@@ -1,6 +1,7 @@
 :root {
   --green: #3ec70b;
   --lightGray: #e5e7eb;
+  --gray: #6b7280;
   --darkGray: #d1d5db;
   --yellow: #fede53;
   --white: #ffffff;
@@ -178,6 +179,27 @@ input:focus {
 }
 
 .noFriendDetail{
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.noSearchWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.noSearchText{
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  color: var(--gray);
   font-size: 14px;
   font-weight: 400;
 }
