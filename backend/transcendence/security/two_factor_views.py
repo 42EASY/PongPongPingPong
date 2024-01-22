@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from members.models import Members
 from security.views import login_required
 from django.http import HttpResponse
+from django.http import JsonResponse
 import qrcode
 import pyotp
 from io import BytesIO
@@ -38,4 +39,19 @@ class TwoFactorAuthView(APIView):
 
 		return response
 
-
+	@login_required
+	def post(self, request):
+		otp_code = request.data.get("otp_code")
+		user = request.user
+		secret_key = user.two_factor_secret
+		totp = pyotp.TOTP(secret_key)
+		if (totp.verify(otp_code)):
+			return JsonResponse({
+				'code':200,
+				'message':'ok',
+			}, status=200)
+		else:
+			return JsonResponse({
+				'code':401,
+				'message':'UnAuthorized',
+			}, status=401)
