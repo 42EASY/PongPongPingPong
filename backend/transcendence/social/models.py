@@ -1,5 +1,5 @@
 from django.db import models
-
+from enum import Enum
 # Create your models here.
 
 class Friend(models.Model):
@@ -23,3 +23,8 @@ class Block(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'target'], name='PK_PARTICIPANT_BLOCK')
         ]
+
+class Relation(Enum):
+    NONE = 'NONE'
+    FRIEND = 'FRIEND'
+    BLOCK = 'BLOCK'
