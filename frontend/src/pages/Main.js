@@ -1,10 +1,9 @@
-import Nav from "../components/Nav/Nav.js";
+import Nav from "./Nav.js";
 import Profile from "../components/Main/Profile.js";
 import GameHistory from "../components/Main/GameHistory.js";
 
 export default function Main() {
-  const $navbar = document.querySelector(".nav");
-  $navbar.innerHTML = Nav().innerHTML;
+  Nav();
 
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
