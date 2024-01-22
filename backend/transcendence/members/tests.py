@@ -15,17 +15,19 @@ class MemberViewTestCase(APITestCase):
 		refresh = RefreshToken.for_user(self.fake_user)
 		fake_token = str(refresh.access_token)
 
-		self.member = Members.objects.create(nickname='testuser', email='testuser@email.com', is_2fa=False,
-		refresh_token='refresh_token')
 		self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + fake_token)
+		
+	@classmethod
+	def setUpTestData(cls):
+		cls.member = Members.objects.create(nickname='testuser', email='testuser@email.com', is_2fa=False, refresh_token='refresh_token')
 
 		game1 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL')
 		game2 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL')
 		game3 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL')
 
-		Participant.objects.create(user_id=self.member, game_id=game1, score=10, result='WIN')
-		Participant.objects.create(user_id=self.member, game_id=game2, score=0, result='LOSE')
-		Participant.objects.create(user_id=self.member, game_id=game3, score=10, result='WIN')
+		Participant.objects.create(user_id=cls.member, game_id=game1, score=10, result='WIN')
+		Participant.objects.create(user_id=cls.member, game_id=game2, score=0, result='LOSE')
+		Participant.objects.create(user_id=cls.member, game_id=game3, score=10, result='WIN')
 	
 	
 	def test_get_member_success(self):
