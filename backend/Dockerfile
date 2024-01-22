@@ -1,4 +1,4 @@
-FROM python:3.8.10
+FROM python:3.9
 
 ENV PYTHONUNBUFFERED=1
 WORKDIR /app
@@ -18,6 +18,10 @@ RUN pip install drf-yasg --upgrade && \
 RUN pip install djangorestframework-simplejwt
 
 RUN pip install PyJWT
+RUN pip install django_otp
+RUN pip install django-qr-code
+RUN pip install qrcode
+RUN pip install pyotp
 
 ENV DOCKERIZE_VERSION v0.2.0
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \

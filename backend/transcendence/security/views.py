@@ -7,7 +7,7 @@ import jwt
 import os
 import environ
 
-class MyJwtView(APIView):
+class JwtView(APIView):
 	def post(self, request):
 		# TODO: 헤더에서 가져오도록 해야함.
 		received_refresh_token = request.data.get('refresh_token')
