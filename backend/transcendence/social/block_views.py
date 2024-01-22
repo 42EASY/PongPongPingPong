@@ -21,7 +21,7 @@ class BlockView(APIView):
         except:
             return JsonResponse({
 				'code': 404,
-				'message':'Bad Request'
+				'message':'Not Found'
 			}, status = 404)
         
         try:
@@ -51,7 +51,7 @@ class BlockView(APIView):
         except:
             return JsonResponse({
 				'code': 404,
-				'message':'Bad Request'
+				'message':'Not Found'
 			}, status = 404)
         
         try:
