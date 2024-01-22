@@ -1,6 +1,8 @@
 import EndGame from "../../pages/EndGame.js";
 
-export default function Board(mode) {
+export default function Board(mode, option) {
+  console.log(mode);
+  console.log(option);
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
@@ -15,7 +17,7 @@ export default function Board(mode) {
   const maxScore = 1;
 
   const Ball = {
-    new: function (incrementedSpeed) {
+    new: function () {
       return {
         width: 18,
         height: 18,
@@ -23,7 +25,7 @@ export default function Board(mode) {
         y: canvas.height / 2 - 9,
         moveX: DIRECTION.IDLE,
         moveY: DIRECTION.IDLE,
-        speed: incrementedSpeed || 9,
+        speed: option === "speed" ? 15 : 9,
       };
     },
   };
@@ -45,7 +47,6 @@ export default function Board(mode) {
   const pongGame = {
     canvas: canvas,
     initialize: function () {
-      console.log("Initializing the game...");
       this.canvas.height = window.innerHeight * 0.85;
       this.canvas.width = canvas.height * 1.45;
 
@@ -53,14 +54,10 @@ export default function Board(mode) {
       this.paddle = Paddle.new.call(this, "right");
       this.ball = Ball.new.call(this);
 
-      console.log(this.canvas.width);
-      console.log(this.paddle.x);
-
       this.paddle.speed = 8;
       this.running = this.over = false;
       this.turn = this.paddle;
       this.timer = this.round = 0;
-      console.log("Initialization completed.");
 
       this.menu();
       this.listen();
@@ -293,7 +290,6 @@ export default function Board(mode) {
 
     listen: function () {
       document.addEventListener("keydown", (key) => {
-        console.log("Key down:", key.key);
         // Handle the 'Press any key to begin' function and start the game.
         if (this.running === false) {
           this.running = true;

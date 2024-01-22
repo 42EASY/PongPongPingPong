@@ -9,13 +9,13 @@ export default function EndBtn(mode) {
 
   $btnBox.classList.add("btnBox");
   $fstBtn.classList.add("btn", "addFriend");
-  $sndBtn.classList.add("btn", mode === "default" ? "exit" : "chatting");
+  $sndBtn.classList.add("btn", mode === "normal" ? "exit" : "chatting");
   $fstTxt.classList.add("btnTxt", "fstTxt");
   $sndTxt.classList.add("btnTxt", "sndTxt");
   $fstIcn.classList.add("bi", "bi-person-plus", "fstIcn");
   $sndIcn.classList.add(
     "bi",
-    mode === "default" ? "bi-arrow-right" : "bi-chat-left-dots",
+    mode === "normal" ? "bi-arrow-right" : "bi-chat-left-dots",
     "sndIcn"
   );
 
@@ -27,6 +27,6 @@ export default function EndBtn(mode) {
   $sndBtn.appendChild($sndTxt);
 
   $fstTxt.innerHTML = "친구 추가";
-  $sndTxt.innerHTML = mode === "default" ? "나가기" : "채팅";
+  $sndTxt.innerHTML = mode === "normal" ? "나가기" : "채팅";
   return $btnBox;
 }

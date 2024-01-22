@@ -9,7 +9,7 @@ export default function Game() {
   $page.classList.add("page");
 
   const $info = Info();
-  const $board = Board("tournament");
+  const $board = Board("normal", "speed");
 
   $page.appendChild($info);
   $page.appendChild($board);
