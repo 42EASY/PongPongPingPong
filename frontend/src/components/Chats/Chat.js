@@ -14,10 +14,12 @@ export default function Chat() {
   $profileName.classList.add("profileName");
   $profileName.innerText = "이름";
 
+  //안읽은 채팅 있을 경우
   const $chatStatus = document.createElement("div");
   $chatStatus.classList.add("chatStatus");
   $chatStatus.innerText = "1";
 
+  //싱글 클릭 시 닫기 버튼 띄우기
   const $closeButton = document.createElement("i");
   $closeButton.classList.add("closeButton", "bi", "bi-x-lg"); //
 
