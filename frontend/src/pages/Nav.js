@@ -1,4 +1,5 @@
 import NavBar from "../components/Nav/NavBar.js";
+import Chat from "../pages/Chat.js";
 
 export default function Nav() {
   const $navbar = document.querySelector(".nav");
@@ -17,5 +18,13 @@ export default function Nav() {
     console.log(value);
     if (value.length !== 0) searchList.style.display = "block";
     else searchList.style.display = "none";
+  });
+
+  const $chatButton = document.querySelector(".navChat");
+  $chatButton.addEventListener("click", (e) => {
+    const $sidebar = document.querySelector(".chatsWrapper");
+    const $overlay = document.querySelector(".overlay");
+    $sidebar.classList.add("showSidebar");
+    $overlay.style.display = "block";
   });
 }

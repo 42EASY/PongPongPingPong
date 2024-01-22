@@ -3,10 +3,8 @@ import Search from "../components/Friends/Search.js";
 import List from "../components/Chats/Chats.js";
 
 export default function Chats() {
-  const $app = document.querySelector(".App");
-  $app.innerHTML = ""; //추후 수정 필요할 수 있음
-
-  //전체 영역
+  const $sidebar = document.querySelector(".sidebar");
+  //사이드바 영역
   const $chatsWrapper = document.createElement("div");
   $chatsWrapper.classList.add("chatsWrapper");
 
@@ -22,5 +20,14 @@ export default function Chats() {
   const $list = List();
   $chatsWrapper.appendChild($list);
 
-  $app.appendChild($chatsWrapper);
+  $sidebar.appendChild($chatsWrapper);
+  //사이드바 외부 영역
+  const $overlay = document.createElement("div");
+  $overlay.classList.add("overlay");
+
+  $overlay.addEventListener("click", (e) => {
+    $chatsWrapper.classList.remove("showSidebar");
+    $overlay.style.display = "none";
+  });
+  $sidebar.appendChild($overlay);
 }
