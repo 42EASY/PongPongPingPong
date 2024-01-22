@@ -15,6 +15,14 @@ class BlockViewTest(TestCase):
         
         cls.target_model = Members.objects.create(nickname = 'target', email = 'target@test.com', is_2fa = False,
                                         image_url = 'test_url', refresh_token = 'test_token')
+        
+        for i in range(5):
+            dummy_nickname = 'dummy' + str(i)
+            dummy_email = 'dummy' + str(i) + '@test.com'
+            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
+            Block.objects.create(user = cls.user_model, target = dummy)
+
+      
 
     #base_user가 target을 친구 차단 성공 테스트
     #TODO: 토큰 미적용하여 /api/v1/block/{user-id}/{base-user-id}로 사용, 추후 /api/v1/block/{user-id}로 변경 예정
@@ -60,12 +68,6 @@ class BlockViewTest(TestCase):
     def test_get_block_list_no_keyword(self):
         user_model = Members.objects.get(nickname = 'base_user')
 
-        for i in range(5):
-            dummy_nickname = 'dummy' + str(i)
-            dummy_email = 'dummy' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
-            Block.objects.create(user = user_model, target = dummy)
-
         query_params = {
            'keyword': '',
            'page': 1,
@@ -90,12 +92,6 @@ class BlockViewTest(TestCase):
     #TODO: /api/v1/block?keyword={keyword}&page={page}&size={size}&user_id={user_id} 에서 user_id 삭제 예정
     def test_get_block_list_keyword(self):
         user_model = Members.objects.get(nickname = 'base_user')
-
-        for i in range(5):
-            dummy_nickname = 'dummy' + str(i)
-            dummy_email = 'dummy' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
-            Block.objects.create(user = user_model, target = dummy)
 
         tmp = Members.objects.create(nickname = 'tmp', email = 'tmp@test.com', is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
         Block.objects.create(user = user_model, target = tmp)
@@ -123,12 +119,6 @@ class BlockViewTest(TestCase):
     def test_get_block_list_invalid_size_negative(self):
         user_model = Members.objects.get(nickname = 'base_user')
 
-        for i in range(5):
-            dummy_nickname = 'dummy' + str(i)
-            dummy_email = 'dummy' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
-            Block.objects.create(user = user_model, target = dummy)
-
         query_params = {
            'keyword': '',
            'page': 1,
@@ -150,12 +140,6 @@ class BlockViewTest(TestCase):
     def test_get_block_list_invalid_size_zero(self):
         user_model = Members.objects.get(nickname = 'base_user')
 
-        for i in range(5):
-            dummy_nickname = 'dummy' + str(i)
-            dummy_email = 'dummy' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
-            Block.objects.create(user = user_model, target = dummy)
-
         query_params = {
            'keyword': '',
            'page': 1,
@@ -175,12 +159,6 @@ class BlockViewTest(TestCase):
     #TODO: /api/v1/block?keyword={keyword}&page={page}&size={size}&user_id={user_id} 에서 user_id 삭제 예정
     def test_get_block_list_invalid_size_big(self):
         user_model = Members.objects.get(nickname = 'base_user')
-
-        for i in range(5):
-            dummy_nickname = 'dummy' + str(i)
-            dummy_email = 'dummy' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
-            Block.objects.create(user = user_model, target = dummy)
 
         query_params = {
            'keyword': '',
@@ -232,12 +210,6 @@ class BlockViewTest(TestCase):
     def test_get_block_list_invalid_page_negative(self):
         user_model = Members.objects.get(nickname = 'base_user')
 
-        for i in range(5):
-            dummy_nickname = 'dummy' + str(i)
-            dummy_email = 'dummy' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
-            Block.objects.create(user = user_model, target = dummy)
-
         query_params = {
            'keyword': '',
            'page': -1,
@@ -258,12 +230,6 @@ class BlockViewTest(TestCase):
     #TODO: /api/v1/block?keyword={keyword}&page={page}&size={size}&user_id={user_id} 에서 user_id 삭제 예정
     def test_get_block_list_invalid_page_zero(self):
         user_model = Members.objects.get(nickname = 'base_user')
-
-        for i in range(5):
-            dummy_nickname = 'dummy' + str(i)
-            dummy_email = 'dummy' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
-            Block.objects.create(user = user_model, target = dummy)
 
         query_params = {
            'keyword': '',
@@ -286,12 +252,6 @@ class BlockViewTest(TestCase):
     def test_get_block_list_invalid_page_blank(self):
         user_model = Members.objects.get(nickname = 'base_user')
 
-        for i in range(5):
-            dummy_nickname = 'dummy' + str(i)
-            dummy_email = 'dummy' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
-            Block.objects.create(user = user_model, target = dummy)
-
         query_params = {
            'keyword': '',
            'page': '',
@@ -312,12 +272,6 @@ class BlockViewTest(TestCase):
     #TODO: /api/v1/block?keyword={keyword}&page={page}&size={size}&user_id={user_id} 에서 user_id 삭제 예정
     def test_get_block_list_invalid_page_big(self):
         user_model = Members.objects.get(nickname = 'base_user')
-
-        for i in range(5):
-            dummy_nickname = 'dummy' + str(i)
-            dummy_email = 'dummy' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
-            Block.objects.create(user = user_model, target = dummy)
 
         query_params = {
            'keyword': '',
