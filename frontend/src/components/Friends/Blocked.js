@@ -8,6 +8,7 @@ export default function Blocked() {
   const $blockedButton = document.createElement("div");
   $blockedButton.classList.add("blockedButton");
   $blockedButton.innerHTML = "차단 해제";
+  //todo: 클릭 이벤트 적용
 
   const $blockedImage = document.createElement("img");
   $blockedImage.classList.add("friendImage");

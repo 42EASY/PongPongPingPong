@@ -7,6 +7,7 @@ export default function Friend() {
 
   const $friendButton = document.createElement("i");
   $friendButton.classList.add("friendButton", "bi", "bi-three-dots-vertical");
+  //todo: 클릭 이벤트 적용
 
   const $friendImage = document.createElement("img");
   $friendImage.classList.add("friendImage");
