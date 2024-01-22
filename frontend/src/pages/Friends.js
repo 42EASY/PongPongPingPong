@@ -1,6 +1,6 @@
 import Title from "../components/Friends/Title.js";
 import Search from "../components/Friends/Search.js";
-import List from "../components/Friends/List.js";
+import List from "../components/Friends/Friends.js";
 
 export default function Friends() {
   const $app = document.querySelector(".App");

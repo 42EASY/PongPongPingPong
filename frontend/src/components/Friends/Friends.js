@@ -1,6 +1,6 @@
 import Friend from "./Friend.js";
 
-export default function List() {
+export default function Friends() {
   const $listWrapper = document.createElement("div");
   $listWrapper.classList.add("listWrapper");
 
