@@ -11,7 +11,7 @@ export default function Search() {
   const $searchInput = document.createElement("input");
   $searchInput.classList.add("searchInput");
   $searchInput.type = "text";
-  $searchInput.placeholder = "친구 찾기";
+  $searchInput.placeholder = "목록 검색";
 
   $search.appendChild($searchIcon);
   $search.appendChild($searchInput);
