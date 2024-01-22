@@ -22,6 +22,7 @@ RUN pip install django_otp
 RUN pip install django-qr-code
 RUN pip install qrcode
 RUN pip install pyotp
+RUN pip install django-redis
 
 ENV DOCKERIZE_VERSION v0.2.0
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
