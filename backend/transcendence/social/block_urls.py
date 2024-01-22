@@ -1,5 +1,5 @@
 from django.urls import path
-from social.views import BlockView
+from social.block_views import BlockView
 
 app_name = 'block';
 

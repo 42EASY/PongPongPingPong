@@ -48,4 +48,5 @@ urlpatterns = [
     path('api/v1/auth/', include(('security.auth_urls'))),
     path('api/v1/token/', include(('security.urls'))),
     path('api/v1/auth/2fa/', include(('security.two_factor_urls'))),
+    path('api/v1/friends', include(('social.friends_urls'))),
 ]
