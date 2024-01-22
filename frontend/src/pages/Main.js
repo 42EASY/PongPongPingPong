@@ -1,11 +1,13 @@
 import Nav from "./Nav.js";
-import Chat from "../pages/Chat.js";
+import Chat from "./Chat.js";
+import Friends from "./Friends.js";
 import Profile from "../components/Main/Profile.js";
 import GameHistory from "../components/Main/GameHistory.js";
 
 export default function Main() {
   Nav();
   Chat();
+  Friends();
 
   const $app = document.querySelector(".App");
   $app.innerHTML = "";

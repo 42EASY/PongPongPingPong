@@ -1,10 +1,12 @@
 import Nav from "./Nav.js";
-import Chat from "../pages/Chat.js";
+import Chat from "./Chat.js";
+import Friends from "./Friends.js";
 import WaitingPlayer from "../components/GameRoom/WaitingPlayer.js";
 
 export default function GameRoom() {
   Nav();
   Chat();
+  Friends();
 
   const $page = document.createElement("div");
   const $gameRoom = document.createElement("div");

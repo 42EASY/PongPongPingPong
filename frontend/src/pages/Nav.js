@@ -20,11 +20,21 @@ export default function Nav() {
     else searchList.style.display = "none";
   });
 
+  //chat 클릭이벤트
   const $chatButton = document.querySelector(".navChat");
   $chatButton.addEventListener("click", (e) => {
     const $sidebar = document.querySelector(".chatsWrapper");
-    const $overlay = document.querySelector(".overlay");
-    $sidebar.classList.add("showSidebar");
+    const $overlay = document.querySelector(".chatOverlay");
+    $sidebar.classList.add("showChat");
+    $overlay.style.display = "block";
+  });
+
+  //friends 클릭이벤트
+  const $friendsButton = document.querySelector(".navFriends");
+  $friendsButton.addEventListener("click", (e) => {
+    const $sidebar = document.querySelector(".friendsWrapper");
+    const $overlay = document.querySelector(".friendsOverlay");
+    $sidebar.classList.add("showFriends");
     $overlay.style.display = "block";
   });
 }

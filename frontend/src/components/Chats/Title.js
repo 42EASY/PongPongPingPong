@@ -14,8 +14,8 @@ export default function Title() {
 
   $closeButton.addEventListener("click", (e) => {
     const $sidebar = document.querySelector(".chatsWrapper");
-    const $overlay = document.querySelector(".overlay");
-    $sidebar.classList.remove("showSidebar");
+    const $overlay = document.querySelector(".chatOverlay");
+    $sidebar.classList.remove("showChat");
     $overlay.style.display = "none";
   });
 

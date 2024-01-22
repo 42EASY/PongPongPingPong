@@ -23,10 +23,10 @@ export default function Chats() {
   $sidebar.appendChild($chatsWrapper);
   //사이드바 외부 영역
   const $overlay = document.createElement("div");
-  $overlay.classList.add("overlay");
+  $overlay.classList.add("chatOverlay");
 
   $overlay.addEventListener("click", (e) => {
-    $chatsWrapper.classList.remove("showSidebar");
+    $chatsWrapper.classList.remove("showChat");
     $overlay.style.display = "none";
   });
   $sidebar.appendChild($overlay);

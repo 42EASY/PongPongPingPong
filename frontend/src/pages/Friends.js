@@ -4,8 +4,7 @@ import FriendList from "../components/Friends/Friends.js";
 import BlockedList from "../components/Friends/Blockeds.js";
 
 export default function Friends() {
-  const $app = document.querySelector(".App");
-  $app.innerHTML = ""; //추후 수정 필요할 수 있음
+  const $sidebar = document.querySelector(".friendsSidebar");
 
   //전체 영역
   const $friendsWrapper = document.createElement("div");
@@ -22,6 +21,16 @@ export default function Friends() {
   //친구 목록
   var $list = FriendList();
   $friendsWrapper.appendChild($list);
+
+  //사이드바 외부 영역
+  const $overlay = document.createElement("div");
+  $overlay.classList.add("friendsOverlay");
+
+  $overlay.addEventListener("click", (e) => {
+    $friendsWrapper.classList.remove("showFriends");
+    $overlay.style.display = "none";
+  });
+  $sidebar.appendChild($overlay);
 
   //타이틀 클릭 이벤트
   $title.addEventListener("click", (e) => {
@@ -45,5 +54,5 @@ export default function Friends() {
     }
   });
 
-  $app.appendChild($friendsWrapper);
+  $sidebar.appendChild($friendsWrapper);
 }

@@ -7,11 +7,6 @@
   --white: #ffffff;
 }
 
-/* .sidebar {
-  height: 100vh;
-  width: 100wh;
-} */
-
 .chatsWrapper {
   height: 100%;
   width: 419px;
@@ -25,15 +20,14 @@
   transition: all 0.5s;
 }
 
-.showSidebar {
+.showChat {
   right: 0;
 }
 
-.overlay {
+.chatOverlay {
   position: fixed;
   width: 100%;
   height: 100vh;
-  background: rgba(0, 0, 0, 0);
   z-index: 998;
   display: none;
 }

@@ -23,5 +23,12 @@ export default function Title() {
   $titleWrapper.appendChild($title);
   $titleWrapper.appendChild($closeButton);
 
+  $closeButton.addEventListener("click", (e) => {
+    const $sidebar = document.querySelector(".friendsWrapper");
+    const $overlay = document.querySelector(".friendsOverlay");
+    $sidebar.classList.remove("showFriends");
+    $overlay.style.display = "none";
+  });
+
   return $titleWrapper;
 }
