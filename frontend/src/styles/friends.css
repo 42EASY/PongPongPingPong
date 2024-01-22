@@ -95,6 +95,7 @@ input:focus {
   height: 100%;
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
@@ -202,4 +203,22 @@ input:focus {
   color: var(--gray);
   font-size: 14px;
   font-weight: 400;
+}
+
+.blockedButton {
+  height: 100%;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: var(--lightGray);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray);
 }

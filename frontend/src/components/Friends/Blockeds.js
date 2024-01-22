@@ -1,16 +1,16 @@
-import Friend from "./Friend.js";
+import Blocked from "./Blocked.js";
 import NoFriend from "./NoFriend.js";
 import NoSearch from "./NoSearch.js";
 
-export default function Friends() {
+export default function Blockeds() {
   const $listWrapper = document.createElement("div");
   $listWrapper.classList.add("listWrapper");
 
   //todo: api 호출
-  const $friend = Friend();
-  $listWrapper.appendChild($friend);
-  const $friend1 = Friend();
-  $listWrapper.appendChild($friend1);
+  const $blocked = Blocked();
+  $listWrapper.appendChild($blocked);
+  const $blocked1 = Blocked();
+  $listWrapper.appendChild($blocked1);
 
   //친구 없을 경우
   // $listWrapper.style.flexDirection = "unset";
