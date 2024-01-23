@@ -3,6 +3,7 @@
   --gray: #adadad;
   --lightGray: #e5e7eb;
   --green: #3ec70b;
+  --lightGreen: #e2f7db;
   --red: #f05252;
   --loseBg: #fde8e8;
   --loseTxt: #e02424;
@@ -50,11 +51,11 @@
   justify-content: space-evenly;
 }
 
-.profileNameBox {
+.mainProfileNameBox {
   display: flex;
 }
 
-.profileName {
+.mainProfileName {
   font-size: 20px;
   text-align: center;
   padding-right: 16px;
@@ -96,6 +97,10 @@
   background-color: var(--red);
 }
 
+.moreFunctionBox {
+  position: relative;
+}
+
 .moreFunctionBtn {
   font-size: 20px;
   color: var(--gray);
@@ -104,29 +109,24 @@
 }
 
 .moreMenuWrapper {
+  display: none;
   width: 224px;
-  box-shadow: 4px 4px 4px var(--lightGray);
+  box-shadow: 3px 3px 3px var(--lightGray);
   border-radius: 8px;
-  display: absolute;
-  top: 60px;
+  position: absolute;
   background-color: white;
 }
 
 .moreMenu {
-  /* display: none; */
-  list-style-type: none;
   font-size: 14px;
-  margin: 0px;
-  padding: 0px;
 }
 
-.moreMenuList {
-  height: 45px;
-  color: black;
-  display: flex;
-  align-items: center;
-  padding-left: 16px;
-  border-bottom: 1px solid var(--lightGray);
+.moreMenu:hover {
+  background-color: var(--lightGreen);
+}
+
+.moreMenuList:hover {
+  background-color: var(--lightGreen);
 }
 
 .menuListRed {
@@ -209,6 +209,10 @@
   border-radius: 2px 2px 0px 0px;
 }
 
+.historyIcon {
+  margin-right: 6px;
+}
+
 .historyBoard {
   display: flex;
   flex-direction: column;
@@ -256,6 +260,10 @@
   background-color: var(--loseBg);
 }
 
+.resultWrapperNotMe {
+  background-color: var(--lightGray);
+}
+
 .resultMark {
   width: 10px;
   height: 100%;
@@ -264,6 +272,10 @@
 
 .resultMarkLose {
   background-color: var(--loseTxt);
+}
+
+.resultMarkNotMe {
+  background-color: var(--darkGray);
 }
 
 .resultInfoBox {
