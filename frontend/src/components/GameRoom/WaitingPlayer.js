@@ -1,6 +1,7 @@
 import PercentBar from "./PercentBar.js";
+import TimerRing from "./TimerRing.js";
 
-export default function WaitingPlayer(isWaiting) {
+export default function WaitingPlayer(state) {
   const $waitingPlayer = document.createElement("div");
   const $waitingPlayerImageBox = document.createElement("div");
   const $waitingPlayerImage = document.createElement("img");
@@ -8,16 +9,23 @@ export default function WaitingPlayer(isWaiting) {
 
   $waitingPlayerImageBox.appendChild($waitingPlayerImage);
   $waitingPlayer.className = "waitingPlayer";
-  $waitingPlayerImageBox.id = "waitingPlayerImageBox";
+  $waitingPlayerImageBox.classList.add("waitingPlayerImageBox");
   $waitingPlayerImage.id = "waitingPlayerImage";
   $waitingPlayerImage.setAttribute("alt", "profile_image");
   $waitingPlayerName.id = "waitingPlayerName";
   $waitingPlayer.appendChild($waitingPlayerImageBox);
   $waitingPlayer.appendChild($waitingPlayerName);
 
-  if (isWaiting) {
+  if (state == 1) {
     $waitingPlayerImage.setAttribute("src", ""); //default image path
-    $waitingPlayerName.innerHTML = "대전자 찾는중...";
+    $waitingPlayerName.innerHTML = "대전자 찾는 중...";
+    $waitingPlayerName.id = "emptyPlayerName";
+    $waitingPlayer.appendChild(PercentBar({ win: 0, lose: 0 }));
+  } else if (state == 2) {
+    $waitingPlayerImageBox.innerHTML = "";
+    $waitingPlayerImageBox.appendChild(TimerRing());
+    $waitingPlayerImageBox.style.backgroundColor = "transparent";
+    $waitingPlayerName.innerHTML = "nickname님을 기다리는 중...";
     $waitingPlayerName.id = "emptyPlayerName";
     $waitingPlayer.appendChild(PercentBar({ win: 0, lose: 0 }));
   } else {
