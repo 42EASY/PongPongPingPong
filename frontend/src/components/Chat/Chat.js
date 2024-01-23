@@ -1,3 +1,5 @@
+import ChatRoom from "../../pages/ChatRoom.js";
+
 export default function Chat() {
   const $chatWrapper = document.createElement("div");
   $chatWrapper.classList.add("chatWrapper");
@@ -39,6 +41,12 @@ export default function Chat() {
   $chatWrapper.addEventListener("mouseout", () => {
     $closeButton.classList.add("hide");
     $chatStatus.style.display = "inherit";
+  });
+
+  //채팅방 더블클릭 시 이벤트
+  $chatWrapper.addEventListener("dblclick", () => {
+    console.log("채팅방 더블클릭");
+    ChatRoom();
   });
 
   return $chatWrapper;
