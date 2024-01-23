@@ -20,10 +20,11 @@ export default function Info() {
   const $profileButton = document.createElement("div");
   $profileButton.classList.add("profileButton", "infoButton");
   const $profileButtonIcon = document.createElement("i");
-  $profileButtonIcon.classList.add("bi", "bi-pencil-square");
+  $profileButtonIcon.classList.add("bi", "bi-person-vcard");
   const $profileButtonText = document.createElement("div");
   $profileButtonText.classList.add("profileButtonText");
   $profileButtonText.innerHTML = "상세 프로필 보기";
+  //todo: 상세 프로필 보기 버튼 클릭 시 상세 프로필로 이동
   $profileButton.appendChild($profileButtonIcon);
   $profileButton.appendChild($profileButtonText);
   $infoNameWrapper.appendChild($infoName);
@@ -49,6 +50,7 @@ export default function Info() {
   const $requestGameButtonText = document.createElement("div");
   $requestGameButtonText.classList.add("requestGameButtonText");
   $requestGameButtonText.innerHTML = "게임신청";
+  //todo: 게임신청 버튼 클릭 시 게임신청 모달 띄우기
 
   const $addFriendButton = document.createElement("div");
   $addFriendButton.classList.add("addFriendButton", "infoButton");
@@ -57,6 +59,7 @@ export default function Info() {
   const $addFriendButtonText = document.createElement("div");
   $addFriendButtonText.classList.add("addFriendButtonText");
   $addFriendButtonText.innerHTML = "친구추가";
+  //todo: 친구추가 버튼 클릭 시 친구하기
 
   const $blockingButton = document.createElement("div");
   $blockingButton.classList.add("blockingButton", "infoButton");
@@ -65,6 +68,7 @@ export default function Info() {
   const $blockingButtonText = document.createElement("div");
   $blockingButtonText.classList.add("blockingButtonText");
   $blockingButtonText.innerHTML = "차단하기";
+  //todo: 차단하기 버튼 클릭 시 차단하기
 
   $requestGameButton.appendChild($requestGameButtonIcon);
   $requestGameButton.appendChild($requestGameButtonText);
