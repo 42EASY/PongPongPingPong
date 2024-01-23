@@ -1,9 +1,9 @@
 export default function Title() {
   const $titleWrapper = document.createElement("div");
-  $titleWrapper.classList.add("titleWrapper");
+  $titleWrapper.classList.add("chatTitleWrapper");
 
   const $title = document.createElement("div");
-  $title.classList.add("title");
+  $title.classList.add("chatTitle");
   $title.innerHTML = "채팅 목록";
 
   const $closeButton = document.createElement("i");
@@ -13,10 +13,10 @@ export default function Title() {
   $titleWrapper.appendChild($closeButton);
 
   $closeButton.addEventListener("click", (e) => {
-    const $sidebar = document.querySelector(".chatsWrapper");
-    const $overlay = document.querySelector(".chatOverlay");
-    $sidebar.classList.remove("showChat");
-    $overlay.style.display = "none";
+    const $sidebar = document.querySelector(".sidebarArea");
+    const $overlay = document.querySelector(".overlay");
+    $sidebar.classList.remove("showSidebar");
+    $overlay.classList.remove("showOverlay");
   });
 
   return $titleWrapper;

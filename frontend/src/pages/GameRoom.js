@@ -5,8 +5,6 @@ import WaitingPlayer from "../components/GameRoom/WaitingPlayer.js";
 
 export default function GameRoom() {
   Nav();
-  Chat();
-  Friends();
 
   const $page = document.createElement("div");
   const $gameRoom = document.createElement("div");

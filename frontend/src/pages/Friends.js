@@ -4,11 +4,12 @@ import FriendList from "../components/Friends/Friends.js";
 import BlockedList from "../components/Friends/Blockeds.js";
 
 export default function Friends() {
-  const $sidebar = document.querySelector(".friendsSidebar");
+  const $sidebar = document.querySelector(".sidebar");
+  $sidebar.innerHTML = "";
 
   //전체 영역
   const $friendsWrapper = document.createElement("div");
-  $friendsWrapper.classList.add("friendsWrapper");
+  $friendsWrapper.classList.add("sidebarArea");
 
   //타이틀
   const $title = Title();
@@ -24,11 +25,12 @@ export default function Friends() {
 
   //사이드바 외부 영역
   const $overlay = document.createElement("div");
-  $overlay.classList.add("friendsOverlay");
+  $overlay.classList.add("overlay");
 
+  //사이드바 외부 영역 클릭 이벤트
   $overlay.addEventListener("click", (e) => {
-    $friendsWrapper.classList.remove("showFriends");
-    $overlay.style.display = "none";
+    $friendsWrapper.classList.remove("showSidebar");
+    $overlay.classList.remove("showOverlay");
   });
   $sidebar.appendChild($overlay);
 
@@ -40,14 +42,14 @@ export default function Friends() {
     $friendsWrapper.removeChild($list);
 
     if (e.target.classList.contains("friendList")) {
-      $friendList.classList.add("titleSelect");
-      $blockedList.classList.remove("titleSelect");
+      $friendList.classList.add("friendsTitleSelect");
+      $blockedList.classList.remove("friendsTitleSelect");
 
       $list = FriendList();
       $friendsWrapper.appendChild($list);
     } else if (e.target.classList.contains("blockedList")) {
-      $friendList.classList.remove("titleSelect");
-      $blockedList.classList.add("titleSelect");
+      $friendList.classList.remove("friendsTitleSelect");
+      $blockedList.classList.add("friendsTitleSelect");
 
       $list = BlockedList();
       $friendsWrapper.appendChild($list);

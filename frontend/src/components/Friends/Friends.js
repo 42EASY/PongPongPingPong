@@ -4,7 +4,7 @@ import NoSearch from "./NoSearch.js";
 
 export default function Friends() {
   const $listWrapper = document.createElement("div");
-  $listWrapper.classList.add("listWrapper");
+  $listWrapper.classList.add("friendsWrapper");
 
   //todo: api 호출
   const $friend = Friend();

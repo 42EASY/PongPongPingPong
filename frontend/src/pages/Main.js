@@ -6,8 +6,6 @@ import GameHistory from "../components/Main/GameHistory.js";
 
 export default function Main() {
   Nav();
-  Chat();
-  Friends();
 
   const $app = document.querySelector(".App");
   $app.innerHTML = "";

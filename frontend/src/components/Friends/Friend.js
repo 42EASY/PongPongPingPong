@@ -3,19 +3,19 @@ export default function Friend() {
   $friendWrapper.classList.add("friendWrapper");
 
   const $friendInfo = document.createElement("div");
-  $friendInfo.classList.add("friendInfo");
+  $friendInfo.classList.add("profileInfo");
 
   const $friendButton = document.createElement("i");
   $friendButton.classList.add("friendButton", "bi", "bi-three-dots-vertical");
   //todo: 클릭 이벤트 적용
 
   const $friendImage = document.createElement("img");
-  $friendImage.classList.add("friendImage");
+  $friendImage.classList.add("profileImg");
   $friendImage.setAttribute("src", "../../images/none_profile.png");
   $friendImage.setAttribute("alt", "profile_image");
 
   const $friendName = document.createElement("div");
-  $friendName.classList.add("friendName");
+  $friendName.classList.add("profileName");
   $friendName.innerHTML = "이름";
 
   const $friendStatus = document.createElement("div");
