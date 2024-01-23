@@ -1,4 +1,4 @@
-export default function TimerRing(second) {
+export default function TimerRing() {
   const $timerRingWrapper = document.createElement("div");
   $timerRingWrapper.classList.add("timerWrapper");
 
@@ -7,16 +7,9 @@ export default function TimerRing(second) {
 
   const $timerCnt = document.createElement("div");
   $timerCnt.classList.add("timerCnt");
-  $timerCnt.innerHTML = second;
 
   $timerRingWrapper.appendChild($timerRing);
   $timerRingWrapper.appendChild($timerCnt);
-
-  let time = setInterval(() => {
-    $timerCnt.innerHTML = --second;
-    console.log(second);
-    if (second <= 0) clearInterval(time);
-  }, 1000);
 
   return $timerRingWrapper;
 }
