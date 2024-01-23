@@ -19,9 +19,9 @@ export default function Chat() {
   $chatStatus.classList.add("chatStatus");
   $chatStatus.innerText = "1";
 
-  //호버 시 닫기 버튼 띄우기
   const $closeButton = document.createElement("i");
   $closeButton.classList.add("closeButton", "bi", "bi-x-lg", "hide");
+  //todo: 채팅방 닫기 버튼 클릭 시 이벤트
 
   $profileInfo.appendChild($profileImg);
   $profileInfo.appendChild($profileName);
@@ -30,15 +30,14 @@ export default function Chat() {
   $chatWrapper.appendChild($chatStatus);
   $chatWrapper.appendChild($closeButton);
 
+  //채팅방 호버 시 이벤트
   $chatWrapper.addEventListener("mouseover", () => {
     $closeButton.classList.remove("hide");
-    // $chatStatus.classList.add("hide");
     $chatStatus.style.display = "none";
   });
 
   $chatWrapper.addEventListener("mouseout", () => {
     $closeButton.classList.add("hide");
-    // $chatStatus.classList.remove("hide");
     $chatStatus.style.display = "inherit";
   });
 
