@@ -1,5 +1,6 @@
 :root {
   --green: #3ec70b;
+  --lightGreen: #e2f7db;
   --lightGray: #e5e7eb;
   --gray: #6b7280;
   --darkGray: #d1d5db;
@@ -60,6 +61,9 @@
   cursor: pointer;
 }
 
+.hide {
+  display: none;
+}
 
 .searchWrapper {
   width: 100%;
@@ -108,6 +112,10 @@ input:focus {
   padding-right: 16px;
 }
 
+.chatWrapper:hover {
+  background-color: var(--lightGreen);
+}
+
 .profileInfo {
   width: 100%;
   display: flex;
@@ -128,7 +136,6 @@ input:focus {
 }
 
 .chatStatus {
-  width: 24px;
   height: 24px;
   display: flex;
   padding: 6px;
@@ -140,7 +147,6 @@ input:focus {
   font-weight: 700;
   color: var(--white);
 }
-
 
 .noChatWrapper {
   width: 100%;
