@@ -61,7 +61,7 @@ main {
   padding: 0px 10px 0px 10px;
 }
 
-#waitingPlayerImageBox {
+.waitingPlayerImageBox {
   width: 144px;
   height: 144px;
   border-radius: 70%;
