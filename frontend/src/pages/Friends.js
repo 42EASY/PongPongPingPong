@@ -39,18 +39,18 @@ export default function Friends() {
     const $friendList = document.querySelector(".friendList");
     const $blockedList = document.querySelector(".blockedList");
 
-    $friendsWrapper.removeChild($list);
-
     if (e.target.classList.contains("friendList")) {
       $friendList.classList.add("friendsTitleSelect");
       $blockedList.classList.remove("friendsTitleSelect");
 
+      $friendsWrapper.removeChild($list);
       $list = FriendList();
       $friendsWrapper.appendChild($list);
     } else if (e.target.classList.contains("blockedList")) {
       $friendList.classList.remove("friendsTitleSelect");
       $blockedList.classList.add("friendsTitleSelect");
 
+      $friendsWrapper.removeChild($list);
       $list = BlockedList();
       $friendsWrapper.appendChild($list);
     }
