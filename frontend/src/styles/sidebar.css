@@ -19,6 +19,7 @@
   box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
   background-color: var(--white);
   transition: all 0.5s;
+  align-items: space-evenly;
 }
 
 .showSidebar {
@@ -380,6 +381,7 @@ input:focus {
   justify-content: center;
   border-radius: 4px;
   background-color: var(--lightGray);
+  cursor: pointer;
 }
 
 .chatContentRight {
@@ -401,6 +403,7 @@ input:focus {
 .chatContentName {
   font-size: 14px;
   font-weight: 700;
+  cursor: pointer;
 }
 
 .chatContentTime {
@@ -413,4 +416,146 @@ input:focus {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.8;
+}
+
+.infoWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* gap: 12px;
+  padding : 12px; */
+}
+
+.infoProfileImg {
+  height: 256px;
+  width: 256px;
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  border-radius: 5px;
+  background-color: var(--lightGray);
+  margin-top: 16px;
+}
+
+.infoHeader {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding : 16px;
+  border-bottom: 1px solid var(--lightGray);
+}
+
+.infoNameWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.infoName {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.infoButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--lightGray);
+  cursor: pointer;
+  color: var(--darkGraygray);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.infoStatusWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 8px;
+}
+
+.infoStatusText {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.infoButtonWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.contactInfoWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 12px;
+  padding : 16px;
+  border-bottom: 1px solid var(--lightGray);
+}
+
+.contactInfoTitle {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.contactInfo {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 8px;
+}
+
+.contactInfoIconWrapper {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  border-radius: 8px;
+  background-color: var(--lightGray);
+}
+
+.contactInfoTextWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.contactInfoTextTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray);
+}
+
+.contactInfoText {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.GameInfoWrapper {
+  width: 100%;
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 12px;
+  padding : 16px;
 }

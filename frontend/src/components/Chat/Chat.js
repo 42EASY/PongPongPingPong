@@ -45,7 +45,6 @@ export default function Chat() {
 
   //채팅방 더블클릭 시 이벤트
   $chatWrapper.addEventListener("dblclick", () => {
-    console.log("채팅방 더블클릭");
     ChatRoom();
   });
 

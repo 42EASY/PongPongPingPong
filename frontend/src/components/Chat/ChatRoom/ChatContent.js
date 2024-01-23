@@ -1,3 +1,5 @@
+import Profile from "../../../pages/Profile.js";
+
 export default function ChatContent() {
   const $chatContentWrapper = document.createElement("div");
   $chatContentWrapper.classList.add("chatContentWrapper");
@@ -31,6 +33,14 @@ export default function ChatContent() {
   $chatContentRight.appendChild($chatContent);
   $chatContentWrapper.appendChild($chatContentImg);
   $chatContentWrapper.appendChild($chatContentRight);
+
+  //이미지, 이름 클릭 시 프로필 보기
+  $chatContentImg.addEventListener("click", () => {
+    Profile();
+  });
+  $chatContentName.addEventListener("click", () => {
+    Profile();
+  });
 
   return $chatContentWrapper;
 }
