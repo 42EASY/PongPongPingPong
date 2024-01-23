@@ -1,4 +1,6 @@
 import Nav from "./Nav.js";
+import Chat from "./Chat.js";
+import Friends from "./Friends.js";
 import WaitingPlayer from "../components/GameRoom/WaitingPlayer.js";
 
 export default function GameRoom() {

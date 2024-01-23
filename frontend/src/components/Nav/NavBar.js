@@ -68,11 +68,9 @@ export default function NavBar() {
   $navProfileBtnImage.setAttribute("alt", "profile_image");
   $navProfileBtnImage.classList.add("navProfileBtnImage");
   $navVerticalLine.classList.add("navVerticalLine");
-  $navChatBtn.setAttribute("href", "#"); //chat page path
-  $navChatBtn.classList.add("navTextBtn");
+  $navChatBtn.classList.add("navTextBtn", "navChat");
   $navChatBtn.innerHTML = "Chat";
-  $navFriendsBtn.setAttribute("href", "#"); //friends page path
-  $navFriendsBtn.classList.add("navTextBtn");
+  $navFriendsBtn.classList.add("navTextBtn", "navFriends");
   $navFriendsBtn.innerHTML = "Friends";
   $navGameBtn.setAttribute("href", "#");
   $navGameBtn.classList.add("navGameBtn");
