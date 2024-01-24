@@ -7,6 +7,8 @@ from games.models import Participant, Game
 from django.urls import reverse
 from rest_framework_simplejwt.tokens import RefreshToken
 from urllib.parse import urlencode
+from datetime import datetime
+from django.utils import timezone
 
 # Create your tests here.
 class MemberViewTestCase(APITestCase):
@@ -86,9 +88,11 @@ class MemberGameViewTestCase(APITestCase):
 		cls.member2 = Members.objects.create(nickname='test2user', email='test2user@email.com', is_2fa=False, refresh_token='refresh_token2')
 		cls.member3 = Members.objects.create(nickname='test3user', email='test3user@email.com', is_2fa=False, refresh_token='refresh_token3')
 
-		game1 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL')
-		game2 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL')
-		game3 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL')
+		start_time = timezone.make_aware(datetime(2024, 1, 22, 16, 23, 11))
+		end_time = timezone.make_aware(datetime(2024, 1, 22, 17, 55, 12))
+		game1 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL', start_time = start_time, end_time = end_time)
+		game2 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL', start_time = start_time, end_time = end_time)
+		game3 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL', start_time = start_time, end_time = end_time)
 
 		Participant.objects.create(user_id=cls.member, game_id=game1, score=10, result='WIN')
 		Participant.objects.create(user_id=cls.member2, game_id=game1, score=5, result='LOSE')
@@ -144,11 +148,9 @@ class MemberGameViewTestCase(APITestCase):
 		url = reverse('members:member-game', kwargs={'user_id': tmp.id}) + '?' + query_string
 		response = self.client.get(url)
 
-		print(response.json()['message'])
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response.json()['code'], 200)
 
-		print(response.json()['result'])
 
 
 	#normal 모드일때의 전적 검색 반환 실패 테스트(존재하지 않는 유저)
