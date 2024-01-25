@@ -88,7 +88,6 @@ class MemberGameView(APIView):
 		if (mode == Game.GameMode.NORMAL):
 
 			try:
-				#TODO: normal모드인 게임만 가져오도록 변경!!!!!!!!!!!!
 				game_list = Participant.objects.filter(user_id = user_id, game_id__game_mode=Game.GameMode.NORMAL).order_by('user_id')
 
 			except:
