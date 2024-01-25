@@ -4,6 +4,17 @@ import Game from "./pages/Game.js";
 import EndGame from "./pages/EndGame.js";
 import Test from "./pages/Test.js";
 import GameRoom from "./pages/GameRoom.js";
+import Modal from "../src/components/Modal/Modal.js";
+
+const $test_body = document.querySelector("body");
+const $ModalBox = document.createElement("div");
+const $myModal = Modal({
+  title: "대진표",
+  showCloseButton: true,
+  headerContent: [{ type: "text", text: "토너먼트 대진표" }],
+});
+$test_body.appendChild($ModalBox);
+$ModalBox.innerHTML = $myModal.innerHTML;
 
 const $app = document.querySelector(".App");
 let currentComponent = Login;
@@ -13,7 +24,7 @@ const routes = {
   "/login": Login,
   "/main": Main, //임의,,
   "/game": Game, //임의,,
-  "/endgame" : EndGame,
+  "/endgame": EndGame,
   "/gameroom": GameRoom,
 };
 
@@ -24,10 +35,8 @@ export const changeUrl = (requestedUrl) => {
   document.getElementById("styles").setAttribute("href", path);
   history.pushState(null, null, window.location.pathname);
   currentComponent = routes[requestedUrl];
-  if (currentComponent === EndGame)
-    currentComponent("tournament", 1, 3);
-  else
-    currentComponent();
+  if (currentComponent === EndGame) currentComponent("tournament", 1, 3);
+  else currentComponent();
 };
 
 window.addEventListener("click", (e) => {
