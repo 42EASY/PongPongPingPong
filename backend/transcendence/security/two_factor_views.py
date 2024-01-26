@@ -1,10 +1,10 @@
 from rest_framework.views import APIView
 from members.models import Members
 from security.views import login_required
-from django.http import HttpResponse
 from django.http import JsonResponse
 import qrcode
 import pyotp
+import base64
 from io import BytesIO
 
 # Create your views here.
@@ -31,13 +31,19 @@ class TwoFactorAuthView(APIView):
 
 		# 이미지 스트림으로 변환
 		img = qr.make_image(fill_color="black", back_color="white")
-		response = HttpResponse(content_type="image/png")
 		img_io = BytesIO()
 		img.save(img_io, 'PNG')
 		img_io.seek(0)
-		response.write(img_io.getvalue())
 
-		return response
+		encoded_img = base64.b64encode(img_io.getvalue()).decode('utf-8')
+
+		return JsonResponse({
+			'code':200,
+			'message':'ok',
+			'result': {
+				'encoded_image': encoded_img
+			}
+		}, status=200)
 
 	@login_required
 	def post(self, request):
