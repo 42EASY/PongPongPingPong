@@ -4,17 +4,7 @@ import Game from "./pages/Game.js";
 import EndGame from "./pages/EndGame.js";
 import Test from "./pages/Test.js";
 import GameRoom from "./pages/GameRoom.js";
-import Modal from "../src/components/Modal/Modal.js";
-
-const $test_body = document.querySelector("body");
-const $ModalBox = document.createElement("div");
-const $myModal = Modal({
-  title: "대진표",
-  showCloseButton: true,
-  headerContent: [{ type: "text", text: "토너먼트 대진표" }],
-});
-$test_body.appendChild($ModalBox);
-$ModalBox.innerHTML = $myModal.innerHTML;
+import Modal from "./components/Modal/Modal.js";
 
 const $app = document.querySelector(".App");
 let currentComponent = Login;
@@ -55,6 +45,9 @@ window.addEventListener("click", (e) => {
   } else if (e.target.classList.contains("moveToGameRoomPageBtn")) {
     // GameRoom 페이지의 버튼이 클릭된 경우
     changeUrl("/gameroom");
+  } else if (e.target.classList.contains("modalBtn")) {
+    // GameRoom 페이지의 버튼이 클릭된 경우
+    Modal(1);
   }
 });
 

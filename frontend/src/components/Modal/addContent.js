@@ -3,25 +3,22 @@ export default function addContentElement(content) {
 
   switch (content.type) {
     case "text":
-      $contentElement = document.createElement("p");
+      $contentElement = document.createElement("div");
       $contentElement.innerHTML = content.text;
-      console.log(content.text); /////////////////
       break;
     case "image":
       $contentElement.document.createElement("img");
       $contentElement.setAttribute("src", content.src);
       $contentElement.setAttribute("alt", content.alt);
       break;
-    case "primary-button":
-    case "secondary-button":
+    case "primaryButton":
+    case "secondaryButton":
       $contentElement = document.createElement("button");
-      if (content.type === "primary-button")
-        $contentElement.classList.add("btn", "btn-primary");
-      else $contentElement.classList.add("btn", "btn-secondary");
-      if (content.dismiss)
-        $contentElement.setAttribute("data-bs-dismiss", "modal");
+      if (content.type === "primaryButton")
+        $contentElement.classList.add("btn", "primaryButton");
+      else
+        $contentElement.classList.add("btn", "closeButton", "secondaryButton");
       $contentElement.innerHTML = content.text;
-      console.log("here");
       break;
     default:
       $contentElement = content;
