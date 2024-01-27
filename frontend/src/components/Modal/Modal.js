@@ -40,8 +40,8 @@ const $app = document.querySelector(".App");
 
 export default function Modal(modalId) {
   console.log("modal ID:" + modalId);
-  var $modalWrapper;
-  var $closeButtons;
+  let $modalWrapper;
+  let $closeButtons;
 
   if (modalId === 1) $modalWrapper = addModal(fstModal);
   else if (modalId === 2) $modalWrapper = addModal(sndModal);

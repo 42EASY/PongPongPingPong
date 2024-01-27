@@ -33,11 +33,11 @@ export default function addModal(options) {
     );
   }
   if (options.bodyContent) {
-    for (var i = 0; i < options.bodyContent.length; i++)
+    for (let i = 0; i < options.bodyContent.length; i++)
       $modalBody.appendChild(addContentElement(options.bodyContent[i]));
   }
   if (options.footerContent) {
-    for (var i = 0; i < options.footerContent.length; i++)
+    for (let i = 0; i < options.footerContent.length; i++)
       $modalFooter.appendChild(addContentElement(options.footerContent[i]));
   }
 

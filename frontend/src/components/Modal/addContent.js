@@ -1,5 +1,5 @@
 export default function addContentElement(content) {
-  var $contentElement;
+  let $contentElement;
 
   switch (content.type) {
     case "text":
