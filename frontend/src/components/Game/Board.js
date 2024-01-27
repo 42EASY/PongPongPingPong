@@ -354,7 +354,7 @@ export default function Board(mode, option) {
     },
   };
 
-  var Pong = pongGame;
+  let Pong = pongGame;
   Pong.initialize();
   return canvas;
 }

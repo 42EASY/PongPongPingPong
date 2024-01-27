@@ -4,6 +4,7 @@ import Game from "./pages/Game.js";
 import EndGame from "./pages/EndGame.js";
 import Test from "./pages/Test.js";
 import GameRoom from "./pages/GameRoom.js";
+import Modal from "./components/Modal/Modal.js";
 
 const $app = document.querySelector(".App");
 let currentComponent = Login;
@@ -13,7 +14,7 @@ const routes = {
   "/login": Login,
   "/main": Main, //임의,,
   "/game": Game, //임의,,
-  "/endgame" : EndGame,
+  "/endgame": EndGame,
   "/gameroom": GameRoom,
 };
 
@@ -24,10 +25,8 @@ export const changeUrl = (requestedUrl) => {
   document.getElementById("styles").setAttribute("href", path);
   history.pushState(null, null, window.location.pathname);
   currentComponent = routes[requestedUrl];
-  if (currentComponent === EndGame)
-    currentComponent("tournament", 1, 3);
-  else
-    currentComponent();
+  if (currentComponent === EndGame) currentComponent("tournament", 1, 3);
+  else currentComponent();
 };
 
 window.addEventListener("click", (e) => {
@@ -46,6 +45,9 @@ window.addEventListener("click", (e) => {
   } else if (e.target.classList.contains("moveToGameRoomPageBtn")) {
     // GameRoom 페이지의 버튼이 클릭된 경우
     changeUrl("/gameroom");
+  } else if (e.target.classList.contains("modalBtn")) {
+    // GameRoom 페이지의 버튼이 클릭된 경우
+    Modal(1);
   }
 });
 

@@ -7,6 +7,7 @@ export default function Test() {
           <button class="moveToGamePageBtn">Go to Game</button>
           <button class="moveToEndGamePageBtn">Go to EndGame</button>
           <button class="moveToGameRoomPageBtn">Go to GameRoom</button>
+          <button class="modalBtn">Modal</button>
         </div>
       `;
 }
