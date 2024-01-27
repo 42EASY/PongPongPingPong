@@ -1,19 +1,21 @@
-import Nav from "../components/Nav/Nav.js";
+import Nav from "./Nav.js";
+import Chat from "./Chat.js";
+import Friends from "./Friends.js";
 import WaitingPlayer from "../components/GameRoom/WaitingPlayer.js";
 
 export default function GameRoom() {
-  const $navbar = document.querySelector(".nav");
-  $navbar.innerHTML = Nav().innerHTML;
+  Nav();
 
   const $page = document.createElement("div");
   const $gameRoom = document.createElement("div");
   const $waitingPlayers = document.createElement("div");
 
   const waitingPlayersArr = [];
-  waitingPlayersArr[0] = WaitingPlayer(false);
-  waitingPlayersArr[1] = WaitingPlayer(false);
-  waitingPlayersArr[2] = WaitingPlayer(true);
-  waitingPlayersArr[3] = WaitingPlayer(true);
+  //0 : profile, 1: empty, 2: waiting friend
+  waitingPlayersArr[0] = WaitingPlayer(0);
+  waitingPlayersArr[1] = WaitingPlayer(2);
+  waitingPlayersArr[2] = WaitingPlayer(1);
+  waitingPlayersArr[3] = WaitingPlayer(2);
 
   $page.appendChild($gameRoom);
   $gameRoom.id = "gameRoom";

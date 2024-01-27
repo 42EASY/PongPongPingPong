@@ -19,9 +19,9 @@ export default function MyProfile() {
   $ProfileInfoBox.classList.add("profileInfoBox");
   $ProfileImageBox.appendChild($ProfileImage);
   $ProfileInfoBox.appendChild($ProfileNameBox);
-  $ProfileNameBox.classList.add("profileNameBox");
+  $ProfileNameBox.classList.add("mainProfileNameBox");
   $ProfileNameBox.appendChild($ProfileName);
-  $ProfileName.classList.add("profileName");
+  $ProfileName.classList.add("mainProfileName");
   $ProfileName.innerHTML = "someone";
   if (isMe) $ProfileNameBox.appendChild(MyBtn());
   else $ProfileNameBox.appendChild(OtherBtn({ status: 0 }));

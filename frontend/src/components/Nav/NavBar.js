@@ -1,4 +1,4 @@
-export default function Nav() {
+export default function NavBar() {
   const $navWrapper = document.createElement("div");
   const $navBar = document.createElement("nav");
   const $navBrand = document.createElement("a");
@@ -15,6 +15,36 @@ export default function Nav() {
   $navBrandImage.classList.add("navBrandImage");
   $navBrand.appendChild($navBrandImage);
   $navBrand.append("퐁퐁핑퐁");
+
+  const $navSearchBox = document.createElement("div");
+  const $navSearchIcon = document.createElement("i");
+  const $navSearch = document.createElement("input");
+  const $navSearchList = document.createElement("ul");
+  const $navSearchItem = document.createElement("li");
+  const $navSearchItem2 = document.createElement("li");
+
+  $navBar.appendChild($navSearchBox);
+  $navSearchBox.appendChild($navSearchIcon);
+  $navSearchBox.id = "navSearchBox";
+  $navSearchIcon.classList.add("bi", "bi-search");
+  $navSearchBox.appendChild($navSearch);
+  $navSearchBox.classList.add("navSearchBox");
+  $navSearch.id = "navSearch";
+  $navSearch.classList.add("navSearch");
+  $navSearch.setAttribute("type", "text");
+  $navSearch.setAttribute("placeholder", "Search");
+  $navSearch.setAttribute("maxlength", "10");
+  $navSearch.setAttribute("autocomplete", "off");
+  $navSearchBox.appendChild($navSearchList);
+  $navSearchList.id = "navSearchList";
+  $navSearchList.classList.add("list-group", "navSearchList");
+  //Todo: 아래 부분 api로 받아 반복문으로 수정
+  $navSearchList.appendChild($navSearchItem);
+  $navSearchList.appendChild($navSearchItem2);
+  $navSearchItem.append("nickname");
+  $navSearchItem.classList.add("list-group-item", "navSearchItem");
+  $navSearchItem2.append("nickname2");
+  $navSearchItem2.classList.add("list-group-item", "navSearchItem");
 
   const $navBtns = document.createElement("div");
   const $navProfileBtn = document.createElement("a");
@@ -38,11 +68,9 @@ export default function Nav() {
   $navProfileBtnImage.setAttribute("alt", "profile_image");
   $navProfileBtnImage.classList.add("navProfileBtnImage");
   $navVerticalLine.classList.add("navVerticalLine");
-  $navChatBtn.setAttribute("href", "#"); //chat page path
-  $navChatBtn.classList.add("navTextBtn");
+  $navChatBtn.classList.add("navTextBtn", "navChat");
   $navChatBtn.innerHTML = "Chat";
-  $navFriendsBtn.setAttribute("href", "#"); //friends page path
-  $navFriendsBtn.classList.add("navTextBtn");
+  $navFriendsBtn.classList.add("navTextBtn", "navFriends");
   $navFriendsBtn.innerHTML = "Friends";
   $navGameBtn.setAttribute("href", "#");
   $navGameBtn.classList.add("navGameBtn");

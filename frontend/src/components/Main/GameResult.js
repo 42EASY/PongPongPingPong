@@ -1,4 +1,5 @@
 export default function GameResult(data) {
+  const cur_user_id = 1;
   const $ResultWrapper = document.createElement("div");
   const $ResultMark = document.createElement("div");
 
@@ -50,12 +51,21 @@ export default function GameResult(data) {
   const date = data.game_date.split("-");
   $ResultInfoDate.innerHTML = `${date[0][2]}${date[0][3]}.${date[1]}.${date[2]}`;
   $ResultInfoDivLine.classList.add("divLine");
-  if (data.result == "WIN") {
-    $ResultInfoResult.innerHTML = "승리";
+  if (
+    data.player_one.user_id !== cur_user_id &&
+    data.player_two.user_id !== cur_user_id
+  ) {
+    $ResultWrapper.classList.add("resultWrapperNotMe");
+    $ResultMark.classList.add("resultMarkNotMe");
+    $ResultInfoResult.innerHTML = "";
   } else {
-    $ResultWrapper.classList.add("resultWrapperLose");
-    $ResultMark.classList.add("resultMarkLose");
-    $ResultInfoResult.innerHTML = "패배";
+    if (data.player_one.result == "WIN") {
+      $ResultInfoResult.innerHTML = "승리";
+    } else {
+      $ResultWrapper.classList.add("resultWrapperLose");
+      $ResultMark.classList.add("resultMarkLose");
+      $ResultInfoResult.innerHTML = "패배";
+    }
   }
   $ResultInfoResult.classList.add("resultInfoBold");
   const time = data.playtime.split("-");
@@ -89,7 +99,7 @@ export default function GameResult(data) {
     $MedalImage.setAttribute("src", "./src/images/medal.png");
     $MedalImage.setAttribute("alt", "medal_image");
 
-    if (data.result === "WIN") {
+    if (data.player_one.result === "WIN") {
       $ResultPlayer1MedalBox.appendChild($MedalImageBox);
     } else {
       $ResultPlayer2MedalBox.appendChild($MedalImageBox);
