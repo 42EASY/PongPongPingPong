@@ -160,8 +160,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=14), # 토큰 유효 시간 # TODO: 유효기간 바꾸기
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=14), # refresh token 유효 기간
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': os.environ.get('JWT_SECRET_KEY'),

@@ -8,7 +8,6 @@ class Members(models.Model):
     email = models.CharField(max_length=255)
     is_2fa = models.BooleanField(null=True)
     image_url = models.CharField(max_length=255, null=True)
-    refresh_token = models.CharField(max_length=255, null=True)
     two_factor_secret = models.CharField(max_length=255, null=True)
     created_at = models.DateTimeField(null=True)
     modified_at = models.DateTimeField(null=True)
