@@ -147,6 +147,50 @@ const waitingPlayer = {
   ],
 };
 
+const invalidGame = {
+  title: "유효하지 않은 게임입니다",
+  showCloseButton: true,
+  bodyContent: [
+    {
+      type: "text",
+      text: "이미 만료되었거나, 유효하지 않은 게임입니다",
+    },
+  ],
+  footerContent: [
+    {
+      type: "primaryButton",
+      text: "확인",
+      class: "btn primaryButton closeButton",
+    },
+  ],
+};
+
+const tournamentTable = {
+  title: "토너먼트 대진표",
+  showCloseButton: true,
+  bodyContent: [
+    {
+      type: "image",
+      src: "./src/images/League_table.png",
+      alt: "league_table",
+    },
+  ],
+};
+
+const gameResultTable = {
+  title: "게임 종료되었습니다",
+  showCloseButton: true,
+  bodyContent: [
+    {
+      type: "image",
+      src: "./src/images/League_table.png",
+      alt: "league_table",
+    },
+  ],
+};
+
+const gameResult = {};
+
 const $app = document.querySelector(".App");
 
 export default function Modal(modalName) {
@@ -159,6 +203,11 @@ export default function Modal(modalName) {
   else if (modalName === "unblockFriend")
     $modalWrapper = addModal(unblockFriend);
   else if (modalName === "exitChatting") $modalWrapper = addModal(exitChatting);
+  else if (modalName === "invalidGame") $modalWrapper = addModal(invalidGame);
+  else if (modalName === "tournamentTable")
+    $modalWrapper = addModal(tournamentTable);
+  else if (modalName === "gameResultTable")
+    $modalWrapper = addModal(gameResultTable);
   else if (modalName === "gameMode") {
     let selectedGameMode = "";
     $modalWrapper = addModal(gameMode);
@@ -207,4 +256,5 @@ export default function Modal(modalName) {
       $app.removeChild($modalWrapper);
     });
   }
+  console.log("ss");
 }

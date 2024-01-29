@@ -67,7 +67,7 @@
 
 .modalBody {
   display: flex;
-  color: var(--darkGray);
+  color: var(--gray);
   margin-bottom: 15px;
   flex-direction: column;
   align-content: center;

@@ -11,6 +11,8 @@ export default function addContentElement(content) {
       $contentElement = document.createElement("img");
       $contentElement.setAttribute("src", content.src);
       $contentElement.setAttribute("alt", content.alt);
+      console.log("src:" + content.src);
+      console.log("alt:" + content.alt);
       break;
     case "radio":
       $contentElement = document.createElement("div");
@@ -45,5 +47,6 @@ export default function addContentElement(content) {
   }
   if (content.class) $contentElement.className = content.class;
   if (content.id) $contentElement.id = content.id;
+  console.log($contentElement);
   return $contentElement;
 }
