@@ -22,8 +22,10 @@ $app.innerHTML = routes["/"]();
 export const changeUrl = (requestedUrl) => {
   const path = `./src/styles${requestedUrl}.css`;
   document.getElementById("styles").setAttribute("href", path);
-  history.pushState(null, null, window.location.pathname);
-  if (routes[requestedUrl] === undefined) return;
+  history.pushState(null, null, requestedUrl);
+
+  if (routes[requestedUrl] === undefined) return; // 404 페이지 띄우기
+
   currentComponent = routes[requestedUrl];
   if (currentComponent === EndGame) currentComponent("tournament", 1, 3);
   else currentComponent();
