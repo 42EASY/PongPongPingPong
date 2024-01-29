@@ -4,6 +4,7 @@ from rest_framework import status
 from members.models import Members
 from social.models import Friend, Block
 from games.models import Participant, Game
+from tournaments.models import Tournament, TournamentGame 
 from django.urls import reverse
 from rest_framework_simplejwt.tokens import RefreshToken
 from urllib.parse import urlencode
@@ -103,6 +104,28 @@ class MemberGameViewTestCase(APITestCase):
 		Participant.objects.create(user_id=cls.member, game_id=game3, score=10, result='WIN')
 		Participant.objects.create(user_id=cls.member3, game_id=game3, score=0, result='LOSE')
 
+		#토너먼트 테스트 데이터
+		cls.member4 = Members.objects.create(nickname='test4uer', email='test4user@email.com', is_2fa=False, refresh_token='refresh_token4')
+		tournamentgame1 = Game.objects.create(game_mode=Game.GameMode.TOURNAMENT, start_time=start_time, end_time=end_time)
+		tournamentgame2 = Game.objects.create(game_mode=Game.GameMode.TOURNAMENT, start_time=start_time, end_time=end_time)
+		tournamentgame3 = Game.objects.create(game_mode=Game.GameMode.TOURNAMENT, start_time=start_time, end_time=end_time)
+
+		Participant.objects.create(user_id=cls.member, game_id=tournamentgame1, score=10, result=Participant.Result.WIN)
+		Participant.objects.create(user_id=cls.member2, game_id=tournamentgame1, score=3, result=Participant.Result.LOSE)
+
+		Participant.objects.create(user_id=cls.member3, game_id=tournamentgame2, score=6, result=Participant.Result.LOSE)
+		Participant.objects.create(user_id=cls.member4, game_id=tournamentgame2, score=10, result=Participant.Result.WIN)
+
+		Participant.objects.create(user_id=cls.member, game_id=tournamentgame3, score=10, result=Participant.Result.WIN)
+		Participant.objects.create(user_id=cls.member4, game_id=tournamentgame3, score=7, result=Participant.Result.LOSE)
+
+		tournament = Tournament.objects.create()
+
+		TournamentGame.objects.create(game_id=tournamentgame1, tournament_id=tournament, round=TournamentGame.Round.SEMI_FINAL)
+		TournamentGame.objects.create(game_id=tournamentgame2, tournament_id=tournament, round=TournamentGame.Round.SEMI_FINAL)
+		TournamentGame.objects.create(game_id=tournamentgame3, tournament_id=tournament, round=TournamentGame.Round.FINAL)
+		
+
 
 	#normal 모드일때의 전적 검색 반환 성공 테스트
 	def test_get_normal_records_success(self):
@@ -168,3 +191,42 @@ class MemberGameViewTestCase(APITestCase):
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.json()['code'], 404)
+
+
+
+	#tournament 모드일때의 전적 검색 반환 성공 테스트
+	def test_get_tournament_records_success(self):
+		query_params = {
+			'mode': Game.GameMode.TOURNAMENT,
+			'page': 1,
+			'size': 10
+		}
+
+		query_string = urlencode(query_params)
+
+		url = reverse('members:member-game', kwargs={'user_id': self.member.id}) + '?' + query_string
+		response = self.client.get(url)
+
+		print(response.json()['message'])
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.json()['code'], 200)
+
+
+
+	#tournament 모드일때의 전적 검색 반환 성공 테스트(전적이 없을때)
+	def test_get_tournament_records_success_no_records(self):
+		tmp = Members.objects.create(nickname='tmp', email='tmp@email.com', is_2fa=False, refresh_token='refresh_token_tmp')
+
+		query_params = {
+			'mode': Game.GameMode.TOURNAMENT,
+			'page': 1,
+			'size': 10
+		}
+
+		query_string = urlencode(query_params)
+
+		url = reverse('members:member-game', kwargs={'user_id': tmp.id}) + '?' + query_string
+		response = self.client.get(url)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.json()['code'], 200)
