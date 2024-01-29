@@ -12,9 +12,8 @@ let currentComponent = Login;
 const routes = {
   "/": Test,
   "/login": Login,
-  "/main": Main, //임의,,
-  "/game": Game, //임의,,
-  "/endgame": EndGame,
+  "/main": Main,
+  "/game": Game,
   "/gameroom": GameRoom,
 };
 
@@ -24,6 +23,7 @@ export const changeUrl = (requestedUrl) => {
   const path = `./src/styles${requestedUrl}.css`;
   document.getElementById("styles").setAttribute("href", path);
   history.pushState(null, null, window.location.pathname);
+  if (routes[requestedUrl] === undefined) return;
   currentComponent = routes[requestedUrl];
   if (currentComponent === EndGame) currentComponent("tournament", 1, 3);
   else currentComponent();
@@ -52,5 +52,6 @@ window.addEventListener("click", (e) => {
 });
 
 window.addEventListener("popstate", () => {
+  console.log("popstate");
   changeUrl(window.location.pathname);
 });
