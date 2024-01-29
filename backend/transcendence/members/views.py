@@ -8,6 +8,7 @@ from games.models import Game, Participant
 from django.db.models import Count, Q
 from django.core.paginator import Paginator
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from tournaments.models import Tournament, TournamentGame
 
 # Create your views here.
 class MemberView(APIView):
@@ -85,6 +86,7 @@ class MemberGameView(APIView):
     		
 		data = []
        
+	   #normal 모드일 경우
 		if (mode == Game.GameMode.NORMAL):
 
 			try:
@@ -171,13 +173,118 @@ class MemberGameView(APIView):
                 	'message': 'Get Data Error'
             	}, status = 400)
 
-
+		#tournament인 경우
 		elif (mode == Game.GameMode.TOURNAMENT):
-			#TODO: 구현
-			print('hi')
 
+			try:
+				game_list = Participant.objects.filter(user_id = user, game_id__game_mode=Game.GameMode.TOURNAMENT).order_by('user_id')
+				game_ids = game_list.values_list('game_id', flat = True)
+				tournament_games_list= TournamentGame.objects.filter(game_id__in = game_ids).order_by('tournament_id')
+				tournament_games = tournament_games_list.values_list('tournament_id', flat = True).distinct()
+	
+			except:
+				return JsonResponse({
+					'code': 400,
+					'message': 'Model Error'
+				}, status = 400)
+			
+			try:
+				paginator = Paginator(tournament_games, size)
+				total_page = paginator.num_pages
+
+			except:
+				return JsonResponse({
+					'code': 400,
+					'message': 'Paginator Error'
+				}, status = 400)
+
+			#total page의 범위를 벗어난 page를 가지고자 한 경우
+			if (int(total_page) < int(page)) or (int(page) <= 0):
+				return JsonResponse({
+			    'code': 400,
+				'message':'Page Index Error'
+			}, status = 400)
+
+			try:
+				page_obj = paginator.get_page(page)
+
+			except:
+				return JsonResponse({
+                	'code': 400,
+                	'message': 'Get Page Error'
+            	}, status = 400)
+        
+			tournaments = []
+
+			try:
+				for tournament_id in tournament_games:
+					tournament_all_game_list = TournamentGame.objects.filter(tournament_id = tournament_id).order_by('tournament_id')
+					tournaments_game_ids = tournament_all_game_list.values_list('game_id', flat = True)
+		
+					tournament_data = []
+
+					for game_id in tournaments_game_ids:
+							game = Game.objects.get(game_id = game_id)
+							participants_in_game = Participant.objects.filter(game_id = game)
+							user_ids_in_game = participants_in_game.values_list('user_id', flat = True)
+
+
+							if participants_in_game.filter(user_id=user_id).exists():
+								player1_model = user
+								player2_model = Members.objects.exclude(id=user_id).get(id__in=user_ids_in_game)
+							else:
+								player1_model = Members.objects.filter(id__in=user_ids_in_game).first()
+								player2_model = Members.objects.filter(id__in=user_ids_in_game).exclude(id=player1_model.id).first()
+
+							player1_participant = Participant.objects.get(game_id = game, user_id = player1_model)
+							player2_participant = Participant.objects.get(game_id = game, user_id = player2_model)
+
+							total_duration = game.end_time - game.start_time
+							total_minutes, total_seconds = divmod(total_duration.total_seconds(), 60)
+							game_time = "{:02d}-{:02d}".format(int(total_minutes), int(total_seconds))
+				
+
+
+							player1 = {
+								'user_id': player1_model.id,
+								'image_url': player1_model.image_url,
+								'nickname': player1_model.nickname,
+								'score': player1_participant.score,
+								'result': player1_participant.result,
+							}
+						
+							player2 = {
+								'user_id': player2_model.id,
+								'image_url': player2_model.image_url,
+								'nickname': player2_model.nickname,
+								'score': player2_participant.score,
+								'result': player2_participant.result,
+							}
+
+							tournament_game_data = {
+								'round': TournamentGame.objects.get(game_id = game).round,
+								'game_date': game.start_time.strftime("%Y-%m-%d"),
+								'playtime': game_time,
+								'player_one': player1,
+								'player_two': player2
+							}
+
+							tournament_data.append(tournament_game_data)
+
+					tournaments.append(tournament_data)
+				
+				data.append({'tournament' : tournaments})
+			except:
+				return JsonResponse({
+                	'code': 400,
+                	'message': 'Get Data Error'
+            	}, status = 400)
+
+			
+
+		#모드가 잘못되었을 경우
 		else:
-			return JsonResponse({
+			return JsonResponse({       
 				'code': 400,
 				'message':'Mode Error'
 			}, status = 400)
