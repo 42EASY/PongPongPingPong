@@ -10,12 +10,94 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from urllib.parse import urlencode
 from datetime import datetime
 from django.utils import timezone
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.conf import settings
+from django.core.files.storage import default_storage
+from urllib.parse import urlparse
+import json
 
 # Create your tests here.
-class MemberViewTestCase(APITestCase):
+class MemberViewPatchTestCase(APITestCase):
 	def setUp(self):
 		# 가짜 토큰 생성
-		self.fake_user = Members.objects.create(nickname='loginUser', email='loginUser@email.com', is_2fa=False, refresh_token='refresh_token')
+		self.fake_user = Members.objects.create(nickname='loginUser', email='loginUser@email.com', is_2fa=False)
+		refresh = RefreshToken.for_user(self.fake_user)
+		fake_token = str(refresh.access_token)
+
+		self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + fake_token)
+	
+	def tearDown(self):
+		if hasattr(self, 'fake_user'):
+			self.fake_user.refresh_from_db()
+		if self.fake_user.image_url:
+			parsed_url = urlparse(self.fake_user.image_url)
+			file_path = parsed_url.path.replace(settings.MEDIA_URL, '', 1)
+			if default_storage.exists(file_path):
+				default_storage.delete(file_path)
+
+	def test_update_image_only(self):
+		url = reverse('members:patch')
+
+		# 테스트용 이미지 파일 생성
+		test_image = SimpleUploadedFile("testimage.jpg", b"dummy image data", content_type="image/jpeg")
+				
+		# PATCH 요청 시뮬레이션
+		response = self.client.patch(url, {'image': test_image}, format='multipart')
+		
+		# 응답 검증
+		self.assertEqual(response.status_code, 200)
+		self.assertIn('image_url', response.json()['result'])
+		self.assertEqual(response.json()['result']['nickname'], 'loginUser')
+		self.assertEqual(response.json()['result']['is_2fa'], False)
+
+	def test_update_data_nickname_only(self):
+		url = reverse('members:patch')
+
+		# JSON 데이터 업데이트
+		test_data = test_data = json.dumps({'nickname': 'new_nickname'})
+				
+		# PATCH 요청 시뮬레이션
+		response = self.client.patch(url, {'data':test_data}, format='multipart')
+
+		# 응답 검증
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.json()['result']['nickname'], 'new_nickname')
+		self.assertEqual(response.json()['result']['is_2fa'], False)
+
+	def test_update_data_2fa_only(self):
+		url = reverse('members:patch')
+
+		# JSON 데이터 업데이트
+		test_data = test_data = json.dumps({'is_2fa': True})
+
+		# PATCH 요청 시뮬레이션
+		response = self.client.patch(url, {'data':test_data}, format='multipart')
+
+		# 응답 검증
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.json()['result']['nickname'], 'loginUser')
+		self.assertEqual(response.json()['result']['is_2fa'], True)
+
+	def test_update_image_and_data(self):
+		url = reverse('members:patch')
+
+		# 테스트용 이미지 파일 및 JSON 데이터 생성
+		test_image = SimpleUploadedFile("testimage.jpg", b"dummy image data", content_type="image/jpeg")
+		test_data = json.dumps({'nickname': 'another_nickname', 'is_2fa': False})
+				
+		# PATCH 요청 시뮬레이션
+		response = self.client.patch(url, {'image': test_image, 'data': test_data}, format='multipart')
+
+		# 응답 검증
+		self.assertEqual(response.status_code, 200)
+		self.assertIn('image_url', response.json()['result'])
+		self.assertEqual(response.json()['result']['nickname'], 'another_nickname')
+		self.assertEqual(response.json()['result']['is_2fa'], False)
+
+class MemberViewGetTestCase(APITestCase):
+	def setUp(self):
+		# 가짜 토큰 생성
+		self.fake_user = Members.objects.create(nickname='loginUser', email='loginUser@email.com', is_2fa=False)
 		refresh = RefreshToken.for_user(self.fake_user)
 		fake_token = str(refresh.access_token)
 
@@ -23,7 +105,7 @@ class MemberViewTestCase(APITestCase):
 		
 	@classmethod
 	def setUpTestData(cls):
-		cls.member = Members.objects.create(nickname='testuser', email='testuser@email.com', is_2fa=False, refresh_token='refresh_token')
+		cls.member = Members.objects.create(nickname='testuser', email='testuser@email.com', is_2fa=False)
 
 		game1 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL')
 		game2 = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL')
@@ -36,7 +118,7 @@ class MemberViewTestCase(APITestCase):
 	
 	def test_get_member_success(self):
 		# 존재하는 멤버에 대한 요청 테스트
-		url = reverse('members:member-profile', kwargs={'user_id': self.member.id})
+		url = reverse('members:get', kwargs={'user_id': self.member.id})
 		response = self.client.get(url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response.json()['code'], 200)
@@ -47,7 +129,7 @@ class MemberViewTestCase(APITestCase):
 		Friend.objects.create(user=self.fake_user, target=self.member)
 
 		# 친구 관계인 유저에 대한 테스트
-		url = reverse('members:member-profile', kwargs={'user_id': self.member.id})
+		url = reverse('members:get', kwargs={'user_id': self.member.id})
 		response = self.client.get(url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response.json()['code'], 200)
@@ -57,7 +139,7 @@ class MemberViewTestCase(APITestCase):
 		Block.objects.create(user=self.fake_user, target=self.member)
 
 		# 친구 관계인 유저에 대한 테스트
-		url = reverse('members:member-profile', kwargs={'user_id': self.member.id})
+		url = reverse('members:get', kwargs={'user_id': self.member.id})
 		response = self.client.get(url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(response.json()['code'], 200)
@@ -67,7 +149,7 @@ class MemberViewTestCase(APITestCase):
 		Block.objects.create(user=self.fake_user, target=self.member)
 
 		# 친구 관계인 유저에 대한 테스트
-		url = reverse('members:member-profile', kwargs={'user_id': 99999})
+		url = reverse('members:get', kwargs={'user_id': 99999})
 		response = self.client.get(url)
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.json()['code'], 404)
@@ -77,7 +159,7 @@ class MemberViewTestCase(APITestCase):
 class MemberGameViewTestCase(APITestCase):
 	def setUp(self):
 		# 가짜 토큰 생성
-		self.fake_user = Members.objects.create(nickname='loginUser', email='loginUser@email.com', is_2fa=False, refresh_token='refresh_token')
+		self.fake_user = Members.objects.create(nickname='loginUser', email='loginUser@email.com', is_2fa=False)
 		refresh = RefreshToken.for_user(self.fake_user)
 		fake_token = str(refresh.access_token)
 
@@ -85,9 +167,9 @@ class MemberGameViewTestCase(APITestCase):
 		
 	@classmethod
 	def setUpTestData(cls):
-		cls.member = Members.objects.create(nickname='testuser', email='testuser@email.com', is_2fa=False, refresh_token='refresh_token')
-		cls.member2 = Members.objects.create(nickname='test2user', email='test2user@email.com', is_2fa=False, refresh_token='refresh_token2')
-		cls.member3 = Members.objects.create(nickname='test3user', email='test3user@email.com', is_2fa=False, refresh_token='refresh_token3')
+		cls.member = Members.objects.create(nickname='testuser', email='testuser@email.com', is_2fa=False)
+		cls.member2 = Members.objects.create(nickname='test2user', email='test2user@email.com', is_2fa=False)
+		cls.member3 = Members.objects.create(nickname='test3user', email='test3user@email.com', is_2fa=False)
 
 		start_time = timezone.make_aware(datetime(2024, 1, 22, 16, 23, 11))
 		end_time = timezone.make_aware(datetime(2024, 1, 22, 17, 55, 12))
@@ -105,7 +187,7 @@ class MemberGameViewTestCase(APITestCase):
 		Participant.objects.create(user_id=cls.member3, game_id=game3, score=0, result='LOSE')
 
 		#토너먼트 테스트 데이터
-		cls.member4 = Members.objects.create(nickname='test4uer', email='test4user@email.com', is_2fa=False, refresh_token='refresh_token4')
+		cls.member4 = Members.objects.create(nickname='test4uer', email='test4user@email.com', is_2fa=False)
 		tournamentgame1 = Game.objects.create(game_mode=Game.GameMode.TOURNAMENT, start_time=start_time, end_time=end_time)
 		tournamentgame2 = Game.objects.create(game_mode=Game.GameMode.TOURNAMENT, start_time=start_time, end_time=end_time)
 		tournamentgame3 = Game.objects.create(game_mode=Game.GameMode.TOURNAMENT, start_time=start_time, end_time=end_time)
@@ -158,7 +240,7 @@ class MemberGameViewTestCase(APITestCase):
 
 	#normal 모드일때의 전적 검색 반환 성공 테스트(전적이 없을때)
 	def test_get_normal_records_success_no_records(self):
-		tmp = Members.objects.create(nickname='tmp', email='tmp@email.com', is_2fa=False, refresh_token='refresh_token_tmp')
+		tmp = Members.objects.create(nickname='tmp', email='tmp@email.com', is_2fa=False)
 
 		query_params = {
 			'mode': 'NORMAL',
@@ -215,7 +297,7 @@ class MemberGameViewTestCase(APITestCase):
 
 	#tournament 모드일때의 전적 검색 반환 성공 테스트(전적이 없을때)
 	def test_get_tournament_records_success_no_records(self):
-		tmp = Members.objects.create(nickname='tmp', email='tmp@email.com', is_2fa=False, refresh_token='refresh_token_tmp')
+		tmp = Members.objects.create(nickname='tmp', email='tmp@email.com', is_2fa=False)
 
 		query_params = {
 			'mode': Game.GameMode.TOURNAMENT,

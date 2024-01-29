@@ -1,6 +1,8 @@
 import EndGame from "../../pages/EndGame.js";
 
-export default function Board(mode) {
+export default function Board(mode, option) {
+  console.log(mode);
+  console.log(option);
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
@@ -12,10 +14,10 @@ export default function Board(mode) {
     RIGHT: 4,
   };
 
-  const maxScore = 1;
+  const maxScore = 3;
 
   const Ball = {
-    new: function (incrementedSpeed) {
+    new: function () {
       return {
         width: 18,
         height: 18,
@@ -23,7 +25,7 @@ export default function Board(mode) {
         y: canvas.height / 2 - 9,
         moveX: DIRECTION.IDLE,
         moveY: DIRECTION.IDLE,
-        speed: incrementedSpeed || 9,
+        speed: option === "speed" ? 13 : 4,
       };
     },
   };
@@ -45,22 +47,20 @@ export default function Board(mode) {
   const pongGame = {
     canvas: canvas,
     initialize: function () {
-      console.log("Initializing the game...");
       this.canvas.height = window.innerHeight * 0.85;
       this.canvas.width = canvas.height * 1.45;
 
-      this.player = Paddle.new.call(this, "left");
-      this.paddle = Paddle.new.call(this, "right");
+      this.leftPlayer = Paddle.new.call(this, "left");
+      this.rightPlayer = Paddle.new.call(this, "right");
       this.ball = Ball.new.call(this);
 
-      console.log(this.canvas.width);
-      console.log(this.paddle.x);
-
-      this.paddle.speed = 8;
-      this.running = this.over = false;
-      this.turn = this.paddle;
+      this.running = this.gameOver = false;
+      this.turnOver = true;
+      this.serve = Math.random() < 0.5 ? this.leftPlayer : this.rightPlayer;
+      console.log(
+        "initial serve : " + (this.serve === this.leftPlayer ? "left" : "right")
+      );
       this.timer = this.round = 0;
-      console.log("Initialization completed.");
 
       this.menu();
       this.listen();
@@ -74,7 +74,7 @@ export default function Board(mode) {
       const path = `./src/styles${requestedUrl}.css`;
       document.getElementById("styles").setAttribute("href", path);
       history.pushState(null, null, window.location.pathname);
-      EndGame(mode, this.player.score, this.paddle.score);
+      EndGame(mode, this.leftPlayer.score, this.rightPlayer.score);
     },
 
     menu: function () {
@@ -106,37 +106,46 @@ export default function Board(mode) {
 
     // Update all objects (move the player, paddle, ball, increment the score, etc.)
     update: function () {
-      if (!this.over) {
+      if (!this.gameOver) {
         // If the ball collides with the bound limits - correct the x and y coords.
-        if (this.ball.x <= 0)
-          Pong._resetTurn.call(this, this.paddle, this.player);
+        if (this.ball.x <= 0) Pong._resetTurn.call(this, this.rightPlayer);
         if (this.ball.x >= this.canvas.width - this.ball.width)
-          Pong._resetTurn.call(this, this.player, this.paddle);
+          Pong._resetTurn.call(this, this.leftPlayer);
         if (this.ball.y <= 0) this.ball.moveY = DIRECTION.DOWN;
         if (this.ball.y >= this.canvas.height - this.ball.height)
           this.ball.moveY = DIRECTION.UP;
 
         // Move player if they player.move value was updated by a keyboard event
-        if (this.player.move === DIRECTION.UP)
-          this.player.y -= this.player.speed;
-        else if (this.player.move === DIRECTION.DOWN)
-          this.player.y += this.player.speed;
+        if (this.leftPlayer.move === DIRECTION.UP)
+          this.leftPlayer.y -= this.leftPlayer.speed;
+        else if (this.leftPlayer.move === DIRECTION.DOWN)
+          this.leftPlayer.y += this.leftPlayer.speed;
 
         // On new serve (start of each turn) move the ball to the correct side
         // and randomize the direction to add some challenge.
-        if (Pong._turnDelayIsOver.call(this) && this.turn) {
+        if (Pong._turnDelayIsOver.call(this) && this.turnOver) {
+          // 서브할 때 공 설정 -> 이거 그냥 공 초기화할 때 해도 되지 않나
+          console.log(
+            "serve!!!!!!!!!!!!!!!!!! : " +
+              (this.serve === this.leftPlayer ? "left" : "right")
+          );
           this.ball.moveX =
-            this.turn === this.player ? DIRECTION.LEFT : DIRECTION.RIGHT;
-          this.ball.moveY = Math.random() < 0.5 ? DIRECTION.UP : DIRECTION.DOWN;
+            this.serve === this.leftPlayer ? DIRECTION.LEFT : DIRECTION.RIGHT;
+          this.ball.moveY = [DIRECTION.UP, DIRECTION.DOWN][
+            Math.round(Math.random())
+          ];
           this.ball.y =
             Math.floor(Math.random() * this.canvas.height - 200) + 200;
-          this.turn = null;
+          this.turnOver = false; //turnOver, gameOver
         }
 
         // If the player collides with the bound limits, update the x and y coords.
-        if (this.player.y <= 0) this.player.y = 0;
-        else if (this.player.y >= this.canvas.height - this.player.height)
-          this.player.y = this.canvas.height - this.player.height;
+        if (this.leftPlayer.y <= 0) this.leftPlayer.y = 0;
+        else if (
+          this.leftPlayer.y >=
+          this.canvas.height - this.leftPlayer.height
+        )
+          this.leftPlayer.y = this.canvas.height - this.leftPlayer.height;
 
         // Move ball in intended direction based on moveY and moveX values
         if (this.ball.moveY === DIRECTION.UP)
@@ -147,47 +156,41 @@ export default function Board(mode) {
         else if (this.ball.moveX === DIRECTION.RIGHT)
           this.ball.x += this.ball.speed;
 
-        // Handle paddle (AI) UP and DOWN movement
-        if (this.paddle.y > this.ball.y - this.paddle.height / 2) {
-          if (this.ball.moveX === DIRECTION.RIGHT)
-            this.paddle.y -= this.paddle.speed / 1.5;
-          else this.paddle.y -= this.paddle.speed / 4;
-        }
-        if (this.paddle.y < this.ball.y - this.paddle.height / 2) {
-          if (this.ball.moveX === DIRECTION.RIGHT)
-            this.paddle.y += this.paddle.speed / 1.5;
-          else this.paddle.y += this.paddle.speed / 4;
-        }
+        // Handle right player UP and DOWN movement
+        if (this.rightPlayer.move === DIRECTION.UP)
+          this.rightPlayer.y -= this.rightPlayer.speed;
+        else if (this.rightPlayer.move === DIRECTION.DOWN)
+          this.rightPlayer.y += this.rightPlayer.speed;
 
-        // Handle paddle (AI) wall collision
-        if (this.paddle.y >= this.canvas.height - this.paddle.height)
-          this.paddle.y = this.canvas.height - this.paddle.height;
-        else if (this.paddle.y <= 0) this.paddle.y = 0;
+        // Handle right player wall collision
+        if (this.rightPlayer.y >= this.canvas.height - this.rightPlayer.height)
+          this.rightPlayer.y = this.canvas.height - this.rightPlayer.height;
+        else if (this.rightPlayer.y <= 0) this.rightPlayer.y = 0;
 
-        // Handle Player-Ball collisions
+        // Handle leftPlayer-Ball collisions
         if (
-          this.ball.x - this.ball.width <= this.player.x &&
-          this.ball.x >= this.player.x - this.player.width
+          this.ball.x - this.ball.width <= this.leftPlayer.x &&
+          this.ball.x >= this.leftPlayer.x - this.leftPlayer.width
         ) {
           if (
-            this.ball.y <= this.player.y + this.player.height &&
-            this.ball.y + this.ball.height >= this.player.y
+            this.ball.y <= this.leftPlayer.y + this.leftPlayer.height &&
+            this.ball.y + this.ball.height >= this.leftPlayer.y
           ) {
-            this.ball.x = this.player.x + this.ball.width;
+            this.ball.x = this.leftPlayer.x + this.ball.width;
             this.ball.moveX = DIRECTION.RIGHT;
           }
         }
 
-        // Handle paddle-ball collision
+        // Handle rightPlayer-ball collision
         if (
-          this.ball.x - this.ball.width <= this.paddle.x &&
-          this.ball.x >= this.paddle.x - this.paddle.width
+          this.ball.x - this.ball.width <= this.rightPlayer.x &&
+          this.ball.x >= this.rightPlayer.x - this.rightPlayer.width
         ) {
           if (
-            this.ball.y <= this.paddle.y + this.paddle.height &&
-            this.ball.y + this.ball.height >= this.paddle.y
+            this.ball.y <= this.rightPlayer.y + this.rightPlayer.height &&
+            this.ball.y + this.ball.height >= this.rightPlayer.y
           ) {
-            this.ball.x = this.paddle.x - this.ball.width;
+            this.ball.x = this.rightPlayer.x - this.ball.width;
             this.ball.moveX = DIRECTION.LEFT;
           }
         }
@@ -195,15 +198,11 @@ export default function Board(mode) {
 
       // // Handle the end of round transition
       // // Check to see if the player won the round.
-      if (this.player.score === maxScore) {
-        this.over = true;
-        setTimeout(function () {
-          Pong.changeUrl("/endgame");
-        }, 1000);
-      }
-      // Check to see if the paddle/AI has won the round.
-      else if (this.paddle.score === maxScore) {
-        this.over = true;
+      if (
+        this.leftPlayer.score === maxScore ||
+        this.rightPlayer.score === maxScore
+      ) {
+        this.gameOver = true;
         setTimeout(function () {
           Pong.changeUrl("/endgame");
         }, 1000);
@@ -224,20 +223,20 @@ export default function Board(mode) {
       // Set the fill style to white (For the paddles and the ball)
       context.fillStyle = "#ffffff";
 
-      // Draw the Player
+      // Draw the leftPlayer
       context.fillRect(
-        this.player.x,
-        this.player.y,
-        this.player.width,
-        this.player.height
+        this.leftPlayer.x,
+        this.leftPlayer.y,
+        this.leftPlayer.width,
+        this.leftPlayer.height
       );
 
-      // Draw the Paddle
+      // Draw the rightPlayer
       context.fillRect(
-        this.paddle.x,
-        this.paddle.y,
-        this.paddle.width,
-        this.paddle.height
+        this.rightPlayer.x,
+        this.rightPlayer.y,
+        this.rightPlayer.width,
+        this.rightPlayer.height
       );
 
       // Draw the net (Line in the middle)
@@ -270,14 +269,14 @@ export default function Board(mode) {
       // Draw the players score (left)
       context.fillStyle = "#ffffff";
       context.fillText(
-        this.player.score.toString().padStart(2, "0"),
+        this.leftPlayer.score.toString().padStart(2, "0"),
         canvas.width / 2 - 60,
         70
       );
 
       // Draw the paddles score (right)
       context.fillText(
-        this.paddle.score.toString().padStart(2, "0"),
+        this.rightPlayer.score.toString().padStart(2, "0"),
         canvas.width / 2 + 60,
         70
       );
@@ -288,37 +287,48 @@ export default function Board(mode) {
       pongGame.draw();
 
       // If the game is not over, draw the next frame.
-      if (!pongGame.over) requestAnimationFrame(pongGame.loop);
+      if (!pongGame.gameOver) requestAnimationFrame(pongGame.loop);
     },
 
     listen: function () {
       document.addEventListener("keydown", (key) => {
-        console.log("Key down:", key.key);
         // Handle the 'Press any key to begin' function and start the game.
         if (this.running === false) {
           this.running = true;
           window.requestAnimationFrame(() => this.loop());
         }
-        if (key.key === "ArrowUp" || key.key === "w")
-          this.player.move = DIRECTION.UP;
-        if (key.key === "ArrowDown" || key.key === "s")
-          this.player.move = DIRECTION.DOWN;
+        if (key.key === "w") this.leftPlayer.move = DIRECTION.UP;
+        if (key.key === "s") this.leftPlayer.move = DIRECTION.DOWN;
+        if (key.key === "ArrowUp") this.rightPlayer.move = DIRECTION.UP;
+        if (key.key === "ArrowDown") this.rightPlayer.move = DIRECTION.DOWN;
       });
 
       // Stop the player from moving when there are no keys being pressed.
       document.addEventListener("keyup", (key) => {
-        console.log("Key up:", key.key);
-        this.player.move = DIRECTION.IDLE;
+        if (key.key === "w" || key.key === "s")
+          this.leftPlayer.move = DIRECTION.IDLE;
+        if (key.key === "ArrowUp" || key.key === "ArrowDown")
+          this.rightPlayer.move = DIRECTION.IDLE;
       });
     },
 
     // Reset the ball location, the player turns and set a delay before the next round begins.
-    _resetTurn: function (victor, loser) {
-      this.ball = Ball.new.call(this, this.ball.speed);
-      this.turn = loser;
+    _resetTurn: function (victor) {
+      this.turnOver = true;
+      console.log(
+        "game over. this serve was " +
+          (this.serve === this.leftPlayer ? "left" : "right")
+      );
+      this.ball = Ball.new.call(this);
+      this.serve =
+        this.serve === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
       this.timer = new Date().getTime();
 
       victor.score++;
+      console.log(
+        "next serve will : " +
+          (this.serve === this.leftPlayer ? "left" : "right")
+      );
     },
 
     // Wait for a delay to have passed after each turn.
@@ -333,18 +343,18 @@ export default function Board(mode) {
       this.canvas.style.height = this.canvas.height + "px";
 
       // 창 크기가 변경될 때 게임 객체의 위치 업데이트
-      this.player.x = 70;
-      this.player.y = this.canvas.height / 2 - 35;
+      this.leftPlayer.x = 70;
+      this.leftPlayer.y = this.canvas.height / 2 - 35;
 
-      this.paddle.x = this.canvas.width - 70;
-      this.paddle.y = this.canvas.height / 2 - 35;
+      this.rightPlayer.x = this.canvas.width - 70;
+      this.rightPlayer.y = this.canvas.height / 2 - 35;
 
       this.ball.x = this.canvas.width / 2 - 9;
       this.ball.y = this.canvas.height / 2 - 9;
     },
   };
 
-  var Pong = pongGame;
+  let Pong = pongGame;
   Pong.initialize();
   return canvas;
 }

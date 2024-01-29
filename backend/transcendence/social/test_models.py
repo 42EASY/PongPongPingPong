@@ -8,10 +8,10 @@ class BlockModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user_model = Members.objects.create(nickname = 'base_user', email = 'user@test.com', is_2fa = False,
-                                      image_url = 'test_url', refresh_token = 'test_token')
+                                      image_url = 'test_url')
         
         cls.target_model = Members.objects.create(nickname = 'target', email = 'target@test.com', is_2fa = False,
-                                        image_url = 'test_url', refresh_token = 'test_token')
+                                        image_url = 'test_url')
 
     #setUp된 models 불러오기 테스트
     def test_get_block_model(self):
@@ -48,10 +48,10 @@ class FriendModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user_model = Members.objects.create(nickname = 'base_user', email = 'user@test.com', is_2fa = False,
-                                      image_url = 'test_url', refresh_token = 'test_token')
+                                      image_url = 'test_url')
         
         cls.target_model = Members.objects.create(nickname = 'target', email = 'target@test.com', is_2fa = False,
-                                        image_url = 'test_url', refresh_token = 'test_token')
+                                        image_url = 'test_url')
 
     #setUp된 models 불러오기 테스트
     def test_get_friend_model(self):

@@ -1,3 +1,5 @@
+import MoreMenu from "./MoreMenu.js";
+
 export default function OtherBtn({ status }) {
   let curStatus = status; //0: not friend, 1: friend, 2: blocked
 
@@ -5,18 +7,24 @@ export default function OtherBtn({ status }) {
   const $FriendStatusBtn = document.createElement("button");
   const $FriendStatusIcon = document.createElement("i");
   const $MessageBtn = document.createElement("button");
+  const $MoreFunctionBox = document.createElement("div");
   const $MoreFunctionBtn = document.createElement("button");
   const $MoreFucntionIcon = document.createElement("i");
+  const $MoreMenu = MoreMenu();
 
   $OtherBtnWrapper.appendChild($FriendStatusBtn);
   $OtherBtnWrapper.appendChild($MessageBtn);
-  $OtherBtnWrapper.appendChild($MoreFunctionBtn);
+  $OtherBtnWrapper.appendChild($MoreFunctionBox);
+  $MoreFunctionBox.appendChild($MoreFunctionBtn);
   $MoreFunctionBtn.appendChild($MoreFucntionIcon);
+  $MoreFunctionBox.appendChild($MoreMenu);
+
   $OtherBtnWrapper.classList.add("btnWrapper");
   $FriendStatusBtn.classList.add("mainBtn");
   $FriendStatusIcon.classList.add("bi", "bi-plus-lg", "friendStatusIcon");
   $MessageBtn.classList.add("mainBtn");
   $MessageBtn.innerHTML = "메세지";
+  $MoreFunctionBox.classList.add("moreFunctionBtn");
   $MoreFunctionBtn.classList.add("mainBtn", "MoreFunctionBtn");
   $MoreFucntionIcon.classList.add("bi", "bi-three-dots");
 
@@ -46,6 +54,14 @@ export default function OtherBtn({ status }) {
     if (curStatus === 0) onChangeStatus(1);
     else if (curStatus === 2) onChangeStatus(0);
   };
+
+  document.addEventListener("click", (e) => {
+    if (!$MoreFunctionBox.contains(e.target)) $MoreMenu.style.display = "none";
+  });
+
+  $MoreFunctionBtn.addEventListener("click", () => {
+    $MoreMenu.style.display = "block";
+  });
 
   onChangeStatus(curStatus);
   return $OtherBtnWrapper;

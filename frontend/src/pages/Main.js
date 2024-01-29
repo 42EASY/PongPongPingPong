@@ -1,4 +1,6 @@
 import Nav from "./Nav.js";
+import Chat from "./Chat.js";
+import Friends from "./Friends.js";
 import Profile from "../components/Main/Profile.js";
 import GameHistory from "../components/Main/GameHistory.js";
 

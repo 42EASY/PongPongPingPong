@@ -1,22 +1,18 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
+from django.conf import settings
 from django.http import JsonResponse
 from members.models import Members
 from security.views import login_required
 from rest_framework_simplejwt.tokens import RefreshToken
-import datetime
-import environ
-import os
+from django.core.cache import cache
+from django.utils import timezone
 import requests
 
-# Create your views here.
 class LoginView(APIView):
 	def post(self, request):
-		# access_token이 없는 경우.. 
-
 		code = request.data.get('code')
-		# 테스트를 위해 직접 code를 파싱함. 논의한 방식대로면 프론트에서 Post로 Body를 받아 처리해야할듯.
-		# code = request.GET.get('code')
+
 		if not code:
 			return JsonResponse({
 				'code': 400,
@@ -25,10 +21,10 @@ class LoginView(APIView):
 		
 		token_response = requests.post('https://api.intra.42.fr/oauth/token', data={
 			'grant_type': 'authorization_code',
-			'client_id': os.environ.get('SOCIAL_AUTH_42_KEY'),
-			'client_secret': os.environ.get('SOCIAL_AUTH_42_SECRET'),
+			'client_id': settings.SOCIAL_AUTH_42_KEY,
+			'client_secret': settings.SOCIAL_AUTH_42_SECRET,
 			'code': code,
-			'redirect_uri': os.environ.get('LOGIN_CALLBACK_URI'),
+			'redirect_uri': settings.LOGIN_CALLBACK_URI,
 		})
 	
 		ft_access_token = token_response.json().get('access_token')
@@ -49,19 +45,21 @@ class LoginView(APIView):
 			'email': user_info.get('email'),
 			'is_2fa': False,
 			'image_url': user_info.get('image_url'),
-			'refresh_token': None,
-			'created_at': datetime.datetime.now(),
-			'modified_at': datetime.datetime.now(),
+			'created_at': timezone.now(),
+			'modified_at': timezone.now(),
 			'deleted_at': None,
 		}
 
 		member, created = Members.objects.get_or_create(email=user_data['email'], defaults=user_data)
 
 		refresh = RefreshToken.for_user(member)
-		member.refresh_token = str(refresh)
-		member.save()
 
+		refresh_token = str(refresh)
 		access_token = str(refresh.access_token)
+
+		refresh_token_lifetime = int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds())
+
+		cache.set(refresh_token, member.id, timeout=refresh_token_lifetime)
 		
 		if created:
 			return JsonResponse({
@@ -87,7 +85,6 @@ class LoginView(APIView):
 				}
 			}, status=200)
 
-			
 class LogoutView(APIView):
 	@login_required
 	def post(self, request):
@@ -95,17 +92,20 @@ class LogoutView(APIView):
 		try:
 			member = Members.objects.get(id=id)
 
-			member.refresh_token = None
-			member.save()
+			cache.delete(f"refresh_token:{id}")
 
 			return JsonResponse({
 				'code':200,
 				'message':'ok',
 				'result':{}
 			}, status=200)
-		except Exception as e:
-			# exception이 생길만한 상황들 고려
+		except Members.DoesNotExist:
 			return JsonResponse({
 				'code': 404,
-				'message':'Not Found'
+				'message': 'Not Found'
 			}, status=404)
+		except Exception as e:
+			return JsonResponse({
+				'code': 400,
+				'message':'Bad Request'
+			}, status=400)

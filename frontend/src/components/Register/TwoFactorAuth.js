@@ -25,13 +25,18 @@ export default function TwoFactorAuth() {
 
   const $twoFactorAuthDeactive = document.createElement("div");
   //초기 화면에서는 비활성화 선택
-  $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
-  $twoFactorAuthDeactive.classList.add("twoFactorAuthDeactive");
+  $twoFactorAuthDeactive.classList.add(
+    "twoFactorAuthSelect",
+    "twoFactorAuthDeactive"
+  );
+
   $twoFactorAuthDeactive.innerHTML = "비활성화";
 
   const $twoFactorAuthActive = document.createElement("div");
-  $twoFactorAuthActive.classList.add("twoFactorAuthUnSelect");
-  $twoFactorAuthActive.classList.add("twoFactorAuthActive");
+  $twoFactorAuthActive.classList.add(
+    "twoFactorAuthUnSelect",
+    "twoFactorAuthActive"
+  );
   $twoFactorAuthActive.innerHTML = "활성화";
 
   $twoFactorAuthContentSelectBlock.appendChild($twoFactorAuthDeactive);
