@@ -6,15 +6,16 @@ from members.models import Members
 from social.models import Friend
 from social.models import Block
 from django.core.paginator import Paginator
+from security.views import login_required
 
 class FriendsView(APIView):
     permissions_classes = [permissions.AllowAny]
 
-    #TODO: base_user_id 사용 대신 토큰 사용으로 변경
-    def post(self, request, user_id, base_user_id):
+    @login_required
+    def post(self, request, user_id):
         try:
             target_user = Members.objects.get(id = user_id)
-            base_user = Members.objects.get(id = base_user_id)
+            base_user = request.user
 
             if (Block.objects.filter(user = base_user, target = target_user).count() > 0):
                 return JsonResponse({
@@ -43,11 +44,11 @@ class FriendsView(APIView):
         }, status = 201)
     
 
-    def delete(self, request, user_id, base_user_id):
-        #TODO: base_user_id 사용 대신 토큰 사용으로 변경
+    @login_required
+    def delete(self, request, user_id):
         try:
             target_user = Members.objects.get(id = user_id)
-            base_uer = Members.objects.get(id = base_user_id)
+            base_uer = request.user
 
         except:
             return JsonResponse({
@@ -75,14 +76,13 @@ class FriendsView(APIView):
         }, status = 200)
     
 
+    @login_required
     def get(self, request):
         keyword = request.GET.get('keyword', None)
         page = request.GET.get('page', None)
         size = request.GET.get('size', None)
-        #TODO: 토큰이 적용되면, query string대신 token으로 user_id 받기 
-        user_id = request.GET.get('user_id', None)
-
-        if (page == None or page == '' or user_id == None or user_id == ''):
+        
+        if (page == None or page == ''):
             return JsonResponse({
 				'code': 400,
 				'message':'NULL Error'
@@ -95,7 +95,7 @@ class FriendsView(APIView):
         data = []
        
         try:
-            base_user = Members.objects.get(id = user_id)
+            base_user = request.user
 
             #keyword가 비어있는 경우 전체 리스트 반환
             if (keyword == None or keyword == ''):
