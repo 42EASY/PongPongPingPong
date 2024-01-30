@@ -143,7 +143,7 @@ const gameOption = {
       type: "singleButton",
       text: "게임 시작",
       class: "btn singleButton",
-      id: "gameOptionStart",
+      id: "gameStart",
     },
   ],
 };
@@ -274,12 +274,24 @@ export default function Modal(modalName) {
     for (const $radioButton of $radioButtons) {
       $radioButton.addEventListener("change", () => {
         selectedGameMode = $radioButton.value;
+        if ($radioButton.value === "토너먼트") {
+          const $button = document.querySelector(".singleButton");
+          $button.innerHTML = "게임 시작";
+          $button.setAttribute("id", "gameStart");
+        } else {
+          const $button = document.querySelector(".singleButton");
+          $button.innerHTML = "다음";
+          $button.setAttribute("id", "gameModeNext");
+        }
       });
     }
 
     const $nextButton = $modalWrapper.querySelector("#gameModeNext");
     $nextButton.addEventListener("click", () => {
-      if (selectedGameMode) {
+      if (selectedGameMode === "토너먼트") {
+        $app.removeChild($modalWrapper);
+        Modal("waitingPlayer");
+      } else {
         $app.removeChild($modalWrapper);
         Modal("gameOption");
       }
@@ -294,7 +306,7 @@ export default function Modal(modalName) {
       });
     }
 
-    const $startButton = $modalWrapper.querySelector("#gameOptionStart");
+    const $startButton = $modalWrapper.querySelector("#gameStart");
     $startButton.addEventListener("click", () => {
       if (selectedGameOption) {
         $app.removeChild($modalWrapper);
