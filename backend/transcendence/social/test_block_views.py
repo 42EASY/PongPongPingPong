@@ -11,15 +11,15 @@ class BlockViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user_model = Members.objects.create(nickname = 'base_user', email = 'user@test.com', is_2fa = False,
-                                      image_url = 'test_url', refresh_token = 'test_token')
+                                      image_url = 'test_url')
         
         cls.target_model = Members.objects.create(nickname = 'target', email = 'target@test.com', is_2fa = False,
-                                        image_url = 'test_url', refresh_token = 'test_token')
+                                        image_url = 'test_url')
         
         for i in range(5):
             dummy_nickname = 'dummy' + str(i)
             dummy_email = 'dummy' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
+            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url')
             Block.objects.create(user = cls.user_model, target = dummy)
 
       
@@ -93,7 +93,7 @@ class BlockViewTest(TestCase):
     def test_get_block_list_keyword(self):
         user_model = Members.objects.get(nickname = 'base_user')
 
-        tmp = Members.objects.create(nickname = 'tmp', email = 'tmp@test.com', is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
+        tmp = Members.objects.create(nickname = 'tmp', email = 'tmp@test.com', is_2fa = False, image_url = 'test_url')
         Block.objects.create(user = user_model, target = tmp)
 
         query_params = {
@@ -184,7 +184,7 @@ class BlockViewTest(TestCase):
         for i in range(5):
             dummy_nickname = 'aa' + str(i)
             dummy_email = 'aa' + str(i) + '@test.com'
-            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url', refresh_token = 'test_token')
+            dummy = Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url')
             Block.objects.create(user = user_model, target = dummy)
 
         query_params = {
