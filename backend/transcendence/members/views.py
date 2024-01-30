@@ -184,7 +184,7 @@ class MemberGameView(APIView):
 				for participant in page_obj:
 					game = participant.game_id
 	
-					participants_in_game = Participant.objects.filter(game_id = game.game_id) 
+					participants_in_game = Participant.objects.filter(game_id = game) 
 					user_ids_in_game = participants_in_game.values_list('user_id', flat = True)
 				
 					opponent_player = Members.objects.exclude(id=user_id).get(id__in=user_ids_in_game)
@@ -277,7 +277,7 @@ class MemberGameView(APIView):
 					tournament_data = []
 
 					for game_id in tournaments_game_ids:
-							game = Game.objects.get(game_id = game_id)
+							game = Game.objects.get(id = game_id)
 							participants_in_game = Participant.objects.filter(game_id = game)
 							user_ids_in_game = participants_in_game.values_list('user_id', flat = True)
 
