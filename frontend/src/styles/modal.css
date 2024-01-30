@@ -69,6 +69,7 @@
   display: flex;
   color: var(--gray);
   margin-bottom: 15px;
+  margin-right: 10px;
   flex-direction: column;
   align-content: center;
 }
@@ -126,4 +127,5 @@ label > .explanation {
 .singleButton {
   background-color: var(--green);
   width: 100%;
+  color: var(--white);
 }

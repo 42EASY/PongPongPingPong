@@ -1,5 +1,18 @@
 import addModal from "./adddModal.js";
 
+const tfa = {
+  title: "2차 인증",
+  showCloseButton: true,
+  bodyContent: [{ type: "image", src: "./src/images/qr.png", alt: "qr code" }],
+  footerContent: [
+    {
+      type: "singleButton",
+      text: "등록 완료",
+      class: "btn singleButton closeButton",
+    },
+  ],
+};
+
 const deleteFriend = {
   title: "friend1 님과 친구를 끊으시겠습니까?",
   showCloseButton: true,
@@ -189,7 +202,39 @@ const gameResultTable = {
   ],
 };
 
-const gameResult = {};
+const inviteFail = {
+  title: "사용자를 초대할 수 없습니다",
+  showCloseButton: true,
+  bodyContent: [
+    {
+      type: "text",
+      text: "사용자를 초대할 수 없습니다",
+    },
+  ],
+  footerContent: [
+    {
+      type: "primaryButton",
+      text: "확인",
+      class: "btn primaryButton closeButton",
+    },
+  ],
+};
+
+const inviteFail_alreadyInvited = JSON.parse(JSON.stringify(inviteFail));
+inviteFail_alreadyInvited.bodyContent[0].text =
+  "이미 초대되었거나 초대 대기 중인 사용자는 초대할 수 없습니다";
+
+const inviteFail_fullRoom = JSON.parse(JSON.stringify(inviteFail));
+inviteFail_fullRoom.bodyContent[0].text =
+  "게임방이 꽉 차면 더이상 사용자를 초대할 수 없습니다";
+
+const inviteFail_offline = JSON.parse(JSON.stringify(inviteFail));
+inviteFail_offline.bodyContent[0].text =
+  "오프라인 상태의 사용자는 초대할 수 없습니다";
+
+const inviteFail_inGame = JSON.parse(JSON.stringify(inviteFail));
+inviteFail_inGame.bodyContent[0].text =
+  "게임 중인 상태의 사용자는 초대할 수 없습니다";
 
 const $app = document.querySelector(".App");
 
@@ -198,7 +243,8 @@ export default function Modal(modalName) {
   let $modalWrapper;
   let $closeButtons;
 
-  if (modalName === "deleteFriend") $modalWrapper = addModal(deleteFriend);
+  if (modalName === "tfa") $modalWrapper = addModal(tfa);
+  else if (modalName === "deleteFriend") $modalWrapper = addModal(deleteFriend);
   else if (modalName === "blockFriend") $modalWrapper = addModal(blockFriend);
   else if (modalName === "unblockFriend")
     $modalWrapper = addModal(unblockFriend);
@@ -208,6 +254,19 @@ export default function Modal(modalName) {
     $modalWrapper = addModal(tournamentTable);
   else if (modalName === "gameResultTable")
     $modalWrapper = addModal(gameResultTable);
+  else if (modalName === "inviteFail_alreadyInvited") {
+    // inviteFail - alreadyInvited
+    console.log(inviteFail_alreadyInvited);
+    $modalWrapper = addModal(inviteFail_alreadyInvited);
+  } else if (modalName === "inviteFail_fullRoom")
+    // inviteFail - fullRoom
+    $modalWrapper = addModal(inviteFail_fullRoom);
+  else if (modalName === "inviteFail_offline")
+    // inviteFail - offline
+    $modalWrapper = addModal(inviteFail_offline);
+  else if (modalName === "inviteFail_inGame")
+    // inviteFail - inGame
+    $modalWrapper = addModal(inviteFail_inGame);
   else if (modalName === "gameMode") {
     let selectedGameMode = "";
     $modalWrapper = addModal(gameMode);
@@ -236,7 +295,6 @@ export default function Modal(modalName) {
     }
 
     const $startButton = $modalWrapper.querySelector("#gameOptionStart");
-    console.log("selected game Option : " + selectedGameOption);
     $startButton.addEventListener("click", () => {
       if (selectedGameOption) {
         $app.removeChild($modalWrapper);
@@ -246,15 +304,12 @@ export default function Modal(modalName) {
   } else if (modalName === "waitingPlayer")
     $modalWrapper = addModal(waitingPlayer);
 
-  console.log($modalWrapper);
   $app.appendChild($modalWrapper);
 
   $closeButtons = document.getElementsByClassName("closeButton");
   for (let i = 0; i < $closeButtons.length; i++) {
     $closeButtons[i].addEventListener("click", () => {
-      console.log($closeButtons[i]);
       $app.removeChild($modalWrapper);
     });
   }
-  console.log("ss");
 }
