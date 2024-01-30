@@ -13,7 +13,7 @@ class Game(models.Model):
         TOURNAMENT = 'TOURNAMENT', 'Tournament mode'
         # 추가 모드 필요 시 여기에 정의
 
-    game_id = models.BigAutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     game_option = models.CharField(max_length=100, choices=GameOption.choices)
     game_mode = models.CharField(max_length=100, choices=GameMode.choices)
     start_time = models.DateTimeField(null=True)
