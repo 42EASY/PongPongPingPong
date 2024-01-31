@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Tournament(models.Model):
-	key = models.BigAutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
 
 class TournamentGame(models.Model):
     class Round(models.TextChoices):

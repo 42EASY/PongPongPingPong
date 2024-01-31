@@ -1,56 +1,90 @@
 import addModal from "./adddModal.js";
-
-const fstModal = {
-  title: "friend1 님과 친구를 끊으시겠습니까?",
-  showCloseButton: true,
-  bodyContent: [
-    { type: "text", text: "이 사용자를 다시 친구 추가할 수 있습니다." },
-  ],
-  footerContent: [
-    {
-      type: "secondaryButton",
-      text: "취소",
-    },
-    {
-      type: "primaryButton",
-      text: "친구끊기",
-    },
-  ],
-};
-
-const sndModal = {
-  title: "friend1 님을 차단하시겠습니까?",
-  showCloseButton: true,
-  bodyContent: [
-    { type: "text", text: "Friends > 차단 목록에서 해제할 수 있습니다." },
-  ],
-  footerContent: [
-    {
-      type: "secondaryButton",
-      text: "취소",
-    },
-    {
-      type: "primaryButton",
-      text: "친구끊기",
-    },
-  ],
-};
+import modals from "./ModalsInfo.js";
 
 const $app = document.querySelector(".App");
 
-export default function Modal(modalId) {
-  console.log("modal ID:" + modalId);
+export default function Modal(modalName) {
+  console.log("modal name :" + modalName);
   let $modalWrapper;
   let $closeButtons;
 
-  if (modalId === 1) $modalWrapper = addModal(fstModal);
-  else if (modalId === 2) $modalWrapper = addModal(sndModal);
+  if (modalName === "tfa") $modalWrapper = addModal(modals.tfa);
+  else if (modalName === "deleteFriend")
+    $modalWrapper = addModal(modals.deleteFriend);
+  else if (modalName === "blockFriend")
+    $modalWrapper = addModal(modals.blockFriend);
+  else if (modalName === "unblockFriend")
+    $modalWrapper = addModal(modals.unblockFriend);
+  else if (modalName === "exitChatting")
+    $modalWrapper = addModal(modals.exitChatting);
+  else if (modalName === "invalidGame")
+    $modalWrapper = addModal(modals.invalidGame);
+  else if (modalName === "tournamentTable")
+    $modalWrapper = addModal(modals.tournamentTable);
+  else if (modalName === "gameResultTable")
+    $modalWrapper = addModal(modals.gameResultTable);
+  else if (modalName === "inviteFail_alreadyInvited")
+    $modalWrapper = addModal(modals.inviteFail_alreadyInvited);
+  else if (modalName === "inviteFail_fullRoom")
+    $modalWrapper = addModal(modals.inviteFail_fullRoom);
+  else if (modalName === "inviteFail_offline")
+    $modalWrapper = addModal(modals.inviteFail_offline);
+  else if (modalName === "inviteFail_inGame")
+    $modalWrapper = addModal(modals.inviteFail_inGame);
+  else if (modalName === "gameMode") {
+    let selectedGameMode = "";
+    $modalWrapper = addModal(modals.gameMode);
+    const $radioButtons = $modalWrapper.querySelectorAll('input[type="radio"]');
+    for (const $radioButton of $radioButtons) {
+      $radioButton.addEventListener("change", () => {
+        selectedGameMode = $radioButton.value;
+        if ($radioButton.value === "토너먼트") {
+          const $button = document.querySelector(".singleButton");
+          $button.innerHTML = "게임 시작";
+          $button.setAttribute("id", "gameStart");
+        } else {
+          const $button = document.querySelector(".singleButton");
+          $button.innerHTML = "다음";
+          $button.setAttribute("id", "gameModeNext");
+        }
+      });
+    }
+
+    const $nextButton = $modalWrapper.querySelector("#gameModeNext");
+    $nextButton.addEventListener("click", () => {
+      if (selectedGameMode === "토너먼트") {
+        $app.removeChild($modalWrapper);
+        Modal("waitingPlayer");
+      } else {
+        $app.removeChild($modalWrapper);
+        Modal("gameOption");
+      }
+    });
+  } else if (modalName === "gameOption") {
+    let selectedGameOption = "";
+    $modalWrapper = addModal(modals.gameOption);
+    const $radioButtons = $modalWrapper.querySelectorAll('input[type="radio"]');
+    for (const $radioButton of $radioButtons) {
+      $radioButton.addEventListener("change", () => {
+        selectedGameOption = $radioButton.value;
+      });
+    }
+
+    const $startButton = $modalWrapper.querySelector("#gameStart");
+    $startButton.addEventListener("click", () => {
+      if (selectedGameOption) {
+        $app.removeChild($modalWrapper);
+        Modal("waitingPlayer");
+      }
+    });
+  } else if (modalName === "waitingPlayer")
+    $modalWrapper = addModal(modals.waitingPlayer);
+
   $app.appendChild($modalWrapper);
 
   $closeButtons = document.getElementsByClassName("closeButton");
   for (let i = 0; i < $closeButtons.length; i++) {
     $closeButtons[i].addEventListener("click", () => {
-      console.log($closeButtons[i]);
       $app.removeChild($modalWrapper);
     });
   }
