@@ -40,7 +40,8 @@ export default function changeUrl(requestedUrl) {
   document.getElementById("styles").setAttribute("href", cssPath);
   history.pushState(null, null, match.path);
 
-  match.page();
+  if (match.page === EndGame) match.page("tournament", 1, 3);
+  else match.page();
 }
 
 window.addEventListener("click", (e) => {
