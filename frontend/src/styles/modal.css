@@ -5,21 +5,8 @@
   --darkGray: #6b7280;
   --gray: #adadad;
   --lightGray: #e5e7eb;
+  /* accent-color: var(--green); */
 }
-
-html,
-body,
-.App {
-  /* height: 100%; */
-  /* width: 100%; */
-  /* background-color: black; */
-}
-
-/* .App {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
 
 .modalOverlay {
   position: fixed;
@@ -46,6 +33,7 @@ body,
   border-radius: 10px;
   padding: 15px 25px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.8px;
 }
 
 .modalWrapper * {
@@ -78,8 +66,42 @@ body,
 }
 
 .modalBody {
-  color: var(--darkGray);
-  margin-bottom: 20px;
+  display: flex;
+  color: var(--gray);
+  margin-bottom: 15px;
+  margin-right: 10px;
+  flex-direction: column;
+  align-content: center;
+}
+
+.radioBox {
+  display: flex;
+}
+
+[type="radio"] {
+  appearance: none;
+  margin-top: 6px;
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--darkGray);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+}
+
+[type="radio"]:checked {
+  background-color: var(--white);
+  border: 3.5px solid var(--green);
+}
+
+.radioBox > label {
+  margin: 0px 10px;
+  color: var(--black);
+}
+
+label > .explanation {
+  font-size: 13.5px;
+  color: var(--gray);
 }
 
 .modalFooter {
@@ -100,4 +122,10 @@ body,
   background-color: var(--green);
   color: var(--white);
   border-color: var(--green);
+}
+
+.singleButton {
+  background-color: var(--green);
+  width: 100%;
+  color: var(--white);
 }

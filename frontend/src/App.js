@@ -47,7 +47,7 @@ window.addEventListener("click", (e) => {
     changeUrl("/gameroom");
   } else if (e.target.classList.contains("modalBtn")) {
     // GameRoom 페이지의 버튼이 클릭된 경우
-    Modal(1);
+    Modal("gameMode");
   }
 });
 
