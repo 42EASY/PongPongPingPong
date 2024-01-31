@@ -26,7 +26,7 @@ class FriendsView(APIView):
         except:
             return JsonResponse({
                 'code': 404,
-                'message': 'Bad Request'
+                'message': 'Not Found'
             }, status = 404)
   
         try:
@@ -40,7 +40,7 @@ class FriendsView(APIView):
         
         return JsonResponse({
             'code': 201,
-            'message': 'Bad Request'
+            'message': 'Created'
         }, status = 201)
     
 
