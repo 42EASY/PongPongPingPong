@@ -11,7 +11,7 @@ const inviteFail = {
     {
       type: "primaryButton",
       text: "확인",
-      class: "btn primaryButton closeButton",
+      class: "btn primaryButton close",
     },
   ],
 };
@@ -27,7 +27,7 @@ const modals = {
       {
         type: "singleButton",
         text: "등록 완료",
-        class: "btn singleButton closeButton",
+        class: "btn singleButton close",
       },
     ],
   },
@@ -42,7 +42,7 @@ const modals = {
       {
         type: "secondaryButton",
         text: "취소",
-        class: "btn secondaryButton closeButton",
+        class: "btn secondaryButton close",
       },
       {
         type: "primaryButton",
@@ -62,7 +62,7 @@ const modals = {
       {
         type: "secondaryButton",
         text: "취소",
-        class: "btn secondaryButton closeButton",
+        class: "btn secondaryButton close",
       },
       {
         type: "primaryButton",
@@ -82,7 +82,7 @@ const modals = {
       {
         type: "secondaryButton",
         text: "취소",
-        class: "btn secondaryButton closeButton",
+        class: "btn secondaryButton close",
       },
       {
         type: "primaryButton",
@@ -102,7 +102,7 @@ const modals = {
       {
         type: "secondaryButton",
         text: "취소",
-        class: "btn secondaryButton closeButton",
+        class: "btn secondaryButton close",
       },
       {
         type: "primaryButton",
@@ -160,7 +160,7 @@ const modals = {
     footerContent: [
       {
         type: "singleButton",
-        text: "게임 시작",
+        text: "🏓게임 시작🏓",
         class: "btn singleButton",
         id: "gameStart",
       },
@@ -174,7 +174,7 @@ const modals = {
       {
         type: "singleButton",
         text: "취소",
-        class: "btn singleButton closeButton",
+        class: "btn singleButton close",
       },
     ],
   },
@@ -192,7 +192,7 @@ const modals = {
       {
         type: "primaryButton",
         text: "확인",
-        class: "btn primaryButton closeButton",
+        class: "btn primaryButton close",
       },
     ],
   },
