@@ -1,4 +1,5 @@
 import Result from "../components/Game/GameResult.js";
+import confetti from "https://cdn.skypack.dev/canvas-confetti";
 
 export default function EndGame(mode, leftScore, rightScore) {
   const $app = document.querySelector(".App");
@@ -6,16 +7,46 @@ export default function EndGame(mode, leftScore, rightScore) {
 
   $app.appendChild(Result(mode, leftScore, rightScore));
   if (leftScore > rightScore) {
-    // win
-    const $leftConfetti = document.createElement("img");
-    const $rightConfetti = document.createElement("img");
-    $leftConfetti.classList.add("confetti", "leftConfetti"); // order: -1
-    $rightConfetti.classList.add("confetti", "rightConfetti");
-    $leftConfetti.setAttribute("src", "./src/images/left_confetti.svg");
-    $leftConfetti.setAttribute("alt", "left confetti");
-    $rightConfetti.setAttribute("src", "./src/images/right_confetti.svg");
-    $leftConfetti.setAttribute("alt", "right confetti");
-    $app.appendChild($leftConfetti);
-    $app.appendChild($rightConfetti);
+    let lastCallTime = performance.now(); // 마지막 호출 시간
+    const callInterval = 200; // 호출 간격
+
+    const doItNow = (evt, hard) => {
+      const currentTime = performance.now();
+      if (currentTime - lastCallTime < callInterval) return;
+      lastCallTime = currentTime;
+      const direction = Math.sign(lastX - evt.clientX);
+      lastX = evt.clientX;
+      const particleCount = hard ? r(122, 300) : r(40, 50);
+      confetti({
+        particleCount,
+        angle: r(90, 90 + direction * 30),
+        spread: r(60, 80),
+        origin: {
+          x: evt.clientX / window.innerWidth,
+          y: evt.clientY / window.innerHeight,
+        },
+      });
+    };
+    console.log(confetti);
+    const doIt = (evt) => {
+      doItNow(evt, false);
+    };
+
+    const doItHard = (evt) => {
+      doItNow(evt, true);
+    };
+
+    let lastX = 0;
+    $app.addEventListener("mousemove", doIt);
+    $app.addEventListener("click", doItHard);
+
+    function r(mi, ma) {
+      return parseInt(Math.random() * (ma - mi) + mi);
+    }
+
+    setTimeout(function () {
+      $app.removeEventListener("mousemove", doIt);
+      $app.removeEventListener("click", doItHard);
+    }, 5000);
   }
 }

@@ -40,7 +40,7 @@ export default function Modal(modalName) {
         selectedGameMode = $radioButton.value;
         if ($radioButton.value === "토너먼트") {
           const $button = document.querySelector(".singleButton");
-          $button.innerHTML = "게임 시작";
+          $button.innerHTML = "🏓게임 시작🏓";
           $button.setAttribute("id", "gameStart");
         } else {
           const $button = document.querySelector(".singleButton");
@@ -55,7 +55,7 @@ export default function Modal(modalName) {
       if (selectedGameMode === "토너먼트") {
         $app.removeChild($modalWrapper);
         Modal("waitingPlayer");
-      } else {
+      } else if (selectedGameMode) {
         $app.removeChild($modalWrapper);
         Modal("gameOption");
       }
@@ -82,10 +82,14 @@ export default function Modal(modalName) {
 
   $app.appendChild($modalWrapper);
 
-  $closeButtons = document.getElementsByClassName("closeButton");
+  $closeButtons = document.getElementsByClassName("close");
   for (let i = 0; i < $closeButtons.length; i++) {
     $closeButtons[i].addEventListener("click", () => {
       $app.removeChild($modalWrapper);
     });
   }
+
+  document.querySelector(".modalWrapper").addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
 }

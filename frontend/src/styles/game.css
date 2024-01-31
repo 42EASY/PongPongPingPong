@@ -22,11 +22,12 @@ body,
   flex-direction: column;
 }
 
-.infoWrapper {
-  width: 370px;
-  height: 44px;
+.gameInfoWrapper {
   display: flex;
   flex-direction: row;
+  width: 40%;
+  height: 44px;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   color: var(--white);
@@ -34,16 +35,19 @@ body,
 }
 
 .infoBox {
-  width: 43%;
+  width: 200px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-content: center;
 }
 
 .name {
-  width: 68%;
+  display: flex;
   font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  width: 2000px;
 }
 
 .leftName {
@@ -51,6 +55,8 @@ body,
 }
 
 .profileImage {
+  display: flex;
+  align-content: center;
   width: 44px;
   height: 44px;
   border-radius: 70%;

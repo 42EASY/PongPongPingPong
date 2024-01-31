@@ -8,8 +8,10 @@ function addElement(content) {
 }
 
 export default function addModal(options) {
-  console.log("in addModal");
-  const $modalOverlay = addElement({ typd: "div", class: "modalOverlay" });
+  const $modalOverlay = addElement({
+    type: "div",
+    class: "modalOverlay close",
+  });
   const $modalWrapper = addElement({ type: "div", class: "modalWrapper" });
   const $modalHeader = addElement({ type: "div", class: "modalHeader" });
   const $modalBody = addElement({ type: "div", class: "modalBody" });
@@ -27,7 +29,7 @@ export default function addModal(options) {
     $modalHeader.appendChild(
       addElement({
         type: "i",
-        class: "closeButton bi bi-x",
+        class: "close bi bi-x",
         id: "x",
       })
     );

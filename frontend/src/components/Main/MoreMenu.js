@@ -1,3 +1,6 @@
+import OtherBtn from "./OtherBtn.js";
+import Modal from "../Modal/Modal.js";
+
 export default function MoreMenu() {
   const $MoreMenuWrapper = document.createElement("div");
   const $MoreMenu = document.createElement("ul");
@@ -19,6 +22,18 @@ export default function MoreMenu() {
   $BlockOption.appendChild($BlockIcon);
   $BlockIcon.classList.add("bi", "bi-person-dash", "menuIcon");
   $BlockOption.append("차단하기");
+
+  $InviteGameOption.addEventListener("click", () => {
+    // todo: 게임 초대
+  });
+
+  $BlockOption.addEventListener("click", () => {
+    // todo: Post 차단
+    const $ProfileBtnBox = document.querySelector("#profileBtnBox");
+    $ProfileBtnBox.innerHTML = "";
+    Modal("blockFriend");
+    $ProfileBtnBox.appendChild(OtherBtn({ status: 2 }));
+  });
 
   return $MoreMenuWrapper;
 }

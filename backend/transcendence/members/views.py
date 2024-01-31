@@ -9,7 +9,6 @@ from social.models import Block, Friend, Relation
 from games.models import Game, Participant
 from django.db.models import Count, Q
 from django.core.paginator import Paginator
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from tournaments.models import Tournament, TournamentGame
 from django.core.files.storage import default_storage
 from urllib.parse import urlparse
@@ -109,6 +108,90 @@ class MemberView(APIView):
 			}
 		}, status=200)
 
+class MemberSearchView(APIView):
+	@login_required
+	def get(self, request):
+		keyword = request.GET.get('keyword', None)
+		page = request.GET.get('page', None)
+		size = request.GET.get('size', None)
+		
+		if (page == None or page == ''):
+			return JsonResponse({
+				'code': 400,
+				'message':'NULL Error'
+			}, status = 400)
+
+		#만일 size값이 없으면 size는 10으로 지정
+		if (size == None or size == ''):
+			size = 10
+		
+		data = []
+	   
+		try:
+			#keyword가 비어있는 경우 전체 리스트 반환
+			if (keyword == None or keyword == ''):
+				member_list = Members.objects.order_by('nickname')
+			else:
+				member_list = Members.objects.filter(nickname__icontains = keyword).order_by('nickname')
+
+		except:
+			return JsonResponse({
+				'code': 400,
+				'message':'Model Error'
+			}, status = 400)
+
+		try :
+			paginator = Paginator(member_list, size)
+			total_page = paginator.num_pages
+
+		except:
+			return JsonResponse({
+				'code': 400,
+				'message':'Paginator Error'
+			}, status = 400)
+			
+		
+		#total page의 범위를 벗어난 page를 가지고자 한 경우
+		if (int(total_page) < int(page)) or (int(page) <= 0):
+			return JsonResponse({
+				'code': 400,
+				'message':'Page Index Error'
+			}, status = 400)
+		
+		try:
+			page_obj = paginator.get_page(page)
+		
+		except:
+			return JsonResponse({
+				'code': 400,
+				'message': 'Get Page Error'
+			}, status = 400)
+
+		try:
+			for member in page_obj:
+				user_data = {
+					'user_id' : member.id,
+					'image_url' : member.image_url,
+					'nickname' : member.nickname
+				}
+				data.append(user_data)
+		except:
+			return JsonResponse({
+				'code': 400,
+				'message' : 'Input Data Error'
+			}, status = 400)
+
+
+		result = {
+			'data' : data,
+			'total_page' : total_page
+		}
+
+		return JsonResponse({
+			'code': 200,
+			'message': 'ok',
+			'result' : result
+		}, status = 200)
 
 class MemberGameView(APIView):
 	@login_required
@@ -123,9 +206,9 @@ class MemberGameView(APIView):
 			
 		except:
 			return JsonResponse({
-            	'code': 404,
-            	'message': 'Not Found'
-            }, status = 404)
+				'code': 404,
+				'message': 'Not Found'
+			}, status = 404)
 
 		if (page == None or page == ''):
 			return JsonResponse({
@@ -136,9 +219,9 @@ class MemberGameView(APIView):
 		#만일 size값이 없으면 size는 10으로 지정
 		if (size == None or size == ''):
 			size = 10
-    		
+			
 		data = []
-       
+	   
 	   #normal 모드일 경우
 		if (mode == Game.GameMode.NORMAL):
 
@@ -147,7 +230,7 @@ class MemberGameView(APIView):
 
 			except:
 				return JsonResponse({
-			    	'code': 400,
+					'code': 400,
 					'message':'Model Error'
 				}, status = 400)
 
@@ -158,27 +241,27 @@ class MemberGameView(APIView):
 				
 			except:
 				return JsonResponse({
-			    	'code': 400,
+					'code': 400,
 					'message':'Paginator Error'
 				}, status = 400)
-        
+		
 
 			#total page의 범위를 벗어난 page를 가지고자 한 경우
 			if (int(total_page) < int(page)) or (int(page) <= 0):
 				return JsonResponse({
-			    'code': 400,
+				'code': 400,
 				'message':'Page Index Error'
 			}, status = 400)
-        
+		
 
 			try:
 				page_obj = paginator.get_page(page)
-        
+		
 			except:
 				return JsonResponse({
-                	'code': 400,
-                	'message': 'Get Page Error'
-            	}, status = 400)
+					'code': 400,
+					'message': 'Get Page Error'
+				}, status = 400)
 
 			try: 
 				for participant in page_obj:
@@ -222,9 +305,9 @@ class MemberGameView(APIView):
 				
 			except:
 				return JsonResponse({
-                	'code': 400,
-                	'message': 'Get Data Error'
-            	}, status = 400)
+					'code': 400,
+					'message': 'Get Data Error'
+				}, status = 400)
 
 		#tournament인 경우
 		elif (mode == Game.GameMode.TOURNAMENT):
@@ -254,7 +337,7 @@ class MemberGameView(APIView):
 			#total page의 범위를 벗어난 page를 가지고자 한 경우
 			if (int(total_page) < int(page)) or (int(page) <= 0):
 				return JsonResponse({
-			    'code': 400,
+				'code': 400,
 				'message':'Page Index Error'
 			}, status = 400)
 
@@ -263,10 +346,10 @@ class MemberGameView(APIView):
 
 			except:
 				return JsonResponse({
-                	'code': 400,
-                	'message': 'Get Page Error'
-            	}, status = 400)
-        
+					'code': 400,
+					'message': 'Get Page Error'
+				}, status = 400)
+		
 			tournaments = []
 
 			try:
@@ -329,15 +412,13 @@ class MemberGameView(APIView):
 				data.append({'tournament' : tournaments})
 			except:
 				return JsonResponse({
-                	'code': 400,
-                	'message': 'Get Data Error'
-            	}, status = 400)
-
-			
+					'code': 400,
+					'message': 'Get Data Error'
+				}, status = 400)
 
 		#모드가 잘못되었을 경우
 		else:
-			return JsonResponse({       
+			return JsonResponse({	   
 				'code': 400,
 				'message':'Mode Error'
 			}, status = 400)
@@ -348,7 +429,7 @@ class MemberGameView(APIView):
 		}
 
 		return JsonResponse({
-            'code': 200,
-            'message': 'ok',
-            'result' : result
-        }, status = 200)
+			'code': 200,
+			'message': 'ok',
+			'result' : result
+		}, status = 200)
