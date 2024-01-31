@@ -160,7 +160,7 @@ const modals = {
     footerContent: [
       {
         type: "singleButton",
-        text: "게임 시작",
+        text: "🏓게임 시작🏓",
         class: "btn singleButton",
         id: "gameStart",
       },
