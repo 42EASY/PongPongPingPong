@@ -8,7 +8,6 @@ function addElement(content) {
 }
 
 export default function addModal(options) {
-  console.log("in addModal");
   const $modalOverlay = addElement({
     type: "div",
     class: "modalOverlay close",
