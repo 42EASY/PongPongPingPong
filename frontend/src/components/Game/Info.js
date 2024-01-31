@@ -13,7 +13,7 @@ export default function Info() {
   $rightProfileImage.setAttribute("src", "./src/images/none_profile.png");
   $rightProfileImage.setAttribute("alt", "profile image");
 
-  $infoWrapper.classList.add("infoWrapper");
+  $infoWrapper.classList.add("gameInfoWrapper");
   $leftBox.classList.add("leftBox", "infoBox");
   $leftProfileImage.classList.add("leftProfileImage", "profileImage");
   $leftName.classList.add("leftName", "name");

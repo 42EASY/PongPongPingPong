@@ -25,7 +25,7 @@ export const changeUrl = (requestedUrl) => {
   document.getElementById("styles").setAttribute("href", path);
   history.pushState(null, null, window.location.pathname);
   currentComponent = routes[requestedUrl];
-  if (currentComponent === EndGame) currentComponent("tournament", 1, 3);
+  if (currentComponent === EndGame) currentComponent("tournament", 3, 1);
   else currentComponent();
 };
 
