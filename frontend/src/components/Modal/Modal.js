@@ -82,7 +82,7 @@ export default function Modal(modalName) {
 
   $app.appendChild($modalWrapper);
 
-  $closeButtons = document.getElementsByClassName("closeButton");
+  $closeButtons = document.getElementsByClassName("close");
   for (let i = 0; i < $closeButtons.length; i++) {
     $closeButtons[i].addEventListener("click", () => {
       $app.removeChild($modalWrapper);
