@@ -5,6 +5,7 @@ import EndGame from "./pages/EndGame.js";
 import Test from "./pages/Test.js";
 import GameRoom from "./pages/GameRoom.js";
 import Modal from "./components/Modal/Modal.js";
+import Register from "./pages/Register.js";
 
 const $app = document.querySelector(".App");
 let currentComponent = Login;
@@ -16,6 +17,7 @@ const routes = {
   "/game": Game, //임의,,
   "/endgame": EndGame,
   "/gameroom": GameRoom,
+  "/register": Register,
 };
 
 $app.innerHTML = routes["/"]();
