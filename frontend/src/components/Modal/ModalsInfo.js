@@ -1,4 +1,22 @@
-export const moals = {
+const inviteFail = {
+  title: "사용자를 초대할 수 없습니다",
+  showCloseButton: true,
+  bodyContent: [
+    {
+      type: "text",
+      text: "사용자를 초대할 수 없습니다",
+    },
+  ],
+  footerContent: [
+    {
+      type: "primaryButton",
+      text: "확인",
+      class: "btn primaryButton closeButton",
+    },
+  ],
+};
+
+const modals = {
   tfa: {
     title: "2차 인증",
     showCloseButton: true,
@@ -203,37 +221,22 @@ export const moals = {
     ],
   },
 
-  inviteFail: {
-    title: "사용자를 초대할 수 없습니다",
-    showCloseButton: true,
-    bodyContent: [
-      {
-        type: "text",
-        text: "사용자를 초대할 수 없습니다",
-      },
-    ],
-    footerContent: [
-      {
-        type: "primaryButton",
-        text: "확인",
-        class: "btn primaryButton closeButton",
-      },
-    ],
-  },
   inviteFail_alreadyInvited: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_fullRoom: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_offline: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_inGame: JSON.parse(JSON.stringify(inviteFail)),
 };
 
-inviteFail_alreadyInvited.bodyContent[0].text =
+modals.inviteFail_alreadyInvited.bodyContent[0].text =
   "이미 초대되었거나 초대 대기 중인 사용자는 초대할 수 없습니다";
 
-inviteFail_fullRoom.bodyContent[0].text =
+modals.inviteFail_fullRoom.bodyContent[0].text =
   "게임방이 꽉 차면 더이상 사용자를 초대할 수 없습니다";
 
-inviteFail_offline.bodyContent[0].text =
+modals.inviteFail_offline.bodyContent[0].text =
   "오프라인 상태의 사용자는 초대할 수 없습니다";
 
-inviteFail_inGame.bodyContent[0].text =
+modals.inviteFail_inGame.bodyContent[0].text =
   "게임 중인 상태의 사용자는 초대할 수 없습니다";
+
+export default modals;
