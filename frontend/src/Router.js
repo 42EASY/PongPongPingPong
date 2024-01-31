@@ -8,7 +8,7 @@ import Modal from "./components/Modal/Modal.js";
 import Register from "./pages/Register.js";
 
 const routes = [
-  { path: "/", page: Test }, //추후 Test > Login으로 변경
+  { path: "/", page: Test }, //todo: Test > Login으로 변경
   { path: "/login", page: Login },
   { path: "/register", page: Register },
   { path: "/main", page: Main },
