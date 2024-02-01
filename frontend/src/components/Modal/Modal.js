@@ -9,6 +9,7 @@ export default function Modal(modalName) {
   let $closeButtons;
 
   if (modalName === "tfa") $modalWrapper = addModal(modals.tfa);
+  else if (modalName === "otp") $modalWrapper = addModal(modals.otp);
   else if (modalName === "deleteFriend")
     $modalWrapper = addModal(modals.deleteFriend);
   else if (modalName === "blockFriend")
