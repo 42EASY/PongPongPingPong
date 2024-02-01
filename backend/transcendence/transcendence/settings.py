@@ -188,3 +188,14 @@ CACHES = {
         }
     }
 }
+
+#channel_layer 설정
+ASGI_APPLICATION = 'transcendence.routing.application'
+CHANNEL_LAYERS = {
+    'default' : {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts" : [('redis', 6379)],
+        },
+    },
+}
