@@ -1,4 +1,4 @@
-import { changeUrl } from "../../App.js";
+import changeUrl from "../../Router.js";
 
 export default function MyBtn() {
   const $MyBtnWrapper = document.createElement("div");

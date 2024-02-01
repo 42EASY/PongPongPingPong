@@ -6,11 +6,13 @@ import Test from "./pages/Test.js";
 import GameRoom from "./pages/GameRoom.js";
 import Modal from "./components/Modal/Modal.js";
 import Register from "./pages/Register.js";
+import Redirect from "./components/Login/Redirect.js";
 
 const routes = [
   { path: "/", page: Test }, //todo: Test > Login으로 변경
   { path: "/login", page: Login },
   { path: "/register", page: Register },
+  { path: "/login/oauth2/code", page: Redirect },
   { path: "/main", page: Main },
   { path: "/gameroom", page: GameRoom },
   { path: "/game", page: Game },
@@ -38,7 +40,7 @@ export default function changeUrl(requestedUrl) {
 
   const cssPath = `./src/styles${match.path}.css`;
   document.getElementById("styles").setAttribute("href", cssPath);
-  history.pushState(null, null, match.path);
+  if (match.page !== Redirect) history.pushState(null, null, match.path);
 
   if (match.page === EndGame) match.page("tournament", 1, 3);
   else match.page();

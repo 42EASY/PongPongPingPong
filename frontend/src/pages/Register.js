@@ -5,7 +5,7 @@ import Nickname from "../components/Register/Nickname.js";
 import TwoFactorAuth from "../components/Register/TwoFactorAuth.js";
 import SubmitButton from "../components/Register/SubmitButton.js";
 
-export default function Register() {
+export default function Register(isInit = false) {
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 
@@ -14,7 +14,8 @@ export default function Register() {
   $registerWrapper.classList.add("registerWrapper");
 
   //타이틀
-  const $title = Title("퐁퐁핑퐁 가입하기"); //or 프로필 편집
+  const $title =
+    isInit === true ? Title("퐁퐁핑퐁 가입하기") : Title("프로필 편집");
   $registerWrapper.appendChild($title);
 
   //이미지 업로드
@@ -34,7 +35,8 @@ export default function Register() {
   $registerWrapper.appendChild($twoFactorAuth);
 
   //계정만들기 버튼
-  const $submitButton = SubmitButton("계정 만들기"); //or 수정하기
+  const $submitButton =
+    isInit === true ? SubmitButton("계정 만들기") : SubmitButton("수정하기");
   $registerWrapper.appendChild($submitButton);
 
   $app.appendChild($registerWrapper);
