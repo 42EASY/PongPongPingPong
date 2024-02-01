@@ -62,7 +62,7 @@ def login_required(func):
 		except Members.DoesNotExist:
 			return JsonResponse({
 				'code':404,
-				'message':'Not Found',
+				'message':'Login Member Not Found',
 			})
 		
 		return func(self, request, *args, **kwargs)

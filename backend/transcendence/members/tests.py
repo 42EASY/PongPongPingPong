@@ -154,6 +154,181 @@ class MemberViewGetTestCase(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.json()['code'], 404)
 
+class MemberSearchViewTestCase(APITestCase):
+	def setUp(self):
+		# 가짜 토큰 생성
+		self.fake_user = Members.objects.create(nickname='loginUser', email='loginUser@email.com', is_2fa=False)
+		refresh = RefreshToken.for_user(self.fake_user)
+		fake_token = str(refresh.access_token)
+
+		self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + fake_token)
+
+	@classmethod
+	def setUpTestData(cls):
+		for i in range(5):
+			dummy_nickname = 'dummy' + str(i)
+			dummy_email = 'dummy' + str(i) + '@test.com'
+			Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url')
+
+	#유저목록 목록 반환 테스트(keyword x)
+	def test_get_member_list_no_keyword(self):
+		query_params = {
+		   'keyword': '',
+		   'page': 1,
+		   'size': 5,
+		}
+
+		query_string = urlencode(query_params)
+	
+		url = reverse('members:search') + '?' + query_string
+		response = self.client.get(url)
+
+		self.assertEquals(response.json()['code'], 200)
+		self.assertEquals(response.status_code, 200)
+		self.assertEquals(response.json()['result']['total_page'], 2)
+
+
+
+	#유저 목록 반환 테스트(keyword o)
+	def test_get_member_list_keyword(self):
+		query_params = {
+		   'keyword': 'dummy',
+		   'page': 1,
+		   'size': 10
+		}
+
+		query_string = urlencode(query_params)
+	
+		url = reverse('members:search') + '?' + query_string
+		response = self.client.get(url)
+
+		self.assertEquals(response.json()['code'], 200)
+		self.assertEquals(response.status_code, 200)
+		self.assertEquals(response.json()['result']['total_page'], 1)
+		self.assertEquals(len(response.json()['result']['data']), 5)
+		
+
+	#유저 목록 반환 실패(유효하지 않는 size - 음수일 때)
+	def test_get_member_list_invalid_size(self):
+		query_params = {
+		   'keyword': '',
+		   'page': 1,
+		   'size': -1,
+		}
+
+		query_string = urlencode(query_params)
+	
+		url = reverse('members:search') + '?' + query_string
+		response = self.client.get(url)
+
+		self.assertEquals(response.json()['code'], 400)
+		self.assertEquals(response.status_code, 400)
+
+	#유저 목록 반환 실패(유효하지 않는 size - 0일때)
+	def test_get_member_list_invalid_size_zero(self):
+		query_params = {
+		   'keyword': '',
+		   'page': 1,
+		   'size': 0,
+		}
+
+		query_string = urlencode(query_params)
+	
+		url = reverse('members:search') + '?' + query_string
+		response = self.client.get(url)
+
+		self.assertEquals(response.json()['code'], 400)
+		self.assertEquals(response.status_code, 400)
+
+
+	#유저 목록 반환 성공(size가 빈칸일 때)
+	def test_get_member_list_invalid_size_null(self):
+		for i in range(5):
+			dummy_nickname = 'aa' + str(i)
+			dummy_email = 'aa' + str(i) + '@test.com'
+			Members.objects.create(nickname = dummy_nickname, email = dummy_email, is_2fa = False, image_url = 'test_url')
+
+		query_params = {
+		   'keyword': 'aa',
+		   'page': 1,
+		   'size': ''
+		}
+
+		query_string = urlencode(query_params)
+	
+		url = reverse('members:search') + '?' + query_string
+		response = self.client.get(url)
+
+		self.assertEquals(response.json()['code'], 200)
+		self.assertEquals(response.status_code, 200)
+	
+
+	#유저 목록 반환 실패(유효하지 않는 페이지 - 음수일 때)
+	def test_get_member_list_invalid_page_negative(self):
+		query_params = {
+		   'keyword': '',
+		   'page': -1,
+		   'size': 10
+		}
+
+		query_string = urlencode(query_params)
+	
+		url = reverse('members:search') + '?' + query_string
+		response = self.client.get(url)
+
+		self.assertEquals(response.json()['code'], 400)
+		self.assertEquals(response.status_code, 400)
+
+
+	#유저 목록 반환 실패(유효하지 않는 페이지 - 0일때)
+	def test_get_member_list_invalid_page_zero(self):  
+		query_params = {
+		   'keyword': '',
+		   'page': 0,
+		   'size': 10
+		}
+
+		query_string = urlencode(query_params)
+	
+		url = reverse('members:search') + '?' + query_string
+		response = self.client.get(url)
+
+		self.assertEquals(response.json()['code'], 400)
+		self.assertEquals(response.status_code, 400)
+
+
+	#유저 목록 반환 실패(유효하지 않는 페이지 - 빈칸일 때)
+	def test_get_member_list_invalid_page_blank(self):
+		query_params = {
+		   'keyword': '',
+		   'page': '',
+		   'size': 10,
+		}
+
+		query_string = urlencode(query_params)
+	
+		url = reverse('members:search') + '?' + query_string
+		response = self.client.get(url)
+
+		self.assertEquals(response.json()['code'], 400)
+		self.assertEquals(response.status_code, 400)
+
+	
+	#유저 목록 반환 실패(유효하지 않는 페이지 - 존재하는 페이지보다 큰 수 일때)
+	def test_get_member_list_invalid_page_big(self):
+		query_params = {
+		   'keyword': '',
+		   'page': 10000,
+		   'size': 10
+		}
+
+		query_string = urlencode(query_params)
+	
+		url = reverse('members:search') + '?' + query_string
+		response = self.client.get(url)
+
+		self.assertEquals(response.json()['code'], 400)
+		self.assertEquals(response.status_code, 400)
 
 
 class MemberGameViewTestCase(APITestCase):

@@ -12,6 +12,7 @@ export default function MyProfile() {
   const $ProfileInfoBox = document.createElement("div");
   const $ProfileNameBox = document.createElement("div");
   const $ProfileName = document.createElement("div");
+  const $ProfileBtnBox = document.createElement("div");
 
   $ProfileWrapper.id = "profileWrapper";
   $ProfileWrapper.appendChild($ProfileImageBox);
@@ -23,8 +24,10 @@ export default function MyProfile() {
   $ProfileNameBox.appendChild($ProfileName);
   $ProfileName.classList.add("mainProfileName");
   $ProfileName.innerHTML = "someone";
-  if (isMe) $ProfileNameBox.appendChild(MyBtn());
-  else $ProfileNameBox.appendChild(OtherBtn({ status: 0 }));
+  $ProfileNameBox.appendChild($ProfileBtnBox);
+  $ProfileBtnBox.id = "profileBtnBox";
+  if (isMe) $ProfileBtnBox.appendChild(MyBtn());
+  else $ProfileBtnBox.appendChild(OtherBtn({ status: 0 }));
   $ProfileInfoBox.appendChild(GameCount({ total: 42, win: 42, lose: 42 }));
   $ProfileInfoBox.appendChild(PercentBar({ win: 25, lose: 75 }));
   $ProfileImageBox.classList.add("profileImageBox");
