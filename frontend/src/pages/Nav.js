@@ -1,4 +1,4 @@
-import { changeUrl } from "../App.js";
+import changeUrl from "../Router.js";
 import Modal from "../components/Modal/Modal.js";
 import NavBar from "../components/Nav/NavBar.js";
 import Chat from "../pages/Chat.js";
