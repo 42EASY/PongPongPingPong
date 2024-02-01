@@ -1,12 +1,11 @@
-export default function UproadImage() {
+export default function UproadImage(image) {
   const $uproadImageWrapper = document.createElement("div");
   $uproadImageWrapper.classList.add("uproadImageWrapper");
 
   const $previewImage = document.createElement("img");
   $previewImage.classList.add("previewImage");
   //todo: 이미지 업로드 시 미리보기 기능 구현
-  $previewImage.setAttribute("src", "./src/images/none_profile.png");
-  console.log(window.location.pathname);
+  $previewImage.setAttribute("src", image);
   $previewImage.setAttribute("alt", "프로필 이미지");
 
   const $uproadImageButton = document.createElement("div");

@@ -1,4 +1,4 @@
-export default function TwoFactorAuth() {
+export default function TwoFactorAuth(is2fa) {
   const $twoFactorAuthWrapper = document.createElement("div");
   $twoFactorAuthWrapper.classList.add("twoFactorAuthWrapper");
 
@@ -14,7 +14,7 @@ export default function TwoFactorAuth() {
 
   const $twoFactorAuthContentInfo = document.createElement("div");
   $twoFactorAuthContentInfo.classList.add("twoFactorAuthContentInfo");
-  $twoFactorAuthContentInfo.innerHTML = "Googl e Authentication";
+  $twoFactorAuthContentInfo.innerHTML = "Google OTP";
 
   $twoFactorAuthContent.appendChild($twoFactorAuthContentInfo);
 
@@ -24,20 +24,21 @@ export default function TwoFactorAuth() {
   );
 
   const $twoFactorAuthDeactive = document.createElement("div");
-  //초기 화면에서는 비활성화 선택
-  $twoFactorAuthDeactive.classList.add(
-    "twoFactorAuthSelect",
-    "twoFactorAuthDeactive"
-  );
+  $twoFactorAuthDeactive.classList.add("twoFactorAuthDeactive");
 
   $twoFactorAuthDeactive.innerHTML = "비활성화";
 
   const $twoFactorAuthActive = document.createElement("div");
-  $twoFactorAuthActive.classList.add(
-    "twoFactorAuthUnSelect",
-    "twoFactorAuthActive"
-  );
+  $twoFactorAuthActive.classList.add("twoFactorAuthActive");
   $twoFactorAuthActive.innerHTML = "활성화";
+
+  if (is2fa) {
+    $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
+    $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
+  } else {
+    $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
+    $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
+  }
 
   $twoFactorAuthContentSelectBlock.appendChild($twoFactorAuthDeactive);
   $twoFactorAuthContentSelectBlock.appendChild($twoFactorAuthActive);
@@ -50,20 +51,17 @@ export default function TwoFactorAuth() {
   $twoFactorAuthWrapper.appendChild($twoFactorAuthContentWrapper);
 
   //비활성화 클릭 이벤트
+  //todo: is2fa가 true인 경우, 비활성화 클릭 시 인증 모달 띄우기
   $twoFactorAuthDeactive.onclick = () => {
-    $twoFactorAuthDeactive.classList.remove("twoFactorAuthUnSelect");
-    $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
     $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
-    $twoFactorAuthActive.classList.add("twoFactorAuthUnSelect");
+    $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
   };
 
   //활성화 클릭 이벤트
-  //todo: 활성화 클릭 시, 확인 모달 띄우기
+  //todo: 활성화 클릭 시, 인증 모달 띄우기
   $twoFactorAuthActive.onclick = () => {
-    $twoFactorAuthActive.classList.remove("twoFactorAuthUnSelect");
     $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
-    $twoFactorAuthDeactive.classList.add("twoFactorAuthUnSelect");
   };
 
   return $twoFactorAuthWrapper;

@@ -9,6 +9,12 @@ export default function Register(isInit = false) {
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 
+  const image = "./src/images/none_profile.png"; //기본 이미지
+  const email = "hahlee@student.com";
+  const nickname = "";
+  const is2fa = false;
+  //todo: isInit이 false 인 경우 api 호출해서 받아온 값으로 변경
+
   //전체 영역
   const $registerWrapper = document.createElement("div");
   $registerWrapper.classList.add("registerWrapper");
@@ -19,19 +25,19 @@ export default function Register(isInit = false) {
   $registerWrapper.appendChild($title);
 
   //이미지 업로드
-  const $uproadImage = UproadImage();
+  const $uproadImage = UproadImage(image);
   $registerWrapper.appendChild($uproadImage);
 
   //이메일
-  const $email = Email();
+  const $email = Email(email);
   $registerWrapper.appendChild($email);
 
   //닉네임
-  const $nickname = Nickname(); //어떤 페이지인지 인자로 넘겨주기
+  const $nickname = Nickname(nickname);
   $registerWrapper.appendChild($nickname);
 
   //2차인증
-  const $twoFactorAuth = TwoFactorAuth();
+  const $twoFactorAuth = TwoFactorAuth(is2fa);
   $registerWrapper.appendChild($twoFactorAuth);
 
   //계정만들기 버튼

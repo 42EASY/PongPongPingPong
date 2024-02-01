@@ -26,7 +26,7 @@ function checkUrl(requestedUrl) {
   return match;
 }
 
-export default function changeUrl(requestedUrl) {
+export default function changeUrl(requestedUrl, element) {
   //화면 초기화
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
@@ -38,11 +38,13 @@ export default function changeUrl(requestedUrl) {
   const match = checkUrl(requestedUrl);
   if (match === undefined) return; //todo: 404 페이지 띄우기
 
-  const cssPath = `./src/styles${match.path}.css`;
+  const cssPath = `/src/styles${match.path}.css`;
   document.getElementById("styles").setAttribute("href", cssPath);
+
   if (match.page !== Redirect) history.pushState(null, null, match.path);
 
   if (match.page === EndGame) match.page("tournament", 1, 3);
+  else if (match.page === Register) match.page(element);
   else match.page();
 }
 

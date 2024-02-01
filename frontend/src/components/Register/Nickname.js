@@ -1,4 +1,4 @@
-export default function Nickname() {
+export default function Nickname(nickname) {
   const $nicknameWrapper = document.createElement("div");
   $nicknameWrapper.classList.add("nicknameWrapper");
 
@@ -14,6 +14,7 @@ export default function Nickname() {
 
   const $nicknameInput = document.createElement("input");
   $nicknameInput.classList.add("nicknameInput");
+  nickname ? $nicknameInput.setAttribute("value", nickname) : "";
   $nicknameInput.setAttribute("type", "text");
   $nicknameInput.setAttribute("placeholder", "닉네임을 입력해주세요.");
 
