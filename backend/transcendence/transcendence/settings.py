@@ -191,7 +191,7 @@ CACHES = {
     }
 }
 
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:443','http://localhost:443']
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:443','http://localhost:443','http://127.0.0.1:8000','http://localhost:8000','http://127.0.0.1','http://localhost']
 
 CORS_ALLOW_ALL_ORIGIN = True 
 
