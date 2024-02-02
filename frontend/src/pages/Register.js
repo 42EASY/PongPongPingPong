@@ -4,16 +4,21 @@ import Email from "../components/Register/Email.js";
 import Nickname from "../components/Register/Nickname.js";
 import TwoFactorAuth from "../components/Register/TwoFactorAuth.js";
 import SubmitButton from "../components/Register/SubmitButton.js";
+import { getIsLogin, getEmail, getIs2fa } from "../state/State.js";
+import changeUrl from "../Router.js";
 
-export default function Register(isInit = false) {
+export default function Register(
+  isInit = false,
+  image = "./src/images/none_profile.png",
+  nickname = ""
+) {
+  if (getIsLogin() === false) {
+    changeUrl("/login"); //todo: 추후 "/"으로 변경
+    return;
+  }
+
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
-
-  const image = "./src/images/none_profile.png"; //기본 이미지
-  const email = "hahlee@student.com";
-  const nickname = "";
-  const is2fa = false;
-  //todo: isInit이 false 인 경우 api 호출해서 받아온 값으로 변경
 
   //전체 영역
   const $registerWrapper = document.createElement("div");
@@ -29,7 +34,7 @@ export default function Register(isInit = false) {
   $registerWrapper.appendChild($uproadImage);
 
   //이메일
-  const $email = Email(email);
+  const $email = Email(getEmail());
   $registerWrapper.appendChild($email);
 
   //닉네임
@@ -37,7 +42,7 @@ export default function Register(isInit = false) {
   $registerWrapper.appendChild($nickname);
 
   //2차인증
-  const $twoFactorAuth = TwoFactorAuth(is2fa);
+  const $twoFactorAuth = TwoFactorAuth(getIs2fa());
   $registerWrapper.appendChild($twoFactorAuth);
 
   //계정만들기 버튼
