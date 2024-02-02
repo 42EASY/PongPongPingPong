@@ -50,7 +50,7 @@ const setNewAccessToken = () => {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
+      console.log(data); //은비가 응답코드들 정리해주면 분기 필요
       // if (data.code === 200) {
       //   setLoginState(
       //     true,
