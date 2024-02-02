@@ -9,16 +9,23 @@ import jwt
 
 class JwtView(APIView):
 	def post(self, request):
-		# TODO: 헤더에서 가져오도록 해야함.
-		received_refresh_token = request.data.get('refresh_token')
+		header = request.META.get('HTTP_AUTHORIZATION', None)
+		if not header:
+			return JsonResponse(
+				{'code':401,
+				'message':'Unauthorized'},
+				status=401
+			)
+		
+		token = header.split()[1]
 		try:
-			member = Members.objects.get(id=cache.get(received_refresh_token))
+			Members.objects.get(id=cache.get(token))
 		except Members.DoesNotExist:
 			return JsonResponse({'code': 403, 'message': 'Forbidden'}, status=403)
 
 		# 새로운 access_token 생성
 		try:
-			refresh = RefreshToken(received_refresh_token)
+			refresh = RefreshToken(token)
 			new_access_token = str(refresh.access_token)
 		except:
 			return JsonResponse({'code': 403, 'message': 'Invalid refresh token'}, status=403)
