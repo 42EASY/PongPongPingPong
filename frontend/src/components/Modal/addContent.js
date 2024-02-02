@@ -11,6 +11,10 @@ export default function addContentElement(content) {
       $contentElement.setAttribute("src", content.src);
       $contentElement.setAttribute("alt", content.alt);
       break;
+    case "input":
+      $contentElement = document.createElement("input");
+      $contentElement.type = "text";
+      break;
     case "radio":
       $contentElement = document.createElement("div");
       $contentElement.classList.add("radioBox");

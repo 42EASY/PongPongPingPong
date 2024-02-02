@@ -19,7 +19,6 @@ services:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     command: -p "${POSTGRES_PORT}"
 
-
   backend:
     pull_policy: never
     build:
@@ -43,6 +42,7 @@ services:
     container_name: nginx
     ports: 
       - 443:443
+      - 80:80
     env_file:
       - .env
     networks:

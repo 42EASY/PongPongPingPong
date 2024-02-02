@@ -18,15 +18,44 @@ const inviteFail = {
 
 const modals = {
   tfa: {
-    title: "2차 인증",
+    title: "2차 인증 설정",
     showCloseButton: true,
     bodyContent: [
-      { type: "image", src: "./src/images/qr.png", alt: "qr code" },
+      {
+        type: "image",
+        src: "./src/images/qr.png",
+        alt: "qr code",
+      },
+      {
+        type: "text",
+        text: "Google OTP(Autheticator) 앱에서 QR코드를 스캔해주세요",
+      },
     ],
     footerContent: [
       {
         type: "singleButton",
-        text: "등록 완료",
+        text: "확인",
+        class: "btn singleButton close",
+      },
+    ],
+  },
+
+  otp: {
+    title: "OTP 인증번호 입력",
+    showCloseButton: true,
+    bodyContent: [
+      {
+        type: "text",
+        text: "Google OTP(Autheticator) 앱의\n인증번호 6자리를 입력해주세요",
+      },
+      {
+        type: "input",
+      },
+    ],
+    footerContent: [
+      {
+        type: "singleButton",
+        text: "확인",
         class: "btn singleButton close",
       },
     ],
