@@ -1,4 +1,4 @@
-import { getToken } from "../../state/State.js";
+import { getAccessToken } from "../../state/State.js";
 
 export default function SubmitButton(text) {
   const $submitButton = document.createElement("div");
@@ -11,7 +11,7 @@ export default function SubmitButton(text) {
   //     method: "PATCH",
   //     headers: {
   //       "content-Type": "multipart/form-data",
-  //       Authorization: `Bearer ${getToken()}`,
+  //       Authorization: `Bearer ${getAccessToken()}`,
   //     },
   //     body: JSON.stringify({
   //       image: "이미지 파일",
@@ -25,8 +25,7 @@ export default function SubmitButton(text) {
   //     .then((data) => {
   //       console.log(data);
   //       if (data.code === 200) {
-  //         setLoginState(true, data.data.token);
-  //         changeUrl("/register");
+  //        // 등록 성공 시 메인으로 보내기?ㄴ
   //       } else if (data.code === 400) {
   //         // 닉네임 중복 등 응답 처리 필요
   //       }
