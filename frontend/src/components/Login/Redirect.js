@@ -38,7 +38,7 @@ export default function Redirect() {
   //           data.result.is2fa
   //         );
   //         if (data.result.is2fa === true) {
-  //           changeUrl("/login/2fa");
+  //           changeUrl("/login/2fa"); //모달 띄우기
   //         } else changeUrl("/main");
   //       } else if (data.code === 201) {
   //         setLoginState(
