@@ -14,4 +14,4 @@ python /app/transcendence/manage.py migrate
 
 cd /app/transcendence
 
-daphne transcendence.asgi:application
+daphne transcendence.asgi:application -b 0.0.0.0 -p 8000
