@@ -1,6 +1,8 @@
 const loginState = {
   isLogin: false,
   token: "",
+  email: "",
+  is2fa: false,
 };
 
 const setLoginState = (state, token) => {
