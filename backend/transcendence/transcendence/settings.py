@@ -21,6 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = os.path.join(BASE_DIR, 'members/static')
 MEDIA_URL = '/transcendence/members/data/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -191,9 +193,7 @@ CACHES = {
     }
 }
 
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:443','http://localhost:443','http://127.0.0.1:8000','http://localhost:8000','http://127.0.0.1','http://localhost']
-
-CORS_ALLOW_ALL_ORIGIN = True 
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:8000','http://localhost:8000','http://127.0.0.1','http://localhost']
 
 CORS_ALLOW_METHODS = (
     "DELETE",
