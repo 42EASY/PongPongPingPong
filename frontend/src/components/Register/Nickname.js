@@ -28,6 +28,7 @@ export default function Nickname(nickname) {
   const $nicknameCheck = document.createElement("div");
   $nicknameCheck.classList.add("nicknameCheck");
   $nicknameCheck.innerHTML = "사용 중인 닉네임 입니다 등,, 에러 문구";
+  $nicknameCheck.style.display = "none"; //에러 문구가 없을 때는 display: none
   $nicknameWrapper.appendChild($nicknameCheck);
 
   return $nicknameWrapper;
