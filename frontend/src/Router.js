@@ -9,14 +9,14 @@ import Register from "./pages/Register.js";
 import Redirect from "./components/Login/Redirect.js";
 
 const routes = [
-  { path: "/", page: Test }, //todo: Test > Login으로 변경
-  { path: "/login", page: Login },
-  { path: "/register", page: Register },
-  { path: "/login/oauth2/code", page: Redirect },
-  { path: "/main", page: Main },
-  { path: "/gameroom", page: GameRoom },
-  { path: "/game", page: Game },
-  { path: "/endgame", page: EndGame },
+  { path: "/", page: Test, style: "/" }, //todo: Test > Login으로 변경
+  { path: "/login", page: Login, style: "login" },
+  { path: "/register", page: Register, style: "register" },
+  { path: "/login/oauth2/code", page: Redirect, style: "redirect" },
+  { path: "/main", page: Main, style: "main" },
+  { path: "/gameroom", page: GameRoom, style: "gameroom" },
+  { path: "/game", page: Game, style: "game" },
+  { path: "/endgame", page: EndGame, style: "endgame" },
 ];
 
 function checkUrl(requestedUrl) {
@@ -38,7 +38,7 @@ export default function changeUrl(requestedUrl, element) {
   const match = checkUrl(requestedUrl);
   if (match === undefined) return; //todo: 404 페이지 띄우기
 
-  const cssPath = `/src/styles${match.path}.css`;
+  const cssPath = `/src/styles/${match.style}.css`;
   document.getElementById("styles").setAttribute("href", cssPath);
 
   if (match.page !== Redirect) history.pushState(null, null, match.path);
