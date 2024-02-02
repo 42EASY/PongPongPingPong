@@ -12,4 +12,6 @@ python /app/transcendence/manage.py makemigrations tournaments
 
 python /app/transcendence/manage.py migrate
 
-daphne /app/transcendence/transcendence.asgi:application -b 127.0.0.1 -p 8000
+cd /app/transcendence
+
+daphne transcendence.asgi:application
