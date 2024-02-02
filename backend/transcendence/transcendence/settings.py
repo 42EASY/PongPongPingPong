@@ -15,6 +15,12 @@ from datetime import timedelta
 import environ
 import os
 
+#MEMO: 로컬용
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,6 +41,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -88,6 +95,18 @@ TEMPLATES = [
         },
     },
 ]
+
+#channel_layer 설정
+ASGI_APPLICATION = 'transcendence.asgi.application'
+CHANNEL_LAYERS = {
+    'default' : {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts" : [('redis', 6379)],
+            # "hosts" : [('localhost', 6379)], #MEMO: 로컬에서 돌리기 위해 localhost로 변경
+        },
+    },
+}
 
 WSGI_APPLICATION = 'transcendence.wsgi.application'
 
@@ -187,15 +206,4 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
-}
-
-#channel_layer 설정
-ASGI_APPLICATION = 'transcendence.routing.application'
-CHANNEL_LAYERS = {
-    'default' : {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts" : [('redis', 6379)],
-        },
-    },
 }

@@ -25,6 +25,7 @@ RUN pip install pyotp
 RUN pip install django-redis
 RUN pip install channels
 RUN pip install channels-redis
+RUN pip install daphne
 
 ENV DOCKERIZE_VERSION v0.2.0
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
