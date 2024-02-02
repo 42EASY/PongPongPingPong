@@ -54,7 +54,6 @@
 .navSearch {
   padding-left: 8px;
   border: none;
-  color: var(--darkGray);
   font-weight: 500;
 }
 
@@ -103,6 +102,11 @@
   text-decoration: none;
   margin-right: 16px;
   cursor: pointer;
+}
+
+.navTextBtn:hover {
+  color: black;
+  transition: all 0.2s;
 }
 
 .navGameBtn {

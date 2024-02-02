@@ -1,3 +1,5 @@
+import changeUrl from "../Router.js";
+import Modal from "../components/Modal/Modal.js";
 import NavBar from "../components/Nav/NavBar.js";
 import Chat from "../pages/Chat.js";
 import Friends from "./Friends.js";
@@ -5,6 +7,18 @@ import Friends from "./Friends.js";
 export default function Nav() {
   const $navbar = document.querySelector(".nav");
   $navbar.innerHTML = NavBar().innerHTML;
+
+  //로고 클릭이벤트
+  const $navBrand = document.querySelector(".navBrand");
+  $navBrand.addEventListener("click", () => {
+    changeUrl("/main");
+  });
+
+  //프로필 클릭이벤트
+  const $navProfile = document.querySelector(".navProfileBtn");
+  $navProfile.addEventListener("click", () => {
+    changeUrl("/main");
+  });
 
   const searchBox = document.getElementById("navSearchBox");
   const searchList = document.querySelector(".navSearchList");
@@ -17,6 +31,7 @@ export default function Nav() {
   $input.addEventListener("input", (e) => {
     const value = e.target.value;
     console.log(value);
+    // todo: GET 유저 검색
     if (value.length !== 0) searchList.style.display = "block";
     else searchList.style.display = "none";
   });
@@ -39,5 +54,11 @@ export default function Nav() {
     const $overlay = document.querySelector(".overlay");
     $sidebar.classList.add("showSidebar");
     $overlay.classList.add("showOverlay");
+  });
+
+  //게임하러 가기 클릭이벤트
+  const $navGameBtn = document.querySelector(".navGameBtn");
+  $navGameBtn.addEventListener("click", () => {
+    Modal("gameMode");
   });
 }

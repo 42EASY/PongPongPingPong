@@ -1,14 +1,13 @@
 export default function NavBar() {
   const $navWrapper = document.createElement("div");
   const $navBar = document.createElement("nav");
-  const $navBrand = document.createElement("a");
+  const $navBrand = document.createElement("div");
   const $navBrandImage = document.createElement("img");
 
   $navWrapper.appendChild($navBar);
   $navBar.id = "navBar";
   $navBar.appendChild($navBrand);
 
-  $navBrand.setAttribute("href", "#"); //main 경로 추가
   $navBrand.classList.add("navBrand");
   $navBrandImage.setAttribute("src", "./src/images/sponge.png");
   $navBrandImage.setAttribute("alt", "brand_logo_image");
@@ -45,6 +44,7 @@ export default function NavBar() {
   $navSearchItem.classList.add("list-group-item", "navSearchItem");
   $navSearchItem2.append("nickname2");
   $navSearchItem2.classList.add("list-group-item", "navSearchItem");
+  //todo: 리스트 클릭 이벤트 추가
 
   const $navBtns = document.createElement("div");
   const $navProfileBtn = document.createElement("a");
@@ -62,7 +62,6 @@ export default function NavBar() {
   $navBtns.appendChild($navGameBtn);
   $navBtns.classList.add("navBtns");
   $navProfileBtn.appendChild($navProfileBtnImage);
-  $navProfileBtn.setAttribute("href", "#"); //main page path
   $navProfileBtn.classList.add("navProfileBtn");
   $navProfileBtnImage.setAttribute("src", ""); //profile image path
   $navProfileBtnImage.setAttribute("alt", "profile_image");
@@ -72,8 +71,7 @@ export default function NavBar() {
   $navChatBtn.innerHTML = "Chat";
   $navFriendsBtn.classList.add("navTextBtn", "navFriends");
   $navFriendsBtn.innerHTML = "Friends";
-  $navGameBtn.setAttribute("href", "#");
-  $navGameBtn.classList.add("navGameBtn");
+  $navGameBtn.classList.add("btn", "navGameBtn");
   const $navGameBtnIcon = document.createElement("i");
   $navGameBtnIcon.classList.add("bi", "bi-controller", "navGameBtnIcon");
   $navGameBtn.appendChild($navGameBtnIcon);

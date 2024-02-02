@@ -81,6 +81,7 @@ class LoginView(APIView):
 					'refresh_token': str(refresh),
 					'access_token': access_token,
 					'user_id': member.id,
+					'email':member.email,
 					'is_2fa':member.is_2fa,
 				}
 			}, status=200)

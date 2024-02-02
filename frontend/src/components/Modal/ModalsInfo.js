@@ -11,23 +11,52 @@ const inviteFail = {
     {
       type: "primaryButton",
       text: "확인",
-      class: "btn primaryButton closeButton",
+      class: "btn primaryButton close",
     },
   ],
 };
 
 const modals = {
   tfa: {
-    title: "2차 인증",
+    title: "2차 인증 설정",
     showCloseButton: true,
     bodyContent: [
-      { type: "image", src: "./src/images/qr.png", alt: "qr code" },
+      {
+        type: "image",
+        src: "./src/images/qr.png",
+        alt: "qr code",
+      },
+      {
+        type: "text",
+        text: "Google OTP(Autheticator) 앱에서 QR코드를 스캔해주세요",
+      },
     ],
     footerContent: [
       {
         type: "singleButton",
-        text: "등록 완료",
-        class: "btn singleButton closeButton",
+        text: "확인",
+        class: "btn singleButton close",
+      },
+    ],
+  },
+
+  otp: {
+    title: "OTP 인증번호 입력",
+    showCloseButton: true,
+    bodyContent: [
+      {
+        type: "text",
+        text: "Google OTP(Autheticator) 앱의\n인증번호 6자리를 입력해주세요",
+      },
+      {
+        type: "input",
+      },
+    ],
+    footerContent: [
+      {
+        type: "singleButton",
+        text: "확인",
+        class: "btn singleButton close",
       },
     ],
   },
@@ -42,7 +71,7 @@ const modals = {
       {
         type: "secondaryButton",
         text: "취소",
-        class: "btn secondaryButton closeButton",
+        class: "btn secondaryButton close",
       },
       {
         type: "primaryButton",
@@ -62,7 +91,7 @@ const modals = {
       {
         type: "secondaryButton",
         text: "취소",
-        class: "btn secondaryButton closeButton",
+        class: "btn secondaryButton close",
       },
       {
         type: "primaryButton",
@@ -82,7 +111,7 @@ const modals = {
       {
         type: "secondaryButton",
         text: "취소",
-        class: "btn secondaryButton closeButton",
+        class: "btn secondaryButton close",
       },
       {
         type: "primaryButton",
@@ -102,7 +131,7 @@ const modals = {
       {
         type: "secondaryButton",
         text: "취소",
-        class: "btn secondaryButton closeButton",
+        class: "btn secondaryButton close",
       },
       {
         type: "primaryButton",
@@ -160,7 +189,7 @@ const modals = {
     footerContent: [
       {
         type: "singleButton",
-        text: "게임 시작",
+        text: "🏓게임 시작🏓",
         class: "btn singleButton",
         id: "gameStart",
       },
@@ -174,7 +203,7 @@ const modals = {
       {
         type: "singleButton",
         text: "취소",
-        class: "btn singleButton closeButton",
+        class: "btn singleButton close",
       },
     ],
   },
@@ -192,7 +221,7 @@ const modals = {
       {
         type: "primaryButton",
         text: "확인",
-        class: "btn primaryButton closeButton",
+        class: "btn primaryButton close",
       },
     ],
   },

@@ -1,5 +1,4 @@
 export default function addContentElement(content) {
-  console.log("in addContent");
   let $contentElement;
 
   switch (content.type) {
@@ -11,8 +10,10 @@ export default function addContentElement(content) {
       $contentElement = document.createElement("img");
       $contentElement.setAttribute("src", content.src);
       $contentElement.setAttribute("alt", content.alt);
-      console.log("src:" + content.src);
-      console.log("alt:" + content.alt);
+      break;
+    case "input":
+      $contentElement = document.createElement("input");
+      $contentElement.type = "text";
       break;
     case "radio":
       $contentElement = document.createElement("div");
@@ -43,10 +44,8 @@ export default function addContentElement(content) {
       break;
     default:
       $contentElement = content;
-      console.log($contentElement);
   }
   if (content.class) $contentElement.className = content.class;
   if (content.id) $contentElement.id = content.id;
-  console.log($contentElement);
   return $contentElement;
 }
