@@ -21,14 +21,14 @@ class JwtView(APIView):
 		try:
 			Members.objects.get(id=cache.get(token))
 		except Members.DoesNotExist:
-			return JsonResponse({'code': 403, 'message': 'Forbidden'}, status=403)
+			return JsonResponse({'code': 404, 'message': 'Not Found'}, status=404)
 
 		# 새로운 access_token 생성
 		try:
 			refresh = RefreshToken(token)
 			new_access_token = str(refresh.access_token)
 		except:
-			return JsonResponse({'code': 403, 'message': 'Invalid refresh token'}, status=403)
+			return JsonResponse({'code': 403, 'message': 'Forbbiden'}, status=403)
 
 		return JsonResponse({
 			'code': 200,
