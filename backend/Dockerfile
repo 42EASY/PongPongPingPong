@@ -23,6 +23,9 @@ RUN pip install django-qr-code
 RUN pip install qrcode
 RUN pip install pyotp
 RUN pip install django-redis
+RUN pip install channels
+RUN pip install channels-redis
+RUN pip install daphne
 
 RUN pip install django-cors-headers
 
