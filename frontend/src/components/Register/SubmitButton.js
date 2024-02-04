@@ -49,7 +49,7 @@ export default function SubmitButton(text) {
       "data",
       JSON.stringify({
         nickname: nickname,
-        "2fa": false,
+        is_2fa: false,
       })
     );
 
