@@ -4,9 +4,13 @@ export default function UproadImage(image) {
 
   const $previewImage = document.createElement("img");
   $previewImage.classList.add("previewImage");
-  //todo: 이미지 업로드 시 미리보기 기능 구현
   $previewImage.setAttribute("src", image);
   $previewImage.setAttribute("alt", "프로필 이미지");
+
+  const $uproadImageInput = document.createElement("input");
+  $uproadImageInput.classList.add("uproadImageInput");
+  $uproadImageInput.setAttribute("type", "file");
+  $uproadImageInput.setAttribute("accept", "image/jpg, image/jpeg, image/png");
 
   const $uproadImageButton = document.createElement("div");
   $uproadImageButton.classList.add("uproadImageButton");
@@ -22,14 +26,30 @@ export default function UproadImage(image) {
   $uproadImageNotice.classList.add("uproadImageNotice");
   $uproadImageNotice.innerHTML =
     "10MB 이하의 jpg, jpeg, png 파일만 가능합니다.";
-  //todo: 이미지 업로드 클릭이벤트 추가
 
   $uproadImageButton.appendChild($uproadImageIcon);
   $uproadImageButton.appendChild($uproadImageText);
 
   $uproadImageWrapper.appendChild($previewImage);
+  $uproadImageWrapper.appendChild($uproadImageInput);
   $uproadImageWrapper.appendChild($uproadImageButton);
   $uproadImageWrapper.appendChild($uproadImageNotice);
+
+  $uproadImageButton.addEventListener("click", () => {
+    $uproadImageInput.click();
+  });
+
+  //이미지 미리보기
+  $uproadImageInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      $previewImage.setAttribute("src", e.target.result);
+    };
+
+    reader.readAsDataURL(file);
+  });
 
   return $uproadImageWrapper;
 }
