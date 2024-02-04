@@ -1,3 +1,4 @@
+import Nav from "../pages/Nav.js";
 import Title from "../components/Register/Title.js";
 import UproadImage from "../components/Register/UproadImage.js";
 import Email from "../components/Register/Email.js";
@@ -16,6 +17,7 @@ export default function Register(
     changeUrl("/login"); //todo: 추후 "/"으로 변경
     return;
   }
+  isInit === false ? Nav() : "";
 
   const $app = document.querySelector(".App");
   $app.innerHTML = "";

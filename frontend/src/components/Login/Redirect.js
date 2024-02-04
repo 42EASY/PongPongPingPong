@@ -7,7 +7,7 @@ export default function Redirect() {
 
   const $loading = document.createElement("div");
   $loading.classList.add("loading");
-  $loading.innerHTML = "로그인 중입니다...🫨";
+  $loading.innerHTML = "로그인 중입니다...";
 
   $app.appendChild($loading);
 
