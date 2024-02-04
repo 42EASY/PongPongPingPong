@@ -50,28 +50,13 @@ const setNewAccessToken = () => {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data); //은비가 응답코드들 정리해주면 분기 필요
-      // if (data.code === 200) {
-      //   setLoginState(
-      //     true,
-      //     data.result.access_token,
-      //     data.result.refresh_token,
-      //     data.result.email,
-      //     data.result.is2fa
-      //   );
-      //   if (data.result.is2fa === true) {
-      //     console.log("모달"); //모달 띄우기
-      //   } else changeUrl("/main");
-      // } else if (data.code === 201) {
-      //   setLoginState(
-      //     true,
-      //     data.result.access_token,
-      //     data.result.refresh_token,
-      //     data.result.email,
-      //     data.result.is2fa
-      //   );
-      //   changeUrl("/register", true);
-      // }
+      console.log(data);
+      if (data.code === 201) {
+        setAccessToken(data.result.access_token);
+        return data.result.access_token;
+      } else {
+        changeUrl("/login"); //todo: 추후 "/"으로 변경
+      }
     });
 };
 
