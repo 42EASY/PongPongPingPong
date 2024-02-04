@@ -4,7 +4,7 @@ import MyBtn from "./MyBtn.js";
 import OtherBtn from "./OtherBtn.js";
 
 export default function MyProfile() {
-  const isMe = false; // true: myprofile, false: friend's profile
+  const isMe = true; // true: myprofile, false: friend's profile
 
   const $ProfileWrapper = document.createElement("div");
   const $ProfileImageBox = document.createElement("div");

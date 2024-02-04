@@ -1,3 +1,6 @@
+import { getIs2fa } from "../../state/State.js";
+import Modal from "../Modal/Modal.js";
+
 export default function TwoFactorAuth(is2fa) {
   const $twoFactorAuthWrapper = document.createElement("div");
   $twoFactorAuthWrapper.classList.add("twoFactorAuthWrapper");
@@ -52,17 +55,22 @@ export default function TwoFactorAuth(is2fa) {
 
   //비활성화 클릭 이벤트
   //todo: is2fa가 true인 경우, 비활성화 클릭 시 인증 모달 띄우기
-  $twoFactorAuthDeactive.onclick = () => {
+  $twoFactorAuthDeactive.addEventListener("click", () => {
     $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
-  };
+    if (is2fa == false) return;
+    Modal("otp");
+    //모달 결과에 따라 is2fa 변경
+  });
 
   //활성화 클릭 이벤트
   //todo: 활성화 클릭 시, 인증 모달 띄우기
-  $twoFactorAuthActive.onclick = () => {
+  $twoFactorAuthActive.addEventListener("click", () => {
     $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
-  };
+    Modal("tfa");
+    //모달 결과에 따라 is2fa 변경
+  });
 
   return $twoFactorAuthWrapper;
 }

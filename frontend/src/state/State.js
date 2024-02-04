@@ -12,10 +12,15 @@ const setLoginState = (state, accessToken, refreshToken, email, is2fa) => {
   loginState.refreshToken = refreshToken;
   loginState.email = email;
   loginState.is2fa = is2fa;
+  console.log(loginState);
 };
 
 const setAccessToken = (token) => {
   loginState.accessToken = token;
+};
+
+const setIs2fa = (is2fa) => {
+  loginState.is2fa = is2fa;
 };
 
 const getIsLogin = () => {
@@ -63,6 +68,7 @@ export {
   setLoginState,
   setAccessToken,
   setNewAccessToken,
+  setIs2fa,
   getIsLogin,
   getAccessToken,
   getRefreshToken,

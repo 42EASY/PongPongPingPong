@@ -32,9 +32,9 @@ export default function Redirect() {
           data.result.access_token,
           data.result.refresh_token,
           data.result.email,
-          data.result.is2fa
+          data.result.is_2fa
         );
-        if (data.result.is2fa === true) {
+        if (data.result.is_2fa === true) {
           console.log("모달"); //모달 띄우기
         } else changeUrl("/main");
       } else if (data.code === 201) {
@@ -43,7 +43,7 @@ export default function Redirect() {
           data.result.access_token,
           data.result.refresh_token,
           data.result.email,
-          data.result.is2fa
+          data.result.is_2fa
         );
         changeUrl("/register", true);
       }

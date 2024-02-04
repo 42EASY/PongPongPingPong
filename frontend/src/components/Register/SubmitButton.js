@@ -1,5 +1,10 @@
 import changeUrl from "../../Router.js";
-import { getAccessToken, setNewAccessToken } from "../../state/State.js";
+import {
+  getAccessToken,
+  setIs2fa,
+  setLoginState,
+  setNewAccessToken,
+} from "../../state/State.js";
 
 export default function SubmitButton(text) {
   const $submitButton = document.createElement("div");
@@ -34,8 +39,16 @@ export default function SubmitButton(text) {
     } else return nickname;
   }
 
-  function callApi(nickname) {
+  function getCurrent2fa() {
+    const $twoFactorAuthActive = document.getElementsByClassName(
+      "twoFactorAuthActive"
+    )[0];
+    return $twoFactorAuthActive.classList.contains("twoFactorAuthSelect");
+  }
+
+  function callApi(nickname, is2fa) {
     if (nickname === "") return;
+    console.log(is2fa);
 
     const url = "http://localhost:8000/api/v1/members";
     const $uproadImageInput =
@@ -49,14 +62,14 @@ export default function SubmitButton(text) {
       "data",
       JSON.stringify({
         nickname: nickname,
-        is_2fa: false,
+        is_2fa: is2fa,
       })
     );
 
     fetch(url, {
       method: "PATCH",
       headers: {
-        "content-Type": "multipart/form-data",
+        // "content-Type": "multipart/form-data",
         Authorization: `Bearer ${getAccessToken()}`,
       },
       body: formData,
@@ -65,6 +78,7 @@ export default function SubmitButton(text) {
       .then((data) => {
         console.log(data);
         if (data.code === 200) {
+          setIs2fa(data.result.is_2fa);
           changeUrl("/main");
         } else if (data.code === 409) {
           //중복된 닉네임
@@ -78,7 +92,7 @@ export default function SubmitButton(text) {
   }
 
   $submitButton.addEventListener("click", () => {
-    callApi(checkNickname());
+    callApi(checkNickname(), getCurrent2fa());
   });
 
   return $submitButton;
