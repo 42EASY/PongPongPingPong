@@ -34,10 +34,8 @@ export default function SubmitButton(text) {
     } else return nickname;
   }
 
-  //todo: 계정 만들기 버튼 클릭 시 회원가입 기능 구현
-  $submitButton.addEventListener("click", () => {
-    const nickname = document.getElementsByClassName("nicknameInput")[0].value;
-    checkNickname();
+  function callApi(nickname) {
+    if (nickname === "") return;
 
     const url = "http://localhost:8000/api/v1/members";
 
@@ -61,11 +59,19 @@ export default function SubmitButton(text) {
         if (data.code === 200) {
           changeUrl("/main");
         } else if (data.code === 409) {
-          checkNickname(true); //중복된 닉네임
-        } else {
-          //
+          //중복된 닉네임
+          checkNickname(true);
+        } else if (data.code === 401) {
+          //토큰 만료
+          setNewAccessToken();
+          callApi();
         }
       });
+  }
+
+  //todo: 계정 만들기 버튼 클릭 시 회원가입 기능 구현
+  $submitButton.addEventListener("click", () => {
+    callApi(checkNickname());
   });
 
   return $submitButton;

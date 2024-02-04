@@ -53,7 +53,6 @@ const setNewAccessToken = () => {
       console.log(data);
       if (data.code === 201) {
         setAccessToken(data.result.access_token);
-        return data.result.access_token;
       } else {
         changeUrl("/login"); //todo: 추후 "/"으로 변경
       }
