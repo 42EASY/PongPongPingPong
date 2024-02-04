@@ -38,6 +38,20 @@ export default function SubmitButton(text) {
     if (nickname === "") return;
 
     const url = "http://localhost:8000/api/v1/members";
+    const $uproadImageInput =
+      document.getElementsByClassName("uproadImageInput")[0];
+
+    const formData = new FormData();
+    $uproadImageInput.files[0] !== undefined
+      ? formData.append("image", $uproadImageInput.files[0])
+      : "";
+    formData.append(
+      "data",
+      JSON.stringify({
+        nickname: nickname,
+        "2fa": false,
+      })
+    );
 
     fetch(url, {
       method: "PATCH",
@@ -45,13 +59,7 @@ export default function SubmitButton(text) {
         "content-Type": "multipart/form-data",
         Authorization: `Bearer ${getAccessToken()}`,
       },
-      body: JSON.stringify({
-        image: "이미지 파일",
-        data: {
-          nickname: nickname,
-          "2fa": false,
-        },
-      }),
+      body: formData,
     })
       .then((res) => res.json())
       .then((data) => {
@@ -69,7 +77,6 @@ export default function SubmitButton(text) {
       });
   }
 
-  //todo: 계정 만들기 버튼 클릭 시 회원가입 기능 구현
   $submitButton.addEventListener("click", () => {
     callApi(checkNickname());
   });
