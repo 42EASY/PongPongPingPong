@@ -6,7 +6,7 @@ export default function SubmitButton(text) {
   $submitButton.classList.add("submitButton");
   $submitButton.innerHTML = text;
 
-  function checkNickname() {
+  function checkNickname(isDuplicate = false) {
     const nickname = document.getElementsByClassName("nicknameInput")[0].value;
     const nicknameError = document.getElementsByClassName("nicknameCheck")[0];
     const regex = /^[a-zA-Z0-9가-힣]*$/;
@@ -24,6 +24,11 @@ export default function SubmitButton(text) {
     } else if (!regex.test(nickname)) {
       //닉네임이 영어, 한글, 숫자가 아닌 경우
       nicknameError.innerHTML = "영어, 한글, 숫자만 입력해주세요.";
+      nicknameError.style.display = "block";
+      return "";
+    } else if (isDuplicate === true) {
+      //중복된 닉네임인 경우
+      nicknameError.innerHTML = "사용 중인 닉네임 입니다.";
       nicknameError.style.display = "block";
       return "";
     } else return nickname;
@@ -56,7 +61,7 @@ export default function SubmitButton(text) {
         if (data.code === 200) {
           changeUrl("/main");
         } else if (data.code === 409) {
-          // 닉네임 중복 등 응답 처리 필요
+          checkNickname(true); //중복된 닉네임
         } else {
           //
         }
