@@ -79,7 +79,7 @@ export default function SubmitButton(text) {
         console.log(data);
         if (data.code === 200) {
           setIs2fa(data.result.is_2fa);
-          changeUrl("/main");
+          changeUrl("/main"); //todo: 메인 페이지 이동 불필요. 닉네임 에러 삭제 필요
         } else if (data.code === 409) {
           //중복된 닉네임
           checkNickname(true);

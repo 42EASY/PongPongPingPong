@@ -1,4 +1,8 @@
-import { getIs2fa } from "../../state/State.js";
+import {
+  setNewAccessToken,
+  getAccessToken,
+  getIs2fa,
+} from "../../state/State.js";
 import Modal from "../Modal/Modal.js";
 
 export default function TwoFactorAuth(is2fa) {
@@ -53,6 +57,63 @@ export default function TwoFactorAuth(is2fa) {
   $twoFactorAuthWrapper.appendChild($twoFactorAuthText);
   $twoFactorAuthWrapper.appendChild($twoFactorAuthContentWrapper);
 
+  //2차 인증 QR코드 API 호출
+  function call2faQrApi() {
+    const url = "http://localhost:8000/api/v1/auth/2fa/";
+
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "content-Type": "application/json",
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.code === 200) {
+          Modal("tfa");
+          const $modalBodyQr = document.querySelector(".modalBody img");
+          $modalBodyQr.setAttribute(
+            "src",
+            `data:image/png;base64,${data.result.encoded_image}`
+          );
+        } else if (data.code === 401) {
+          setNewAccessToken();
+          call2faQrApi();
+        }
+      });
+  }
+
+  //2차 인증 OTP API 호출
+  function call2faOtqApi() {
+    console.log(document.querySelector(".modalBody input").value); //todo: 확인필요
+    const url = "http://localhost:8000/api/v1/auth/2fa/";
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "content-Type": "application/json",
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+      body: JSON.stringify({
+        otp: document.querySelector(".modalBody input").value,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.code === 200) {
+          //인증 성공 모달 띄우기
+        } else if (data.code === 401) {
+          setNewAccessToken();
+          call2faOtqApi();
+        } else {
+          //인증 실패 모달 띄우기
+        }
+      });
+  }
+
   //비활성화 클릭 이벤트
   //todo: is2fa가 true인 경우, 비활성화 클릭 시 인증 모달 띄우기
   $twoFactorAuthDeactive.addEventListener("click", () => {
@@ -60,7 +121,7 @@ export default function TwoFactorAuth(is2fa) {
     $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
     if (is2fa == false) return;
     Modal("otp");
-    //모달 결과에 따라 is2fa 변경
+    //모달 결과에 따라 select 변경
   });
 
   //활성화 클릭 이벤트
@@ -68,8 +129,12 @@ export default function TwoFactorAuth(is2fa) {
   $twoFactorAuthActive.addEventListener("click", () => {
     $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
-    Modal("tfa");
-    //모달 결과에 따라 is2fa 변경
+
+    call2faQrApi();
+    Modal("otp");
+    const $modalOtpSummit = document.querySelector(".otpSummit");
+    $modalOtpSummit.addEventListener("click", call2faOtqApi);
+    //모달 결과에 따라 select 변경
   });
 
   return $twoFactorAuthWrapper;
