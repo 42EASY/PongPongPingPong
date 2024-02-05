@@ -1,10 +1,9 @@
-const inviteFail = {
-  title: "사용자를 초대할 수 없습니다",
-  showCloseButton: true,
+const onlyYes = {
+  title: "title",
   bodyContent: [
     {
       type: "text",
-      text: "사용자를 초대할 수 없습니다",
+      text: "body text",
     },
   ],
   footerContent: [
@@ -16,10 +15,34 @@ const inviteFail = {
   ],
 };
 
+const yesOrNo = {
+  title: "title",
+  bodyContent: [
+    {
+      type: "text",
+      text: "body text",
+    },
+  ],
+  footerContent: [
+    {
+      type: "secondaryButton",
+      text: "취소",
+      class: "btn secondaryButton close",
+    },
+    {
+      type: "primaryButton",
+      text: "확인",
+      class: "btn primaryButton",
+    },
+  ],
+};
+
+const inviteFail = JSON.parse(JSON.stringify(onlyYes));
+inviteFail.title = "사용자를 초대할 수 없습니다";
+
 const modals = {
   tfa: {
     title: "2차 인증 설정",
-    showCloseButton: true,
     bodyContent: [
       {
         type: "image",
@@ -42,7 +65,6 @@ const modals = {
 
   otp: {
     title: "OTP 인증번호 입력",
-    showCloseButton: true,
     bodyContent: [
       {
         type: "text",
@@ -61,89 +83,8 @@ const modals = {
     ],
   },
 
-  deleteFriend: {
-    title: "friend1 님과 친구를 끊으시겠습니까?",
-    showCloseButton: true,
-    bodyContent: [
-      { type: "text", text: "이 사용자를 다시 친구 추가할 수 있습니다." },
-    ],
-    footerContent: [
-      {
-        type: "secondaryButton",
-        text: "취소",
-        class: "btn secondaryButton close",
-      },
-      {
-        type: "primaryButton",
-        text: "친구끊기",
-        class: "btn primaryButton",
-      },
-    ],
-  },
-
-  blockFriend: {
-    title: "friend1 님을 차단하시겠습니까?",
-    showCloseButton: true,
-    bodyContent: [
-      { type: "text", text: "Friends > 차단 목록에서 해제할 수 있습니다." },
-    ],
-    footerContent: [
-      {
-        type: "secondaryButton",
-        text: "취소",
-        class: "btn secondaryButton close",
-      },
-      {
-        type: "primaryButton",
-        text: "차단하기",
-        class: "btn primaryButton",
-      },
-    ],
-  },
-
-  unblockFriend: {
-    title: "friend1 님을 차단 해제하시겠습니까?",
-    showCloseButton: true,
-    bodyContent: [
-      { type: "text", text: "이제 friend1 님의 메세지를 받을 수 있습니다." },
-    ],
-    footerContent: [
-      {
-        type: "secondaryButton",
-        text: "취소",
-        class: "btn secondaryButton close",
-      },
-      {
-        type: "primaryButton",
-        text: "해제하기",
-        class: "btn primaryButton",
-      },
-    ],
-  },
-
-  exitChatting: {
-    title: "채팅방에서 나가시겠습니까?",
-    showCloseButton: true,
-    bodyContent: [
-      { type: "text", text: "friend 님과의 대화 내역이 모두 삭제됩니다." },
-    ],
-    footerContent: [
-      {
-        type: "secondaryButton",
-        text: "취소",
-        class: "btn secondaryButton close",
-      },
-      {
-        type: "primaryButton",
-        text: "나가기",
-        class: "btn primaryButton",
-      },
-    ],
-  },
-
   gameMode: {
     title: "게임 모드 선택",
-    showCloseButton: true,
     bodyContent: [
       {
         type: "radio",
@@ -173,7 +114,6 @@ const modals = {
 
   gameOption: {
     title: "게임 옵션 선택",
-    showCloseButton: true,
     bodyContent: [
       {
         type: "radio",
@@ -198,7 +138,6 @@ const modals = {
 
   waitingPlayer: {
     title: "대전자 찾는 중",
-    showCloseButton: true,
     footerContent: [
       {
         type: "singleButton",
@@ -208,27 +147,8 @@ const modals = {
     ],
   },
 
-  invalidGame: {
-    title: "유효하지 않은 게임입니다",
-    showCloseButton: true,
-    bodyContent: [
-      {
-        type: "text",
-        text: "이미 만료되었거나, 유효하지 않은 게임입니다",
-      },
-    ],
-    footerContent: [
-      {
-        type: "primaryButton",
-        text: "확인",
-        class: "btn primaryButton close",
-      },
-    ],
-  },
-
   tournamentTable: {
     title: "토너먼트 대진표",
-    showCloseButton: true,
     bodyContent: [
       {
         type: "image",
@@ -240,7 +160,6 @@ const modals = {
 
   gameResultTable: {
     title: "게임 종료되었습니다",
-    showCloseButton: true,
     bodyContent: [
       {
         type: "image",
@@ -250,12 +169,40 @@ const modals = {
     ],
   },
 
+  deleteFriend: JSON.parse(JSON.stringify(yesOrNo)),
+  blockFriend: JSON.parse(JSON.stringify(yesOrNo)),
+  unblockFriend: JSON.parse(JSON.stringify(yesOrNo)),
+  exitChatting: JSON.parse(JSON.stringify(yesOrNo)),
+
   inviteFail_alreadyInvited: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_fullRoom: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_offline: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_inGame: JSON.parse(JSON.stringify(inviteFail)),
+  invalidGame: JSON.parse(JSON.stringify(onlyYes)),
 };
 
+// yes or no
+modals.deleteFriend.title = "friend1 님과 친구를 끊으시겠습니까?";
+modals.deleteFriend.bodyContent[0].text =
+  "이 사용자를 다시 친구 추가할 수 있습니다";
+modals.deleteFriend.footerContent[1].text = "친구끊기";
+
+modals.blockFriend.title = "friend1 님을 차단하시겠습니까?";
+modals.blockFriend.bodyContent[0].text =
+  "Friends > 차단 목록에서 해제할 수 있습니다.";
+modals.blockFriend.footerContent[1].text = "차단하기";
+
+modals.unblockFriend.title = "friend1 님을 차단 해제하시겠습니까?";
+modals.unblockFriend.bodyContent[0] =
+  "이제 friend1 님의 메세지를 받을 수 있습니다.";
+modals.unblockFriend.footerContent[1].text = "해제하기";
+
+modals.exitChatting.title = "채팅방에서 나가시겠습니까?";
+modals.exitChatting.bodyContent[0].text =
+  "friend 님과의 대화 내역이 모두 삭제됩니다.";
+modals.exitChatting.footerContent[1].text = "나가기";
+
+// only Yes
 modals.inviteFail_alreadyInvited.bodyContent[0].text =
   "이미 초대되었거나 초대 대기 중인 사용자는 초대할 수 없습니다";
 
@@ -267,5 +214,9 @@ modals.inviteFail_offline.bodyContent[0].text =
 
 modals.inviteFail_inGame.bodyContent[0].text =
   "게임 중인 상태의 사용자는 초대할 수 없습니다";
+
+modals.invalidGame.title = "유효하지 않은 게임입니다";
+modals.invalidGame.bodyContent[0].text =
+  "이미 만료되었거나, 유효하지 않은 게임입니다";
 
 export default modals;
