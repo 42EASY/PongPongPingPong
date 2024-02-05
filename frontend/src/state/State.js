@@ -1,13 +1,22 @@
 const loginState = {
   isLogin: false,
+  userId: "",
   accessToken: "",
   refreshToken: "",
   email: "",
   is2fa: false,
 };
 
-const setLoginState = (state, accessToken, refreshToken, email, is2fa) => {
+const setLoginState = (
+  state,
+  userId,
+  accessToken,
+  refreshToken,
+  email,
+  is2fa
+) => {
   loginState.isLogin = state;
+  loginState.userId = userId;
   loginState.accessToken = accessToken;
   loginState.refreshToken = refreshToken;
   loginState.email = email;
@@ -25,6 +34,10 @@ const setIs2fa = (is2fa) => {
 
 const getIsLogin = () => {
   return loginState.isLogin;
+};
+
+const getUserId = () => {
+  return loginState.userId;
 };
 
 const getAccessToken = () => {
@@ -70,6 +83,7 @@ export {
   setNewAccessToken,
   setIs2fa,
   getIsLogin,
+  getUserId,
   getAccessToken,
   getRefreshToken,
   getEmail,
