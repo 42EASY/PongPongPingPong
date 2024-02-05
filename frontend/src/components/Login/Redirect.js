@@ -29,6 +29,7 @@ export default function Redirect() {
       if (data.code === 200) {
         setLoginState(
           true,
+          data.result.user_id,
           data.result.access_token,
           data.result.refresh_token,
           data.result.email,
@@ -40,6 +41,7 @@ export default function Redirect() {
       } else if (data.code === 201) {
         setLoginState(
           true,
+          data.result.user_id,
           data.result.access_token,
           data.result.refresh_token,
           data.result.email,
