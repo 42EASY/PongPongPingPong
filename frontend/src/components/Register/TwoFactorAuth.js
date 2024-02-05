@@ -87,7 +87,7 @@ export default function TwoFactorAuth(is2fa) {
 
   //2차 인증 OTP API 호출
   function call2faOtqApi() {
-    console.log(document.querySelector(".modalBody input").value); //todo: 확인필요
+    //모달 리턴값으로 otp 코드 받기
     const url = "http://localhost:8000/api/v1/auth/2fa/";
 
     fetch(url, {
@@ -97,7 +97,7 @@ export default function TwoFactorAuth(is2fa) {
         Authorization: `Bearer ${getAccessToken()}`,
       },
       body: JSON.stringify({
-        otp: document.querySelector(".modalBody input").value,
+        otp: "test",
       }),
     })
       .then((res) => res.json())
@@ -115,17 +115,16 @@ export default function TwoFactorAuth(is2fa) {
   }
 
   //비활성화 클릭 이벤트
-  //todo: is2fa가 true인 경우, 비활성화 클릭 시 인증 모달 띄우기
   $twoFactorAuthDeactive.addEventListener("click", () => {
     $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
     if (is2fa == false) return;
+    //is2fa가 true인 경우, otp 인증
     Modal("otp");
-    //모달 결과에 따라 select 변경
+    //todo: 모달 결과에 따라 select 변경
   });
 
   //활성화 클릭 이벤트
-  //todo: 활성화 클릭 시, 인증 모달 띄우기
   $twoFactorAuthActive.addEventListener("click", () => {
     $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
@@ -134,7 +133,7 @@ export default function TwoFactorAuth(is2fa) {
     Modal("otp");
     const $modalOtpSummit = document.querySelector(".otpSummit");
     $modalOtpSummit.addEventListener("click", call2faOtqApi);
-    //모달 결과에 따라 select 변경
+    //todo: 모달 결과에 따라 select 변경
   });
 
   return $twoFactorAuthWrapper;
