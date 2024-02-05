@@ -16,6 +16,7 @@ export default function Redirect() {
 
   fetch(url, {
     method: "POST",
+    credentials:'include',
     headers: {
       "content-Type": "application/json",
     },
