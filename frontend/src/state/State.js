@@ -72,7 +72,7 @@ const setNewAccessToken = () => {
       if (data.code === 201) {
         setAccessToken(data.result.access_token);
       } else {
-        changeUrl("/login"); //todo: 추후 "/"으로 변경
+        changeUrl("/"); //재발급 실패한 경우
       }
     });
 };

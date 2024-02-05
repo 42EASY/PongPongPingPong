@@ -14,7 +14,7 @@ export default function Register(
   nickname = ""
 ) {
   if (getIsLogin() === false) {
-    changeUrl("/login"); //todo: 추후 "/"으로 변경
+    changeUrl("/"); //로그인 안되어있으면 로그인 페이지로 이동
     return;
   }
   isInit === false ? Nav() : "";
