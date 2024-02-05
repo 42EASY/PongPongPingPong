@@ -1,4 +1,4 @@
-export default function Email() {
+export default function Email(email) {
   const $emailWrapper = document.createElement("div");
   $emailWrapper.classList.add("emailWrapper");
 
@@ -16,7 +16,7 @@ export default function Email() {
   $emailIcon.classList.add("bi", "bi-envelope-fill");
   const $emailContentText = document.createElement("div");
   $emailContentText.classList.add("emailContentText");
-  $emailContentText.innerHTML = "test@gmail.com";
+  $emailContentText.innerHTML = email;
 
   $emailContent.appendChild($emailIcon);
   $emailContent.appendChild($emailContentText);

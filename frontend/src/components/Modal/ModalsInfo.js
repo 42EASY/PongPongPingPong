@@ -56,7 +56,7 @@ const modals = {
       {
         type: "singleButton",
         text: "확인",
-        class: "btn singleButton close",
+        class: "btn singleButton close otpSummit",
       },
     ],
   },

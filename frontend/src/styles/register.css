@@ -53,6 +53,10 @@
   border-radius: 50px;
 }
 
+.uproadImageInput {
+  display: none;
+}
+
 .uproadImageButton {
   witdh: 100%;
   display: flex;
@@ -61,6 +65,7 @@
   font-size: 13px;
   font-weight: bold;
   margin-top: 10px;
+  cursor: pointer;
 }
 
 .uproadImageText {
@@ -252,6 +257,8 @@ input:focus {
   align-items: center;
   border-radius: 8px 0px 0px 8px;
   cursor: pointer;
+  color: var(--gray);
+  background-color: var(--lightGray);
 }
 
 .twoFactorAuthActive {
@@ -262,6 +269,8 @@ input:focus {
   align-items: center;
   border-radius: 0px 8px 8px 0px;
   cursor: pointer;
+  color: var(--gray);
+  background-color: var(--lightGray);
 }
 
 .twoFactorAuthUnSelect {
