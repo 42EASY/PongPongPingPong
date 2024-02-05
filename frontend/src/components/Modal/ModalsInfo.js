@@ -32,7 +32,7 @@ const yesOrNo = {
     {
       type: "primaryButton",
       text: "확인",
-      class: "btn primaryButton",
+      class: "btn primaryButton close",
     },
   ],
 };
@@ -72,6 +72,7 @@ const modals = {
       },
       {
         type: "input",
+        placeHolder: "인증번호를 입력하세요",
       },
     ],
     footerContent: [
@@ -169,16 +170,20 @@ const modals = {
     ],
   },
 
+  // yes or no
   deleteFriend: JSON.parse(JSON.stringify(yesOrNo)),
   blockFriend: JSON.parse(JSON.stringify(yesOrNo)),
   unblockFriend: JSON.parse(JSON.stringify(yesOrNo)),
   exitChatting: JSON.parse(JSON.stringify(yesOrNo)),
 
+  // only yes
+  invalidGame: JSON.parse(JSON.stringify(onlyYes)),
+  tfaSuccess: JSON.parse(JSON.stringify(onlyYes)),
+  tfaFail: JSON.parse(JSON.stringify(onlyYes)),
   inviteFail_alreadyInvited: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_fullRoom: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_offline: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_inGame: JSON.parse(JSON.stringify(inviteFail)),
-  invalidGame: JSON.parse(JSON.stringify(onlyYes)),
 };
 
 // yes or no
@@ -203,6 +208,17 @@ modals.exitChatting.bodyContent[0].text =
 modals.exitChatting.footerContent[1].text = "나가기";
 
 // only Yes
+modals.invalidGame.title = "유효하지 않은 게임입니다";
+modals.invalidGame.bodyContent[0].text =
+  "이미 만료되었거나, 유효하지 않은 게임입니다";
+
+modals.tfaSuccess.title = "2차인증 성공";
+modals.tfaSuccess.bodyContent[0].text = "2차인증에 성공했습니다";
+
+modals.tfaFail.title = "2차인증 실패";
+modals.tfaFail.bodyContent[0].text =
+  "2차인증에 실패했습니다. 다시 시도해 주세요";
+
 modals.inviteFail_alreadyInvited.bodyContent[0].text =
   "이미 초대되었거나 초대 대기 중인 사용자는 초대할 수 없습니다";
 
@@ -214,9 +230,5 @@ modals.inviteFail_offline.bodyContent[0].text =
 
 modals.inviteFail_inGame.bodyContent[0].text =
   "게임 중인 상태의 사용자는 초대할 수 없습니다";
-
-modals.invalidGame.title = "유효하지 않은 게임입니다";
-modals.invalidGame.bodyContent[0].text =
-  "이미 만료되었거나, 유효하지 않은 게임입니다";
 
 export default modals;

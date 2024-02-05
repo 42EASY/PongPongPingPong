@@ -14,6 +14,7 @@ export default function addContentElement(content) {
     case "input":
       $contentElement = document.createElement("input");
       $contentElement.type = "text";
+      $contentElement.placeholder = content.placeHolder;
       break;
     case "radio":
       $contentElement = document.createElement("div");

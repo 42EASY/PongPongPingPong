@@ -25,15 +25,14 @@ export default function addModal(options) {
   $modalTitle.innerHTML = options.title;
   $modalHeader.appendChild($modalTitle);
 
-  if (options.showCloseButton) {
-    $modalHeader.appendChild(
-      addElement({
-        type: "i",
-        class: "close bi bi-x",
-        id: "x",
-      })
-    );
-  }
+  $modalHeader.appendChild(
+    addElement({
+      type: "i",
+      class: "close bi bi-x",
+      id: "x",
+    })
+  );
+
   if (options.bodyContent) {
     for (let i = 0; i < options.bodyContent.length; i++)
       $modalBody.appendChild(addContentElement(options.bodyContent[i]));

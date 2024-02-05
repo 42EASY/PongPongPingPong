@@ -24,6 +24,9 @@ export default function Modal(modalName) {
     $modalWrapper = addModal(modals.tournamentTable);
   else if (modalName === "gameResultTable")
     $modalWrapper = addModal(modals.gameResultTable);
+  else if (modalName === "tfaSuccess")
+    $modalWrapper = addModal(modals.tfaSuccess);
+  else if (modalName === "tfaFail") $modalWrapper = addModal(modals.tfaFail);
   else if (modalName === "inviteFail_alreadyInvited")
     $modalWrapper = addModal(modals.inviteFail_alreadyInvited);
   else if (modalName === "inviteFail_fullRoom")
