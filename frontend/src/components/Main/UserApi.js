@@ -4,7 +4,7 @@ const baseUrl = "http://localhost:8000";
 
 export async function getUserInfo(id) {
   try {
-    const url = baseUrl + "/api/v1/members/" + id;
+    const url = baseUrl + `/api/v1/members/${id}`;
     const res = await fetch(url, {
       method: "GET",
       headers: {
@@ -21,7 +21,7 @@ export async function getUserInfo(id) {
 
 export async function postFriend(id) {
   try {
-    const url = baseUrl + "/api/v1/friends/" + id;
+    const url = baseUrl + `/api/v1/friends/${id}`;
     const res = await fetch(url, {
       method: "POST",
       headers: {
@@ -37,7 +37,7 @@ export async function postFriend(id) {
 
 export async function deleteFriend(id) {
   try {
-    const url = baseUrl + "/api/v1/friends/" + id;
+    const url = baseUrl + `/api/v1/friends/${id}`;
     const res = await fetch(url, {
       method: "DELETE",
       headers: {
@@ -53,7 +53,7 @@ export async function deleteFriend(id) {
 
 export async function postBlock(id) {
   try {
-    const url = baseUrl + "/api/v1/block/" + id;
+    const url = baseUrl + `/api/v1/block/${id}`;
     const res = await fetch(url, {
       method: "POST",
       headers: {
@@ -69,7 +69,7 @@ export async function postBlock(id) {
 
 export async function deleteBlock(id) {
   try {
-    const url = baseUrl + "/api/v1/block/" + id;
+    const url = baseUrl + `/api/v1/block/${id}`;
     const res = await fetch(url, {
       method: "DELETE",
       headers: {
