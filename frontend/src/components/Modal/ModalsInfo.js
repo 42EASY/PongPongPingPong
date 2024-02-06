@@ -3,7 +3,7 @@ const onlyYes = {
   bodyContent: [
     {
       type: "text",
-      text: "body text",
+      text: "",
     },
   ],
   footerContent: [
@@ -148,6 +148,17 @@ const modals = {
     ],
   },
 
+  waitingInvitationAcceptance: {
+    title: "초대 수락 대기 중",
+    footerContent: [
+      {
+        type: "singleButton",
+        text: "취소",
+        class: "btn singleButton close",
+      },
+    ],
+  },
+
   tournamentTable: {
     title: "토너먼트 대진표",
     bodyContent: [
@@ -180,6 +191,7 @@ const modals = {
   invalidGame: JSON.parse(JSON.stringify(onlyYes)),
   tfaSuccess: JSON.parse(JSON.stringify(onlyYes)),
   tfaFail: JSON.parse(JSON.stringify(onlyYes)),
+  matchingFail: JSON.parse(JSON.stringify(onlyYes)),
   inviteFail_alreadyInvited: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_fullRoom: JSON.parse(JSON.stringify(inviteFail)),
   inviteFail_offline: JSON.parse(JSON.stringify(inviteFail)),
@@ -208,16 +220,16 @@ modals.exitChatting.bodyContent[0].text =
 modals.exitChatting.footerContent[1].text = "나가기";
 
 // only Yes
-modals.invalidGame.title = "유효하지 않은 게임입니다";
+modals.invalidGame.title = "게임을 찾을 수 없습니다";
 modals.invalidGame.bodyContent[0].text =
   "이미 만료되었거나, 유효하지 않은 게임입니다";
 
-modals.tfaSuccess.title = "2차인증 성공";
-modals.tfaSuccess.bodyContent[0].text = "2차인증에 성공했습니다";
+modals.tfaSuccess.title = "2차인증에 성공했습니다";
 
-modals.tfaFail.title = "2차인증 실패";
-modals.tfaFail.bodyContent[0].text =
-  "2차인증에 실패했습니다. 다시 시도해 주세요";
+modals.tfaFail.title = "2차인증에 실패했습니다";
+modals.tfaFail.bodyContent[0].text = "다시 시도해 주세요";
+
+modals.matchingFail.title = "대전자를 찾을 수 없습니다";
 
 modals.inviteFail_alreadyInvited.bodyContent[0].text =
   "이미 초대되었거나 초대 대기 중인 사용자는 초대할 수 없습니다";
