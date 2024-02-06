@@ -11,7 +11,7 @@ export default function Modal(modalName) {
   const modalContent = modals[modalName];
   if (modalContent) $modalWrapper = addModal(modalContent);
   else {
-    console.log("`${modalName}` not found");
+    console.log(`${modalName} : not found`);
     return;
   }
 
@@ -49,10 +49,8 @@ export default function Modal(modalName) {
 
     const $nextButton = $modalWrapper.querySelector("#gameModeNext");
     $nextButton.addEventListener("click", () => {
-      if (selectedGameMode === "토너먼트") {
-        $app.removeChild($modalWrapper);
-        Modal("waitingPlayer");
-      } else if (selectedGameMode) {
+      if (selectedGameMode === "토너먼트") $app.removeChild($modalWrapper);
+      else if (selectedGameMode) {
         $app.removeChild($modalWrapper);
         Modal("gameOption");
       }
@@ -68,10 +66,14 @@ export default function Modal(modalName) {
 
     const $startButton = $modalWrapper.querySelector("#gameStart");
     $startButton.addEventListener("click", () => {
-      if (selectedGameOption) {
-        $app.removeChild($modalWrapper);
-        Modal("waitingPlayer");
-      }
+      if (selectedGameOption) $app.removeChild($modalWrapper);
     });
+  } else if (modalName === "gameLeftServe" || modalName === "gameRightServe") {
+    console.log(`${modalName}will remove in 3s`);
+    setTimeout(function () {
+      $app.removeChild($modalWrapper);
+      console.log("removed modalWrapper. will return true");
+      return true;
+    }, 3000);
   }
 }

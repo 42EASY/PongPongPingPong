@@ -2,6 +2,9 @@ export default function addContentElement(content) {
   let $contentElement;
 
   switch (content.type) {
+    case "i":
+      $contentElement = document.createElement("i");
+      break;
     case "text":
       $contentElement = document.createElement("div");
       $contentElement.innerHTML = content.text;

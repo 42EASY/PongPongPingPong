@@ -10,7 +10,9 @@ function addElement(content) {
 export default function addModal(options) {
   const $modalOverlay = addElement({
     type: "div",
-    class: "modalOverlay close",
+    class: options.backdropCloseDisabled
+      ? "modalOverlay"
+      : "modalOverlay close",
   });
   const $modalWrapper = addElement({ type: "div", class: "modalWrapper" });
   const $modalHeader = addElement({ type: "div", class: "modalHeader" });
@@ -25,13 +27,15 @@ export default function addModal(options) {
   $modalTitle.innerHTML = options.title;
   $modalHeader.appendChild($modalTitle);
 
-  $modalHeader.appendChild(
-    addElement({
-      type: "i",
-      class: "close bi bi-x",
-      id: "x",
-    })
-  );
+  if (!options.hideCloseButton) {
+    $modalHeader.appendChild(
+      addElement({
+        type: "i",
+        class: "close bi bi-x",
+        id: "x",
+      })
+    );
+  }
 
   if (options.bodyContent) {
     for (let i = 0; i < options.bodyContent.length; i++)

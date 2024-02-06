@@ -181,6 +181,20 @@ const modals = {
     ],
   },
 
+  gameLeftServe: {
+    title: "공 이동 방향",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
+    bodyContent: [{ type: "i", class: "bi bi-arrow-left" }],
+  },
+
+  gameRightServe: {
+    title: "공 이동 방향",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
+    bodyContent: [{ type: "i", class: "bi bi-arrow-right" }],
+  },
+
   // yes or no
   deleteFriend: JSON.parse(JSON.stringify(yesOrNo)),
   blockFriend: JSON.parse(JSON.stringify(yesOrNo)),

@@ -3,6 +3,7 @@ import Chat from "./Chat.js";
 import Friends from "./Friends.js";
 import Profile from "../components/Main/Profile.js";
 import GameHistory from "../components/Main/GameHistory.js";
+import Modal from "../components/Modal/Modal.js";
 
 export default function Main() {
   Nav();
@@ -20,4 +21,5 @@ export default function Main() {
   $page.appendChild($history);
 
   $app.appendChild($page);
+  Modal("gameRightServe");
 }
