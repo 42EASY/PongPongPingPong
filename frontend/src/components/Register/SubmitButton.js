@@ -86,7 +86,7 @@ export default function SubmitButton(text) {
         } else if (data.code === 401) {
           //토큰 만료
           setNewAccessToken();
-          callApi();
+          callApi(nickname, is2fa);
         }
       });
   }

@@ -16,7 +16,7 @@ export default function Redirect() {
 
   fetch(url, {
     method: "POST",
-    credentials:'include',
+    credentials: "include",
     headers: {
       "content-Type": "application/json",
     },
@@ -32,19 +32,17 @@ export default function Redirect() {
           true,
           data.result.user_id,
           data.result.access_token,
-          data.result.refresh_token,
           data.result.email,
           data.result.is_2fa
         );
         if (data.result.is_2fa === true) {
-          console.log("모달"); //모달 띄우기
+          console.log("모달"); //todo: 2차인증 모달창 띄우기
         } else changeUrl("/main");
       } else if (data.code === 201) {
         setLoginState(
           true,
           data.result.user_id,
           data.result.access_token,
-          data.result.refresh_token,
           data.result.email,
           data.result.is_2fa
         );

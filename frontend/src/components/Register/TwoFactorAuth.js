@@ -1,8 +1,4 @@
-import {
-  setNewAccessToken,
-  getAccessToken,
-  getIs2fa,
-} from "../../state/State.js";
+import { setNewAccessToken, getAccessToken } from "../../state/State.js";
 import Modal from "../Modal/Modal.js";
 
 export default function TwoFactorAuth(is2fa) {
@@ -39,7 +35,7 @@ export default function TwoFactorAuth(is2fa) {
   $twoFactorAuthActive.classList.add("twoFactorAuthActive");
   $twoFactorAuthActive.innerHTML = "활성화";
 
-  if (is2fa) {
+  if (is2fa === "true") {
     $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
   } else {
@@ -118,7 +114,7 @@ export default function TwoFactorAuth(is2fa) {
   $twoFactorAuthDeactive.addEventListener("click", () => {
     $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
-    if (is2fa == false) return;
+    if (is2fa === false) return;
     //is2fa가 true인 경우, otp 인증
     Modal("otp");
     //todo: 모달 결과에 따라 select 변경
