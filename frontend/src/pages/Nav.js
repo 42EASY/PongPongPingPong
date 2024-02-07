@@ -39,14 +39,12 @@ export default async function Nav() {
 
   $input.addEventListener("input", async (e) => {
     const keyword = e.target.value;
-    console.log(keyword);
     let arr = new Map();
     $searchList.innerHTML = "";
     let $searchItem = document.createElement("div");
     $searchItem.classList.add("list-group-item", "navSearchItem");
     if (keyword.length !== 0) {
-      const list = await getUserList(keyword, 5);
-      console.log(list);
+      const list = await getUserList(keyword, 1, 5);
       for (let i = 0; i < list.result.data.length; i++) {
         $searchItem.innerHTML = list.result.data[i].nickname;
         $searchList.appendChild($searchItem);

@@ -2,10 +2,11 @@ import { getAccessToken } from "../../state/State.js";
 
 const baseUrl = "http://localhost:8000";
 
-export async function getUserList(keyword, size) {
+export async function getUserList(keyword, page, size) {
   try {
     const url =
-      baseUrl + `/api/v1/members/search?keyword=${keyword}&page=1&size=${size}`;
+      baseUrl +
+      `/api/v1/members/search?keyword=${keyword}&page=${page}&size=${size}`;
     const res = await fetch(url, {
       method: "GET",
       headers: {
