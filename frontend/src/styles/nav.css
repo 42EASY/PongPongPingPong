@@ -3,6 +3,7 @@
   --lightGray: #e5e7eb;
   --green: #3ec70b;
   --lightGreen: #e2f7db;
+  --red: #f05252;
 }
 
 * {
@@ -54,6 +55,7 @@
 .navSearch {
   padding-left: 8px;
   border: none;
+  caret-color: var(--green);
   font-weight: 500;
 }
 
@@ -63,14 +65,22 @@
 
 .navSearchList {
   position: absolute;
-  width: 280px;
+  width: 300px;
   display: none;
   padding-top: 10px;
   font-weight: 500;
 }
 
+.navSearchItem {
+  height: 45px;
+}
+
 .navSearchItem:hover {
   background-color: var(--lightGreen);
+}
+
+.navProfileBox {
+  position: relative;
 }
 
 .navProfileBtn {
@@ -89,6 +99,29 @@
   color: black;
 }
 
+.profileMenuWrapper {
+  display: none;
+  width: 224px;
+  box-shadow: 3px 3px 3px var(--lightGray);
+  border-radius: 8px;
+  position: absolute;
+  background-color: white;
+  margin-top: 10px;
+}
+
+.profileMenu {
+  font-size: 14px;
+  color: var(--red);
+}
+
+.profileMenu:hover {
+  background-color: var(--lightGreen);
+}
+
+.profileMenuIcon {
+  font-size: 18px;
+  margin-right: 12px;
+}
 .navVerticalLine {
   width: 1.2px;
   height: 32px;
