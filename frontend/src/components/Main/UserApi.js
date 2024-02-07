@@ -8,7 +8,7 @@ export async function getUserInfo(id) {
     const res = await fetch(url, {
       method: "GET",
       headers: {
-        "content-Type": "application/json",
+        "Content-Type": "application/json",
         Authorization: `Bearer ${getAccessToken()}`,
       },
     });
