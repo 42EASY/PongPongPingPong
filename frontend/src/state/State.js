@@ -54,6 +54,7 @@ const setNewAccessToken = () => {
       } else {
         //재발급 실패한 경우 로그아웃 처리
         logout();
+        return false;
       }
     });
 };
