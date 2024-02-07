@@ -28,7 +28,10 @@ export default function MyProfile(id, user) {
   $ProfileName.innerHTML = user.nickname;
   $ProfileNameBox.appendChild($ProfileBtnBox);
   $ProfileBtnBox.id = "profileBtnBox";
-  if (isMe) $ProfileBtnBox.appendChild(MyBtn());
+  if (isMe)
+    $ProfileBtnBox.appendChild(
+      MyBtn({ isInit: false, image: user.image_url, nickname: user.nickname })
+    );
   else $ProfileBtnBox.appendChild(OtherBtn(id, user.relation));
   $ProfileInfoBox.appendChild(
     GameCount({

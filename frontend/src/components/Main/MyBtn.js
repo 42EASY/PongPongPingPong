@@ -1,6 +1,6 @@
 import changeUrl from "../../Router.js";
 
-export default function MyBtn() {
+export default function MyBtn(user) {
   const $MyBtnWrapper = document.createElement("div");
   const $ProfileEditBtn = document.createElement("button");
 
@@ -10,7 +10,7 @@ export default function MyBtn() {
   $ProfileEditBtn.innerHTML = "프로필 편집";
 
   $ProfileEditBtn.addEventListener("click", () => {
-    changeUrl("/register");
+    changeUrl("/register", user);
   });
 
   return $MyBtnWrapper;

@@ -8,11 +8,11 @@ import SubmitButton from "../components/Register/SubmitButton.js";
 import { getIsLogin, getEmail, getIs2fa } from "../state/State.js";
 import changeUrl from "../Router.js";
 
-export default function Register(
+export default function Register({
   isInit = false,
   image = "./src/images/none_profile.png",
-  nickname = ""
-) {
+  nickname = "",
+}) {
   if (getIsLogin() === false) {
     changeUrl("/"); //로그인 안되어있으면 로그인 페이지로 이동
     return;
