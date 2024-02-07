@@ -6,7 +6,7 @@ export default function MyBtn() {
 
   $MyBtnWrapper.classList.add("btnWrapper");
   $MyBtnWrapper.appendChild($ProfileEditBtn);
-  $ProfileEditBtn.classList.add("mainBtn");
+  $ProfileEditBtn.classList.add("btn", "mainBtn");
   $ProfileEditBtn.innerHTML = "프로필 편집";
 
   $ProfileEditBtn.addEventListener("click", () => {

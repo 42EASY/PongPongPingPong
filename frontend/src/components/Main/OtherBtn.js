@@ -20,7 +20,7 @@ export default function OtherBtn(id, status) {
   $MoreFunctionBox.appendChild($MoreMenu);
 
   $OtherBtnWrapper.classList.add("btnWrapper");
-  $FriendStatusBtn.classList.add("mainBtn");
+  $FriendStatusBtn.classList.add("btn", "mainBtn");
   $FriendStatusIcon.classList.add("bi", "bi-plus-lg", "friendStatusIcon");
   $MessageBtn.classList.add("btn", "mainBtn");
   $MessageBtn.innerHTML = "메세지";
@@ -32,19 +32,15 @@ export default function OtherBtn(id, status) {
     status = nextStatus;
     if (nextStatus === "NONE") {
       $FriendStatusBtn.classList.remove("statusBlocked");
-      $FriendStatusBtn.classList.add("btn", "statusNotFriend");
+      $FriendStatusBtn.classList.add("statusNotFriend");
       $FriendStatusBtn.innerHTML = "";
       $FriendStatusBtn.appendChild($FriendStatusIcon);
       $FriendStatusBtn.append("친구 추가");
     } else if (nextStatus === "FRIEND") {
-      $FriendStatusBtn.classList.remove(
-        "btn",
-        "statusNotFriend",
-        "statusBlocked"
-      );
+      $FriendStatusBtn.classList.remove("statusNotFriend", "statusBlocked");
       $FriendStatusBtn.innerHTML = "친구";
     } else if (nextStatus === "BLOCK") {
-      $FriendStatusBtn.classList.remove("btn", "statusNotFriend");
+      $FriendStatusBtn.classList.remove("statusNotFriend");
       $FriendStatusBtn.classList.add("statusBlocked");
       $FriendStatusBtn.innerHTML = "차단됨";
       $MoreFunctionBtn.remove();
