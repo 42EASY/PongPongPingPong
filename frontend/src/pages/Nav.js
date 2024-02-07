@@ -52,10 +52,9 @@ export default async function Nav() {
       }
 
       $searchItem.addEventListener("click", (e) => {
-        console.log(e.target.innerHTML);
-        console.log(arr.get(e.target.innerHTML));
         changeUrl("/main", arr.get(e.target.innerHTML));
       });
+
       $searchList.style.display = "block";
     }
   });
