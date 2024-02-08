@@ -29,13 +29,13 @@ export default function OtherBtn(id, status) {
   $MoreFucntionIcon.classList.add("bi", "bi-three-dots");
 
   const onChangeStatus = (nextStatus) => {
-    status = nextStatus;
     if (nextStatus === "NONE") {
       $FriendStatusBtn.classList.remove("statusBlocked");
       $FriendStatusBtn.classList.add("statusNotFriend");
       $FriendStatusBtn.innerHTML = "";
       $FriendStatusBtn.appendChild($FriendStatusIcon);
       $FriendStatusBtn.append("친구 추가");
+      if (status === "BLOCK") $MoreFunctionBox.appendChild($MoreFunctionBtn);
     } else if (nextStatus === "FRIEND") {
       $FriendStatusBtn.classList.remove("statusNotFriend", "statusBlocked");
       $FriendStatusBtn.innerHTML = "친구";
@@ -45,6 +45,7 @@ export default function OtherBtn(id, status) {
       $FriendStatusBtn.innerHTML = "차단됨";
       $MoreFunctionBtn.remove();
     }
+    status = nextStatus;
   };
 
   $FriendStatusBtn.onclick = () => {
