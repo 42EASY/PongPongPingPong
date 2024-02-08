@@ -21,5 +21,4 @@ export default function Main() {
   $page.appendChild($history);
 
   $app.appendChild($page);
-  Modal("gameRightServe");
 }

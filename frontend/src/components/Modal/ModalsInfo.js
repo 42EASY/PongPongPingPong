@@ -10,7 +10,7 @@ const onlyYes = {
     {
       type: "primaryButton",
       text: "확인",
-      class: "btn primaryButton close",
+      class: "btn primaryButton close positive",
     },
   ],
 };
@@ -32,7 +32,7 @@ const yesOrNo = {
     {
       type: "primaryButton",
       text: "확인",
-      class: "btn primaryButton close",
+      class: "btn primaryButton close positive",
     },
   ],
 };
@@ -58,7 +58,7 @@ const modals = {
       {
         type: "singleButton",
         text: "확인",
-        class: "btn singleButton close",
+        class: "btn singleButton close positive",
       },
     ],
   },
@@ -72,6 +72,7 @@ const modals = {
       },
       {
         type: "input",
+        name: "otp",
         placeHolder: "인증번호를 입력하세요",
       },
     ],
@@ -79,7 +80,7 @@ const modals = {
       {
         type: "singleButton",
         text: "확인",
-        class: "btn singleButton close otpSummit",
+        class: "btn singleButton close otpSummit positive",
       },
     ],
   },
@@ -90,16 +91,19 @@ const modals = {
       {
         type: "radio",
         text: "2P 게임",
+        name: "game",
         explanation: "하나의 키보드에서 두 명의 플레이어 간 게임이 진행됩니다",
       },
       {
         type: "radio",
         text: "일반 게임",
+        name: "game",
         explanation: "1:1 방식으로 진행됩니다",
       },
       {
         type: "radio",
         text: "토너먼트",
+        name: "game",
         explanation: "4명이 모여 토너먼트 방식으로 진행됩니다",
       },
     ],
@@ -107,8 +111,7 @@ const modals = {
       {
         type: "singleButton",
         text: "다음",
-        class: "btn singleButton",
-        id: "gameModeNext",
+        class: "btn singleButton positive close",
       },
     ],
   },
@@ -119,11 +122,13 @@ const modals = {
       {
         type: "radio",
         text: "클래식",
+        name: "game",
         explanation: "Pong 게임 방식으로 진행됩니다",
       },
       {
         type: "radio",
         text: "스피드",
+        name: "game",
         explanation: "공의 속도가 더 빠릅니다",
       },
     ],
@@ -131,14 +136,15 @@ const modals = {
       {
         type: "singleButton",
         text: "🏓게임 시작🏓",
-        class: "btn singleButton",
-        id: "gameStart",
+        class: "btn singleButton positive close",
       },
     ],
   },
 
   waitingPlayer: {
     title: "대전자 찾는 중",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
     footerContent: [
       {
         type: "singleButton",
@@ -148,8 +154,10 @@ const modals = {
     ],
   },
 
-  waitingInvitationAcceptance: {
+  waitingInvitation: {
     title: "초대 수락 대기 중",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
     footerContent: [
       {
         type: "singleButton",
@@ -224,7 +232,7 @@ modals.blockFriend.bodyContent[0].text =
 modals.blockFriend.footerContent[1].text = "차단하기";
 
 modals.unblockFriend.title = "friend1 님을 차단 해제하시겠습니까?";
-modals.unblockFriend.bodyContent[0] =
+modals.unblockFriend.bodyContent[0].text =
   "이제 friend1 님의 메세지를 받을 수 있습니다.";
 modals.unblockFriend.footerContent[1].text = "해제하기";
 

@@ -17,6 +17,7 @@ export default function addContentElement(content) {
     case "input":
       $contentElement = document.createElement("input");
       $contentElement.type = "text";
+      $contentElement.name = content.name;
       $contentElement.placeholder = content.placeHolder;
       break;
     case "radio":
@@ -25,7 +26,7 @@ export default function addContentElement(content) {
 
       const $radioButton = document.createElement("input");
       $radioButton.type = "radio";
-      $radioButton.name = "game";
+      $radioButton.name = content.name;
       $radioButton.value = content.text;
       $contentElement.appendChild($radioButton);
 
