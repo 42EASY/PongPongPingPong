@@ -9,23 +9,22 @@ import jwt
 
 class JwtView(APIView):
 	def post(self, request):
-		header = request.META.get('HTTP_AUTHORIZATION', None)
-		if not header:
+		refresh_token = request.COOKIES.get('refresh_token', None)
+		if not refresh_token:
 			return JsonResponse(
 				{'code':401,
 				'message':'Unauthorized'},
 				status=401
 			)
 		
-		token = header.split()[1]
 		try:
-			Members.objects.get(id=cache.get(token))
+			Members.objects.get(id=cache.get(refresh_token))
 		except Members.DoesNotExist:
 			return JsonResponse({'code': 404, 'message': 'Not Found'}, status=404)
 
 		# 새로운 access_token 생성
 		try:
-			refresh = RefreshToken(token)
+			refresh = RefreshToken(refresh_token)
 			new_access_token = str(refresh.access_token)
 		except:
 			return JsonResponse({'code': 403, 'message': 'Forbbiden'}, status=403)
