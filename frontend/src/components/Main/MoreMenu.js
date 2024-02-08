@@ -1,7 +1,8 @@
 import OtherBtn from "./OtherBtn.js";
 import Modal from "../Modal/Modal.js";
+import { postBlock } from "./UserApi.js";
 
-export default function MoreMenu() {
+export default function MoreMenu(id) {
   const $MoreMenuWrapper = document.createElement("div");
   const $MoreMenu = document.createElement("ul");
   const $InviteGameOption = document.createElement("li");
@@ -28,11 +29,12 @@ export default function MoreMenu() {
   });
 
   $BlockOption.addEventListener("click", () => {
-    // todo: Post 차단
+    // todo: modat return 값 확인
     const $ProfileBtnBox = document.querySelector("#profileBtnBox");
     $ProfileBtnBox.innerHTML = "";
     Modal("blockFriend");
-    $ProfileBtnBox.appendChild(OtherBtn({ status: 2 }));
+    postBlock(id);
+    $ProfileBtnBox.appendChild(OtherBtn(id, "BLOCK"));
   });
 
   return $MoreMenuWrapper;
