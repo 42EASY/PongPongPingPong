@@ -89,6 +89,11 @@ class MemberView(APIView):
 			
 				if serializer.is_valid():
 					serializer.save()
+				else:
+					return JsonResponse({
+						'code':409,
+						'message': 'Dulicate nicknames'
+					}, status=409)
 
 		except:
 			return JsonResponse({

@@ -33,6 +33,7 @@ services:
       - transcendence
     depends_on:
       - db
+      - redis
 
   nginx:
     pull_policy: never

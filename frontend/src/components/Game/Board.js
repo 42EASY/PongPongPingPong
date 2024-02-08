@@ -1,8 +1,8 @@
 import EndGame from "../../pages/EndGame.js";
+import Modal from "../../components/Modal/Modal.js";
 
 export default function Board(mode, option) {
-  console.log(mode);
-  console.log(option);
+  console.log(`${mode} , ${option}`);
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
@@ -57,17 +57,10 @@ export default function Board(mode, option) {
       this.running = this.gameOver = false;
       this.turnOver = true;
       this.serve = Math.random() < 0.5 ? this.leftPlayer : this.rightPlayer;
-      console.log(
-        "initial serve : " + (this.serve === this.leftPlayer ? "left" : "right")
-      );
       this.timer = this.round = 0;
 
-      this.menu();
+      this.draw();
       this.listen();
-      window.addEventListener("resize", () => {
-        this.setCanvasSize();
-        this.draw();
-      });
     },
 
     changeUrl: function (requestedUrl) {
@@ -75,33 +68,6 @@ export default function Board(mode, option) {
       document.getElementById("styles").setAttribute("href", path);
       history.pushState(null, null, window.location.pathname);
       EndGame(mode, this.leftPlayer.score, this.rightPlayer.score);
-    },
-
-    menu: function () {
-      // Draw all the Pong objects in their current state
-      this.draw();
-
-      // Change the canvas font size and color
-      context.font = "50px sans-serif";
-      context.fillStyle = "#ffffff";
-
-      // Draw the rectangle behind the 'Press any key to begin' text.
-      context.fillRect(
-        canvas.width / 2 - 350,
-        canvas.height / 2 - 48,
-        700,
-        100
-      );
-
-      // Change the canvas color;
-      context.fillStyle = "#000000";
-
-      // Draw the 'press any key to begin' text
-      context.fillText(
-        "Press any key to begin",
-        canvas.width / 2,
-        canvas.height / 2 + 15
-      );
     },
 
     // Update all objects (move the player, paddle, ball, increment the score, etc.)
@@ -125,10 +91,6 @@ export default function Board(mode, option) {
         // and randomize the direction to add some challenge.
         if (Pong._turnDelayIsOver.call(this) && this.turnOver) {
           // 서브할 때 공 설정 -> 이거 그냥 공 초기화할 때 해도 되지 않나
-          console.log(
-            "serve!!!!!!!!!!!!!!!!!! : " +
-              (this.serve === this.leftPlayer ? "left" : "right")
-          );
           this.ball.moveX =
             this.serve === this.leftPlayer ? DIRECTION.LEFT : DIRECTION.RIGHT;
           this.ball.moveY = [DIRECTION.UP, DIRECTION.DOWN][
@@ -315,42 +277,17 @@ export default function Board(mode, option) {
     // Reset the ball location, the player turns and set a delay before the next round begins.
     _resetTurn: function (victor) {
       this.turnOver = true;
-      console.log(
-        "game over. this serve was " +
-          (this.serve === this.leftPlayer ? "left" : "right")
-      );
       this.ball = Ball.new.call(this);
       this.serve =
         this.serve === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
       this.timer = new Date().getTime();
 
       victor.score++;
-      console.log(
-        "next serve will : " +
-          (this.serve === this.leftPlayer ? "left" : "right")
-      );
     },
 
     // Wait for a delay to have passed after each turn.
     _turnDelayIsOver: function () {
       return new Date().getTime() - this.timer >= 1000;
-    },
-
-    setCanvasSize: function () {
-      this.canvas.height = window.innerHeight * 0.85;
-      this.canvas.width = canvas.height * 1.45;
-      this.canvas.style.width = this.canvas.width + "px";
-      this.canvas.style.height = this.canvas.height + "px";
-
-      // 창 크기가 변경될 때 게임 객체의 위치 업데이트
-      this.leftPlayer.x = 70;
-      this.leftPlayer.y = this.canvas.height / 2 - 35;
-
-      this.rightPlayer.x = this.canvas.width - 70;
-      this.rightPlayer.y = this.canvas.height / 2 - 35;
-
-      this.ball.x = this.canvas.width / 2 - 9;
-      this.ball.y = this.canvas.height / 2 - 9;
     },
   };
 

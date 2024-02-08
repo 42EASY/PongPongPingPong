@@ -3,6 +3,7 @@ import Profile from "../components/Main/Profile.js";
 import GameHistory from "../components/Main/GameHistory.js";
 import { getUserId } from "../state/State.js";
 import { getUserInfo } from "../components/Main/UserApi.js";
+import Modal from "../components/Modal/Modal.js";
 
 export default async function Main(id = getUserId()) {
   Nav();

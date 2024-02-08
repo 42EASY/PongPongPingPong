@@ -35,7 +35,7 @@ class LoginView(APIView):
 			}, status=400)
 
 		user_info_response = requests.get('https://api.intra.42.fr/v2/me', headers={
-	    'Authorization': f'Bearer {ft_access_token}'
+		'Authorization': f'Bearer {ft_access_token}'
 		})
 
 		user_info = user_info_response.json()
@@ -61,30 +61,22 @@ class LoginView(APIView):
 
 		cache.set(refresh_token, member.id, timeout=refresh_token_lifetime)
 		
-		if created:
-			return JsonResponse({
-				'code':201,
-				'message':'created',
-				'result': {
-					'refresh_token': str(refresh),
-					'access_token': access_token,
-					'user_id': member.id,
-					'email':member.email,
-					'is_2fa':member.is_2fa,
-				}
-			}, status=201)
-		else:
-			return JsonResponse({
-				'code':200,
-				'message':'ok',
-				'result': {
-					'refresh_token': str(refresh),
-					'access_token': access_token,
-					'user_id': member.id,
-					'email':member.email,
-					'is_2fa':member.is_2fa,
-				}
-			}, status=200)
+		res = JsonResponse({
+			'code': 201 if created else 200,
+			'message': 'created' if created else 'ok',
+			'result': {
+				'refresh_token': str(refresh),
+				'access_token': access_token,
+				'user_id': member.id,
+				'email': member.email,
+				'is_2fa': member.is_2fa,
+			}
+		})
+
+		#TODO: 개발 환경 설정 변경
+		res.set_cookie('refresh_token', refresh_token, httponly=True, samesite='Strict', secure=False, max_age=refresh_token_lifetime) #secure 옵션 -> 개발환경에서는 False
+
+		return res
 
 class LogoutView(APIView):
 	@login_required
@@ -94,12 +86,15 @@ class LogoutView(APIView):
 			member = Members.objects.get(id=id)
 
 			cache.delete(f"refresh_token:{id}")
-
-			return JsonResponse({
+			res = JsonResponse({
 				'code':200,
 				'message':'ok',
 				'result':{}
 			}, status=200)
+
+			res.delete_cookie('refresh_token')
+
+			return res
 		except Members.DoesNotExist:
 			return JsonResponse({
 				'code': 404,
