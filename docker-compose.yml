@@ -31,6 +31,8 @@ services:
       - 8000:8000
     networks:
       - transcendence
+    volumes:
+      - ./backend/transcendence/media:/app/transcendence/media
     depends_on:
       - db
       - redis
@@ -51,7 +53,8 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app/frontend
+      - ./backend/transcendence/media:/app/backend/transcendence/media
     
   redis:
     image: redis:7.2-bookworm
