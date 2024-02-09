@@ -47,6 +47,20 @@ class BlockViewTest(TestCase):
         self.assertEquals(response.json()['code'], 404)
         self.assertEquals(response.status_code, 404)
 
+
+    #이미 차단되어있는 경우에 친구 차단 실패 테스트
+    def test_double_post_block(self):
+        target_model = Members.objects.get(nickname = 'target')
+
+        Block.objects.create(user = self.fake_user, target = target_model)
+
+        url = reverse('block:post', kwargs = {'user_id' : target_model.id})
+        response = client.post(url)
+
+        self.assertEquals(response.json()['code'], 409)
+        self.assertEquals(response.status_code, 409)
+
+
     #loginuser가 차단한 target을 차단 해제 성공 테스트
     def test_delete_block_success(self):
         target_model = Members.objects.get(nickname = 'target')
