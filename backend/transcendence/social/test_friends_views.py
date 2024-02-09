@@ -60,6 +60,34 @@ class FriendsViewTest(TestCase):
         self.assertEquals(response.json()['code'], 409)
         self.assertEquals(response.status_code, 409)
 
+    #이미 친구 추가가 되어있는 경우에 친구 추가 실패 테스트
+    def test_double_post_friends(self):
+        target_model = Members.objects.get(nickname = 'target')
+
+        Friend.objects.create(user = self.fake_user, target = target_model)
+
+        url = reverse('friends:post', kwargs = {'user_id' : target_model.id})
+        response = client.post(url)
+
+        self.assertEquals(response.json()['code'], 409)
+        self.assertEquals(response.status_code, 409)
+
+    #loginuser가 차단 해제 후 다시 친구 추가 성공 테스트
+    def test_post_deleted_block_friends(self):
+        target_model = Members.objects.get(nickname = 'target')
+
+        Block.objects.create(user = self.fake_user, target = target_model)
+
+        block_url = reverse('block:delete', kwargs = {'user_id' : target_model.id})
+        client.delete(block_url)
+
+        url = reverse('friends:post', kwargs = {'user_id' : target_model.id})
+        response = client.post(url)
+
+        self.assertEquals(response.json()['code'], 201)
+        self.assertEquals(response.status_code, 201)
+
+
     #loginuser가 친구 추가된 target을 친구 삭제 성공테스트
     def test_delete_friends_success(self):
         target_model = Members.objects.get(nickname = 'target')

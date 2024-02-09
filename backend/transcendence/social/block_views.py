@@ -3,7 +3,7 @@ from rest_framework import permissions
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from members.models import Members
-from social.models import Block
+from social.models import Block, Friend
 from django.core.paginator import Paginator
 from security.views import login_required
 
@@ -19,6 +19,13 @@ class BlockView(APIView):
             target_user = Members.objects.get(id = user_id)
             base_user = request.user
         
+            if (Block.objects.filter(user = base_user, target = target_user).exists()):
+                return JsonResponse({
+                    'code': 409,
+                    'message': 'Conflict'
+                }, status = 409)
+            
+
         except:
             return JsonResponse({
 				'code': 404,
@@ -27,6 +34,11 @@ class BlockView(APIView):
         
         try:
             Block.objects.create(user = base_user, target = target_user)
+
+            if (Friend.objects.filter(user = base_user, target = target_user).exists()):
+                friend = Friend.objects.get(user = base_user, target = target_user)
+
+                friend.delete()
         
         except:
             return JsonResponse({
