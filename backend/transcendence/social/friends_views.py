@@ -22,6 +22,13 @@ class FriendsView(APIView):
                     'code': 409,
                     'message': 'Conflict'
                 }, status = 409)
+            
+
+            if (Friend.objects.filter(user = base_user, target = target_user).count() > 0):
+                return JsonResponse({
+                    'code': 409,
+                    'message': 'AlReady Exists'
+                }, status = 409)
       
         except:
             return JsonResponse({
