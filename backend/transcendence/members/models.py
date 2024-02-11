@@ -3,6 +3,12 @@ from django.forms.models import model_to_dict
 
 # Create your models here.
 class Members(models.Model):
+
+    class Status(models.TextChoices):
+        ONLINE = 'ONLINE', 'Online'
+        OFFLINE = 'OFFLINE', 'Offline'
+        IN_GAME = 'IN_GAME', 'In_Game'
+
     id = models.BigAutoField(primary_key=True)
     nickname = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
@@ -12,6 +18,7 @@ class Members(models.Model):
     created_at = models.DateTimeField(null=True)
     modified_at = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)
+    status = models.CharField(max_length = 100, choices = Status.choices, default = Status.OFFLINE)
 
     class Meta:
         db_table = 'members'
