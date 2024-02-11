@@ -52,7 +52,8 @@ class MemberView(APIView):
 					"relation" : relation,
 					"game_count" : total_games,
 					"win_count" : win_count,
-					"lose_count" : lose_count
+					"lose_count" : lose_count,
+					"status": user.status
 					}
 			})
 
