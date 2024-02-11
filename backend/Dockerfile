@@ -28,6 +28,8 @@ RUN pip install channels-redis
 RUN pip install daphne
 
 RUN pip install django-cors-headers
+RUN pip install pytest-asyncio
+
 
 RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
 
