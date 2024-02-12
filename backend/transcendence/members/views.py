@@ -78,7 +78,7 @@ class MemberView(APIView):
 					if default_storage.exists(old_file_path):
 						default_storage.delete(old_file_path)
 					
-				file_path = default_storage.save(os.path.join(str(user.id), file.name), file)
+				file_path = default_storage.save(os.path.join("profile-images", str(user.id), file.name), file)
 				file_url = default_storage.url(file_path)
 				user.image_url = file_url
 				user.save()

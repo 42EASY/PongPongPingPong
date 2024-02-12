@@ -5,92 +5,63 @@ const $app = document.querySelector(".App");
 
 export default function Modal(modalName) {
   console.log("modal name :" + modalName);
-  let $modalWrapper;
-  let $closeButtons;
 
-  if (modalName === "tfa") $modalWrapper = addModal(modals.tfa);
-  else if (modalName === "otp") $modalWrapper = addModal(modals.otp);
-  else if (modalName === "deleteFriend")
-    $modalWrapper = addModal(modals.deleteFriend);
-  else if (modalName === "blockFriend")
-    $modalWrapper = addModal(modals.blockFriend);
-  else if (modalName === "unblockFriend")
-    $modalWrapper = addModal(modals.unblockFriend);
-  else if (modalName === "exitChatting")
-    $modalWrapper = addModal(modals.exitChatting);
-  else if (modalName === "invalidGame")
-    $modalWrapper = addModal(modals.invalidGame);
-  else if (modalName === "tournamentTable")
-    $modalWrapper = addModal(modals.tournamentTable);
-  else if (modalName === "gameResultTable")
-    $modalWrapper = addModal(modals.gameResultTable);
-  else if (modalName === "inviteFail_alreadyInvited")
-    $modalWrapper = addModal(modals.inviteFail_alreadyInvited);
-  else if (modalName === "inviteFail_fullRoom")
-    $modalWrapper = addModal(modals.inviteFail_fullRoom);
-  else if (modalName === "inviteFail_offline")
-    $modalWrapper = addModal(modals.inviteFail_offline);
-  else if (modalName === "inviteFail_inGame")
-    $modalWrapper = addModal(modals.inviteFail_inGame);
-  else if (modalName === "gameMode") {
-    let selectedGameMode = "";
-    $modalWrapper = addModal(modals.gameMode);
-    const $radioButtons = $modalWrapper.querySelectorAll('input[type="radio"]');
-    for (const $radioButton of $radioButtons) {
-      $radioButton.addEventListener("change", () => {
-        selectedGameMode = $radioButton.value;
-        if ($radioButton.value === "토너먼트") {
-          const $button = document.querySelector(".singleButton");
-          $button.innerHTML = "🏓게임 시작🏓";
-          $button.setAttribute("id", "gameStart");
-        } else {
-          const $button = document.querySelector(".singleButton");
-          $button.innerHTML = "다음";
-          $button.setAttribute("id", "gameModeNext");
-        }
+  return new Promise((resolve) => {
+    const modalContent = modals[modalName];
+    if (!modalContent) console.log(`Error!!!!!!! ${modalName} : not found`); //
+    const $modalWrapper = addModal(modalContent);
+    $app.appendChild($modalWrapper);
+    document
+      .querySelector(".modalWrapper")
+      .addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+
+    // [모달 창 닫는 부분]
+    const $closeButtons = document.getElementsByClassName("close");
+    for (let i = 0; i < $closeButtons.length; i++) {
+      $closeButtons[i].addEventListener("click", (event) => {
+        const isPositive = event.target.classList.contains("positive");
+        const inputTag = document.querySelector(".modalOverlay input") !== null;
+        const input = getInputValue(modalName);
+        if (inputTag && isPositive && !input) return;
+
+        $app.removeChild($modalWrapper);
+        return inputTag
+          ? resolve({ isPositive, input })
+          : resolve({ isPositive });
       });
     }
 
-    const $nextButton = $modalWrapper.querySelector("#gameModeNext");
-    $nextButton.addEventListener("click", () => {
-      if (selectedGameMode === "토너먼트") {
-        $app.removeChild($modalWrapper);
-        Modal("waitingPlayer");
-      } else if (selectedGameMode) {
-        $app.removeChild($modalWrapper);
-        Modal("gameOption");
+    // gameMode modal 버튼 이름 변경 listener
+    if (modalName === "gameMode") {
+      const $radioButtons =
+        $modalWrapper.querySelectorAll('input[name="game"]');
+      for (const $radioButton of $radioButtons) {
+        $radioButton.addEventListener("change", () => {
+          if ($radioButton.value === "토너먼트")
+            document.querySelector(".singleButton").innerHTML = "🏓게임 시작🏓";
+          else document.querySelector(".singleButton").innerHTML = "다음";
+        });
       }
-    });
-  } else if (modalName === "gameOption") {
-    let selectedGameOption = "";
-    $modalWrapper = addModal(modals.gameOption);
-    const $radioButtons = $modalWrapper.querySelectorAll('input[type="radio"]');
-    for (const $radioButton of $radioButtons) {
-      $radioButton.addEventListener("change", () => {
-        selectedGameOption = $radioButton.value;
-      });
     }
-
-    const $startButton = $modalWrapper.querySelector("#gameStart");
-    $startButton.addEventListener("click", () => {
-      if (selectedGameOption) {
+    // gameServe modal 자동 닫힘 예외처리
+    if (modalName === "gameLeftServe" || modalName === "gameRightServe") {
+      setTimeout(() => {
         $app.removeChild($modalWrapper);
-        Modal("waitingPlayer");
-      }
-    });
-  } else if (modalName === "waitingPlayer")
-    $modalWrapper = addModal(modals.waitingPlayer);
-
-  $app.appendChild($modalWrapper);
-
-  $closeButtons = document.getElementsByClassName("close");
-  for (let i = 0; i < $closeButtons.length; i++) {
-    $closeButtons[i].addEventListener("click", () => {
-      $app.removeChild($modalWrapper);
-    });
-  }
-
-  document.querySelector(".modalWrapper").addEventListener("click", (event) => {
-    event.stopPropagation();
+        resolve(true);
+      }, 3000);
+    }
   });
+
+  function getInputValue(modalName) {
+    if (modalName === "otp") {
+      const otpInput = document.querySelector('input[name="otp"]');
+      return otpInput.value !== "" ? otpInput.value : false;
+    } else if (modalName === "gameMode" || modalName === "gameOption") {
+      const checkedRadio = document.querySelector('input[name="game"]:checked');
+      return checkedRadio ? checkedRadio.value : false;
+    }
+    return false;
+  }
 }

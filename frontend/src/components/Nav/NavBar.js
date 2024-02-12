@@ -1,3 +1,5 @@
+import NavProfileMenu from "./NavProfileMenu.js";
+
 export default function NavBar() {
   const $navWrapper = document.createElement("div");
   const $navBar = document.createElement("nav");
@@ -19,8 +21,6 @@ export default function NavBar() {
   const $navSearchIcon = document.createElement("i");
   const $navSearch = document.createElement("input");
   const $navSearchList = document.createElement("ul");
-  const $navSearchItem = document.createElement("li");
-  const $navSearchItem2 = document.createElement("li");
 
   $navBar.appendChild($navSearchBox);
   $navSearchBox.appendChild($navSearchIcon);
@@ -37,33 +37,29 @@ export default function NavBar() {
   $navSearchBox.appendChild($navSearchList);
   $navSearchList.id = "navSearchList";
   $navSearchList.classList.add("list-group", "navSearchList");
-  //Todo: 아래 부분 api로 받아 반복문으로 수정
-  $navSearchList.appendChild($navSearchItem);
-  $navSearchList.appendChild($navSearchItem2);
-  $navSearchItem.append("nickname");
-  $navSearchItem.classList.add("list-group-item", "navSearchItem");
-  $navSearchItem2.append("nickname2");
-  $navSearchItem2.classList.add("list-group-item", "navSearchItem");
-  //todo: 리스트 클릭 이벤트 추가
 
   const $navBtns = document.createElement("div");
-  const $navProfileBtn = document.createElement("a");
+  const $navProfileBox = document.createElement("div");
+  const $navProfileBtn = document.createElement("div");
   const $navProfileBtnImage = document.createElement("img");
+  const $navProfileMenu = NavProfileMenu();
   const $navVerticalLine = document.createElement("div");
   const $navChatBtn = document.createElement("a");
   const $navFriendsBtn = document.createElement("a");
   const $navGameBtn = document.createElement("a");
 
   $navBar.appendChild($navBtns);
-  $navBtns.appendChild($navProfileBtn);
+  $navBtns.appendChild($navProfileBox);
   $navBtns.appendChild($navVerticalLine);
   $navBtns.appendChild($navChatBtn);
   $navBtns.appendChild($navFriendsBtn);
   $navBtns.appendChild($navGameBtn);
   $navBtns.classList.add("navBtns");
+  $navProfileBox.appendChild($navProfileBtn);
+  $navProfileBox.appendChild($navProfileMenu);
   $navProfileBtn.appendChild($navProfileBtnImage);
+  $navProfileBox.classList.add("navProfileBox");
   $navProfileBtn.classList.add("navProfileBtn");
-  $navProfileBtnImage.setAttribute("src", ""); //profile image path
   $navProfileBtnImage.setAttribute("alt", "profile_image");
   $navProfileBtnImage.classList.add("navProfileBtnImage");
   $navVerticalLine.classList.add("navVerticalLine");

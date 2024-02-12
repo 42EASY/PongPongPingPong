@@ -17,10 +17,17 @@ class FriendsView(APIView):
             target_user = Members.objects.get(id = user_id)
             base_user = request.user
 
-            if (Block.objects.filter(user = base_user, target = target_user).count() > 0):
+            if (Block.objects.filter(user = base_user, target = target_user).exists()):
                 return JsonResponse({
                     'code': 409,
                     'message': 'Conflict'
+                }, status = 409)
+            
+
+            if (Friend.objects.filter(user = base_user, target = target_user).exists()):
+                return JsonResponse({
+                    'code': 409,
+                    'message': 'AlReady Exists'
                 }, status = 409)
       
         except:

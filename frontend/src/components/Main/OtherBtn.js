@@ -1,9 +1,8 @@
 import MoreMenu from "./MoreMenu.js";
 import Chat from "../../pages/Chat.js";
+import { postFriend, deleteFriend, deleteBlock } from "./UserApi.js";
 
-export default function OtherBtn({ status }) {
-  let curStatus = status; //0: not friend, 1: friend, 2: blocked
-
+export default function OtherBtn(id, status) {
   const $OtherBtnWrapper = document.createElement("div");
   const $FriendStatusBtn = document.createElement("button");
   const $FriendStatusIcon = document.createElement("i");
@@ -11,7 +10,7 @@ export default function OtherBtn({ status }) {
   const $MoreFunctionBox = document.createElement("div");
   const $MoreFunctionBtn = document.createElement("button");
   const $MoreFucntionIcon = document.createElement("i");
-  const $MoreMenu = MoreMenu();
+  const $MoreMenu = MoreMenu(id);
 
   $OtherBtnWrapper.appendChild($FriendStatusBtn);
   $OtherBtnWrapper.appendChild($MessageBtn);
@@ -21,7 +20,7 @@ export default function OtherBtn({ status }) {
   $MoreFunctionBox.appendChild($MoreMenu);
 
   $OtherBtnWrapper.classList.add("btnWrapper");
-  $FriendStatusBtn.classList.add("mainBtn");
+  $FriendStatusBtn.classList.add("btn", "mainBtn");
   $FriendStatusIcon.classList.add("bi", "bi-plus-lg", "friendStatusIcon");
   $MessageBtn.classList.add("btn", "mainBtn");
   $MessageBtn.innerHTML = "메세지";
@@ -30,34 +29,36 @@ export default function OtherBtn({ status }) {
   $MoreFucntionIcon.classList.add("bi", "bi-three-dots");
 
   const onChangeStatus = (nextStatus) => {
-    curStatus = nextStatus;
-    if (nextStatus === 0) {
-      //Not Friend
+    if (nextStatus === "NONE") {
       $FriendStatusBtn.classList.remove("statusBlocked");
-      $FriendStatusBtn.classList.add("btn", "statusNotFriend");
+      $FriendStatusBtn.classList.add("statusNotFriend");
       $FriendStatusBtn.innerHTML = "";
       $FriendStatusBtn.appendChild($FriendStatusIcon);
       $FriendStatusBtn.append("친구 추가");
-    } else if (nextStatus === 1) {
-      // Friend
-      $FriendStatusBtn.classList.remove(
-        "btn",
-        "statusNotFriend",
-        "statusBlocked"
-      );
+      if (status === "BLOCK") $MoreFunctionBox.appendChild($MoreFunctionBtn);
+    } else if (nextStatus === "FRIEND") {
+      $FriendStatusBtn.classList.remove("statusNotFriend", "statusBlocked");
       $FriendStatusBtn.innerHTML = "친구";
-    } else if (nextStatus === 2) {
-      // Blocked
-      $FriendStatusBtn.classList.remove("btn", "statusNotFriend");
+    } else if (nextStatus === "BLOCK") {
+      $FriendStatusBtn.classList.remove("statusNotFriend");
       $FriendStatusBtn.classList.add("statusBlocked");
       $FriendStatusBtn.innerHTML = "차단됨";
       $MoreFunctionBtn.remove();
     }
+    status = nextStatus;
   };
 
   $FriendStatusBtn.onclick = () => {
-    if (curStatus === 0) onChangeStatus(1);
-    else if (curStatus === 2) onChangeStatus(0);
+    if (status === "NONE") {
+      postFriend(id);
+      onChangeStatus("FRIEND");
+    } else if (status === "BLOCK") {
+      deleteBlock(id);
+      onChangeStatus("NONE");
+    } else if (status === "FRIEND") {
+      deleteFriend(id);
+      onChangeStatus("NONE");
+    }
   };
 
   document.addEventListener("click", (e) => {
@@ -76,6 +77,6 @@ export default function OtherBtn({ status }) {
     $MoreMenu.style.display = "block";
   });
 
-  onChangeStatus(curStatus);
+  onChangeStatus(status);
   return $OtherBtnWrapper;
 }

@@ -3,7 +3,6 @@ import Main from "./pages/Main.js";
 import Game from "./pages/Game.js";
 import EndGame from "./pages/EndGame.js";
 import GameRoom from "./pages/GameRoom.js";
-import Modal from "./components/Modal/Modal.js";
 import Register from "./pages/Register.js";
 import Redirect from "./components/Login/Redirect.js";
 
@@ -42,7 +41,7 @@ export default function changeUrl(requestedUrl, element) {
   if (match.page !== Redirect) history.pushState(null, null, match.path);
 
   if (match.page === EndGame) match.page("tournament", 1, 3);
-  else if (match.page === Register) match.page(element);
+  else if (match.page === Register || match.page === Main) match.page(element);
   else match.page();
 }
 

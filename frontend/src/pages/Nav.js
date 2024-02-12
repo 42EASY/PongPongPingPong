@@ -3,8 +3,9 @@ import Modal from "../components/Modal/Modal.js";
 import NavBar from "../components/Nav/NavBar.js";
 import Chat from "../pages/Chat.js";
 import Friends from "./Friends.js";
+import { getUserList, postLogout } from "../components/Nav/NavApi.js";
 
-export default function Nav() {
+export default async function Nav() {
   const $navbar = document.querySelector(".nav");
   $navbar.innerHTML = NavBar().innerHTML;
 
@@ -15,25 +16,47 @@ export default function Nav() {
   });
 
   //프로필 클릭이벤트
-  const $navProfile = document.querySelector(".navProfileBtn");
+  const $navProfile = document.querySelector(".navProfileBox");
+  const $navProfileMenu = document.querySelector(".profileMenuWrapper");
   $navProfile.addEventListener("click", () => {
-    changeUrl("/main");
+    $navProfileMenu.style.display = "block";
   });
 
-  const searchBox = document.getElementById("navSearchBox");
-  const searchList = document.querySelector(".navSearchList");
-
-  document.addEventListener("click", (e) => {
-    if (!searchBox.contains(e.target)) searchList.style.display = "none";
+  // 로그아웃 클릭이벤트
+  $navProfileMenu.addEventListener("click", () => {
+    postLogout();
+    changeUrl("/");
   });
 
   const $input = document.querySelector("#navSearch");
-  $input.addEventListener("input", (e) => {
-    const value = e.target.value;
-    console.log(value);
-    // todo: GET 유저 검색
-    if (value.length !== 0) searchList.style.display = "block";
-    else searchList.style.display = "none";
+  const $searchBox = document.getElementById("navSearchBox");
+  const $searchList = document.querySelector(".navSearchList");
+
+  document.addEventListener("click", (e) => {
+    if (!$searchBox.contains(e.target)) $searchList.style.display = "none";
+    if (!$navProfile.contains(e.target)) $navProfileMenu.style.display = "none";
+  });
+
+  $input.addEventListener("input", async (e) => {
+    const keyword = e.target.value;
+    let arr = new Map();
+    $searchList.innerHTML = "";
+    let $searchItem = document.createElement("div");
+    $searchItem.classList.add("list-group-item", "navSearchItem");
+    if (keyword.length !== 0) {
+      const list = await getUserList(keyword, 1, 5);
+      for (let i = 0; i < list.result.data.length; i++) {
+        $searchItem.innerHTML = list.result.data[i].nickname;
+        $searchList.appendChild($searchItem);
+        arr.set($searchItem.innerHTML, list.result.data[i].user_id);
+      }
+
+      $searchItem.addEventListener("click", (e) => {
+        changeUrl("/main", arr.get(e.target.innerHTML));
+      });
+
+      $searchList.style.display = "block";
+    }
   });
 
   //chat 클릭이벤트
