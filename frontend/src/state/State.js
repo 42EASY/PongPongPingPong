@@ -48,7 +48,7 @@ const setNewAccessToken = () => {
     .then((res) => res.json())
     .then((data) => {
       console.log(data);
-      if (data.code === 201) {
+      if (data.code === 201 || data.code === 200) {
         setIsLogin(true);
         setAccessToken(data.result.access_token);
       } else {
@@ -85,7 +85,6 @@ const logout = () => {
 
   fetch(url, {
     method: "POST",
-    credentials: "include",
     headers: {
       "content-Type": "application/json",
       Authorization: `Bearer ${getAccessToken()}`,
@@ -94,12 +93,8 @@ const logout = () => {
     .then((res) => res.json())
     .then((data) => {
       console.log(data);
-      if (data.code === 200) {
-        setLogoutState();
-        changeUrl("/");
-      } else {
-        //로그아웃 실패
-      }
+      setLogoutState();
+      changeUrl("/");
     });
 };
 
