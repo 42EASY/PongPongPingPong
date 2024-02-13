@@ -1,9 +1,12 @@
 import changeUrl from "../../Router.js";
 import {
   getAccessToken,
+  getNickname,
+  getIs2fa,
   setIs2fa,
-  setLoginState,
   setNewAccessToken,
+  setNickname,
+  setImage,
 } from "../../state/State.js";
 
 function checkNickname(isDuplicate = false) {
@@ -43,28 +46,24 @@ function getCurrent2fa() {
 
 function callApi(nickname, is2fa) {
   if (nickname === "") return;
-  console.log(is2fa);
 
   const url = "http://localhost:8000/api/v1/members";
   const $uproadImageInput =
     document.getElementsByClassName("uproadImageInput")[0];
 
+  const data = {};
+  if (nickname !== getNickname()) data.nickname = nickname;
+  if (is2fa !== getIs2fa()) data.is_2fa = is2fa;
+
   const formData = new FormData();
   $uproadImageInput.files[0] !== undefined
     ? formData.append("image", $uproadImageInput.files[0])
     : "";
-  formData.append(
-    "data",
-    JSON.stringify({
-      nickname: nickname,
-      is_2fa: is2fa,
-    })
-  );
+  formData.append("data", JSON.stringify(data));
 
   fetch(url, {
     method: "PATCH",
     headers: {
-      // "content-Type": "multipart/form-data",
       Authorization: `Bearer ${getAccessToken()}`,
     },
     body: formData,
@@ -74,6 +73,8 @@ function callApi(nickname, is2fa) {
       console.log(data);
       if (data.code === 200) {
         setIs2fa(data.result.is_2fa);
+        setNickname(data.result.nickname);
+        setImage(data.result.image);
         changeUrl("/main"); //todo: 메인 페이지 이동 불필요. 닉네임 에러 삭제 필요
       } else if (data.code === 409) {
         //중복된 닉네임
