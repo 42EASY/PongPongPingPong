@@ -148,7 +148,8 @@ class FriendsView(APIView):
                 user_data = {
                     'user_id' : friend.target.id,
                     'image_url' : friend.target.image_url,
-                    'nickname' : friend.target.nickname
+                    'nickname' : friend.target.nickname,
+                    'status' : friend.target.status
                 }
                 data.append(user_data)
         except:
