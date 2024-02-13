@@ -36,12 +36,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.handle_chat(data)
 		elif action == 'user_status':
 			await self.update_friends_status(data)
+		elif action == 'notice':
+			await self.handle_notice(data)
 
 	async def handle_chat(self, data):
 		message = data['message']
 		receiver_id = data['receiver_id']
 		if await self.is_user_online(receiver_id):
 			await self.send_message(receiver_id, message)
+	
+	async def handle_notice(self, data):
+		type = data['type']
+		invitee_id = data['invitee_id']
+		game_option = data['game_option']
+
+		if await self.is_user_online(invitee_id):
+			if type == 'invite_normal_game':
+				await self.invite_normal_game(invitee_id, game_option)
 
 	@sync_to_async
 	def save_channel_name(self, user_id, channel_name):
@@ -100,7 +111,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		# 파싱된 메시지 데이터를 클라이언트에게 전송
 		await self.send(text_data=json.dumps({
-			'type' : 'receive_message',
+			'event' : 'receive_message',
 			'message': message,
 			'timestamp': timestamp,
 			'sender_id': sender_id,
@@ -137,7 +148,49 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		# 클라이언트에게 상태 변경 알림을 전송
 		await self.send(text_data=json.dumps({
-			'type': 'update_friends_status',
+			'event': 'update_friends_status',
 			'user_id': user_id,
 			'status': status,
 		}))
+
+	async def notice_invite_normal_game(self, event):
+		text_data_json = json.loads(event['text'])
+
+		game = text_data_json['game']
+		inviter_id = text_data_json['inviter_id']
+		timestamp = text_data_json['timestamp']
+
+		await self.send(text_data=json.dumps({
+			'event' : 'notice_invite_normal_game',
+			'game' : game,
+			'inviter_id' : inviter_id,
+			'timestamp' : timestamp,
+		}))
+
+	async def invite_normal_game(self, invitee_id, game_option):
+		 # 현재 시간을 UTC로 기록
+		timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+
+		# TODO: 게임 로직 추가 (게임방 만들기 등...)
+		game = {
+			'game_id' : 1,
+			'option' : game_option
+		}
+
+		message_data = {
+			'game': game,
+			'inviter_id' : self.user.id,
+			'timestamp': timestamp,
+		}
+
+		invitee_channel_name = await self.get_channel_name(invitee_id)
+
+		if invitee_channel_name:
+			# 수신자에게 메시지 전송
+			await self.channel_layer.send(
+				invitee_channel_name,
+				{
+					'type': 'notice_invite_normal_game',
+					'text': json.dumps(message_data),
+				}
+			)
