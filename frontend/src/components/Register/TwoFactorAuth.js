@@ -83,12 +83,10 @@ export default function TwoFactorAuth(is2fa) {
         $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
       });
     }
-    //todo: 모달 결과에 따라 select 변경
   });
 
   //활성화 클릭 이벤트
   $twoFactorAuthActive.addEventListener("click", () => {
-    if ($twoFactorAuthActive.classList.contains("twoFactorAuthSelect")) return;
     $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
 
@@ -158,13 +156,16 @@ async function call2faOtqApi(otpNum) {
   const data = await res.json();
   console.log(data);
   if (data.code === 200) {
-    //인증 성공 모달 띄우기
+    Modal("tfaSuccess");
     return true;
   } else if (data.code === 401 && data.message === "2차 인증 실패") {
-    //인증 실패 모달 띄우기
+    Modal("tfaFail");
     return false;
   } else if (data.code === 401) {
     setNewAccessToken();
     call2faOtqApi();
+  } else {
+    Modal("tfaFail");
+    return false;
   }
 }
