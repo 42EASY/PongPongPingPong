@@ -1,79 +1,111 @@
-const loginState = {
-  isLogin: false,
-  userId: "",
-  accessToken: "",
-  refreshToken: "",
-  email: "",
-  is2fa: false,
+//set
+const setLoginState = (state, userId, accessToken, email, is2fa) => {
+  localStorage.setItem("isLogin", state);
+  localStorage.setItem("accessToken", accessToken);
+  localStorage.setItem("userId", userId);
+  localStorage.setItem("email", email);
+  localStorage.setItem("is2fa", is2fa);
 };
 
-const setLoginState = (
-  state,
-  userId,
-  accessToken,
-  refreshToken,
-  email,
-  is2fa
-) => {
-  loginState.isLogin = state;
-  loginState.userId = userId;
-  loginState.accessToken = accessToken;
-  loginState.refreshToken = refreshToken;
-  loginState.email = email;
-  loginState.is2fa = is2fa;
-  console.log(loginState);
+const setLogoutState = () => {
+  localStorage.removeItem("isLogin");
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("email");
+  localStorage.removeItem("is2fa");
+  localStorage.removeItem("nickname");
+  localStorage.removeItem("image");
+};
+
+const setIsLogin = (state) => {
+  localStorage.setItem("isLogin", state);
 };
 
 const setAccessToken = (token) => {
-  loginState.accessToken = token;
+  localStorage.setItem("accessToken", token);
 };
 
 const setIs2fa = (is2fa) => {
-  loginState.is2fa = is2fa;
+  localStorage.setItem("is2fa", is2fa);
 };
 
-const getIsLogin = () => {
-  return loginState.isLogin;
+const setNickname = (nickname) => {
+  localStorage.setItem("nickname", nickname);
 };
 
-const getUserId = () => {
-  return loginState.userId;
+const setImage = (image) => {
+  localStorage.setItem("image", image);
 };
 
-const getAccessToken = () => {
-  return loginState.accessToken;
-};
-
-const getRefreshToken = () => {
-  return loginState.refreshToken;
-};
-
-const getEmail = () => {
-  return loginState.email;
-};
-
-const getIs2fa = () => {
-  return loginState.is2fa;
-};
-
+//access token 만료 시 로그인 연장 처리
 const setNewAccessToken = () => {
-  const url = "http://localhost:8000//api/v1/token/refresh";
+  const url = "http://localhost:8000/api/v1/token/refresh";
 
   fetch(url, {
     method: "POST",
+    credentials: "include",
     headers: {
       "content-Type": "application/json",
-      Authorization: `bearer ${getRefreshToken()}`,
     },
   })
     .then((res) => res.json())
     .then((data) => {
       console.log(data);
-      if (data.code === 201) {
+      if (data.code === 201 || data.code === 200) {
+        setIsLogin(true);
         setAccessToken(data.result.access_token);
       } else {
-        changeUrl("/"); //재발급 실패한 경우
+        //재발급 실패한 경우 로그아웃 처리
+        logout();
+        return false;
       }
+    });
+};
+
+//get
+const getIsLogin = () => {
+  return localStorage.getItem("isLogin");
+};
+
+const getAccessToken = () => {
+  return localStorage.getItem("accessToken");
+};
+
+const getUserId = () => {
+  return localStorage.getItem("userId");
+};
+
+const getEmail = () => {
+  return localStorage.getItem("email");
+};
+
+const getIs2fa = () => {
+  return localStorage.getItem("is2fa");
+};
+
+const getNickname = () => {
+  return localStorage.getItem("nickname");
+};
+
+const getImage = () => {
+  return localStorage.getItem("image");
+};
+
+const logout = () => {
+  const url = "http://localhost:8000/api/v1/auth/logout";
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "content-Type": "application/json",
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      setLogoutState();
+      changeUrl("/");
     });
 };
 
@@ -82,10 +114,14 @@ export {
   setAccessToken,
   setNewAccessToken,
   setIs2fa,
+  setNickname,
+  setImage,
   getIsLogin,
   getUserId,
   getAccessToken,
-  getRefreshToken,
   getEmail,
   getIs2fa,
+  getNickname,
+  getImage,
+  logout,
 };

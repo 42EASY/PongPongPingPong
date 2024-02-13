@@ -5,19 +5,21 @@ import Email from "../components/Register/Email.js";
 import Nickname from "../components/Register/Nickname.js";
 import TwoFactorAuth from "../components/Register/TwoFactorAuth.js";
 import SubmitButton from "../components/Register/SubmitButton.js";
-import { getIsLogin, getEmail, getIs2fa } from "../state/State.js";
+import {
+  getIsLogin,
+  getEmail,
+  getIs2fa,
+  getImage,
+  getNickname,
+} from "../state/State.js";
 import changeUrl from "../Router.js";
 
-export default function Register({
-  isInit = false,
-  image = "./src/images/none_profile.png",
-  nickname = "",
-}) {
+export default function Register(isInit = false) {
   if (getIsLogin() === false) {
     changeUrl("/"); //로그인 안되어있으면 로그인 페이지로 이동
     return;
   }
-  isInit === false ? Nav() : "";
+  Nav();
 
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
@@ -32,7 +34,7 @@ export default function Register({
   $registerWrapper.appendChild($title);
 
   //이미지 업로드
-  const $uproadImage = UproadImage(image);
+  const $uproadImage = UproadImage(getImage());
   $registerWrapper.appendChild($uproadImage);
 
   //이메일
@@ -40,7 +42,7 @@ export default function Register({
   $registerWrapper.appendChild($email);
 
   //닉네임
-  const $nickname = Nickname(nickname);
+  const $nickname = Nickname(getNickname());
   $registerWrapper.appendChild($nickname);
 
   //2차인증
