@@ -1,40 +1,43 @@
-const loginState = {
-  isLogin: false,
-  accessToken: "",
-};
-
 //set
 const setLoginState = (state, userId, accessToken, email, is2fa) => {
-  loginState.isLogin = state;
-  loginState.accessToken = accessToken;
-
+  localStorage.setItem("isLogin", state);
+  localStorage.setItem("accessToken", accessToken);
   localStorage.setItem("userId", userId);
   localStorage.setItem("email", email);
   localStorage.setItem("is2fa", is2fa);
 };
 
 const setLogoutState = () => {
-  loginState.isLogin = false;
-  loginState.accessToken = "";
-
+  localStorage.removeItem("isLogin");
+  localStorage.removeItem("accessToken");
   localStorage.removeItem("userId");
   localStorage.removeItem("email");
   localStorage.removeItem("is2fa");
+  localStorage.removeItem("nickname");
+  localStorage.removeItem("image");
 };
 
 const setIsLogin = (state) => {
-  loginState.isLogin = state;
+  localStorage.setItem("isLogin", state);
 };
 
 const setAccessToken = (token) => {
-  loginState.accessToken = token;
+  localStorage.setItem("accessToken", token);
 };
 
 const setIs2fa = (is2fa) => {
   localStorage.setItem("is2fa", is2fa);
 };
 
-//새로고침 및 access token 만료 시 로그인 연장 처리
+const setNickname = (nickname) => {
+  localStorage.setItem("nickname", nickname);
+};
+
+const setImage = (image) => {
+  localStorage.setItem("image", image);
+};
+
+//access token 만료 시 로그인 연장 처리
 const setNewAccessToken = () => {
   const url = "http://localhost:8000/api/v1/token/refresh";
 
@@ -61,11 +64,11 @@ const setNewAccessToken = () => {
 
 //get
 const getIsLogin = () => {
-  return loginState.isLogin;
+  return localStorage.getItem("isLogin");
 };
 
 const getAccessToken = () => {
-  return loginState.accessToken;
+  return localStorage.getItem("accessToken");
 };
 
 const getUserId = () => {
@@ -78,6 +81,14 @@ const getEmail = () => {
 
 const getIs2fa = () => {
   return localStorage.getItem("is2fa");
+};
+
+const getNickname = () => {
+  return localStorage.getItem("nickname");
+};
+
+const getImage = () => {
+  return localStorage.getItem("image");
 };
 
 const logout = () => {
@@ -103,10 +114,14 @@ export {
   setAccessToken,
   setNewAccessToken,
   setIs2fa,
+  setNickname,
+  setImage,
   getIsLogin,
   getUserId,
   getAccessToken,
   getEmail,
   getIs2fa,
+  getNickname,
+  getImage,
   logout,
 };
