@@ -337,3 +337,55 @@ async def test_invite_normal_success():
     #TODO: 초대하는 사람이 초대 후에 게임 시작 메세지 확인하기 
     await communicator.disconnect()
          
+#-------------------------------------------------------------------------------
+
+#빠른 시작인 경우 테스트코드 - 방을 새로 만들어서 기다리는 경우
+@pytest.mark.asyncio
+async def test_join_normal_success():
+
+    channel_layer = get_channel_layer()
+
+    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+    fake_user = Members.objects.create(nickname = 'test12', email = 'testUser@test.com', is_2fa = False)
+    refresh = RefreshToken.for_user(fake_user)
+    fake_token = str(refresh.access_token)
+
+    current_time = datetime(2024, 2, 13, 12, 0, 0)
+    
+    current_time2 = datetime(2024, 2, 13, 12, 0, 42)
+
+    iso_8601_current_time = current_time.isoformat()
+    iso_8601_current_time2 = current_time2.isoformat()
+
+    test_user = Members.objects.create(nickname = '12', email = 'tt@test.com', is_2fa = False)
+    
+    #토큰과 함께 ws/join_queue 에 연결
+    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    connected, subprotocol = await communicator.connect()
+
+    assert connected
+
+    keys = cache.keys("*")
+    for key in keys:
+        cache.delete(key)
+
+    await communicator.send_json_to({
+        "action": "join_normal_queue",
+        "game_mode": Game.GameOption.CLASSIC,
+        "current_time": iso_8601_current_time,
+        "user_id": fake_user.id
+    })
+
+    await communicator.send_json_to({
+        "action": "join_normal_queue",
+        "game_mode": Game.GameOption.CLASSIC,
+        "current_time": iso_8601_current_time2,
+        "user_id": test_user.id
+    })
+
+
+    response = await communicator.receive_json_from()    
+
+    assert response["status"] == "game_start_soon"
+    
+    await communicator.disconnect()
