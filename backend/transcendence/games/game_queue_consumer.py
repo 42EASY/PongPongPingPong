@@ -40,7 +40,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         #redis에 key 또는 value가 없는 경우
         if (value is None):
             await self.send_json({
-                'status': 'fail1', #TODO: 디버깅용 status 복구하기
+                'status': 'fail',
                 'message': '잘못된 game_id 입니다'
             })
             return
@@ -54,7 +54,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         #초대리스트에 아무도 없는 경우
         if len(invited_info) == 0:
             await self.send_json({
-                'status': 'fail2', #TODO: 디버깅용 status 복구하기
+                'status': 'fail',
                 'message': '초대 내역이 없습니다'
             })
             return
@@ -82,7 +82,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             #유효한 초대 시간이 아닌경우
             if (invited_info[idx]["user_id"] == user_id):
                 await self.send_json({
-                    'status': 'fail3', #TODO: 디버깅용 status 복구하기
+                    'status': 'fail', 
                     'message': '초대 가능 시간이 초과되었습니다'
                 })
                     
@@ -93,8 +93,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 
             else: 
                 await self.send_json({
-                    'status': 'fail4', #TODO: 디버깅용 status 복구하기
-                    'message': '초대 내역이 없습니다'
+                    'status': 'fail',
+                    'message': '초대 대상이 아닙니다'
                 })
 
             return 
@@ -109,7 +109,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         updated_value = json.dumps(parsed_value)
         cache.set('normal_' + str(game_id), updated_value)
 
-        #TODO: 게임 시작할 것이라는 response를 모두에게 전달
+        #게임 시작할 것이라는 response를 모두에게 전달
         new_value = cache.get('normal_' + str(game_id))
         json_new_value = new_value.encode('utf-8')
         parsed_new_value = json.loads(json_new_value)
@@ -130,12 +130,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                     'type': 'broadcast_game_start',
                     'game_id': game_id
                 })
-        # #TODO: channel_layer.group_send로 변경
-        # await self.send_json({
-        #     'status': 'game_start_soon',
-        #     'game_id': game_id
-        # })
-            
+    
     async def broadcast_game_start(self, game_id):
         await self.send_json({
             "status": "game_start_soon",
