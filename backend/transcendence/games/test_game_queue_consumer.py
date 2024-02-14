@@ -16,6 +16,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import datetime
 from django.core.cache import cache
 
+#TODO: 테스트 데이터들 한번에 합치기 
 @pytest.mark.asyncio
 async def test_invite_normal_queue_success():
 
@@ -38,7 +39,7 @@ async def test_invite_normal_queue_success():
     value = {
         "registered_user": [{
             "user_id" : test_user.id,
-            "channel_id": 123
+            "channel_id": "123"
         }],
         "invited_info": [{
             "user_id": fake_user.id,
@@ -67,3 +68,5 @@ async def test_invite_normal_queue_success():
 
     await communicator.disconnect()
          
+
+#TODO: 실패테스트확인

@@ -122,18 +122,23 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             self.game_group_id, self.channel_name
         )
 
-                    # for user_info in registered_users:
-                     #     await self.send_
-
-                        # await self.channel_layer.group_send(
-                        #     self.game_group_id,
-                        # {
-                        #     #'type': 'test',
-                        #     'status': 'game_start_soon',
-                        #     'game_id': game_id
-                        # })
+        for user_info in registered_users:
+                         
+            await self.channel_layer.send(
+                user_info["channel_id"],
+                {
+                    'type': 'broadcast_game_start',
+                    'game_id': game_id
+                })
+        # #TODO: channel_layer.group_send로 변경
+        # await self.send_json({
+        #     'status': 'game_start_soon',
+        #     'game_id': game_id
+        # })
+            
+    async def broadcast_game_start(self, game_id):
         await self.send_json({
-            'status': 'game_start_soon',
-            'game_id': game_id
+            "status": "game_start_soon",
+            "game_id": game_id
         })
 
