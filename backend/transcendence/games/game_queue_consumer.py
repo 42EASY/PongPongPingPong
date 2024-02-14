@@ -31,6 +31,105 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             await self.join_invite_normal(text_data_json)
         elif (text_data_json["action"] == "invite_normal_queue"):
             await self.invite_normal(text_data_json)
+        elif (text_data_json["action"] == "join_normal_queue"):
+            await self.join_normal(text_data_json)
+
+    #normal 모드 빠른시작
+    async def join_normal(self, text_data_json):
+        game_mode = text_data_json["game_mode"]
+        user_id = text_data_json["user_id"]
+        current_time = text_data_json["current_time"]
+
+        keys = cache.keys('normal_*')
+
+        flag = False
+        
+        join_game_key = ""
+
+        for key in keys:
+            game_id = key[7:]
+            game = Game.objects.get(id = int(game_id))
+
+            if (game.game_option.lower() != game_mode.lower()):
+                continue
+            
+            value = cache.get(key)
+            parsed_value = json.loads(value)
+            invited_info = parsed_value["invited_info"]
+
+            idx = -1
+            delete_idx = []
+            for info in invited_info:
+                idx += 1
+                current_time_datetime = datetime.fromisoformat(current_time)
+                invited_time_datetime = datetime.fromisoformat(info["invited_time"])
+                    
+                time_difference = current_time_datetime - invited_time_datetime
+
+                #만료된 시간인 경우 삭제 하여 새롭게 갱신
+                if time_difference > timedelta(seconds=INVITE_TIME):
+                    delete_idx.append(idx)
+
+            
+            for num in delete_idx:
+                parsed_value["invited_info"].pop(num)
+
+            updated_value = json.dumps(parsed_value)
+            cache.set(key, updated_value)
+
+            
+            #갱신 후에 invite_info에 값이 있는지 확인
+            new_value = cache.get(key)
+            new_parsed_value = json.loads(new_value)
+            new_invited_info = new_parsed_value["invited_info"]
+
+            #만일 값이 없다면 대기리스트에 등록
+            if len(new_invited_info) == 0:
+                new_parsed_value['registered_user'].append({
+                    "user_id": user_id,
+                    "channel_id": self.channel_name
+                }) 
+
+                new_updated_value = json.dumps(new_parsed_value)
+                cache.set(key, updated_value)
+                flag = True
+
+                join_game_key = key
+                break
+
+        
+        #만일 flag == true면은 이미 있는 게임에 있는 사람 모두에게 게임 시작 알림
+        if (flag == True):
+            result_value = cache.get(join_game_key)
+            
+            json_result_value = result_value.encode('utf-8')
+            parsed_result_value = json.loads(json_result_value)
+
+            registered_result_users = parsed_result_value["registered_user"]
+            
+            cache.delete(join_game_key)
+            for user_info in registered_result_users:
+                         
+                await self.channel_layer.send(
+                    user_info["channel_id"],
+                    {
+                        'type': 'broadcast_game_start',
+                        'game_id': join_game_key[7:]
+                    })
+
+        #flag == false면은 새롭게 게임을 만들어서 redis에 저장
+        else:
+            new_game = Game.objects.create(game_option=game_mode, game_mode='NORMAL')
+            new_game_value = {
+                "registered_user": [{
+                    "user_id" : user_id,
+                    "channel_id": self.channel_name
+                }],
+                "invited_info": []
+            }
+
+            cache.set('normal_' + str(new_game.id),  json.dumps(new_game_value))
+
 
     #normal 모드에서 초대를 한 경우
     async def invite_normal(self, text_data_json):
@@ -62,6 +161,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 'status': 'game create success',
                 'game_id': game.id
             })
+
+
 
     #normal 모드에서 초대를 받은 경우
     async def join_invite_normal(self, text_data_json):
@@ -158,6 +259,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             self.game_group_id, self.channel_name
         )
 
+        cache.delete('normal_' + str(game_id))
         for user_info in registered_users:
                          
             await self.channel_layer.send(
