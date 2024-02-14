@@ -16,8 +16,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import datetime
 from django.core.cache import cache
 
+#초대를 받는 경우 성공 테스트
 @pytest.mark.asyncio
-async def test_invite_normal_queue_success():
+async def test_invited_normal_queue_success():
 
     channel_layer = get_channel_layer()
 
@@ -70,7 +71,7 @@ async def test_invite_normal_queue_success():
 
 #redis에 key가 없는 경우
 @pytest.mark.asyncio
-async def test_invite_normal_queue_fail_no_value():
+async def test_invited_normal_queue_fail_no_value():
 
     channel_layer = get_channel_layer()
 
@@ -125,7 +126,7 @@ async def test_invite_normal_queue_fail_no_value():
 
 #초대리스트에 아무도 없는 경우
 @pytest.mark.asyncio
-async def test_invite_normal_queue_fail_no_invited_info():
+async def test_invited_normal_queue_fail_no_invited_info():
 
     channel_layer = get_channel_layer()
 
@@ -178,7 +179,7 @@ async def test_invite_normal_queue_fail_no_invited_info():
 
 #초대리스트에 user_id가 없는 경우
 @pytest.mark.asyncio
-async def test_invite_normal_queue_fail_invitied_info_no_user_id():
+async def test_invited_normal_queue_fail_invitied_info_no_user_id():
 
     channel_layer = get_channel_layer()
 
@@ -232,7 +233,7 @@ async def test_invite_normal_queue_fail_invitied_info_no_user_id():
 
 #유효한 초대시간이 아닌 경우
 @pytest.mark.asyncio
-async def test_invite_normal_queue_fail_invalid_time():
+async def test_invited_normal_queue_fail_invalid_time():
 
     channel_layer = get_channel_layer()
 
@@ -283,3 +284,56 @@ async def test_invite_normal_queue_fail_invalid_time():
 
     await communicator.disconnect()
     
+#-------------------------------------------------------------------------------
+
+#초대를 하는 경우 테스트코드
+@pytest.mark.asyncio
+async def test_invite_normal_success():
+
+    channel_layer = get_channel_layer()
+
+    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+    fake_user = Members.objects.create(nickname = 'test11', email = 'testUser@test.com', is_2fa = False)
+    refresh = RefreshToken.for_user(fake_user)
+    fake_token = str(refresh.access_token)
+
+    invite_time = datetime(2024, 2, 13, 12, 0, 0)
+    accept_time = datetime(2024, 2, 13, 12, 0, 42)
+
+    iso_8601_accept_time = accept_time.isoformat()
+    iso_8601_invite_time = invite_time.isoformat()
+
+    test_user = Members.objects.create(nickname = '11', email = 'tt@test.com', is_2fa = False)
+    
+    #토큰과 함께 ws/join_queue 에 연결
+    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    connected, subprotocol = await communicator.connect()
+
+    assert connected
+
+    await communicator.send_json_to({
+        "action": "invite_normal_queue",
+        "game_mode": Game.GameOption.CLASSIC,
+        "user_id": fake_user.id,
+        "invite_user_id": test_user.id,
+        "invite_time": iso_8601_invite_time
+    })
+
+    response = await communicator.receive_json_from()    
+
+    assert response["status"] == "game create success"
+
+    await communicator.send_json_to({
+        "action": "join_invite_normal_queue",
+        "game_id": response["game_id"],
+        "accept_time": iso_8601_accept_time,
+        "user_id": test_user.id
+    })
+
+    response2 = await communicator.receive_json_from()    
+
+    assert response2["status"] == "game_start_soon"
+    
+    #TODO: 초대하는 사람이 초대 후에 게임 시작 메세지 확인하기 
+    await communicator.disconnect()
+         
