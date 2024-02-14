@@ -3,6 +3,7 @@ import json
 from django.core.cache import cache
 from datetime import datetime, timedelta
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from games.models import Game
 
 INVITE_TIME = 60
 
@@ -28,12 +29,47 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         if (text_data_json["action"] == "join_invite_normal_queue"):
             await self.join_invite_normal(text_data_json)
+        elif (text_data_json["action"] == "invite_normal_queue"):
+            await self.invite_normal(text_data_json)
+
+    #normal 모드에서 초대를 한 경우
+    async def invite_normal(self, text_data_json):
+        game_mode = text_data_json["game_mode"]
+        user_id = text_data_json["user_id"]
+        invite_user_id = text_data_json["invite_user_id"]
+        invite_time = text_data_json["invite_time"]
+
+        #TODO: user_id, invite_user_id 검사하기
+        
+        #TODO: game_mode 검사하기
+
+        game = Game.objects.create(game_option=game_mode, game_mode='NORMAL')
+
+        value = {
+            "registered_user": [{
+                "user_id" : user_id,
+                "channel_id": self.channel_name
+            }],
+            "invited_info": [{
+                "user_id": invite_user_id,
+                "invited_time": invite_time
+            }]
+        }
+
+        cache.set('normal_' + str(game.id),  json.dumps(value))
+
+        await self.send_json({
+                'status': 'game create success',
+                'game_id': game.id
+            })
 
     #normal 모드에서 초대를 받은 경우
     async def join_invite_normal(self, text_data_json):
         game_id = text_data_json["game_id"]
         accept_time = text_data_json["accept_time"]
         user_id = text_data_json["user_id"]
+
+        #TODO: user_id 검사하기
 
         value = cache.get('normal_' + str(game_id))
 
@@ -131,6 +167,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                     'game_id': game_id
                 })
     
+    #TODO: player_info도 보내주기
     async def broadcast_game_start(self, game_id):
         await self.send_json({
             "status": "game_start_soon",
