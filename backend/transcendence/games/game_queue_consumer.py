@@ -43,7 +43,11 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         elif (text_data_json["action"] == "join_tournament_queue"):
             await self.join_tournament(text_data_json)
 
-        #TODO: 만일 action이 잘못되었다면 에러 처리???
+        else:
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 action 입니다"
+            })
 
     #tournament 빠른 시작일 경우
     async def join_tournament(self, text_data_json):
@@ -576,7 +580,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def broadcast_game_start(self, event):
         game_id = event["game_id"]
         player_info = event["player_info"]
-        
+
         await self.send_json({
             "status": "game_start_soon",
             "game_id": game_id,

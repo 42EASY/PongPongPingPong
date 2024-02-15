@@ -1122,3 +1122,32 @@ async def test_join_tournament_invalid_user_id():
     
     await communicator.disconnect()
 
+
+#-------------------------------------------------------------------------------
+
+#잘못된 action일 때
+@pytest.mark.asyncio
+async def test_invalid_action():
+
+    channel_layer = get_channel_layer()
+
+    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+    fake_user = Members.objects.create(nickname = 't11111', email = 'testUser@test.com', is_2fa = False)
+    refresh = RefreshToken.for_user(fake_user)
+    fake_token = str(refresh.access_token)
+
+    #토큰과 함께 ws/join_queue 에 연결
+    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    connected, subprotocol = await communicator.connect()
+
+    assert connected
+
+    await communicator.send_json_to({
+        "action": "invalid"
+    })
+
+    response = await communicator.receive_json_from()    
+
+    assert response["message"] == "잘못된 action 입니다"
+    
+    await communicator.disconnect()
