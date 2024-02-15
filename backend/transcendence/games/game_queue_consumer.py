@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from games.models import Game
 from tournaments.models import Tournament
+from members.models import Members
 
 INVITE_TIME = 60
 
@@ -49,6 +50,13 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def join_tournament(self, text_data_json):
         user_id = text_data_json["user_id"]
         current_time = text_data_json["current_time"]
+
+        if (Members.objects.filter(id = user_id).exists() == False):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 user id 입니다"
+            })
+            return
 
         keys = cache.keys('tournament_*')
 
@@ -129,7 +137,13 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         invite_user_id = text_data_json["invite_user_id"]
         invite_time = text_data_json["invite_time"]
 
-        #TODO: user_id, invite_user_id 검사하기
+        #TODO: invite_user_id 검사하기
+        if (Members.objects.filter(id = user_id).exists() == False):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 user id 입니다"
+            })
+            return
 
         tournament = Tournament.objects.create()
 
@@ -158,6 +172,13 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         tournament_id = text_data_json["tournament_id"]
         accept_time = text_data_json["accept_time"]
         user_id = text_data_json["user_id"]
+
+        if (Members.objects.filter(id = user_id).exists() == False):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 user id 입니다"
+            })
+            return
 
         value = cache.get("tournament_" + str(tournament_id))
 
@@ -245,6 +266,13 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         game_mode = text_data_json["game_mode"]
         user_id = text_data_json["user_id"]
         current_time = text_data_json["current_time"]
+
+        if (Members.objects.filter(id = user_id).exists() == False):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 user id 입니다"
+            })
+            return
 
         keys = cache.keys('normal_*')
 
@@ -344,7 +372,13 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         invite_user_id = text_data_json["invite_user_id"]
         invite_time = text_data_json["invite_time"]
 
-        #TODO: user_id, invite_user_id 검사하기
+        #TODO: invite_user_id 검사하기
+        if (Members.objects.filter(id = user_id).exists() == False):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 user id 입니다"
+            })
+            return
         
         #TODO: game_mode 검사하기
 
@@ -376,7 +410,12 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         accept_time = text_data_json["accept_time"]
         user_id = text_data_json["user_id"]
 
-        #TODO: user_id 검사하기
+        if (Members.objects.filter(id = user_id).exists() == False):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 user id 입니다"
+            })
+            return
 
         value = cache.get('normal_' + str(game_id))
 

@@ -285,6 +285,44 @@ async def test_invited_normal_queue_fail_invalid_time():
 
     await communicator.disconnect()
     
+
+#user_id가 잘못된 경우
+@pytest.mark.asyncio
+async def test_invited_normal_queue_invalid_user_id():
+
+    channel_layer = get_channel_layer()
+
+    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+    fake_user = Members.objects.create(nickname = 'test_user', email = 'testUser@test.com', is_2fa = False)
+    refresh = RefreshToken.for_user(fake_user)
+    fake_token = str(refresh.access_token)
+
+    fake_game = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL')
+
+    accept_time = datetime(2024, 2, 13, 12, 0, 42)
+
+    iso_8601_accept_time = accept_time.isoformat()
+    
+    #토큰과 함께 ws/join_queue 에 연결
+    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    connected, subprotocol = await communicator.connect()
+
+    assert connected
+
+    await communicator.send_json_to({
+        "action": "join_invite_normal_queue",
+        "game_id": fake_game.id,
+        "accept_time": iso_8601_accept_time,
+        "user_id": -1
+    })
+
+    response = await communicator.receive_json_from()    
+
+    assert response["message"] == "잘못된 user id 입니다"
+
+    await communicator.disconnect()
+
+
 #-------------------------------------------------------------------------------
 
 #초대를 하는 경우 테스트코드
@@ -337,7 +375,48 @@ async def test_invite_normal_success():
     
     #TODO: 초대하는 사람이 초대 후에 게임 시작 메세지 확인하기 
     await communicator.disconnect()
-         
+
+
+#user_id가 잘못된 경우
+@pytest.mark.asyncio
+async def test_invite_normal_invalid_user_id():
+
+    channel_layer = get_channel_layer()
+
+    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+    fake_user = Members.objects.create(nickname = 'test11', email = 'testUser@test.com', is_2fa = False)
+    refresh = RefreshToken.for_user(fake_user)
+    fake_token = str(refresh.access_token)
+
+    invite_time = datetime(2024, 2, 13, 12, 0, 0)
+    
+    iso_8601_invite_time = invite_time.isoformat()
+
+    test_user = Members.objects.create(nickname = '11', email = 'tt@test.com', is_2fa = False)
+    
+    #토큰과 함께 ws/join_queue 에 연결
+    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    connected, subprotocol = await communicator.connect()
+
+    assert connected
+
+    await communicator.send_json_to({
+        "action": "invite_normal_queue",
+        "game_mode": Game.GameOption.CLASSIC,
+        "user_id": -1,
+        "invite_user_id": test_user.id,
+        "invite_time": iso_8601_invite_time
+    })
+
+    response = await communicator.receive_json_from()    
+
+    assert response["message"] == "잘못된 user id 입니다"
+
+    await communicator.disconnect()
+
+
+
+
 #-------------------------------------------------------------------------------
 
 #빠른 시작인 경우 테스트코드 - 방을 새로 만들어서 기다리는 경우
@@ -390,6 +469,42 @@ async def test_join_normal_success():
     assert response["status"] == "game_start_soon"
     
     await communicator.disconnect()
+
+
+#user_id가 잘못된 경우
+@pytest.mark.asyncio
+async def test_join_normal_invalid_no_user():
+
+    channel_layer = get_channel_layer()
+
+    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+    fake_user = Members.objects.create(nickname = 'test12', email = 'testUser@test.com', is_2fa = False)
+    refresh = RefreshToken.for_user(fake_user)
+    fake_token = str(refresh.access_token)
+
+    current_time = datetime(2024, 2, 13, 12, 0, 0)
+    
+    iso_8601_current_time = current_time.isoformat()
+
+    #토큰과 함께 ws/join_queue 에 연결
+    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    connected, subprotocol = await communicator.connect()
+
+    assert connected
+
+    await communicator.send_json_to({
+        "action": "join_normal_queue",
+        "game_mode": Game.GameOption.CLASSIC,
+        "current_time": iso_8601_current_time,
+        "user_id": -1
+    })
+
+    response = await communicator.receive_json_from()    
+
+    assert response["message"] == "잘못된 user id 입니다"
+    
+    await communicator.disconnect()
+
 
 
 #-------------------------------------------------------------------------------
@@ -667,7 +782,44 @@ async def test_invited_tournament_queue_fail_invalid_time():
 
     await communicator.disconnect()
 
-    
+
+#잘못된 user id인 경우
+@pytest.mark.asyncio
+async def test_invited_tournament_queue_invalid_user_id():
+
+    channel_layer = get_channel_layer()
+
+    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+    fake_user = Members.objects.create(nickname = 'test111', email = 'testUser@test.com', is_2fa = False)
+    refresh = RefreshToken.for_user(fake_user)
+    fake_token = str(refresh.access_token)
+
+    fake_tournament = Tournament.objects.create()
+
+    accept_time = datetime(2024, 2, 13, 12, 0, 42)
+
+    iso_8601_accept_time = accept_time.isoformat()
+
+    #토큰과 함께 ws/join_queue 에 연결
+    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    connected, subprotocol = await communicator.connect()
+
+    assert connected
+
+    await communicator.send_json_to({
+        "action": "join_invite_tournament_queue",
+        "tournament_id": fake_tournament.id,
+        "accept_time": iso_8601_accept_time,
+        "user_id": -1
+    })
+
+    response = await communicator.receive_json_from()    
+
+    assert response["message"] == "잘못된 user id 입니다"
+
+    await communicator.disconnect()
+
+
 #-------------------------------------------------------------------------------
 
 #토너먼트 초대를 하는 경우 테스트코드
@@ -707,7 +859,45 @@ async def test_invite_tournament_success():
     assert response["status"] == "game create success"
 
     await communicator.disconnect()
-         
+
+
+#잘못된 user id인 경우
+@pytest.mark.asyncio
+async def test_invite_tournament_invalid_user_id():
+
+    channel_layer = get_channel_layer()
+
+    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+    fake_user = Members.objects.create(nickname = 'test1111', email = 'testUser@test.com', is_2fa = False)
+    refresh = RefreshToken.for_user(fake_user)
+    fake_token = str(refresh.access_token)
+
+    invite_time = datetime(2024, 2, 13, 12, 0, 0)
+
+    iso_8601_invite_time = invite_time.isoformat()
+
+    test_user = Members.objects.create(nickname = '1111', email = 'tt@test.com', is_2fa = False)
+    
+    #토큰과 함께 ws/join_queue 에 연결
+    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    connected, subprotocol = await communicator.connect()
+
+    assert connected
+
+    await communicator.send_json_to({
+        "action": "invite_tournament_queue",
+        "user_id": -1,
+        "invite_user_id": test_user.id,
+        "invite_time": iso_8601_invite_time
+    })
+
+    response = await communicator.receive_json_from()    
+
+    assert response["message"] == "잘못된 user id 입니다"
+
+    await communicator.disconnect()
+
+
 
 #-------------------------------------------------------------------------------
 
@@ -747,6 +937,43 @@ async def test_join_tournament_success():
     response = await communicator.receive_json_from()    
 
     assert response["status"] == "success"
+    
+    await communicator.disconnect()
+
+
+#잘못된 user id인 경우
+@pytest.mark.asyncio
+async def test_join_tournament_invalid_user_id():
+
+    channel_layer = get_channel_layer()
+
+    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+    fake_user = Members.objects.create(nickname = 't11111', email = 'testUser@test.com', is_2fa = False)
+    refresh = RefreshToken.for_user(fake_user)
+    fake_token = str(refresh.access_token)
+    
+    current_time2 = datetime(2024, 2, 13, 12, 0, 42)
+
+    iso_8601_current_time2 = current_time2.isoformat()
+
+    test_user = Members.objects.create(nickname = '11111', email = 'tt@test.com', is_2fa = False)
+    
+    #토큰과 함께 ws/join_queue 에 연결
+    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    connected, subprotocol = await communicator.connect()
+
+    assert connected
+
+    await communicator.send_json_to({
+        "action": "join_tournament_queue",
+        "user_id": -1,
+        "current_time": iso_8601_current_time2
+    })
+
+
+    response = await communicator.receive_json_from()    
+
+    assert response["message"] == "잘못된 user id 입니다"
     
     await communicator.disconnect()
 
