@@ -7,6 +7,8 @@ from games.models import Game
 
 INVITE_TIME = 60
 
+#TODO: receive에서 받는 값들 user_id, game_id 등등 검사하기
+#TODO: registered 꽉 차면 삭제하는 로직 검증하기
 class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
 
@@ -33,6 +35,96 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             await self.invite_normal(text_data_json)
         elif (text_data_json["action"] == "join_normal_queue"):
             await self.join_normal(text_data_json)
+        elif (text_data_json["action"] == "join_invite_tournament_queue"):
+            await self.join_invite_tournament(text_data_json)
+
+
+    #tournament 모드에서 초대를 받는 경우
+    async def join_invite_tournament(self, text_data_json):
+        tournament_id = text_data_json["tournament_id"]
+        accept_time = text_data_json["accept_time"]
+        user_id = text_data_json["user_id"]
+
+        value = cache.get("tournament_" + str(tournament_id))
+
+        #redis에 key 또는 value가 없는 경우
+        if (value is None):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 tournament_id 입니다"
+            })
+            return
+        
+        parsed_value = json.loads(value)
+        invited_info = parsed_value["invited_info"]
+
+        #초대리스트에 아무도 없는 경우
+        if len(invited_info) == 0:
+            await self.send_json({
+                "status": "fail",
+                "message": "초대 내역이 없습니다"
+            })
+            return
+        
+
+        flag = False
+        idx = -1
+        user_idx = -1
+        delete_idx = []
+
+        for tmp in invited_info:
+            idx += 1
+                
+            if (tmp["user_id"] == user_id):
+                user_idx = idx
+            
+            accept_time_datetime = datetime.fromisoformat(accept_time)
+            invited_time_datetime = datetime.fromisoformat(tmp["invited_time"])
+                    
+            time_difference = accept_time_datetime - invited_time_datetime
+
+            #초대 받은 시간이 유효하지 않은 경우
+            if time_difference > timedelta(seconds=INVITE_TIME):
+                delete_idx.append(idx)
+            
+            else:
+                #초대 받은 시간이 유효하고, user_id인 경우
+                if (tmp["user_id"] == user_id):
+                    flag = True
+    
+                
+        #만료된 초대 리스트 삭제
+        for idx in delete_idx:
+            parsed_value["invited_info"].pop(idx)
+
+        #invited_info 안에 user_id가 없거나, 유효한 초대 시간이 아닌 경우
+        if (flag == False):
+            #user_id가 없는 경우
+            if (user_idx == -1):
+                await self.send_json({
+                    'status': 'fail',
+                    'message': '초대 대상이 아닙니다'
+                })
+            #유효한 초대 시간이 아닌 경우
+            else: 
+                await self.send_json({
+                    'status': 'fail', 
+                    'message': '초대 가능 시간이 초과되었습니다'
+                })
+            return 
+        
+        parsed_value["registered_user"].append({
+            "user_id": user_id,
+            "channel_id": self.channel_name
+        })
+
+        updated_value = json.dumps(parsed_value)
+        cache.set("tournament_" + str(tournament_id), updated_value)
+
+        await self.send_json({
+            'status': "success"
+        })
+
 
     #normal 모드 빠른시작
     async def join_normal(self, text_data_json):
