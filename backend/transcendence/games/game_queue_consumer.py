@@ -136,13 +136,20 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         invite_user_id = text_data_json["invite_user_id"]
         invite_time = text_data_json["invite_time"]
 
-        #TODO: invite_user_id 검사하기
         if (Members.objects.filter(id = user_id).exists() == False):
             await self.send_json({
                 "status": "fail",
                 "message": "잘못된 user id 입니다"
             })
             return
+
+        if (Members.objects.filter(id = invite_user_id).exists() == False):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 invite user id 입니다"
+            })
+            return
+
 
         tournament = Tournament.objects.create()
 
@@ -379,7 +386,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         invite_user_id = text_data_json["invite_user_id"]
         invite_time = text_data_json["invite_time"]
 
-        #TODO: invite_user_id 검사하기
         if (Members.objects.filter(id = user_id).exists() == False):
             await self.send_json({
                 "status": "fail",
@@ -387,7 +393,12 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
         
-        #TODO: game_mode 검사하기
+        if (Members.objects.filter(id = invite_user_id).exists() == False):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 invite user id 입니다"
+            })
+            return
 
         game = Game.objects.create(game_option=game_mode, game_mode='NORMAL')
 
