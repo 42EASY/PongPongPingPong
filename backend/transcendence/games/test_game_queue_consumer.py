@@ -366,9 +366,9 @@ async def test_join_normal_success():
 
     assert connected
 
-    keys = cache.keys("*")
-    for key in keys:
-        cache.delete(key)
+    # keys = cache.keys("*")
+    # for key in keys:
+    #     cache.delete(key)
 
     await communicator.send_json_to({
         "action": "join_normal_queue",

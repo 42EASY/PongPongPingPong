@@ -296,9 +296,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                     "channel_id": self.channel_name
                 }) 
                 
-                #TODO: new_updated_value 사용으로 고치기
                 new_updated_value = json.dumps(new_parsed_value)
-                cache.set(key, updated_value)
+                cache.set(key, new_updated_value)
                 flag = True
 
                 join_game_key = key
