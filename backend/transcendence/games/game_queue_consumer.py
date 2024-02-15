@@ -9,7 +9,6 @@ from members.models import Members
 
 INVITE_TIME = 60
 
-#TODO: receive에서 받는 값들 user_id, game_id 등등 검사하기
 #TODO: registered 꽉 차면 삭제하는 로직 검증하기
 class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
@@ -179,6 +178,14 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 "message": "잘못된 user id 입니다"
             })
             return
+        
+        if (Tournament.objects.filter(id = tournament_id).exists() == False):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 tournament id 입니다"
+            })
+            return
+
 
         value = cache.get("tournament_" + str(tournament_id))
 
