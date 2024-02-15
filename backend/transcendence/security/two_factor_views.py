@@ -76,5 +76,5 @@ class TwoFactorAuthView(APIView):
 		else:
 			return JsonResponse({
 				'code':401,
-				'message':'UnAuthorized',
+				'message':'2차 인증 실패',
 			}, status=401)
