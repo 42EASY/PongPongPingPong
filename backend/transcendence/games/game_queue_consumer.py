@@ -356,13 +356,31 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             registered_result_users = parsed_result_value["registered_user"]
             
             cache.delete(join_game_key)
+
+            user_info_data = []
+
+            for user_info in registered_result_users:
+                id = user_info["user_id"]
+
+                user = Members.objects.get(id = id)
+
+                data = {
+                    "user_id": id,
+                    "nickname": user.nickname,
+                    "image_url": user.image_url
+                }
+                user_info_data.append(data)
+
+
+
             for user_info in registered_result_users:
                          
                 await self.channel_layer.send(
                     user_info["channel_id"],
                     {
                         'type': 'broadcast_game_start',
-                        'game_id': join_game_key[7:]
+                        'game_id': join_game_key[7:],
+                        'player_info': user_info_data
                     })
 
         #flag == false면은 새롭게 게임을 만들어서 redis에 저장
@@ -529,19 +547,39 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         )
 
         cache.delete('normal_' + str(game_id))
+
+        player_info = []
+
+        for user_info in registered_users:
+            id = user_info["user_id"]
+
+            user = Members.objects.get(id = id)
+
+            data = {
+                "user_id": id,
+                "nickname": user.nickname,
+                "image_url": user.image_url
+            }
+            player_info.append(data)
+
+
         for user_info in registered_users:
                          
             await self.channel_layer.send(
                 user_info["channel_id"],
                 {
                     'type': 'broadcast_game_start',
-                    'game_id': game_id
+                    'game_id': game_id,
+                    'player_info': player_info
                 })
     
-    #TODO: player_info도 보내주기
-    async def broadcast_game_start(self, game_id):
+    async def broadcast_game_start(self, event):
+        game_id = event["game_id"]
+        player_info = event["player_info"]
+        
         await self.send_json({
             "status": "game_start_soon",
-            "game_id": game_id
+            "game_id": game_id,
+            "player_info": player_info
         })
 
