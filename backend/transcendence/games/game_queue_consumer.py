@@ -434,6 +434,12 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 "message": "잘못된 user id 입니다"
             })
             return
+        
+        if (Game.objects.filter(id = game_id).exists() == False):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 game id 입니다"
+            })
 
         value = cache.get('normal_' + str(game_id))
 
