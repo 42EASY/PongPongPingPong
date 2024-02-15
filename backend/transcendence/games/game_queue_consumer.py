@@ -4,6 +4,7 @@ from django.core.cache import cache
 from datetime import datetime, timedelta
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from games.models import Game
+from tournaments.models import Tournament
 
 INVITE_TIME = 60
 
@@ -37,6 +38,38 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             await self.join_normal(text_data_json)
         elif (text_data_json["action"] == "join_invite_tournament_queue"):
             await self.join_invite_tournament(text_data_json)
+        elif (text_data_json["action"] == "invite_tournament_queue"):
+            await self.invite_tournament(text_data_json)
+
+
+    #tournament 모드에서 초대를 하는 경우
+    async def invite_tournament(self, text_data_json):
+        user_id = text_data_json["user_id"]
+        invite_user_id = text_data_json["invite_user_id"]
+        invite_time = text_data_json["invite_time"]
+
+        #TODO: user_id, invite_user_id 검사하기
+
+        tournament = Tournament.objects.create()
+
+        value = {
+            "registered_user": [{
+                "user_id" : user_id,
+                "channel_id": self.channel_name
+            }],
+            "invited_info": [{
+                "user_id": invite_user_id,
+                "invited_time": invite_time
+            }]
+        }
+
+        cache.set('tournament_' + str(tournament.id),  json.dumps(value))
+
+        await self.send_json({
+                'status': 'game create success',
+                'tournament_id': tournament.id
+            })
+        
 
 
     #tournament 모드에서 초대를 받는 경우
