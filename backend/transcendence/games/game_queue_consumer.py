@@ -40,6 +40,87 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             await self.join_invite_tournament(text_data_json)
         elif (text_data_json["action"] == "invite_tournament_queue"):
             await self.invite_tournament(text_data_json)
+        elif (text_data_json["action"] == "join_tournament_queue"):
+            await self.join_tournament(text_data_json)
+
+        #TODO: 만일 action이 잘못되었다면 에러 처리???
+
+    #tournament 빠른 시작일 경우
+    async def join_tournament(self, text_data_json):
+        user_id = text_data_json["user_id"]
+        current_time = text_data_json["current_time"]
+
+        keys = cache.keys('tournament_*')
+
+        flag = False
+        
+        join_game_key = ""
+
+        for key in keys:
+
+            value = cache.get(key)
+            parsed_value = json.loads(value)
+            invited_info = parsed_value["invited_info"]
+
+            idx = -1
+            delete_idx = []
+            for info in invited_info:
+                idx += 1
+                current_time_datetime = datetime.fromisoformat(current_time)
+                invited_time_datetime = datetime.fromisoformat(info["invited_time"])
+                    
+                time_difference = current_time_datetime - invited_time_datetime
+
+                #만료된 시간인 경우 삭제 하여 새롭게 갱신
+                if time_difference > timedelta(seconds=INVITE_TIME):
+                    delete_idx.append(idx)
+
+            
+            for num in delete_idx:
+                parsed_value["invited_info"].pop(num)
+
+            updated_value = json.dumps(parsed_value)
+            cache.set(key, updated_value)
+
+            
+            #갱신 후에 invite_info에 값이 있는지 확인
+            new_value = cache.get(key)
+            new_parsed_value = json.loads(new_value)
+            new_invited_info = new_parsed_value["invited_info"]
+
+            #만일 값이 없다면 대기리스트에 등록
+            if len(new_invited_info) == 0:
+                new_parsed_value['registered_user'].append({
+                    "user_id": user_id,
+                    "channel_id": self.channel_name
+                }) 
+
+                new_updated_value = json.dumps(new_parsed_value)
+                cache.set(key, new_updated_value)
+                flag = True
+
+                join_game_key = key[11:]
+                break
+
+        #flag == false면은 새롭게 토너먼트를 만들어서 redis에 저장
+        if (flag == False):
+            new_tournament = Tournament.objects.create()
+            new_tournament_value = {
+                "registered_user": [{
+                    "user_id" : user_id,
+                    "channel_id": self.channel_name
+                }],
+                "invited_info": []
+            }
+
+            cache.set('tournament_' + str(new_tournament.id),  json.dumps(new_tournament_value))
+            join_game_key = new_tournament.id
+
+
+        await self.send_json({
+                "status": "success",
+                "tournament_id": join_game_key
+            })
 
 
     #tournament 모드에서 초대를 하는 경우
@@ -214,7 +295,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                     "user_id": user_id,
                     "channel_id": self.channel_name
                 }) 
-
+                
+                #TODO: new_updated_value 사용으로 고치기
                 new_updated_value = json.dumps(new_parsed_value)
                 cache.set(key, updated_value)
                 flag = True
