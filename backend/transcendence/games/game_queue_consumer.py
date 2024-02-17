@@ -121,7 +121,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                     "user_id" : user_id,
                     "channel_id": self.channel_name
                 }],
-                "invited_info": []
+                "invited_info": [],
+                "join_user": []
             }
 
             cache.set('tournament_' + str(new_tournament.id),  json.dumps(new_tournament_value))
@@ -165,7 +166,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             "invited_info": [{
                 "user_id": invite_user_id,
                 "invited_time": invite_time
-            }]
+            }],
+            "join_user": []
         }
 
         cache.set('tournament_' + str(tournament.id),  json.dumps(value))
