@@ -25,8 +25,31 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
         if (text_data_json["action"] == "join_room"):
             await self.join_room(text_data_json)
+        elif (text_data_json["action"] == "invite_room"):
+            await self.invite_room(text_data_json)
 
-    
+    #초대를 하는 경우
+    async def invite_room(self, text_data_json):
+        user_id = text_data_json["user_id"]
+        invite_user_id = text_data_json["invite_user_id"]
+        invite_time = text_data_json["invite_time"]
+
+        key = 'tournament_' + str(self.room_id)
+
+        value = cache.get(key)
+        parsed_value = json.loads(value)
+
+        parsed_value["invited_info"].append({"user_id": invite_user_id, "invited_time": invite_time})
+        
+        cache.set(key, json.dumps(parsed_value))
+
+        await self.send_json({
+                'status': 'invitation list registered',
+                'tournament_id': self.room_id
+            })
+        
+
+
     #방에 입장 후 게임 시작 대기
     async def join_room(self, text_data_json):
         user_id = text_data_json["user_id"]
