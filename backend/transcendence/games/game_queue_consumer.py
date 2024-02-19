@@ -30,17 +30,19 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
 
-        if (text_data_json["action"] == "join_invite_normal_queue"):
+        action = text_data_json["action"]
+
+        if (action == "join_invite_normal_queue"):
             await self.join_invite_normal(text_data_json)
-        elif (text_data_json["action"] == "invite_normal_queue"):
+        elif (action == "invite_normal_queue"):
             await self.invite_normal(text_data_json)
-        elif (text_data_json["action"] == "join_normal_queue"):
+        elif (action == "join_normal_queue"):
             await self.join_normal(text_data_json)
-        elif (text_data_json["action"] == "join_invite_tournament_queue"):
+        elif (action == "join_invite_tournament_queue"):
             await self.join_invite_tournament(text_data_json)
-        elif (text_data_json["action"] == "invite_tournament_queue"):
+        elif (action == "invite_tournament_queue"):
             await self.invite_tournament(text_data_json)
-        elif (text_data_json["action"] == "join_tournament_queue"):
+        elif (action == "join_tournament_queue"):
             await self.join_tournament(text_data_json)
 
         else:

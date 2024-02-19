@@ -23,11 +23,13 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
 
-        if (text_data_json["action"] == "join_room"):
+        action = text_data_json["action"]
+
+        if (action == "join_room"):
             await self.join_room(text_data_json)
-        elif (text_data_json["action"] == "invite_room"):
+        elif (action == "invite_room"):
             await self.invite_room(text_data_json)
-        elif (text_data_json["action"] == "join_final"):
+        elif (action == "join_final"):
             await self.join_final(text_data_json)
         else:
             await self.send_json({
