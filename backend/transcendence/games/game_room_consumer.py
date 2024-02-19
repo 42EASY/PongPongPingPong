@@ -259,7 +259,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
         #만일 2명이 방에 다 들어오면 방에 있는 모두에게 게임 시작 알림
         if (len(new_parsed_value["join_final_user"]) == 2):
-            cache.delete(key) #TODO: 여기서 redis에 있는 값을 비우는게 맞는지 나중에 확인하기
+            # cache.delete(key) #TODO: 여기서 redis에 있는 값을 비우는게 맞는지 나중에 확인하기
 
             matching_value = []
 

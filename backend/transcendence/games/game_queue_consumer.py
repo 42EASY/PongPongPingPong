@@ -365,7 +365,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
             registered_result_users = parsed_result_value["registered_user"]
             
-            cache.delete(join_game_key)
+            # cache.delete(join_game_key)
 
             user_info_data = []
 
@@ -556,7 +556,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             self.game_group_id, self.channel_name
         )
 
-        cache.delete('normal_' + str(game_id))
+        # cache.delete('normal_' + str(game_id))
 
         player_info = []
 
