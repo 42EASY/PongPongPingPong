@@ -17,7 +17,6 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
         decoded_data = jwt_decode(token, settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=["HS256"])
         self.user = Members.objects.get(id = decoded_data['user_id'])
-        
 
         #game_id 검증
         try:
@@ -107,6 +106,59 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
         if (action == "round_win"):
             await self.round_over()
+        elif (action == "press_key"):
+            await self.press_key(text_data_json)
+        else:
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 action 입니다"
+            })
+
+
+    #user가 key를 누른 경우
+    async def press_key(self, text_data_json):
+        UP = 1
+        DOWN = 0
+
+        key = text_data_json["key"]
+
+        if (key != UP and key != DOWN):
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 key 입니다"
+            })
+            return
+        
+
+        #상대에게 키 눌렀음 알리기
+        #TODO: 상대 channel_id를 어떻게 저장할지 생각해보기
+        value = cache.get(self.key)
+        parsed_value = json.loads(value)
+
+        if (self.game_mode == Game.GameMode.NORMAL):
+            registered_user = parsed_value["registered_user"]
+
+            for user in registered_user:
+                if (user["user_id"] != self.user.id):
+                     await self.channel_layer.send(
+                        user["channel_id"],
+                        {
+                            'type': 'broadcast_press_key',
+                            'message': 'press_key',
+                            'key': key 
+                        })
+                 
+
+        #TODO: 토너먼트 인 경우 
+
+    #press key 알림
+    async def broadcast_press_key(self, event):
+
+        await self.send_json({
+            "status": event["message"],
+            "key": event["key"]
+        })
+
 
 
     
