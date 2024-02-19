@@ -116,6 +116,8 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         self.user_participant.save()
         #TODO: save 안해도 적용되는지 확인
     
+        #TODO: 토너먼트인 경우 구현하기
+
         #10점인 경우 게임 over 알림
         if (self.user_participant.score == 10):
             

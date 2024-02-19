@@ -19,7 +19,7 @@ from datetime import datetime
 from django.core.cache import cache
 
 @pytest.mark.asyncio
-async def test_round_win_success():
+async def test_normal_round_win_success():
 
     channel_layer = get_channel_layer()
 
