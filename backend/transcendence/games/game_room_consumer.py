@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.core.cache import cache
 from members.models import Members
 from games.models import Game, Participant
+from tournaments.models import TournamentGame, Tournament
 from django.db.models import Count, Q
 
 class GameRoomConsumer(AsyncJsonWebsocketConsumer):
@@ -11,7 +12,15 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         path = self.scope['path']
         self.room_id = path.strip('/').split('/')[-1]
 
-        #TODO: room_id가 유효한지 검증하기
+        try:
+            self.tournament = Tournament.objects.get(id = self.room_id)
+        except:
+            await self.send_json({
+                "status": "fail",
+                "message": "잘못된 room_id 입니다"
+            })
+            return 
+
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -145,9 +154,20 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             sorted_matching_value = sorted(matching_value, key=lambda x: x['win_rate'], reverse=True)
 
 
+            #game과 participant, tournamentgame 생성
             game1 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
+
+            Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[0]["user_id"]), game_id = game1, score = 0, opponent_id = sorted_matching_value[1]["user_id"])
+            Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[1]["user_id"]), game_id = game1, score = 0, opponent_id = sorted_matching_value[0]["user_id"])
+
+            TournamentGame.objects.create(game_id = game1, tournament_id = self.tournament, round = TournamentGame.Round.SEMI_FINAL)
+
             game2 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
 
+            Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[2]["user_id"]), game_id = game2, score = 0, opponent_id = sorted_matching_value[3]["user_id"])
+            Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[3]["user_id"]), game_id = game2, score = 0, opponent_id = sorted_matching_value[2]["user_id"])
+
+            TournamentGame.objects.create(game_id = game2, tournament_id = self.tournament, round = TournamentGame.Round.SEMI_FINAL)
 
             #인덱스 0 - 1이 한 게임, 2 - 3이 한 게임을 하도록 알림
             
@@ -259,7 +279,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
         #만일 2명이 방에 다 들어오면 방에 있는 모두에게 게임 시작 알림
         if (len(new_parsed_value["join_final_user"]) == 2):
-            cache.delete(key) #TODO: 여기서 redis에 있는 값을 비우는게 맞는지 나중에 확인하기
+            # cache.delete(key) #TODO: 여기서 redis에 있는 값을 비우는게 맞는지 나중에 확인하기
 
             matching_value = []
 
@@ -294,6 +314,12 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
             game = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
             
+            TournamentGame.objects.create(game_id = game, tournament_id = self.tournament, round = TournamentGame.Round.FINAL)
+
+            Participant.objects.create(user_id = Members.objects.get(id = matching_value[0]["user_id"]), game_id = game, score = 0, opponent_id = matching_value[1]["user_id"])
+            Participant.objects.create(user_id = Members.objects.get(id = matching_value[1]["user_id"]), game_id = game, score = 0, opponent_id = matching_value[0]["user_id"])
+
+
             #인덱스 0에게 정보 알리기
             await self.channel_layer.send(
                 matching_value[0]["channel_id"],

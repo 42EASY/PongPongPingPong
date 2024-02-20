@@ -3,7 +3,7 @@ import json
 from django.core.cache import cache
 from datetime import datetime, timedelta
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from games.models import Game
+from games.models import Game, Participant
 from tournaments.models import Tournament
 from members.models import Members
 
@@ -353,6 +353,9 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 flag = True
 
                 join_game_key = key
+
+
+                Participant.objects.create(user_id = Members.objects.get(id = user_id), game_id = game, score = 0)
                 break
 
         
@@ -365,7 +368,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
             registered_result_users = parsed_result_value["registered_user"]
             
-            cache.delete(join_game_key)
+            # cache.delete(join_game_key)
 
             user_info_data = []
 
@@ -405,7 +408,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             }
 
             cache.set('normal_' + str(new_game.id),  json.dumps(new_game_value))
-
+            Participant.objects.create(user_id = Members.objects.get(id = user_id), game_id = new_game, score = 0)
 
     #normal 모드에서 초대를 한 경우
     async def invite_normal(self, text_data_json):
@@ -442,6 +445,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         }
 
         cache.set('normal_' + str(game.id),  json.dumps(value))
+        Participant.objects.create(user_id = Members.objects.get(id = user_id), game_id = game, score = 0)
 
         await self.send_json({
                 'status': 'game create success',
@@ -543,6 +547,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         updated_value = json.dumps(parsed_value)
         cache.set('normal_' + str(game_id), updated_value)
 
+        Participant.objects.create(user_id = Members.objects.get(id = user_id), game_id = Game.objects.get(id = game_id), score = 0)
+
         #게임 시작할 것이라는 response를 모두에게 전달
         new_value = cache.get('normal_' + str(game_id))
         json_new_value = new_value.encode('utf-8')
@@ -556,7 +562,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             self.game_group_id, self.channel_name
         )
 
-        cache.delete('normal_' + str(game_id))
+        # cache.delete('normal_' + str(game_id))
 
         player_info = []
 
