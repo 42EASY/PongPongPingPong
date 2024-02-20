@@ -45,12 +45,21 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                 if (user["user_id"] != self.user.id):
                     try:
                         self.opponent = Members.objects.get(id = user["user_id"])
+
+                        #user의 participant에 상대 id 값 추가
+                        self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
+                        self.user_participant.opponent_id = self.opponent.id
+                        self.user_participant.save()
+
+                        self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent.id), game_id = self.game)
+
                     except:
                         await self.send_json({
                             "status": "fail",
                             "message": "상대 플레이어가 존재하지 않습니다"
                         })
                         return
+
                 else:
                     #channel_id 갱신
                     #TODO: channel_id를 redis에 갱신하며 담을지, 테이블에 넣을지 고민
@@ -77,16 +86,16 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         
         
         #게임 정보를 담을 participant 테이블 생성
-        #테이블이 존재하지 않으면 새롭게 생성, 존재하면 변수에 값만 담아둠
-        if (Participant.objects.filter(user_id = self.user, game_id = self.game).exists() == False):
-            self.user_participant = Participant.objects.create(user_id = self.user, game_id = self.game, score = 0)
-        else:
-            self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
+        # #테이블이 존재하지 않으면 새롭게 생성, 존재하면 변수에 값만 담아둠
+        # if (Participant.objects.filter(user_id = self.user, game_id = self.game).exists() == False):
+        #     self.user_participant = Participant.objects.create(user_id = self.user, game_id = self.game, score = 0)
+        # else:
+        #     self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
 
-        if (Participant.objects.filter(user_id = self.opponent, game_id = self.game).exists() == False):
-            self.opponent_participant = Participant.objects.create(user_id = self.opponent, game_id = self.game, score = 0)
-        else:
-            self.opponent_participant = Participant.objects.get(user_id = self.opponent, game_id = self.game)
+        # if (Participant.objects.filter(user_id = self.opponent, game_id = self.game).exists() == False):
+        #     self.opponent_participant = Participant.objects.create(user_id = self.opponent, game_id = self.game, score = 0)
+        # else:
+        #     self.opponent_participant = Participant.objects.get(user_id = self.opponent, game_id = self.game)
             
         
         await self.accept()

@@ -145,8 +145,20 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             sorted_matching_value = sorted(matching_value, key=lambda x: x['win_rate'], reverse=True)
 
 
+            #game과 participant 생성
             game1 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
+
+            Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[0]["user_id"]), game_id = game1, score = 0, opponent_id = sorted_matching_value[1]["user_id"])
+            Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[1]["user_id"]), game_id = game1, score = 0, opponent_id = sorted_matching_value[0]["user_id"])
+
+
             game2 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
+
+
+            Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[2]["user_id"]), game_id = game2, score = 0, opponent_id = sorted_matching_value[3]["user_id"])
+            Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[3]["user_id"]), game_id = game2, score = 0, opponent_id = sorted_matching_value[2]["user_id"])
+
+
 
 
             #인덱스 0 - 1이 한 게임, 2 - 3이 한 게임을 하도록 알림

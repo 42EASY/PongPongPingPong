@@ -32,6 +32,7 @@ class Participant(models.Model):
     game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
     score = models.IntegerField(null=True)
     result = models.CharField(max_length=50, choices=Result.choices)
+    opponent_id = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'participant'
