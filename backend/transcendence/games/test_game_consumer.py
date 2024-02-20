@@ -10,10 +10,12 @@ import pytest
 from channels.testing import WebsocketCommunicator
 from .game_consumer import GameConsumer
 from .game_queue_consumer import GameQueueConsumer
+from .game_room_consumer import GameRoomConsumer
 from channels.layers import get_channel_layer
 import json
 from members.models import Members
 from games.models import Game, Participant
+from tournaments.models import Tournament
 from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import datetime
 from django.core.cache import cache
@@ -198,3 +200,96 @@ async def test_normal_press_key_success():
     response = await opponent_communicator.receive_json_from()
 
     assert response['status'] == 'press_key'
+
+
+#----------------------------------------------------------------------------------
+#토너먼트(결승)인 경우 win 테스트 
+@pytest.mark.asyncio
+async def test_tournament_round_win():
+
+    channel_layer = get_channel_layer()
+
+    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+    fake_user = Members.objects.create(nickname = 'test', email = 'testUser@test.com', is_2fa = False)
+    refresh = RefreshToken.for_user(fake_user)
+    fake_token = str(refresh.access_token)
+
+
+    #더미 데이터 입력 
+    dummy_user1 = Members.objects.create(nickname = 'dummy1', email = 'dummy@test.com', is_2fa = False)
+    dummy_user2 = Members.objects.create(nickname = 'dummy2', email = 'dummy@test.com', is_2fa = False)
+    
+    another_user = Members.objects.create(nickname = 'another', email = 'another@test.com', is_2fa = False)
+    another_refresh = RefreshToken.for_user(another_user)
+    another_token = str(another_refresh.access_token)
+    
+    tournament = Tournament.objects.create()
+
+    value = {
+        "registered_user": [
+            { "user_id" : dummy_user1.id, "channel_id": "123"},
+            { "user_id" : dummy_user2.id, "channel_id": "123"},
+            { "user_id" : another_user.id, "channel_id": "123"},
+            { "user_id" : fake_user.id, "channel_id": "123"}],
+        "invited_info": [],
+        "join_user": [ dummy_user1.id, dummy_user2.id, another_user.id, fake_user.id ],
+        "join_final_user": []
+    }
+
+    cache.set('tournament_' + str(tournament.id), json.dumps(value))
+
+    #another_user가 발급 받은 게임방 아이디로 접속
+    another_communicator = WebsocketCommunicator(GameRoomConsumer.as_asgi(), "/ws/join_room/" + str(tournament.id) +"?token=" + another_token)
+    another_connected, another_subprotocol = await another_communicator.connect()
+
+    assert another_connected
+
+    await another_communicator.send_json_to({
+        "action": "join_final",
+        "user_id": another_user.id
+    })
+
+    #fake_user가 발급 받은 게임방 아이디로 접속
+    final_communicator = WebsocketCommunicator(GameRoomConsumer.as_asgi(), "/ws/join_room/" + str(tournament.id) +"?token=" + fake_token)
+    final_connected, subprotocol = await final_communicator.connect()
+
+    assert final_connected
+
+    await final_communicator.send_json_to({
+        "action": "join_final",
+        "user_id": fake_user.id
+    })
+
+    final_response = await final_communicator.receive_json_from()    
+
+    assert final_response["status"] == "game_start_soon"
+
+
+    fake_communicator = WebsocketCommunicator(GameConsumer.as_asgi(), "/ws/game/" + str(final_response["game_id"]) + "?token=" + fake_token)
+    fake_connected, fake_subprotocol = await fake_communicator.connect()
+
+    assert fake_connected
+
+
+    opponent_communicator = WebsocketCommunicator(GameConsumer.as_asgi(), "/ws/game/" + str(final_response["game_id"]) + "?token=" + another_token)
+    opponent_connected, opponent_subprotocol = await opponent_communicator.connect()    
+
+    assert opponent_connected
+
+    #게임 1번 이겼을 때 성공 테스트
+    await fake_communicator.send_json_to({
+        "action": "round_win",
+    })
+
+    round_win_response = await fake_communicator.receive_json_from()    
+
+    assert round_win_response["status"] == "round_over"
+
+    #게임 10번 이겼을 때 성공 테스트
+    for i in range(1, 10):
+        await fake_communicator.send_json_to({
+            "action": "round_win",
+        })
+        game_over_response= await fake_communicator.receive_json_from()
+
+    assert game_over_response["status"] == "normal_game_over"
