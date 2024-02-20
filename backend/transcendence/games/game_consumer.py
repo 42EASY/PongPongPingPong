@@ -198,13 +198,13 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
     async def round_over(self):
         self.user_participant.score = self.user_participant.score + 1
         self.user_participant.save()
-    
-        #TODO: 토너먼트인 경우 구현하기
 
         #10점인 경우 게임 over 알림
         if (self.user_participant.score == 10):
             if (self.game_mode == Game.GameMode.NORMAL):
                 cache.delete(self.key)
+
+            #TODO: 토너먼트인 경우 final이면 cache.delete
 
             self.user_participant.result = Participant.Result.WIN
             self.opponent_participant.result = Participant.Result.LOSE
