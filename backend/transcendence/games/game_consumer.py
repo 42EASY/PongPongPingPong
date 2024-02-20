@@ -28,9 +28,10 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             })
             return
 
+        self.game_mode = self.game.game_mode
+
         #노멀 게임인 경우
-        if (self.game.game_mode == Game.GameMode.NORMAL):
-            self.game_mode = Game.GameMode.NORMAL
+        if (self.game_mode == Game.GameMode.NORMAL):
             self.key = 'normal_' + self.game_id
             value = cache.get(self.key)
 
@@ -62,7 +63,6 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
                 else:
                     #channel_id 갱신
-                    #TODO: channel_id를 redis에 갱신하며 담을지, 테이블에 넣을지 고민
                     parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
                     flag = True
                 
@@ -77,25 +77,45 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             updated_value = json.dumps(parsed_value)
             cache.set(self.key, updated_value)
 
+        #토너먼트인 경우
+        if (self.game_mode == Game.GameMode.TOURNAMENT):
+            self.key = 'tournament_' + self.game_id
+            value = cache.get(self.key)
+
+            parsed_value = json.loads(value)
+
+            registered_user = parsed_value["registered_user"]
+
+            self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
+
+
+            self.opponent = Members.objects.get(id = self.user_participant.opponent_id)
+            self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent), game_id = self.game)
+
+            flag = False;
+            idx = -1
+            for user in registered_user:
+                idx += 1
+                if (user["user_id"] != self.user_id):
+                    #channel_id 갱신
+                    parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
+                    flag = True
+                    break
+
+                    
+            if (flag == False):
+                await self.send_json({
+                    "status": "fail",
+                    "message": "등록되지 않은 유저입니다"
+                })
+                return
             
-        
+            updated_value = json.dumps(parsed_value)
+            cache.set(self.key, updated_value)
 
-            
 
-        #TODO: 토너먼트인 경우
-        
-        
-        #게임 정보를 담을 participant 테이블 생성
-        # #테이블이 존재하지 않으면 새롭게 생성, 존재하면 변수에 값만 담아둠
-        # if (Participant.objects.filter(user_id = self.user, game_id = self.game).exists() == False):
-        #     self.user_participant = Participant.objects.create(user_id = self.user, game_id = self.game, score = 0)
-        # else:
-        #     self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
 
-        # if (Participant.objects.filter(user_id = self.opponent, game_id = self.game).exists() == False):
-        #     self.opponent_participant = Participant.objects.create(user_id = self.opponent, game_id = self.game, score = 0)
-        # else:
-        #     self.opponent_participant = Participant.objects.get(user_id = self.opponent, game_id = self.game)
+        self.opponent_channel_name = -1
             
         
         await self.accept()
@@ -109,6 +129,19 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
     #connect 이후 receive 및 send 할 내용 정의
     async def receive(self, text_data):
+
+        #상대의 channel_name 저장
+        if (self.opponent_channel_name == -1):
+            value = cache.get(self.key)
+            parsed_value = json.loads(value)
+
+            registered_user = parsed_value["registered_user"]
+
+            for info in registered_user:
+                if (info["user_id"] == self.opponent.id):
+                    self.opponent_channel_name = info["channel_id"]
+
+
         text_data_json = json.loads(text_data)
 
         action = text_data_json["action"]
@@ -140,33 +173,23 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         
 
         #상대에게 키 눌렀음 알리기
-        #TODO: 상대 channel_id를 어떻게 저장할지 생각해보기
-        value = cache.get(self.key)
-        parsed_value = json.loads(value)
-
-        if (self.game_mode == Game.GameMode.NORMAL):
-            registered_user = parsed_value["registered_user"]
-
-            for user in registered_user:
-                if (user["user_id"] != self.user.id):
-                     await self.channel_layer.send(
-                        user["channel_id"],
-                        {
-                            'type': 'broadcast_press_key',
-                            'message': 'press_key',
-                            'key': key 
-                        })
-                 
-
-        #TODO: 토너먼트 인 경우 
+        
+        await self.channel_layer.send(
+            self.opponent_channel_name,
+            {
+                'type': 'broadcast_press_key',
+                'message': 'press_key',
+                'key': key 
+            })
+        
 
     #press key 알림
     async def broadcast_press_key(self, event):
 
         await self.send_json({
-            "status": event["message"],
-            "key": event["key"]
-        })
+                "status": event["message"],
+                "key": event["key"]
+            })
 
 
 
@@ -175,50 +198,57 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
     async def round_over(self):
         self.user_participant.score = self.user_participant.score + 1
         self.user_participant.save()
-        #TODO: save 안해도 적용되는지 확인
     
         #TODO: 토너먼트인 경우 구현하기
 
         #10점인 경우 게임 over 알림
         if (self.user_participant.score == 10):
-            
-            #normal인 경우
             if (self.game_mode == Game.GameMode.NORMAL):
-                
-                value = cache.get(self.key)
-                parsed_value = json.loads(value)
-                registered_user = parsed_value["registered_user"]
-
-                for user in registered_user:
-                    await self.channel_layer.send(
-                        user["channel_id"],
-                        {
-                            'type': 'broadcast_game_status',
-                            'message': 'normal_game_over',
-                            'game_status': [{ "user_id" : self.user.id, "score": self.user_participant.score }, 
-                                            { "user_id" : self.opponent.id, "score" : self.opponent_participant.score}]
-                        })
-
-
                 cache.delete(self.key)
 
-        else:
-            #normal인 경우
-            if (self.game_mode == Game.GameMode.NORMAL):
-                
-                value = cache.get(self.key)
-                parsed_value = json.loads(value)
-                registered_user = parsed_value["registered_user"]
+            self.user_participant.result = Participant.Result.WIN
+            self.opponent_participant.result = Participant.Result.LOSE
 
-                for user in registered_user:
-                    await self.channel_layer.send(
-                        user["channel_id"],
-                        {
-                            'type': 'broadcast_game_status',
-                            'message': 'round_over',
-                            'game_status': [{ "user_id" : self.user.id, "score": self.user_participant.score }, 
-                                            { "user_id" : self.opponent.id, "score" : self.opponent_participant.score}]
-                        })
+            self.user_participant.save()
+            self.opponent_participant.save()
+
+            await self.channel_layer.send(
+                self.channel_name,
+                {
+                    'type': 'broadcast_game_status',
+                    'message': 'normal_game_over',
+                    'game_status': [{ "user_id" : self.user.id, "score": self.user_participant.score }, 
+                                    { "user_id" : self.opponent.id, "score" : self.opponent_participant.score}]
+                })
+            await self.channel_layer.send(
+                self.opponent_channel_name,
+                {
+                    'type': 'broadcast_game_status',
+                    'message': 'normal_game_over',
+                    'game_status': [{ "user_id" : self.user.id, "score": self.user_participant.score }, 
+                                    { "user_id" : self.opponent.id, "score" : self.opponent_participant.score}]
+                })
+
+
+
+        else:
+           await self.channel_layer.send(
+                self.channel_name,
+                {
+                    'type': 'broadcast_game_status',
+                    'message': 'round_over',
+                    'game_status': [{ "user_id" : self.user.id, "score": self.user_participant.score }, 
+                                    { "user_id" : self.opponent.id, "score" : self.opponent_participant.score}]
+                })
+           await self.channel_layer.send(
+                self.opponent_channel_name,
+                {
+                    'type': 'broadcast_game_status',
+                    'message': 'round_over',
+                    'game_status': [{ "user_id" : self.user.id, "score": self.user_participant.score }, 
+                                    { "user_id" : self.opponent.id, "score" : self.opponent_participant.score}]
+                })
+           
 
 
 
