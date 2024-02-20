@@ -3,6 +3,7 @@ import json
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from members.models import Members
 from games.models import Game, Participant
+from tournaments.models import Tournament, TournamentGame
 from django.core.cache import cache
 from urllib.parse import parse_qs
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
@@ -79,8 +80,12 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
         #토너먼트인 경우
         if (self.game_mode == Game.GameMode.TOURNAMENT):
-            self.key = 'tournament_' + self.game_id
+            self.tournament_game = TournamentGame.objects.get(game_id = self.game)
+
+            self.key = 'tournament_' + str(self.tournament_game.tournament_id.id)
+
             value = cache.get(self.key)
+
 
             parsed_value = json.loads(value)
 
@@ -90,13 +95,13 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
 
             self.opponent = Members.objects.get(id = self.user_participant.opponent_id)
-            self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent), game_id = self.game)
+            self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent.id), game_id = self.game)
 
             flag = False;
             idx = -1
             for user in registered_user:
                 idx += 1
-                if (user["user_id"] != self.user_id):
+                if (user["user_id"] != self.user.id):
                     #channel_id 갱신
                     parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
                     flag = True
