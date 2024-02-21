@@ -29,12 +29,14 @@ export default function MoreMenu(id) {
   });
 
   $BlockOption.addEventListener("click", () => {
-    // todo: modat return 값 확인
-    const $ProfileBtnBox = document.querySelector("#profileBtnBox");
-    $ProfileBtnBox.innerHTML = "";
-    Modal("blockFriend");
-    postBlock(id);
-    $ProfileBtnBox.appendChild(OtherBtn(id, "BLOCK"));
+    Modal("blockFriend").then((result) => {
+      if (result.isPositive) {
+        postBlock(id);
+        const $ProfileBtnBox = document.querySelector("#profileBtnBox");
+        $ProfileBtnBox.innerHTML = "";
+        $ProfileBtnBox.appendChild(OtherBtn(id, "BLOCK"));
+      }
+    });
   });
 
   return $MoreMenuWrapper;
