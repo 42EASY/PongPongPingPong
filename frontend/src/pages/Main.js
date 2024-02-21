@@ -3,7 +3,6 @@ import Profile from "../components/Main/Profile.js";
 import GameHistory from "../components/Main/GameHistory.js";
 import { getUserId } from "../state/State.js";
 import { getUserInfo } from "../components/Main/UserApi.js";
-import Modal from "../components/Modal/Modal.js";
 
 export default async function Main(id = getUserId()) {
   Nav();
@@ -11,6 +10,8 @@ export default async function Main(id = getUserId()) {
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
   const $page = document.createElement("div");
+  $app.appendChild($page);
+
   const userInfo = await getUserInfo(id);
   const $profile = Profile(id, userInfo.result);
 
@@ -19,6 +20,4 @@ export default async function Main(id = getUserId()) {
 
   const $history = GameHistory();
   $page.appendChild($history);
-
-  $app.appendChild($page);
 }

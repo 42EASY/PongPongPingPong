@@ -1,5 +1,5 @@
 import PercentBar from "./PercentBar.js";
-import TimerRing from "./TimerRing.js";
+import TimerRing, { startCount } from "./TimerRing.js";
 
 export default function WaitingPlayer(state) {
   const $waitingPlayer = document.createElement("div");
@@ -24,6 +24,7 @@ export default function WaitingPlayer(state) {
   } else if (state == 2) {
     $waitingPlayerImageBox.innerHTML = "";
     $waitingPlayerImageBox.appendChild(TimerRing());
+    startCount();
     $waitingPlayerImageBox.style.backgroundColor = "transparent";
     $waitingPlayerName.innerHTML = "nickname님을 기다리는 중...";
     $waitingPlayerName.id = "emptyPlayerName";
@@ -31,7 +32,7 @@ export default function WaitingPlayer(state) {
   } else {
     $waitingPlayerImage.setAttribute("src", ""); //profile image path
     $waitingPlayerName.innerHTML = "nickname"; //player nickname
-    $waitingPlayer.appendChild(PercentBar({ win: 60, lose: 40 }));
+    $waitingPlayer.appendChild(PercentBar({ win: 6, lose: 4 }));
   }
 
   return $waitingPlayer;

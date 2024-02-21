@@ -159,3 +159,40 @@
 .navGameBtnIcon {
   font-size: 24px;
 }
+
+.timerWrapper {
+  width: 144px;
+  height: 144px;
+  position: relative;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.timerRing {
+  width: 100%;
+  height: 100%;
+  border: 12px solid var(--lightGray);
+  border-top: 12px solid var(--green);
+  border-radius: 50%;
+  animation: spin 3.5s linear infinite;
+}
+
+.timerCnt {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 600;
+}
