@@ -1,6 +1,7 @@
 import MoreMenu from "./MoreMenu.js";
 import Chat from "../../pages/Chat.js";
 import { postFriend, deleteFriend, deleteBlock } from "./UserApi.js";
+import Modal from "../Modal/Modal.js";
 
 export default function OtherBtn(id, status) {
   const $OtherBtnWrapper = document.createElement("div");
@@ -53,11 +54,19 @@ export default function OtherBtn(id, status) {
       postFriend(id);
       onChangeStatus("FRIEND");
     } else if (status === "BLOCK") {
-      deleteBlock(id);
-      onChangeStatus("NONE");
+      Modal("unblockFriend").then((result) => {
+        if (result.isPositive) {
+          deleteBlock(id);
+          onChangeStatus("NONE");
+        }
+      });
     } else if (status === "FRIEND") {
-      deleteFriend(id);
-      onChangeStatus("NONE");
+      Modal("deleteFriend").then((result) => {
+        if (result.isPositive) {
+          deleteFriend(id);
+          onChangeStatus("NONE");
+        }
+      });
     }
   };
 

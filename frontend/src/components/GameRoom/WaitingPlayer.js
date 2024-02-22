@@ -17,7 +17,7 @@ export default function WaitingPlayer(state) {
   $waitingPlayer.appendChild($waitingPlayerName);
 
   if (state == 1) {
-    $waitingPlayerImage.setAttribute("src", ""); //default image path
+    $waitingPlayerImage.setAttribute("src", "./src/images/none_profile.png");
     $waitingPlayerName.innerHTML = "대전자 찾는 중...";
     $waitingPlayerName.id = "emptyPlayerName";
     $waitingPlayer.appendChild(PercentBar({ win: 0, lose: 0 }));
@@ -31,7 +31,7 @@ export default function WaitingPlayer(state) {
   } else {
     $waitingPlayerImage.setAttribute("src", ""); //profile image path
     $waitingPlayerName.innerHTML = "nickname"; //player nickname
-    $waitingPlayer.appendChild(PercentBar({ win: 60, lose: 40 }));
+    $waitingPlayer.appendChild(PercentBar({ win: 6, lose: 4 }));
   }
 
   return $waitingPlayer;

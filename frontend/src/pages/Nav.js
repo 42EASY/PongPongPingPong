@@ -1,9 +1,9 @@
 import changeUrl from "../Router.js";
-import Modal from "../components/Modal/Modal.js";
 import NavBar from "../components/Nav/NavBar.js";
 import Chat from "../pages/Chat.js";
 import Friends from "./Friends.js";
 import { getUserList, postLogout } from "../components/Nav/NavApi.js";
+import FastGameStart from "../components/Nav/FastGameStart.js";
 
 export default async function Nav() {
   const $navbar = document.querySelector(".nav");
@@ -82,6 +82,6 @@ export default async function Nav() {
   //게임하러 가기 클릭이벤트
   const $navGameBtn = document.querySelector(".navGameBtn");
   $navGameBtn.addEventListener("click", () => {
-    Modal("gameMode");
+    FastGameStart();
   });
 }
