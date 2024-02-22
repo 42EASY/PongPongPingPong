@@ -10,7 +10,7 @@ export default function MyBtn(user) {
   $ProfileEditBtn.innerHTML = "프로필 편집";
 
   $ProfileEditBtn.addEventListener("click", () => {
-    changeUrl("/register", user);
+    changeUrl("/register");
   });
 
   return $MyBtnWrapper;
