@@ -1,17 +1,15 @@
-let intervalId;
-
-export const startCount = async () => {
-  let sec = 60;
+export const startCount = (container, sec) => {
+  let intervalId;
   if (intervalId) clearInterval(intervalId);
-  const $timerCnt = document.getElementsByClassName("timerCnt");
-  setInterval(() => {
+  const $timerCnt = container.querySelector(".timerCnt");
+  $timerCnt.innerHTML = sec;
+  intervalId = setInterval(() => {
+    sec--;
+    $timerCnt.innerHTML = sec;
     if (sec === 0) {
       clearInterval(intervalId);
-      return;
+      return true;
     }
-    sec--;
-    $timerCnt.innerHTML = sec.toString();
-    console.log(sec);
   }, 1000);
 };
 
@@ -24,7 +22,6 @@ export default function TimerRing() {
 
   const $timerCnt = document.createElement("div");
   $timerCnt.classList.add("timerCnt");
-  $timerCnt.innerHTML = "60";
   $timerRingWrapper.appendChild($timerRing);
   $timerRingWrapper.appendChild($timerCnt);
 
