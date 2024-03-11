@@ -3,8 +3,8 @@ export default function NoSearch() {
   $noSearchWrapper.classList.add("noSearchWrapper");
 
   const $noSearchImage = document.createElement("img");
-  $noSearchImage.classList.add("friendImage");
-  $noSearchImage.setAttribute("src", "../../images/none_profile.png");
+  $noSearchImage.classList.add("profileImg");
+  $noSearchImage.setAttribute("src", "./src/images/none_profile.png");
   $noSearchImage.setAttribute("alt", "not_found_friend");
 
   const $noSearchText = document.createElement("div");
