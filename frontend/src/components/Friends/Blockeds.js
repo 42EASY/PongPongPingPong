@@ -2,24 +2,28 @@ import Blocked from "./Blocked.js";
 import NoFriend from "./NoFriend.js";
 import NoSearch from "./NoSearch.js";
 
-export default function Blockeds() {
+export default function Blockeds(data) {
   const $listWrapper = document.createElement("div");
   $listWrapper.classList.add("friendsWrapper");
 
-  //todo: api 호출
-  const $blocked = Blocked();
-  $listWrapper.appendChild($blocked);
-  const $blocked1 = Blocked();
-  $listWrapper.appendChild($blocked1);
-
-  //친구 없을 경우
-  // $listWrapper.style.flexDirection = "unset";
-  // const $noFriend = NoFriend();
-  // $listWrapper.appendChild($noFriend);
-
-  //친구 검색 결과 없을 경우
-  // const $noSearch = NoSearch();
-  // $listWrapper.appendChild($noSearch);
+  const len = data.length;
+  const keyword = document.getElementById("searchInput").value;
+  if (len === 0) {
+    if (keyword === "") {
+      $listWrapper.style.flexDirection = "unset";
+      const $noFriend = NoFriend();
+      $listWrapper.appendChild($noFriend);
+    } else {
+      console.log("nosearch");
+      const $noSearch = NoSearch();
+      $listWrapper.appendChild($noSearch);
+    }
+  } else {
+    for (let i = 0; i < len; i++) {
+      const $blocked = Blocked(data[i]);
+      $listWrapper.appendChild($blocked);
+    }
+  }
 
   return $listWrapper;
 }

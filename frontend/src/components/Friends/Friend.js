@@ -1,4 +1,4 @@
-export default function Friend() {
+export default function Friend(user) {
   const $friendWrapper = document.createElement("div");
   $friendWrapper.classList.add("friendWrapper");
 
@@ -11,16 +11,22 @@ export default function Friend() {
 
   const $friendImage = document.createElement("img");
   $friendImage.classList.add("profileImg");
-  $friendImage.setAttribute("src", "../../images/none_profile.png");
+  if (user.image_url === null) user.image_url = "./src/images/none_profile.png";
+  $friendImage.setAttribute("src", user.image_url);
   $friendImage.setAttribute("alt", "profile_image");
 
   const $friendName = document.createElement("div");
   $friendName.classList.add("profileName");
-  $friendName.innerHTML = "이름";
+  $friendName.innerHTML = user.nickname;
 
   const $friendStatus = document.createElement("div");
-  $friendStatus.classList.add("friendStatus", "online");
+
   //접속중 : online, 게임중 : inGame, 오프라인 : offline
+  if (user.status === "OFFLINE")
+    $friendStatus.classList.add("friendStatus", "offline");
+  else if (user.status === "ONLINE")
+    $friendStatus.classList.add("friendStatus", "online");
+  else $friendStatus.classList.add("friendStatus", "inGame");
 
   $friendInfo.appendChild($friendImage);
   $friendInfo.appendChild($friendName);
