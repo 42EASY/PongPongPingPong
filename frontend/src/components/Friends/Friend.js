@@ -1,3 +1,7 @@
+import Options from "./Options.js";
+import Modal from "../Modal/Modal.js";
+import { deleteFriend, postBlock } from "../Main/UserApi.js";
+
 export default function Friend(user) {
   const $friendWrapper = document.createElement("div");
   $friendWrapper.classList.add("friendWrapper");
@@ -5,9 +9,15 @@ export default function Friend(user) {
   const $friendInfo = document.createElement("div");
   $friendInfo.classList.add("profileInfo");
 
-  const $friendButton = document.createElement("i");
-  $friendButton.classList.add("friendButton", "bi", "bi-three-dots-vertical");
-  //todo: 클릭 이벤트 적용
+  const $optionsBox = document.createElement("div");
+  $optionsBox.classList.add("optionsBox");
+
+  const $optionsButton = document.createElement("button");
+  $optionsButton.classList.add("btn", "friendButton");
+  const $optionsIcon = document.createElement("i");
+  $optionsIcon.classList.add("bi", "bi-three-dots-vertical");
+
+  const $options = Options(user.user_id);
 
   const $friendImage = document.createElement("img");
   $friendImage.classList.add("profileImg");
@@ -32,8 +42,44 @@ export default function Friend(user) {
   $friendInfo.appendChild($friendName);
   $friendInfo.appendChild($friendStatus);
 
+  $optionsButton.appendChild($optionsIcon);
+  $optionsBox.appendChild($optionsButton);
+  $optionsBox.appendChild($options);
+
   $friendWrapper.appendChild($friendInfo);
-  $friendWrapper.appendChild($friendButton);
+  $friendWrapper.appendChild($optionsBox);
+
+  // ... 옵션 클릭 이벤트
+  $optionsButton.addEventListener("click", () => {
+    $options.style.display = "block";
+  });
+
+  // 옵션 외부 클릭 이벤트
+  document.addEventListener("click", (e) => {
+    if (!$options.contains(e.target)) $options.style.display = "none";
+  });
+
+  // 친구 끊기 클릭 이벤트
+  const $unfriendOpt = $options.querySelector("#unfriendOpt");
+  $unfriendOpt.addEventListener("click", () => {
+    Modal("deleteFriend").then((result) => {
+      if (result.isPositive) {
+        deleteFriend(user.user_id);
+        $friendWrapper.style.display = "none";
+      }
+    });
+  });
+
+  // 친구 차단하기 클릭 이벤트
+  const $blockOpt = $options.querySelector("#blockOpt");
+  $blockOpt.addEventListener("click", () => {
+    Modal("blockFriend").then((result) => {
+      if (result.isPositive) {
+        postBlock(user.user_id);
+        $friendWrapper.style.display = "none";
+      }
+    });
+  });
 
   return $friendWrapper;
 }

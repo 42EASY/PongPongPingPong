@@ -6,6 +6,7 @@
   --darkGray: #d1d5db;
   --yellow: #fede53;
   --white: #ffffff;
+  --red: #f05252;
 }
 
 .sidebarArea {
@@ -103,7 +104,7 @@ input:focus {
 .chatWrapper {
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   padding-top: 12px;
   padding-bottom: 12px;
@@ -116,7 +117,6 @@ input:focus {
 }
 
 .profileInfo {
-  width: 100%;
   display: flex;
   justify-content: start;
   align-items: center;
@@ -217,12 +217,16 @@ input:focus {
 .friendWrapper {
   width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: start;
+  justify-content: space-between;
+  align-items: center;
   padding-top: 12px;
   padding-bottom: 12px;
   padding-left: 16px;
   padding-right: 16px;
+}
+
+.friendWrapper:hover {
+  background-color: var(--lightGray);
 }
 
 .friendStatus {
@@ -247,12 +251,50 @@ input:focus {
   background-color: var(--darkGray);
 }
 
+.optionsBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: end;
+  position: relative;
+  width: 224px;
+}
+
 .friendButton {
-  height: 100%;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-radius: 10px;
+  background-color: var(--lightGray);
+}
+
+.friendButton:hover {
+  background-color: var(--white);
+}
+
+.optionsWrapper {
+  display: none;
+  width: 160px;
+  border-radius: 60px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  background-color: var(--white);
+}
+
+.options {
+  font-size: 12px;
+}
+
+.optionsItem:hover {
+  background-color: var(--lightGreen);
+}
+
+.optionListRed {
+  color: var(--red);
 }
 
 .noFriendWrapper {
