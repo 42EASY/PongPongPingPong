@@ -88,7 +88,6 @@ export default function Friends() {
     curPage = 1;
     hasMore = true;
     $searchInput.value = "";
-    $listWrapper.innerHTML = "";
     if (e.target.classList.contains("friendList")) {
       $friendList.classList.add("friendsTitleSelect", "titleSelect");
       $blockedList.classList.remove("friendsTitleSelect", "titleSelect");
