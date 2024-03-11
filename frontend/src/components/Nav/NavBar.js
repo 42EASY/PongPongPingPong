@@ -1,3 +1,4 @@
+import { getImage } from "../../state/State.js";
 import NavProfileMenu from "./NavProfileMenu.js";
 
 export default function NavBar() {
@@ -60,6 +61,7 @@ export default function NavBar() {
   $navProfileBtn.appendChild($navProfileBtnImage);
   $navProfileBox.classList.add("navProfileBox");
   $navProfileBtn.classList.add("navProfileBtn");
+  $navProfileBtnImage.setAttribute("src", getImage());
   $navProfileBtnImage.setAttribute("alt", "profile_image");
   $navProfileBtnImage.classList.add("navProfileBtnImage");
   $navVerticalLine.classList.add("navVerticalLine");
