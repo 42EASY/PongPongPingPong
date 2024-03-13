@@ -10,6 +10,7 @@ export default function Search() {
 
   const $searchInput = document.createElement("input");
   $searchInput.classList.add("searchInput");
+  $searchInput.id = "searchInput";
   $searchInput.type = "text";
   $searchInput.placeholder = "목록 검색";
 

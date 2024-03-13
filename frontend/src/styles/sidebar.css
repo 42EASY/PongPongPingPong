@@ -6,14 +6,15 @@
   --darkGray: #d1d5db;
   --yellow: #fede53;
   --white: #ffffff;
-  }
+  --red: #f05252;
+}
 
 .sidebarArea {
   height: 100%;
   width: 419px;
   position: fixed;
   right: -100%;
-  z-index: 999;
+  z-index: 996;
   display: flex;
   flex-direction: column;
   box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -29,7 +30,7 @@
   position: fixed;
   width: 100%;
   height: 100vh;
-  z-index: 998;
+  z-index: 994;
   display: none;
 }
 
@@ -103,7 +104,7 @@ input:focus {
 .chatWrapper {
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   padding-top: 12px;
   padding-bottom: 12px;
@@ -116,7 +117,6 @@ input:focus {
 }
 
 .profileInfo {
-  width: 100%;
   display: flex;
   justify-content: start;
   align-items: center;
@@ -155,19 +155,19 @@ input:focus {
   gap: 24px;
 }
 
-.noChatIcon{
+.noChatIcon {
   font-size: 64px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.noChatText{
+.noChatText {
   font-size: 30px;
   font-weight: 700;
 }
 
-.noChatDetail{
+.noChatDetail {
   font-size: 14px;
   font-weight: 400;
 }
@@ -217,12 +217,16 @@ input:focus {
 .friendWrapper {
   width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: start;
+  justify-content: space-between;
+  align-items: center;
   padding-top: 12px;
   padding-bottom: 12px;
   padding-left: 16px;
   padding-right: 16px;
+}
+
+.friendWrapper:hover {
+  background-color: var(--lightGray);
 }
 
 .friendStatus {
@@ -247,14 +251,51 @@ input:focus {
   background-color: var(--darkGray);
 }
 
+.optionsBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: end;
+  position: relative;
+  width: 224px;
+}
+
 .friendButton {
-  height: 100%;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-radius: 10px;
+  background-color: var(--lightGray);
 }
 
+.friendButton:hover {
+  background-color: var(--white);
+}
+
+.optionsWrapper {
+  display: none;
+  width: 160px;
+  border-radius: 60px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  background-color: var(--white);
+}
+
+.options {
+  font-size: 12px;
+}
+
+.optionsItem:hover {
+  background-color: var(--lightGreen);
+}
+
+.optionListRed {
+  color: var(--red);
+}
 
 .noFriendWrapper {
   width: 100%;
@@ -264,19 +305,19 @@ input:focus {
   gap: 24px;
 }
 
-.noFriendIcon{
+.noFriendIcon {
   font-size: 64px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.noFriendText{
+.noFriendText {
   font-size: 30px;
   font-weight: 700;
 }
 
-.noFriendDetail{
+.noFriendDetail {
   font-size: 14px;
   font-weight: 400;
 }
@@ -292,7 +333,7 @@ input:focus {
   padding-right: 16px;
 }
 
-.noSearchText{
+.noSearchText {
   width: 100%;
   display: flex;
   justify-content: start;
@@ -326,7 +367,7 @@ input:focus {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding : 12px
+  padding: 12px;
 }
 
 .chatInput {
@@ -357,7 +398,7 @@ input:focus {
   flex-direction: column-reverse;
   align-items: center;
   gap: 10px;
-  padding : 10px;
+  padding: 10px;
 }
 
 .chatContentWrapper {
@@ -442,7 +483,7 @@ input:focus {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding : 16px;
+  padding: 16px;
   border-bottom: 1px solid var(--lightGray);
 }
 
@@ -500,7 +541,7 @@ input:focus {
   justify-content: start;
   align-items: center;
   gap: 12px;
-  padding : 16px;
+  padding: 16px;
   border-bottom: 1px solid var(--lightGray);
 }
 
@@ -555,5 +596,14 @@ input:focus {
   justify-content: start;
   align-items: center;
   gap: 12px;
-  padding : 16px;
+  padding: 16px;
+}
+
+.listWrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
 }

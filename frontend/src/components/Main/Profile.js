@@ -42,7 +42,7 @@ export default function MyProfile(id, user) {
   );
   $ProfileImageBox.classList.add("profileImageBox");
   $ProfileImage.classList.add("profileImage");
-  $ProfileImage.setAttribute("src", "/src/images/none_profile.png"); //profile image path
+  $ProfileImage.setAttribute("src", user.image_url);
   $ProfileImage.setAttribute("alt", "profile_image");
 
   return $ProfileWrapper;

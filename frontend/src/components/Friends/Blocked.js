@@ -1,4 +1,8 @@
-export default function Blocked() {
+import { deleteBlock } from "../Main/UserApi.js";
+import Modal from "../Modal/Modal.js";
+
+export default function Blocked(user) {
+  console.log(user);
   const $blockedWrapper = document.createElement("div");
   $blockedWrapper.classList.add("friendWrapper");
 
@@ -6,18 +10,26 @@ export default function Blocked() {
   $blockedInfo.classList.add("profileInfo");
 
   const $blockedButton = document.createElement("div");
-  $blockedButton.classList.add("blockedButton");
+  $blockedButton.classList.add("btn", "blockedButton");
   $blockedButton.innerHTML = "차단 해제";
-  //todo: 클릭 이벤트 적용
+  $blockedButton.addEventListener("click", () => {
+    Modal("unblockFriend").then((result) => {
+      if (result.isPositive) {
+        deleteBlock(user.user_id);
+        $blockedWrapper.style.display = "none";
+      }
+    });
+  });
 
   const $blockedImage = document.createElement("img");
   $blockedImage.classList.add("profileImg");
-  $blockedImage.setAttribute("src", "../../images/none_profile.png");
+  if (user.image_url === null) user.image_url = "./src/images/none_profile.png";
+  $blockedImage.setAttribute("src", user.image_url);
   $blockedImage.setAttribute("alt", "profile_image");
 
   const $blockedName = document.createElement("div");
   $blockedName.classList.add("profileName");
-  $blockedName.innerHTML = "이름";
+  $blockedName.innerHTML = user.nickname;
 
   $blockedInfo.appendChild($blockedImage);
   $blockedInfo.appendChild($blockedName);
