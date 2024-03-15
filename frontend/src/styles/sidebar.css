@@ -283,6 +283,7 @@ input:focus {
   top: 0px;
   right: 0px;
   background-color: var(--white);
+  z-index: 10;
 }
 
 .options {
