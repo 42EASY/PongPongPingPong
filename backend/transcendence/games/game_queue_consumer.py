@@ -7,6 +7,7 @@ from games.models import Game, Participant
 from tournaments.models import Tournament
 from members.models import Members
 
+#TODO: 삭제 예정
 INVITE_TIME = 60
 
 #TODO: registered 꽉 차면 삭제하는 로직 검증하기
@@ -311,37 +312,12 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             if (game.game_option.lower() != game_mode.lower()):
                 continue
             
-            value = cache.get(key)
-            parsed_value = json.loads(value)
-            invited_info = parsed_value["invited_info"]
-
-            idx = -1
-            delete_idx = []
-            for info in invited_info:
-                idx += 1
-                current_time_datetime = datetime.fromisoformat(current_time)
-                invited_time_datetime = datetime.fromisoformat(info["invited_time"])
-                    
-                time_difference = current_time_datetime - invited_time_datetime
-
-                #만료된 시간인 경우 삭제 하여 새롭게 갱신
-                if time_difference > timedelta(seconds=INVITE_TIME):
-                    delete_idx.append(idx)
-
-            
-            for num in delete_idx:
-                parsed_value["invited_info"].pop(num)
-
-            updated_value = json.dumps(parsed_value)
-            cache.set(key, updated_value)
-
-            
-            #갱신 후에 invite_info에 값이 있는지 확인
+            #invite_info에 값이 있는지 확인
             new_value = cache.get(key)
             new_parsed_value = json.loads(new_value)
             new_invited_info = new_parsed_value["invited_info"]
 
-            #만일 값이 없다면 대기리스트에 등록
+            #만일 초대리스트에 값이 없다면 게임에 등록
             if len(new_invited_info) == 0:
                 new_parsed_value['registered_user'].append({
                     "user_id": user_id,
@@ -353,7 +329,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 flag = True
 
                 join_game_key = key
-
 
                 Participant.objects.create(user_id = Members.objects.get(id = user_id), game_id = game, score = 0)
                 break
@@ -409,6 +384,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
             cache.set('normal_' + str(new_game.id),  json.dumps(new_game_value))
             Participant.objects.create(user_id = Members.objects.get(id = user_id), game_id = new_game, score = 0)
+
+
 
     #normal 모드에서 초대를 한 경우
     async def invite_normal(self, text_data_json):
@@ -483,9 +460,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
     
-        
-        # json_value = value.decode('utf-8')
-        # parsed_value = json.loads(json_value)
+
         parsed_value = json.loads(value)
         invited_info = parsed_value["invited_info"]
 
@@ -497,48 +472,17 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
             
+        #초대리스트에 등록된 유저가 아닌 경우
+        if (invited_info[0]["user_id"] != user_id):
+            await self.send_json({
+                'status': 'fail',
+                'message': '초대 대상이 아닙니다'
+            })
+            return
         
-        flag = False
-        idx = -1
-            
-        for tmp in invited_info:
-            idx += 1
-                
-            if (tmp["user_id"] == user_id):
-                accept_time_datetime = datetime.fromisoformat(accept_time)
-                invited_time_datetime = datetime.fromisoformat(tmp["invited_time"])
-                    
-                time_difference = accept_time_datetime - invited_time_datetime
 
-                #초대 받은 시간이 유효한 경우
-                if time_difference <= timedelta(seconds=INVITE_TIME):
-                    flag = True
-                    break
-                
-        #invited_info 안에 user_id가 없거나, 유효한 초대 시간이 아닌 경우
-        if (flag == False):
-            #유효한 초대 시간이 아닌경우
-            if (invited_info[idx]["user_id"] == user_id):
-                await self.send_json({
-                    'status': 'fail', 
-                    'message': '초대 가능 시간이 초과되었습니다'
-                })
-                    
-                #초대리스트에서 삭제
-                parsed_value["invited_info"].pop(idx)
-                updated_value = json.dumps(parsed_value)
-                cache.set('normal_' + str(game_id), updated_value)
-                
-            else: 
-                await self.send_json({
-                    'status': 'fail',
-                    'message': '초대 대상이 아닙니다'
-                })
-
-            return 
-                    
         #invited_info안의 유저 정보 제거 후, 게임 대기 큐에 등록
-        parsed_value["invited_info"].pop(idx)
+        parsed_value["invited_info"].pop(0)
         parsed_value['registered_user'].append({
             "user_id": user_id,
             "channel_id": self.channel_name
@@ -556,6 +500,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         registered_users = parsed_new_value["registered_user"]
             
+        
+        #TODO: group 활용하기
         self.game_group_id = "normal_" + str(game_id)
 
         await self.channel_layer.group_add(
@@ -589,6 +535,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                     'player_info': player_info
                 })
     
+
+
     async def broadcast_game_start(self, event):
         game_id = event["game_id"]
         player_info = event["player_info"]
