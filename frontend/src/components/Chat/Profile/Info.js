@@ -1,11 +1,11 @@
 import ContactInfo from "./ContactInfo.js";
 
-export default function Info() {
+export default function Info(user) {
   const $infoWrapper = document.createElement("div");
   $infoWrapper.classList.add("infoWrapper");
 
   const $infoProfileImg = document.createElement("img");
-  $infoProfileImg.setAttribute("src", "../../images/none_profile.png");
+  $infoProfileImg.setAttribute("src", user.image_url);
   $infoProfileImg.setAttribute("alt", "profileImg");
   $infoProfileImg.classList.add("infoProfileImg");
 
@@ -16,7 +16,7 @@ export default function Info() {
   $infoNameWrapper.classList.add("infoNameWrapper");
   const $infoName = document.createElement("div");
   $infoName.classList.add("infoName");
-  $infoName.innerHTML = "hahlee";
+  $infoName.innerHTML = user.nickname;
   const $profileButton = document.createElement("div");
   $profileButton.classList.add("profileButton", "infoButton");
   const $profileButtonIcon = document.createElement("i");
@@ -36,7 +36,7 @@ export default function Info() {
   $infoStatus.classList.add("friendStatus");
   const $infoStatusText = document.createElement("div");
   $infoStatusText.classList.add("infoStatusText");
-  $infoStatusText.innerHTML = "온라인";
+  $infoStatusText.innerHTML = user.status;
   $infoStatusWrapper.appendChild($infoStatus);
   $infoStatusWrapper.appendChild($infoStatusText);
 

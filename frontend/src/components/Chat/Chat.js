@@ -1,6 +1,8 @@
 import ChatRoom from "../../pages/ChatRoom.js";
+import { delChatContent } from "../../state/ChatState.js";
+import Modal from "../Modal/Modal.js";
 
-export default function Chat() {
+export default function Chat(user, cnt) {
   const $chatWrapper = document.createElement("div");
   $chatWrapper.classList.add("chatWrapper");
 
@@ -8,22 +10,33 @@ export default function Chat() {
   $profileInfo.classList.add("profileInfo");
 
   const $profileImg = document.createElement("img");
-  $profileImg.setAttribute("src", "../../images/none_profile.png");
+  $profileImg.setAttribute("src", user.image_url);
   $profileImg.setAttribute("alt", "profileImg");
   $profileImg.classList.add("profileImg");
 
   const $profileName = document.createElement("div");
   $profileName.classList.add("profileName");
-  $profileName.innerText = "이름";
+  $profileName.innerText = user.nickname;
 
   //안읽은 채팅 있을 경우
   const $chatStatus = document.createElement("div");
-  $chatStatus.classList.add("chatStatus");
-  $chatStatus.innerText = "1";
+  if (cnt !== 0) {
+    $chatStatus.classList.add("chatStatus");
+    $chatStatus.innerText = cnt;
+  }
 
   const $closeButton = document.createElement("i");
   $closeButton.classList.add("closeButton", "bi", "bi-x-lg", "hide");
-  //todo: 채팅방 닫기 버튼 클릭 시 이벤트
+
+  //채팅방 닫기 버튼 클릭 시 이벤트
+  $closeButton.addEventListener("click", () => {
+    Modal("exitChatting").then((result) => {
+      if (result.isPositive) {
+        delChatContent(user.user_id);
+        $chatWrapper.style.display = "none";
+      }
+    });
+  });
 
   $profileInfo.appendChild($profileImg);
   $profileInfo.appendChild($profileName);
@@ -45,7 +58,7 @@ export default function Chat() {
 
   //채팅방 더블클릭 시 이벤트
   $chatWrapper.addEventListener("dblclick", () => {
-    ChatRoom();
+    ChatRoom(user.user_id);
   });
 
   return $chatWrapper;

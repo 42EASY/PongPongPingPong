@@ -2,6 +2,13 @@ import Title from "../components/Chat/Title.js";
 import Search from "../components/Friends/Search.js";
 import List from "../components/Chat/ChatList.js";
 
+async function fetchChats(list) {
+  const $wrapper = document.querySelector(".listWrapper");
+
+  const $list = await List(list);
+  $wrapper.appendChild($list);
+}
+
 export default function Chat() {
   const $sidebar = document.querySelector(".sidebar");
   $sidebar.innerHTML = "";
@@ -9,6 +16,7 @@ export default function Chat() {
   //사이드바 영역
   const $chatsWrapper = document.createElement("div");
   $chatsWrapper.classList.add("sidebarArea");
+  $sidebar.appendChild($chatsWrapper);
 
   //타이틀
   const $title = Title();
@@ -19,10 +27,19 @@ export default function Chat() {
   $chatsWrapper.appendChild($search);
 
   //채팅 목록
-  const $list = List();
-  $chatsWrapper.appendChild($list);
+  const $listWrapper = document.createElement("div");
+  $listWrapper.classList.add("listWrapper");
+  $chatsWrapper.appendChild($listWrapper);
 
-  $sidebar.appendChild($chatsWrapper);
+  /*
+  todo : 메세지 수신한 경우 예시
+  socket.onmessage = () => {
+    const list = [{ id: 2, cnt: 0 }, { id: 3, cnt: 4 }]);
+    addChatContents(id, {socket response});
+    fetchChats(list);
+  }
+  */
+
   //사이드바 외부 영역
   const $overlay = document.createElement("div");
   $overlay.classList.add("overlay");

@@ -1,24 +1,31 @@
 import Chat from "./Chat.js";
 import NoChat from "./NoChat.js";
 import NoSearch from "../Friends/NoSearch.js";
+import { getUserInfo } from "../Main/UserApi.js";
 
-export default function ChatList() {
+export default async function ChatList(data) {
   const $chatListWrapper = document.createElement("div");
   $chatListWrapper.classList.add("chatListWrapper");
 
-  const $chat = Chat();
-  $chatListWrapper.appendChild($chat);
-  const $chat1 = Chat();
-  $chatListWrapper.appendChild($chat1);
+  const len = data.length;
+  const keyword = document.getElementById("searchInput").value;
 
-  //채팅 없을 경우
-  //   $chatListWrapper.style.flexDirection = "unset";
-  //   const $noChat = NoChat();
-  //   $chatListWrapper.appendChild($noChat);
-
-  //친구 검색 결과 없을 경우
-  //   const $noSearch = NoSearch();
-  //   $chatListWrapper.appendChild($noSearch);
+  if (len === 0) {
+    if (keyword === "") {
+      $chatListWrapper.style.flexDirection = "unset";
+      const $noChat = NoChat();
+      $chatListWrapper.appendChild($noChat);
+    } else {
+      const $noSearch = NoSearch();
+      $chatListWrapper.appendChild($noSearch);
+    }
+  } else {
+    for (let i = 0; i < len; i++) {
+      const user = await getUserInfo(data[i].id);
+      const $chat = Chat(user.result, data[i].cnt);
+      $chatListWrapper.appendChild($chat);
+    }
+  }
 
   return $chatListWrapper;
 }
