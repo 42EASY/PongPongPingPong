@@ -1,4 +1,5 @@
 import changeUrl from "../../Router.js";
+import ChatRoom from "../../pages/ChatRoom.js";
 
 export default function Options(id) {
   const $OptionsWrapper = document.createElement("div");
@@ -20,7 +21,9 @@ export default function Options(id) {
   $messageOpt.classList.add("list-group-item", "optionsItem");
   $messageOpt.innerHTML = "메시지 보내기";
   $Options.appendChild($messageOpt);
-  // todo: 메시지 보내기
+  $messageOpt.addEventListener("click", () => {
+    ChatRoom(id);
+  });
 
   const $gameOpt = document.createElement("li");
   $gameOpt.classList.add("list-group-item", "optionsItem");
