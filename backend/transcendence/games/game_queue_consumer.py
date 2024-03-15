@@ -7,9 +7,6 @@ from games.models import Game, Participant
 from tournaments.models import Tournament
 from members.models import Members
 
-#TODO: 삭제 예정
-INVITE_TIME = 60
-
 #TODO: registered 꽉 차면 삭제하는 로직 검증하기
 class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
@@ -71,39 +68,15 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         join_game_key = ""
 
         for key in keys:
-
-            value = cache.get(key)
-            parsed_value = json.loads(value)
-            invited_info = parsed_value["invited_info"]
-
-            idx = -1
-            delete_idx = []
-            for info in invited_info:
-                idx += 1
-                current_time_datetime = datetime.fromisoformat(current_time)
-                invited_time_datetime = datetime.fromisoformat(info["invited_time"])
-                    
-                time_difference = current_time_datetime - invited_time_datetime
-
-                #만료된 시간인 경우 삭제 하여 새롭게 갱신
-                if time_difference > timedelta(seconds=INVITE_TIME):
-                    delete_idx.append(idx)
-
-            
-            for num in delete_idx:
-                parsed_value["invited_info"].pop(num)
-
-            updated_value = json.dumps(parsed_value)
-            cache.set(key, updated_value)
-
-            
-            #갱신 후에 invite_info에 값이 있는지 확인
+ 
+            #invite_info에 값이 있는지 확인
             new_value = cache.get(key)
             new_parsed_value = json.loads(new_value)
             new_invited_info = new_parsed_value["invited_info"]
+            new_registered_info = new_parsed_value["registered_user"]
 
             #만일 값이 없다면 대기리스트에 등록
-            if len(new_invited_info) == 0:
+            if (len(new_registered_info) < 4 and len(new_invited_info) == 0):
                 new_parsed_value['registered_user'].append({
                     "user_id": user_id,
                     "channel_id": self.channel_name
@@ -217,6 +190,15 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         
         parsed_value = json.loads(value)
         invited_info = parsed_value["invited_info"]
+        registered_info = parsed_value["registered_user"]
+
+        #이미 게임 인원이 다 차버린 경우
+        if len(registered_info) == 4:
+            await self.send_json({
+                "status": "fail",
+                "message": "인원이 다 찬 게임방입니다"
+            })
+            return
 
         #초대리스트에 아무도 없는 경우
         if len(invited_info) == 0:
@@ -237,27 +219,16 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 
             if (tmp["user_id"] == user_id):
                 user_idx = idx
-            
-            accept_time_datetime = datetime.fromisoformat(accept_time)
-            invited_time_datetime = datetime.fromisoformat(tmp["invited_time"])
-                    
-            time_difference = accept_time_datetime - invited_time_datetime
-
-            #초대 받은 시간이 유효하지 않은 경우
-            if time_difference > timedelta(seconds=INVITE_TIME):
-                delete_idx.append(idx)
-            
-            else:
-                #초대 받은 시간이 유효하고, user_id인 경우
-                if (tmp["user_id"] == user_id):
-                    flag = True
+                flag = True
+                break
+           
     
                 
         #만료된 초대 리스트 삭제
         for idx in delete_idx:
-            parsed_value["invited_info"].pop(idx)
+            parsed_value["invited_info"].pop(user_idx)
 
-        #invited_info 안에 user_id가 없거나, 유효한 초대 시간이 아닌 경우
+        #invited_info 안에 user_id가 없는 경우
         if (flag == False):
             #user_id가 없는 경우
             if (user_idx == -1):
@@ -265,13 +236,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                     'status': 'fail',
                     'message': '초대 대상이 아닙니다'
                 })
-            #유효한 초대 시간이 아닌 경우
-            else: 
-                await self.send_json({
-                    'status': 'fail', 
-                    'message': '초대 가능 시간이 초과되었습니다'
-                })
-            return 
+                return 
         
         parsed_value["registered_user"].append({
             "user_id": user_id,
