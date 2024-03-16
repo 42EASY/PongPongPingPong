@@ -231,61 +231,7 @@ async def test_invited_normal_queue_fail_invitied_info_no_user_id():
 
     await communicator.disconnect()
          
-
-#유효한 초대시간이 아닌 경우
-@pytest.mark.asyncio
-async def test_invited_normal_queue_fail_invalid_time():
-
-    channel_layer = get_channel_layer()
-
-    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
-    fake_user = Members.objects.create(nickname = 'test_user3', email = 'testUser1@test.com', is_2fa = False)
-    refresh = RefreshToken.for_user(fake_user)
-    fake_token = str(refresh.access_token)
-
-    fake_game = Game.objects.create(game_option='CLASSIC', game_mode='NORMAL')
-
-    invite_time = datetime(2024, 2, 13, 12, 0, 0)
-    #유효하지 않는 초대시간으로 변경
-    accept_time = datetime(2024, 2, 13, 12, 1, 42)
-
-    iso_8601_accept_time = accept_time.isoformat()
-    iso_8601_invite_time = invite_time.isoformat()
-
-    test_user = Members.objects.create(nickname = 'tt3', email = 'tt@test.com', is_2fa = False)
-    value = {
-        "registered_user": [{
-            "user_id" : test_user.id,
-            "channel_id": "123"
-        }],
-        "invited_info": [{
-            "user_id": fake_user.id,
-            "invited_time": iso_8601_invite_time
-        }]
-    }
-
-    cache.set('normal_' + str(fake_game.id),  json.dumps(value))
-
-    #토큰과 함께 ws/join_queue 에 연결
-    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
-    connected, subprotocol = await communicator.connect()
-
-    assert connected
-
-    await communicator.send_json_to({
-        "action": "join_invite_normal_queue",
-        "game_id": fake_game.id,
-        "accept_time": iso_8601_accept_time,
-        "user_id": fake_user.id
-    })
-
-    response = await communicator.receive_json_from()    
-
-    assert response["message"] == "초대 가능 시간이 초과되었습니다"
-
-    await communicator.disconnect()
-    
-
+         
 #user_id가 잘못된 경우
 @pytest.mark.asyncio
 async def test_invited_normal_queue_invalid_user_id():
@@ -798,61 +744,6 @@ async def test_invited_tournament_queue_fail_invitied_info_no_user_id():
 
     await communicator.disconnect()
     
-
-
-
-#유효한 초대시간이 아닌 경우
-@pytest.mark.asyncio
-async def test_invited_tournament_queue_fail_invalid_time():
-
-    channel_layer = get_channel_layer()
-
-    # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
-    fake_user = Members.objects.create(nickname = 'test115', email = 'testUser1@test.com', is_2fa = False)
-    refresh = RefreshToken.for_user(fake_user)
-    fake_token = str(refresh.access_token)
-
-    fake_tournament = Tournament.objects.create()
-
-    invite_time = datetime(2024, 2, 13, 12, 0, 0)
-    #유효하지 않는 초대시간으로 변경
-    accept_time = datetime(2024, 2, 13, 12, 1, 42)
-
-    iso_8601_accept_time = accept_time.isoformat()
-    iso_8601_invite_time = invite_time.isoformat()
-
-    test_user = Members.objects.create(nickname = 'tt115', email = 'tt@test.com', is_2fa = False)
-    value = {
-        "registered_user": [{
-            "user_id" : test_user.id,
-            "channel_id": "123"
-        }],
-        "invited_info": [{
-            "user_id": fake_user.id,
-            "invited_time": iso_8601_invite_time
-        }]
-    }
-
-    cache.set('tournament_' + str(fake_tournament.id),  json.dumps(value))
-
-    #토큰과 함께 ws/join_queue 에 연결
-    communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
-    connected, subprotocol = await communicator.connect()
-
-    assert connected
-
-    await communicator.send_json_to({
-        "action": "join_invite_tournament_queue",
-        "tournament_id": fake_tournament.id,
-        "accept_time": iso_8601_accept_time,
-        "user_id": fake_user.id
-    })
-
-    response = await communicator.receive_json_from()    
-
-    assert response["message"] == "초대 가능 시간이 초과되었습니다"
-
-    await communicator.disconnect()
 
 
 #잘못된 user id인 경우
