@@ -1,11 +1,12 @@
 import Profile from "../../../pages/Profile.js";
+import { getUserId } from "../../../state/State.js";
 
-export default function ChatContent() {
+export default function ChatContent(user, data) {
   const $chatContentWrapper = document.createElement("div");
   $chatContentWrapper.classList.add("chatContentWrapper");
 
   const $chatContentImg = document.createElement("img");
-  $chatContentImg.setAttribute("src", "../../images/none_profile.png");
+  $chatContentImg.setAttribute("src", user.image_url);
   $chatContentImg.setAttribute("alt", "profileImg");
   $chatContentImg.classList.add("chatContentImg");
 
@@ -17,15 +18,15 @@ export default function ChatContent() {
 
   const $chatContentName = document.createElement("div");
   $chatContentName.classList.add("chatContentName");
-  $chatContentName.innerText = "이름";
+  $chatContentName.innerText = user.nickname;
 
   const $chatContentTime = document.createElement("div");
   $chatContentTime.classList.add("chatContentTime");
-  $chatContentTime.innerText = "오후 10:37";
+  $chatContentTime.innerText = data.timestamp;
 
   const $chatContent = document.createElement("div");
   $chatContent.classList.add("chatContent");
-  $chatContent.innerText = "안녕하세요 \n반갑습니다\n 룰루랄라";
+  $chatContent.innerText = data.message;
 
   $chatContentInfo.appendChild($chatContentName);
   $chatContentInfo.appendChild($chatContentTime);
@@ -35,12 +36,14 @@ export default function ChatContent() {
   $chatContentWrapper.appendChild($chatContentRight);
 
   //이미지, 이름 클릭 시 프로필 보기
-  $chatContentImg.addEventListener("click", () => {
-    Profile();
-  });
-  $chatContentName.addEventListener("click", () => {
-    Profile();
-  });
+  if (user.user_id != getUserId()) {
+    $chatContentImg.addEventListener("click", () => {
+      Profile(user);
+    });
+    $chatContentName.addEventListener("click", () => {
+      Profile(user);
+    });
+  }
 
   return $chatContentWrapper;
 }

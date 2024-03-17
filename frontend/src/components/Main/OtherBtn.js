@@ -2,6 +2,7 @@ import MoreMenu from "./MoreMenu.js";
 import Chat from "../../pages/Chat.js";
 import { postFriend, deleteFriend, deleteBlock } from "./UserApi.js";
 import Modal from "../Modal/Modal.js";
+import ChatRoom from "../../pages/ChatRoom.js";
 
 export default function OtherBtn(id, status) {
   const $OtherBtnWrapper = document.createElement("div");
@@ -80,6 +81,7 @@ export default function OtherBtn(id, status) {
     const $overlay = document.querySelector(".overlay");
     $sidebar.classList.add("showSidebar");
     $overlay.classList.add("showOverlay");
+    ChatRoom(id);
   });
 
   $MoreFunctionBtn.addEventListener("click", () => {

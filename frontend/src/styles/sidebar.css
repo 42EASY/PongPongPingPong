@@ -283,6 +283,7 @@ input:focus {
   top: 0px;
   right: 0px;
   background-color: var(--white);
+  z-index: 10;
 }
 
 .options {
@@ -395,7 +396,8 @@ input:focus {
   height: 100%;
   width: 100%;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
+  justify-content: end;
   align-items: center;
   gap: 10px;
   padding: 10px;

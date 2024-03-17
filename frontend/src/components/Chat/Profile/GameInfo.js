@@ -1,7 +1,7 @@
 import GameCount from "../../Main/GameCount.js";
 import PercentBar from "../../GameRoom/PercentBar.js";
 
-export default function GameInfo() {
+export default function GameInfo(user) {
   const $GameInfoWrapper = document.createElement("div");
   $GameInfoWrapper.classList.add("GameInfoWrapper");
 
@@ -9,8 +9,15 @@ export default function GameInfo() {
   $GameInfoTitle.classList.add("contactInfoTitle");
   $GameInfoTitle.innerHTML = "전적 정보";
 
-  const $gameCount = GameCount({ total: 42, win: 42, lose: 42 });
-  const $percentBar = PercentBar({ win: 25, lose: 75 });
+  const $gameCount = GameCount({
+    total: user.game_count,
+    win: user.win_count,
+    lose: user.lose_count,
+  });
+  const $percentBar = PercentBar({
+    win: user.win_count,
+    lose: user.lose_count,
+  });
 
   $GameInfoWrapper.appendChild($GameInfoTitle);
   $GameInfoWrapper.appendChild($gameCount);

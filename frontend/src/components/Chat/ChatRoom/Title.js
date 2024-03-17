@@ -1,6 +1,6 @@
 import Chat from "../../../pages/Chat.js";
 
-export default function Title() {
+export default function Title(user) {
   const $titleWrapper = document.createElement("div");
   $titleWrapper.classList.add("chatTitleWrapper");
 
@@ -8,13 +8,13 @@ export default function Title() {
   $chatRoomInfo.classList.add("profileInfo");
 
   const $profileImg = document.createElement("img");
-  $profileImg.setAttribute("src", "../../images/none_profile.png");
+  $profileImg.setAttribute("src", user.image_url);
   $profileImg.setAttribute("alt", "profileImg");
   $profileImg.classList.add("profileImg");
 
   const $title = document.createElement("div");
   $title.classList.add("chatTitle");
-  $title.innerHTML = "이름";
+  $title.innerHTML = user.nickname;
 
   const $closeButton = document.createElement("i");
   $closeButton.classList.add("closeButton", "bi", "bi-x-lg");

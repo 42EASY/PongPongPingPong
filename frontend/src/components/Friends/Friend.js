@@ -56,7 +56,7 @@ export default function Friend(user) {
 
   // 옵션 외부 클릭 이벤트
   document.addEventListener("click", (e) => {
-    if (!$options.contains(e.target)) $options.style.display = "none";
+    if (!$optionsButton.contains(e.target)) $options.style.display = "none";
   });
 
   // 친구 끊기 클릭 이벤트
