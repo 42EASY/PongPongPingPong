@@ -1,4 +1,5 @@
 import Profile from "../../../pages/Profile.js";
+import { getUserId } from "../../../state/State.js";
 
 export default function ChatContent(user, data) {
   const $chatContentWrapper = document.createElement("div");
@@ -35,12 +36,14 @@ export default function ChatContent(user, data) {
   $chatContentWrapper.appendChild($chatContentRight);
 
   //이미지, 이름 클릭 시 프로필 보기
-  $chatContentImg.addEventListener("click", () => {
-    Profile(user);
-  });
-  $chatContentName.addEventListener("click", () => {
-    Profile(user);
-  });
+  if (user.user_id != getUserId()) {
+    $chatContentImg.addEventListener("click", () => {
+      Profile(user);
+    });
+    $chatContentName.addEventListener("click", () => {
+      Profile(user);
+    });
+  }
 
   return $chatContentWrapper;
 }
