@@ -1,6 +1,6 @@
 import ChatRoom from "../../../pages/ChatRoom.js";
 
-export default function Title() {
+export default function Title(id) {
   const $titleWrapper = document.createElement("div");
   $titleWrapper.classList.add("chatTitleWrapper");
 
@@ -16,7 +16,7 @@ export default function Title() {
 
   //프로필 닫기 버튼 클릭 시 채팅방으로 돌아가기
   $closeButton.addEventListener("click", (e) => {
-    ChatRoom();
+    ChatRoom(id);
     const $sidebarArea = document.querySelector(".sidebarArea");
     const $overlay = document.querySelector(".overlay");
     $sidebarArea.classList.add("showSidebar");
