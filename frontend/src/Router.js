@@ -44,7 +44,8 @@ export default function changeUrl(requestedUrl, element) {
   else if (
     match.page === Register ||
     match.page === Main ||
-    match.page === GameRoom
+    match.page === GameRoom ||
+    match.page === Game // 수정
   )
     match.page(element);
   else match.page();
