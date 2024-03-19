@@ -8,6 +8,7 @@ from django.core.cache import cache
 from urllib.parse import parse_qs
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
 from django.conf import settings
+from distributed_lock import DistributedLock
 
 class GameConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
@@ -18,6 +19,8 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
         decoded_data = jwt_decode(token, settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=["HS256"])
         self.user = Members.objects.get(id = decoded_data['user_id'])
+
+        self.lock = DistributedLock()
 
         #game_id 검증
         try:
@@ -34,8 +37,29 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         #노멀 게임인 경우
         if (self.game_mode == Game.GameMode.NORMAL):
             self.key = 'normal_' + self.game_id
-            value = cache.get(self.key)
 
+            value = None
+            if self.lock.acquire_lock():
+                try:
+                    value = cache.get(self.key)
+                except:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    })
+                    return
+            
+                self.lock.release_lock()
+            else:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "lock 획득 중 오류가 발생했습니다"
+                })
+                return
+            
+            
             parsed_value = json.loads(value)
 
             registered_user = parsed_value["registered_user"]
@@ -76,7 +100,26 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                 return
             
             updated_value = json.dumps(parsed_value)
-            cache.set(self.key, updated_value)
+
+            if self.lock.acquire_lock():
+                try:
+                    cache.set(self.key, updated_value)
+                except:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    })
+                    return  
+            
+                self.lock.release_lock()
+            else:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "lock 획득 중 오류가 발생했습니다"
+                })
+                return
 
         #토너먼트인 경우
         if (self.game_mode == Game.GameMode.TOURNAMENT):
@@ -84,7 +127,26 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
             self.key = 'tournament_' + str(self.tournament_game.tournament_id.id)
 
-            value = cache.get(self.key)
+            value = None
+            if self.lock.acquire_lock():
+                try:
+                    value = cache.get(self.key)
+                except:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    })
+                    return  
+            
+                self.lock.release_lock()
+            else:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "lock 획득 중 오류가 발생했습니다"
+                })
+                return
 
 
             parsed_value = json.loads(value)
@@ -92,7 +154,6 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             registered_user = parsed_value["registered_user"]
 
             self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
-
 
             self.opponent = Members.objects.get(id = self.user_participant.opponent_id)
             self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent.id), game_id = self.game)
@@ -116,13 +177,28 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                 return
             
             updated_value = json.dumps(parsed_value)
-            cache.set(self.key, updated_value)
 
-
+            if self.lock.acquire_lock():
+                try:
+                    cache.set(self.key, updated_value)
+                except:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    })
+                    return  
+            
+                self.lock.release_lock()
+            else:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "lock 획득 중 오류가 발생했습니다"
+                })
+                return
 
         self.opponent_channel_name = -1
-            
-        
         await self.accept()
 
 
@@ -137,7 +213,28 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
         #상대의 channel_name 저장
         if (self.opponent_channel_name == -1):
-            value = cache.get(self.key)
+
+            value = None
+            if self.lock.acquire_lock():
+                try:
+                    value = cache.get(self.key)
+                except:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    })
+                    return  
+            
+                self.lock.release_lock()
+            else:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "lock 획득 중 오류가 발생했습니다"
+                })
+                return
+
             parsed_value = json.loads(value)
 
             registered_user = parsed_value["registered_user"]
@@ -178,7 +275,6 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         
 
         #상대에게 키 눌렀음 알리기
-        
         await self.channel_layer.send(
             self.opponent_channel_name,
             {
@@ -207,8 +303,26 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         #10점인 경우 게임 over 알림
         if (self.user_participant.score == 10):
             if (self.game_mode == Game.GameMode.NORMAL):
-                cache.delete(self.key)
-
+                if self.lock.acquire_lock():
+                    try:
+                        cache.delete(self.key)
+                    except:
+                        self.lock.release_lock()
+                        await self.send_json({
+                            "status": "fail",
+                            "message": "redis에 접근 중 오류가 발생했습니다"
+                        })
+                        return  
+            
+                    self.lock.release_lock()
+                else:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "lock 획득 중 오류가 발생했습니다"
+                    })
+                    return
+                
             #TODO: 토너먼트인 경우 final이면 cache.delete
 
             self.user_participant.result = Participant.Result.WIN
