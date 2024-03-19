@@ -8,14 +8,15 @@ function chatting() {
   $overlay.classList.add("showOverlay");
 }
 
+//exit button : main으로->로그인 안해서 테스트 엌케하지..
 function exit() {}
 
+//friend button : 모달->친구추가
 function friend() {}
 
 export default function EndBtn(mode, hasGameLeft) {
   const $btnWrapper = document.createElement("div");
   $btnWrapper.classList.add("btnWrapper");
-  //exit button : main으로->로그인 안해서 테스트 엌케하지..
   const $exitBtn = document.createElement("button");
   const $exitTxt = document.createElement("div");
   const $exitIcn = document.createElement("i");
@@ -25,7 +26,7 @@ export default function EndBtn(mode, hasGameLeft) {
   $exitTxt.innerHTML = "나가기";
   $exitBtn.appendChild($exitTxt);
   $exitBtn.appendChild($exitIcn);
-  //friend button : 모달->친구추가
+
   const $friendBtn = document.createElement("button");
   const $friendTxt = document.createElement("div");
   const $friendIcn = document.createElement("i");
@@ -35,7 +36,7 @@ export default function EndBtn(mode, hasGameLeft) {
   $friendTxt.innerHTML = "친구추가";
   $friendBtn.appendChild($friendTxt);
   $friendBtn.appendChild($friendIcn);
-  //chat button : 사이드바
+
   const $chatBtn = document.createElement("button");
   const $chatTxt = document.createElement("div");
   const $chatIcn = document.createElement("i");
