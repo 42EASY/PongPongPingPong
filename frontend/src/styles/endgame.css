@@ -11,7 +11,9 @@ body,
   background-color: var(--black);
   width: 100%;
   height: 100%;
+  justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
 .confetti {
@@ -23,22 +25,26 @@ body,
   float: left;
 }
 
+.printBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .resultWrapper {
   flex-grow: 1;
   display: flex;
-  width: 20%;
-  height: 60%;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   color: var(--white);
+  margin-bottom: 20px;
 }
 
 .winOrLose {
   font-size: 140px;
   font-weight: bold;
   margin-left: 25px;
-  letter-spacing: 25px;
+  letter-spacing: 20px;
 }
 
 .scores {
@@ -49,7 +55,7 @@ body,
   justify-content: center;
 }
 
-.btnBox {
+.btnWrapper {
   display: flex;
   flex-direction: row;
 }
@@ -96,8 +102,10 @@ body,
 
 .btn:hover {
   background-color: var(--green);
+  color: var(--white);
 }
-
+/*
 .btn:hover .btnImg {
   fill: var(--white);
 }
+*/
