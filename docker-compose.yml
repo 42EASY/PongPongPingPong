@@ -8,6 +8,7 @@ services:
       - type: bind
         source: ./volume/postgres-data
         target: /var/lib/postgresql/data
+      - ./backend/database_init.sql:/docker-entrypoint-initdb.d/dump.sql
     environment:
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_USER=${POSTGRES_USER}
