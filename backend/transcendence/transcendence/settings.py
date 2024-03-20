@@ -29,6 +29,9 @@ MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+# default image url
+DEFAULT_IMAGE_URL = './src/images/none_profile.png'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -106,8 +109,8 @@ CHANNEL_LAYERS = {
     'default' : {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts" : [('redis', 6379)],
-            # "hosts" : [('localhost', 6379)], #MEMO: 로컬에서 돌리기 위해 localhost로 변경
+            # "hosts" : [('redis', 6379)],
+            "hosts" : [('localhost', 6379)], #MEMO: 로컬에서 돌리기 위해 localhost로 변경
         },
     },
 }
@@ -205,6 +208,7 @@ SIMPLE_JWT = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
+        # "LOCATION": "redis://localhost:6379/1", #MEMO: local용
         "LOCATION": "redis://redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
