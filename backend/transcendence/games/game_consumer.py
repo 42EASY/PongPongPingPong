@@ -8,7 +8,7 @@ from django.core.cache import cache
 from urllib.parse import parse_qs
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
 from django.conf import settings
-from distributed_lock import DistributedLock
+from games.distributed_lock import DistributedLock
 
 class GameConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):

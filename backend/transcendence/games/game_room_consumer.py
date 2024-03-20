@@ -5,7 +5,7 @@ from members.models import Members
 from games.models import Game, Participant
 from tournaments.models import TournamentGame, Tournament
 from django.db.models import Count, Q
-from distributed_lock import DistributedLock
+from games.distributed_lock import DistributedLock
 
 class GameRoomConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
