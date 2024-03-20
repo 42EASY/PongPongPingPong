@@ -6,7 +6,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from games.models import Game, Participant
 from tournaments.models import Tournament
 from members.models import Members
-from distributed_lock import DistributedLock
+from games.distributed_lock import DistributedLock
 
 #TODO: registered 꽉 차면 삭제하는 로직 검증하기
 class GameQueueConsumer(AsyncJsonWebsocketConsumer):
