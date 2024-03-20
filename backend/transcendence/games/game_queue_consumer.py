@@ -12,7 +12,10 @@ from distributed_lock import DistributedLock
 class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
 
+        #TODO: group 활용하기
         self.game_group_id = "10"
+
+        self.user = self.scope['user']
 
         self.lock = DistributedLock()
     
@@ -55,15 +58,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
     #tournament 빠른 시작일 경우
     async def join_tournament(self, text_data_json):
-        user_id = text_data_json["user_id"]
         current_time = text_data_json["current_time"]
-
-        if (Members.objects.filter(id = user_id).exists() == False):
-            await self.send_json({
-                "status": "fail",
-                "message": "잘못된 user id 입니다"
-            })
-            return
+        user_id = text_data_json["user_id"]
 
         keys = None
         if self.lock.acquire_lock():
@@ -104,7 +100,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                         "status": "fail",
                         "message": "redis에 접근 중 오류가 발생했습니다"
                     })
-                    return  
+                    return
             
                 self.lock.release_lock()
             else:
@@ -123,7 +119,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             #만일 값이 없다면 대기리스트에 등록
             if (len(new_registered_info) < 4 and len(new_invited_info) == 0):
                 new_parsed_value['registered_user'].append({
-                    "user_id": user_id,
+                    "user_id": self.user.id,
                     "channel_id": self.channel_name
                 }) 
 
@@ -160,7 +156,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             new_tournament = Tournament.objects.create()
             new_tournament_value = {
                 "registered_user": [{
-                    "user_id" : user_id,
+                    "user_id" : self.user.id,
                     "channel_id": self.channel_name
                 }],
                 "invited_info": [],
@@ -199,16 +195,9 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
     #tournament 모드에서 초대를 하는 경우
     async def invite_tournament(self, text_data_json):
-        user_id = text_data_json["user_id"]
         invite_user_id = text_data_json["invite_user_id"]
         invite_time = text_data_json["invite_time"]
-
-        if (Members.objects.filter(id = user_id).exists() == False):
-            await self.send_json({
-                "status": "fail",
-                "message": "잘못된 user id 입니다"
-            })
-            return
+        user_id = text_data_json["user_id"]
 
         if (Members.objects.filter(id = invite_user_id).exists() == False):
             await self.send_json({
@@ -222,7 +211,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         value = {
             "registered_user": [{
-                "user_id" : user_id,
+                "user_id" : self.user.id,
                 "channel_id": self.channel_name
             }],
             "invited_info": [{
@@ -270,13 +259,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         accept_time = text_data_json["accept_time"]
         user_id = text_data_json["user_id"]
 
-        if (Members.objects.filter(id = user_id).exists() == False):
-            await self.send_json({
-                "status": "fail",
-                "message": "잘못된 user id 입니다"
-            })
-            return
-        
         if (Tournament.objects.filter(id = tournament_id).exists() == False):
             await self.send_json({
                 "status": "fail",
@@ -345,7 +327,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         for tmp in invited_info:
             idx += 1
                 
-            if (tmp["user_id"] == user_id):
+            if (tmp["user_id"] == self.user.id):
                 user_idx = idx
                 flag = True
                 break
@@ -367,7 +349,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 return 
         
         parsed_value["registered_user"].append({
-            "user_id": user_id,
+            "user_id": self.user.id,
             "channel_id": self.channel_name
         })
 
@@ -402,15 +384,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     #normal 모드 빠른시작
     async def join_normal(self, text_data_json):
         game_mode = text_data_json["game_mode"]
-        user_id = text_data_json["user_id"]
         current_time = text_data_json["current_time"]
-
-        if (Members.objects.filter(id = user_id).exists() == False):
-            await self.send_json({
-                "status": "fail",
-                "message": "잘못된 user id 입니다"
-            })
-            return
+        user_id = text_data_json["user_id"]
 
         keys = None
         if self.lock.acquire_lock():
@@ -474,7 +449,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             #만일 초대리스트에 값이 없다면 게임에 등록
             if len(new_invited_info) == 0:
                 new_parsed_value['registered_user'].append({
-                    "user_id": user_id,
+                    "user_id": self.user.id,
                     "channel_id": self.channel_name
                 }) 
                 
@@ -505,8 +480,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 flag = True
 
                 join_game_key = key
-
-                Participant.objects.create(user_id = Members.objects.get(id = user_id), game_id = game, score = 0)
+               
+                Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
                 break
 
         
@@ -570,7 +545,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             new_game = Game.objects.create(game_option=game_mode, game_mode='NORMAL')
             new_game_value = {
                 "registered_user": [{
-                    "user_id" : user_id,
+                    "user_id" : self.user.id,
                     "channel_id": self.channel_name
                 }],
                 "invited_info": []
@@ -598,25 +573,18 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                     "message": "lock 획득 중 오류가 발생했습니다"
                 })
                 return
-            
-            Participant.objects.create(user_id = Members.objects.get(id = user_id), game_id = new_game, score = 0)
+           
+            Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = new_game, score = 0)
 
 
 
     #normal 모드에서 초대를 한 경우
     async def invite_normal(self, text_data_json):
         game_mode = text_data_json["game_mode"]
-        user_id = text_data_json["user_id"]
         invite_user_id = text_data_json["invite_user_id"]
         invite_time = text_data_json["invite_time"]
+        user_id = text_data_json["user_id"]
 
-        if (Members.objects.filter(id = user_id).exists() == False):
-            await self.send_json({
-                "status": "fail",
-                "message": "잘못된 user id 입니다"
-            })
-            return
-        
         if (Members.objects.filter(id = invite_user_id).exists() == False):
             await self.send_json({
                 "status": "fail",
@@ -628,7 +596,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         value = {
             "registered_user": [{
-                "user_id" : user_id,
+                "user_id" : self.user.id,
                 "channel_id": self.channel_name
             }],
             "invited_info": [{
@@ -659,7 +627,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
         
-        Participant.objects.create(user_id = Members.objects.get(id = user_id), game_id = game, score = 0)
+        Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
 
         await self.send_json({
                 'status': 'game create success',
@@ -674,13 +642,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         accept_time = text_data_json["accept_time"]
         user_id = text_data_json["user_id"]
 
-        if (Members.objects.filter(id = user_id).exists() == False):
-            await self.send_json({
-                "status": "fail",
-                "message": "잘못된 user id 입니다"
-            })
-            return
-        
         if (Game.objects.filter(id = game_id).exists() == False):
             await self.send_json({
                 "status": "fail",
@@ -731,7 +692,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             return
             
         #초대리스트에 등록된 유저가 아닌 경우
-        if (invited_info[0]["user_id"] != user_id):
+        if (invited_info[0]["user_id"] != self.user.id):
             await self.send_json({
                 'status': 'fail',
                 'message': '초대 대상이 아닙니다'
@@ -742,7 +703,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         #invited_info안의 유저 정보 제거 후, 게임 대기 큐에 등록
         parsed_value["invited_info"].pop(0)
         parsed_value['registered_user'].append({
-            "user_id": user_id,
+            "user_id": self.user.id,
             "channel_id": self.channel_name
         }) 
 
@@ -770,7 +731,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             return
 
 
-        Participant.objects.create(user_id = Members.objects.get(id = user_id), game_id = Game.objects.get(id = game_id), score = 0)
+        Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = Game.objects.get(id = game_id), score = 0)
 
         #게임 시작할 것이라는 response를 모두에게 전달
         new_value = None
