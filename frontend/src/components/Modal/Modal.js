@@ -1,13 +1,12 @@
 import addModal from "./adddModal.js";
-import modals from "./ModalsInfo.js";
+import getModalContent from "./ModalsInfo.js";
 
 const $app = document.querySelector(".App");
 
-export default function Modal(modalName) {
-  console.log("modal name :" + modalName);
-
+export default function Modal(modalName, argu) {
+  console.log(`modal name: ${modalName}, argu: ${argu}`);
   return new Promise((resolve) => {
-    const modalContent = modals[modalName];
+    const modalContent = getModalContent(modalName, argu);
     if (!modalContent) console.log(`Error!!!!!!! ${modalName} : not found`); //
     const $modalWrapper = addModal(modalContent);
     $app.appendChild($modalWrapper);
