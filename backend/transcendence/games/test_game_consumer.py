@@ -20,6 +20,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import datetime
 from django.core.cache import cache
 
+async def mock_authenticate(scope, user):
+    scope['user'] = user
+    return scope
+
 #노말모드에서 1점 먹은 것과, 10점 먹었을 때의 성공 테스트
 @pytest.mark.asyncio
 async def test_normal_round_win_success():
@@ -44,6 +48,7 @@ async def test_normal_round_win_success():
 
     #fake_user가 invite_user 초대
     invite_communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    invite_communicator.scope = await mock_authenticate(invite_communicator.scope, fake_user)
     invite_connected, invite_subprotocol = await invite_communicator.connect()
 
     assert invite_connected
@@ -61,6 +66,7 @@ async def test_normal_round_win_success():
     assert invite_response["status"] == "game create success"
 
     join_communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + invite_token)
+    join_communicator.scope = await mock_authenticate(join_communicator.scope, invite_token)
     join_connected, invite_subprotocol = await join_communicator.connect()
 
 
@@ -84,12 +90,14 @@ async def test_normal_round_win_success():
 
     #게임방 입장
     fake_communicator = WebsocketCommunicator(GameConsumer.as_asgi(), "/ws/game/" + str(invite_response["game_id"]) + "?token=" + fake_token)
+    fake_communicator.scope = await mock_authenticate(fake_communicator.scope, fake_user)
     fake_connected, fake_subprotocol = await fake_communicator.connect()
 
     assert fake_connected
 
 
     opponent_communicator = WebsocketCommunicator(GameConsumer.as_asgi(), "/ws/game/" + str(invite_response["game_id"]) + "?token=" + invite_token)
+    opponent_communicator.scope = await mock_authenticate(opponent_communicator.scope, invite_user)
     opponent_connected, opponent_subprotocol = await opponent_communicator.connect()    
 
     assert opponent_connected
@@ -141,6 +149,7 @@ async def test_normal_press_key_success():
 
     #fake_user가 invite_user 초대
     invite_communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
+    invite_communicator.scope = await mock_authenticate(invite_communicator.scope, fake_user)
     invite_connected, invite_subprotocol = await invite_communicator.connect()
 
     assert invite_connected
@@ -158,6 +167,7 @@ async def test_normal_press_key_success():
     assert invite_response["status"] == "game create success"
 
     join_communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + invite_token)
+    join_communicator.scope = await mock_authenticate(join_communicator.scope, invite_user)
     join_connected, invite_subprotocol = await join_communicator.connect()
 
 
@@ -181,12 +191,14 @@ async def test_normal_press_key_success():
 
     #게임방 입장
     fake_communicator = WebsocketCommunicator(GameConsumer.as_asgi(), "/ws/game/" + str(invite_response["game_id"]) + "?token=" + fake_token)
+    fake_communicator.scope = await mock_authenticate(fake_communicator.scope, fake_user)
     fake_connected, fake_subprotocol = await fake_communicator.connect()
 
     assert fake_connected
 
 
     opponent_communicator = WebsocketCommunicator(GameConsumer.as_asgi(), "/ws/game/" + str(invite_response["game_id"]) + "?token=" + invite_token)
+    opponent_communicator.scope = await mock_authenticate(opponent_communicator.scope, invite_user)
     opponent_connected, opponent_subprotocol = await opponent_communicator.connect()    
 
     assert opponent_connected
@@ -240,6 +252,7 @@ async def test_tournament_round_win():
 
     #another_user가 발급 받은 게임방 아이디로 접속
     another_communicator = WebsocketCommunicator(GameRoomConsumer.as_asgi(), "/ws/join_room/" + str(tournament.id) +"?token=" + another_token)
+    another_communicator.scope = await mock_authenticate(another_communicator.scope, another_user)
     another_connected, another_subprotocol = await another_communicator.connect()
 
     assert another_connected
@@ -251,6 +264,7 @@ async def test_tournament_round_win():
 
     #fake_user가 발급 받은 게임방 아이디로 접속
     final_communicator = WebsocketCommunicator(GameRoomConsumer.as_asgi(), "/ws/join_room/" + str(tournament.id) +"?token=" + fake_token)
+    final_communicator.scope = await mock_authenticate(final_communicator.scope, fake_user)
     final_connected, subprotocol = await final_communicator.connect()
 
     assert final_connected
@@ -266,12 +280,14 @@ async def test_tournament_round_win():
 
 
     fake_communicator = WebsocketCommunicator(GameConsumer.as_asgi(), "/ws/game/" + str(final_response["game_id"]) + "?token=" + fake_token)
+    fake_communicator.scope = await mock_authenticate(fake_communicator.scope, fake_user)
     fake_connected, fake_subprotocol = await fake_communicator.connect()
 
     assert fake_connected
 
 
     opponent_communicator = WebsocketCommunicator(GameConsumer.as_asgi(), "/ws/game/" + str(final_response["game_id"]) + "?token=" + another_token)
+    opponent_communicator.scope = await mock_authenticate(opponent_communicator.scope, another_user)
     opponent_connected, opponent_subprotocol = await opponent_communicator.connect()    
 
     assert opponent_connected
