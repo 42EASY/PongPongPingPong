@@ -14,11 +14,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         path = self.scope['path']
         self.game_id = path.strip('/').split('/')[-1]
-        
-        token = parse_qs(self.scope["query_string"].decode("utf8")).get("token", [None])[0]
-
-        decoded_data = jwt_decode(token, settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=["HS256"])
-        self.user = Members.objects.get(id = decoded_data['user_id'])
+        self.user = self.scope['user']
 
         self.lock = DistributedLock()
 

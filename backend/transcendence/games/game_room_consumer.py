@@ -11,7 +11,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         path = self.scope['path']
         self.room_id = path.strip('/').split('/')[-1]
-
+        self.user = self.scope['user']
         self.lock = DistributedLock()
 
         try:
@@ -50,7 +50,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
     #초대를 하는 경우
     async def invite_room(self, text_data_json):
-        user_id = text_data_json["user_id"]
+        # user_id = text_data_json["user_id"]
         invite_user_id = text_data_json["invite_user_id"]
         invite_time = text_data_json["invite_time"]
 
@@ -111,7 +111,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
     #방에 입장 후 게임 시작 대기
     async def join_room(self, text_data_json):
-        user_id = text_data_json["user_id"]
+        # user_id = text_data_json["user_id"]
 
         #TODO: user_id가 유효한지 검증하기(만일 connect 시에 user id 값을 받아오게 된다면 필요없어지는 로직)
 
@@ -157,7 +157,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         idx = -1
         for user_value in registered_value:
             idx += 1
-            if (user_value["user_id"] == user_id):
+            if (user_value["user_id"] == self.user.id):
                 #channel_id 갱신
                 parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
                 flag = True
@@ -172,7 +172,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
 
         #join_user에 유저 등록
-        parsed_value["join_user"].append(user_id)
+        parsed_value["join_user"].append(self.user.id)
 
         updated_value = json.dumps(parsed_value)
 
@@ -331,9 +331,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
     #결승 게임 시작 대기
     async def join_final(self, text_data_json):
-        user_id = text_data_json["user_id"]
-
-        #TODO: user_id가 유효한지 검증하기(만일 connect 시에 user id 값을 받아오게 된다면 필요없어지는 로직)
+        # user_id = text_data_json["user_id"]
 
         key = "tournament_" + str(self.room_id)
 
@@ -374,7 +372,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         idx = -1
         for user_value in registered_value:
             idx += 1
-            if (user_value["user_id"] == user_id):
+            if (user_value["user_id"] == self.user.id):
                 #channel_id 갱신
                 parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
                 flag = True
@@ -389,7 +387,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
 
         #join_user에 유저 등록
-        parsed_value["join_final_user"].append(user_id)
+        parsed_value["join_final_user"].append(self.user.id)
 
         updated_value = json.dumps(parsed_value)
 
