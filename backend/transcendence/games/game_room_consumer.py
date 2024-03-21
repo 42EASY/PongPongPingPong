@@ -5,12 +5,14 @@ from members.models import Members
 from games.models import Game, Participant
 from tournaments.models import TournamentGame, Tournament
 from django.db.models import Count, Q
+from games.distributed_lock import DistributedLock
 
 class GameRoomConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
-        # self.room_id = self.scope['url_route']['kwargs']['room_id']
         path = self.scope['path']
         self.room_id = path.strip('/').split('/')[-1]
+        self.user = self.scope['user']
+        self.lock = DistributedLock()
 
         try:
             self.tournament = Tournament.objects.get(id = self.room_id)
@@ -48,19 +50,56 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
     #초대를 하는 경우
     async def invite_room(self, text_data_json):
-        user_id = text_data_json["user_id"]
         invite_user_id = text_data_json["invite_user_id"]
-        invite_time = text_data_json["invite_time"]
 
         key = 'tournament_' + str(self.room_id)
 
-        value = cache.get(key)
+        value = None
+        if self.lock.acquire_lock():
+            try:
+                value = cache.get(key)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+        
         parsed_value = json.loads(value)
 
-        parsed_value["invited_info"].append({"user_id": invite_user_id, "invited_time": invite_time})
-        
-        cache.set(key, json.dumps(parsed_value))
+        parsed_value["invited_info"].append({"user_id": invite_user_id})
 
+        if self.lock.acquire_lock():
+            try:
+                cache.set(key, json.dumps(parsed_value))
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+        
+        
         await self.send_json({
                 'status': 'invitation list registered',
                 'tournament_id': self.room_id
@@ -70,12 +109,30 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
     #방에 입장 후 게임 시작 대기
     async def join_room(self, text_data_json):
-        user_id = text_data_json["user_id"]
-
-        #TODO: user_id가 유효한지 검증하기(만일 connect 시에 user id 값을 받아오게 된다면 필요없어지는 로직)
-
         key = "tournament_" + str(self.room_id)
-        value = cache.get(key)
+        
+        value = None
+        if self.lock.acquire_lock():
+            try:
+                value = cache.get(key)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+
+        
 
         #redis에 key 또는 value가 없는 경우
         if (value is None):
@@ -94,7 +151,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         idx = -1
         for user_value in registered_value:
             idx += 1
-            if (user_value["user_id"] == user_id):
+            if (user_value["user_id"] == self.user.id):
                 #channel_id 갱신
                 parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
                 flag = True
@@ -109,12 +166,51 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
 
         #join_user에 유저 등록
-        parsed_value["join_user"].append(user_id)
+        parsed_value["join_user"].append(self.user.id)
 
         updated_value = json.dumps(parsed_value)
-        cache.set(key, updated_value)
 
-        new_value = cache.get(key)
+        if self.lock.acquire_lock():
+            try:
+                cache.set(key, updated_value)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+
+
+        new_value = None
+        if self.lock.acquire_lock():
+            try:
+                new_value = cache.get(key)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
 
         new_parsed_value = json.loads(new_value)
 
@@ -229,12 +325,28 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
     #결승 게임 시작 대기
     async def join_final(self, text_data_json):
-        user_id = text_data_json["user_id"]
-
-        #TODO: user_id가 유효한지 검증하기(만일 connect 시에 user id 값을 받아오게 된다면 필요없어지는 로직)
 
         key = "tournament_" + str(self.room_id)
-        value = cache.get(key)
+
+        if self.lock.acquire_lock():
+            try:
+                value = cache.get(key)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
 
         #redis에 key 또는 value가 없는 경우
         if (value is None):
@@ -253,7 +365,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         idx = -1
         for user_value in registered_value:
             idx += 1
-            if (user_value["user_id"] == user_id):
+            if (user_value["user_id"] == self.user.id):
                 #channel_id 갱신
                 parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
                 flag = True
@@ -268,19 +380,57 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
 
         #join_user에 유저 등록
-        parsed_value["join_final_user"].append(user_id)
+        parsed_value["join_final_user"].append(self.user.id)
 
         updated_value = json.dumps(parsed_value)
-        cache.set(key, updated_value)
 
-        new_value = cache.get(key)
+        if self.lock.acquire_lock():
+            try:
+                cache.set(key, updated_value)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+
+
+        new_value = None
+        if self.lock.acquire_lock():
+            try:
+                new_value = cache.get(key)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+
 
         new_parsed_value = json.loads(new_value)
 
         #만일 2명이 방에 다 들어오면 방에 있는 모두에게 게임 시작 알림
         if (len(new_parsed_value["join_final_user"]) == 2):
-            # cache.delete(key) #TODO: 여기서 redis에 있는 값을 비우는게 맞는지 나중에 확인하기
-
             matching_value = []
 
             #등록된 유저의 정보와 승률을 list에 저장

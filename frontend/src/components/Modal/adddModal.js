@@ -42,8 +42,27 @@ export default function addModal(options) {
       $modalBody.appendChild(addContentElement(options.bodyContent[i]));
   }
   if (options.footerContent) {
-    for (let i = 0; i < options.footerContent.length; i++)
-      $modalFooter.appendChild(addContentElement(options.footerContent[i]));
+    let $footerBtnBox;
+    for (let i = 0; i < options.footerContent.length; i++) {
+      const $content = addContentElement(options.footerContent[i]);
+      switch (options.footerContent[i].type) {
+        case "primaryButton":
+        case "secondaryButton":
+        case "singleButton":
+          if (!$footerBtnBox) {
+            $footerBtnBox = document.createElement("div");
+            $footerBtnBox.classList.add("footerBtnBox");
+            if (options.footerContent[i].type === "singleButton")
+              $footerBtnBox.classList.add("centerAlign");
+            else $footerBtnBox.classList.add("rightAlign");
+            $modalFooter.appendChild($footerBtnBox);
+          }
+          $footerBtnBox.appendChild($content);
+          break;
+        default:
+          $modalFooter.appendChild($content);
+      }
+    }
   }
 
   return $modalOverlay;
