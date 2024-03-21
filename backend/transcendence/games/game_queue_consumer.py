@@ -58,8 +58,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
     #tournament 빠른 시작일 경우
     async def join_tournament(self, text_data_json):
-        current_time = text_data_json["current_time"]
-        user_id = text_data_json["user_id"]
 
         keys = None
         if self.lock.acquire_lock():
@@ -196,8 +194,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     #tournament 모드에서 초대를 하는 경우
     async def invite_tournament(self, text_data_json):
         invite_user_id = text_data_json["invite_user_id"]
-        invite_time = text_data_json["invite_time"]
-        user_id = text_data_json["user_id"]
 
         if (Members.objects.filter(id = invite_user_id).exists() == False):
             await self.send_json({
@@ -216,7 +212,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             }],
             "invited_info": [{
                 "user_id": invite_user_id,
-                "invited_time": invite_time
             }],
             "join_user": [],
             "join_final_user": []
@@ -256,8 +251,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     #tournament 모드에서 초대를 받는 경우
     async def join_invite_tournament(self, text_data_json):
         tournament_id = text_data_json["tournament_id"]
-        accept_time = text_data_json["accept_time"]
-        user_id = text_data_json["user_id"]
 
         if (Tournament.objects.filter(id = tournament_id).exists() == False):
             await self.send_json({
@@ -384,8 +377,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     #normal 모드 빠른시작
     async def join_normal(self, text_data_json):
         game_mode = text_data_json["game_mode"]
-        current_time = text_data_json["current_time"]
-        user_id = text_data_json["user_id"]
 
         keys = None
         if self.lock.acquire_lock():
@@ -582,8 +573,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def invite_normal(self, text_data_json):
         game_mode = text_data_json["game_mode"]
         invite_user_id = text_data_json["invite_user_id"]
-        invite_time = text_data_json["invite_time"]
-        user_id = text_data_json["user_id"]
 
         if (Members.objects.filter(id = invite_user_id).exists() == False):
             await self.send_json({
@@ -601,7 +590,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             }],
             "invited_info": [{
                 "user_id": invite_user_id,
-                "invited_time": invite_time
             }]
         }
 
@@ -639,8 +627,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     #normal 모드에서 초대를 받은 경우
     async def join_invite_normal(self, text_data_json):
         game_id = text_data_json["game_id"]
-        accept_time = text_data_json["accept_time"]
-        user_id = text_data_json["user_id"]
 
         if (Game.objects.filter(id = game_id).exists() == False):
             await self.send_json({
@@ -760,16 +746,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         registered_users = parsed_new_value["registered_user"]
             
-        
-        #TODO: group 활용하기
-        self.game_group_id = "normal_" + str(game_id)
-
-        await self.channel_layer.group_add(
-            self.game_group_id, self.channel_name
-        )
-
-        # cache.delete('normal_' + str(game_id))
-
         player_info = []
 
         for user_info in registered_users:

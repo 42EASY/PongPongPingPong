@@ -39,13 +39,6 @@ async def test_normal_round_win_success():
     invite_refresh = RefreshToken.for_user(invite_user)
     invite_token = str(invite_refresh.access_token)
 
-    invite_time = datetime(2024, 2, 19, 12, 0, 0)
-    accept_time = datetime(2024, 2, 19, 12, 0, 42)
-
-    iso_8601_accept_time = accept_time.isoformat()
-    iso_8601_invite_time = invite_time.isoformat()
-
-
     #fake_user가 invite_user 초대
     invite_communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
     invite_communicator.scope = await mock_authenticate(invite_communicator.scope, fake_user)
@@ -56,9 +49,7 @@ async def test_normal_round_win_success():
     await invite_communicator.send_json_to({
         "action": "invite_normal_queue",
         "game_mode": Game.GameOption.CLASSIC,
-        "user_id": fake_user.id,
-        "invite_user_id": invite_user.id,
-        "invite_time": iso_8601_invite_time
+        "invite_user_id": invite_user.id    
     })
 
     invite_response = await invite_communicator.receive_json_from()    
@@ -66,7 +57,7 @@ async def test_normal_round_win_success():
     assert invite_response["status"] == "game create success"
 
     join_communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + invite_token)
-    join_communicator.scope = await mock_authenticate(join_communicator.scope, invite_token)
+    join_communicator.scope = await mock_authenticate(join_communicator.scope, invite_user)
     join_connected, invite_subprotocol = await join_communicator.connect()
 
 
@@ -74,9 +65,7 @@ async def test_normal_round_win_success():
 
     await join_communicator.send_json_to({
         "action": "join_invite_normal_queue",
-        "game_id": invite_response["game_id"],
-        "accept_time": iso_8601_accept_time,
-        "user_id": invite_user.id
+        "game_id": invite_response["game_id"]
     })
 
     join_response = await join_communicator.receive_json_from()    
@@ -104,7 +93,7 @@ async def test_normal_round_win_success():
 
     #게임 1번 이겼을 때 성공 테스트
     await fake_communicator.send_json_to({
-        "action": "round_win",
+        "action": "round_win"
     })
 
     round_win_response = await fake_communicator.receive_json_from()    
@@ -140,13 +129,6 @@ async def test_normal_press_key_success():
     invite_refresh = RefreshToken.for_user(invite_user)
     invite_token = str(invite_refresh.access_token)
 
-    invite_time = datetime(2024, 2, 19, 12, 0, 0)
-    accept_time = datetime(2024, 2, 19, 12, 0, 42)
-
-    iso_8601_accept_time = accept_time.isoformat()
-    iso_8601_invite_time = invite_time.isoformat()
-
-
     #fake_user가 invite_user 초대
     invite_communicator = WebsocketCommunicator(GameQueueConsumer.as_asgi(), "/ws/join_queue?token=" + fake_token)
     invite_communicator.scope = await mock_authenticate(invite_communicator.scope, fake_user)
@@ -157,9 +139,7 @@ async def test_normal_press_key_success():
     await invite_communicator.send_json_to({
         "action": "invite_normal_queue",
         "game_mode": Game.GameOption.CLASSIC,
-        "user_id": fake_user.id,
-        "invite_user_id": invite_user.id,
-        "invite_time": iso_8601_invite_time
+        "invite_user_id": invite_user.id
     })
 
     invite_response = await invite_communicator.receive_json_from()    
@@ -175,9 +155,7 @@ async def test_normal_press_key_success():
 
     await join_communicator.send_json_to({
         "action": "join_invite_normal_queue",
-        "game_id": invite_response["game_id"],
-        "accept_time": iso_8601_accept_time,
-        "user_id": invite_user.id
+        "game_id": invite_response["game_id"]
     })
 
     join_response = await join_communicator.receive_json_from()    
@@ -258,8 +236,7 @@ async def test_tournament_round_win():
     assert another_connected
 
     await another_communicator.send_json_to({
-        "action": "join_final",
-        "user_id": another_user.id
+        "action": "join_final"
     })
 
     #fake_user가 발급 받은 게임방 아이디로 접속
@@ -270,8 +247,7 @@ async def test_tournament_round_win():
     assert final_connected
 
     await final_communicator.send_json_to({
-        "action": "join_final",
-        "user_id": fake_user.id
+        "action": "join_final"
     })
 
     final_response = await final_communicator.receive_json_from()    
@@ -294,7 +270,7 @@ async def test_tournament_round_win():
 
     #게임 1번 이겼을 때 성공 테스트
     await fake_communicator.send_json_to({
-        "action": "round_win",
+        "action": "round_win"
     })
 
     round_win_response = await fake_communicator.receive_json_from()    
@@ -304,7 +280,7 @@ async def test_tournament_round_win():
     #게임 10번 이겼을 때 성공 테스트
     for i in range(1, 10):
         await fake_communicator.send_json_to({
-            "action": "round_win",
+            "action": "round_win"
         })
         game_over_response= await fake_communicator.receive_json_from()
 

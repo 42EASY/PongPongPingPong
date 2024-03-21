@@ -50,9 +50,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
     #초대를 하는 경우
     async def invite_room(self, text_data_json):
-        # user_id = text_data_json["user_id"]
         invite_user_id = text_data_json["invite_user_id"]
-        invite_time = text_data_json["invite_time"]
 
         key = 'tournament_' + str(self.room_id)
 
@@ -79,7 +77,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         
         parsed_value = json.loads(value)
 
-        parsed_value["invited_info"].append({"user_id": invite_user_id, "invited_time": invite_time})
+        parsed_value["invited_info"].append({"user_id": invite_user_id})
 
         if self.lock.acquire_lock():
             try:
@@ -111,10 +109,6 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
     #방에 입장 후 게임 시작 대기
     async def join_room(self, text_data_json):
-        # user_id = text_data_json["user_id"]
-
-        #TODO: user_id가 유효한지 검증하기(만일 connect 시에 user id 값을 받아오게 된다면 필요없어지는 로직)
-
         key = "tournament_" + str(self.room_id)
         
         value = None
@@ -331,7 +325,6 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
     #결승 게임 시작 대기
     async def join_final(self, text_data_json):
-        # user_id = text_data_json["user_id"]
 
         key = "tournament_" + str(self.room_id)
 
@@ -438,8 +431,6 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
         #만일 2명이 방에 다 들어오면 방에 있는 모두에게 게임 시작 알림
         if (len(new_parsed_value["join_final_user"]) == 2):
-            # cache.delete(key) #TODO: 여기서 redis에 있는 값을 비우는게 맞는지 나중에 확인하기
-
             matching_value = []
 
             #등록된 유저의 정보와 승률을 list에 저장

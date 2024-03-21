@@ -62,8 +62,7 @@ async def test_join_room_success():
     assert connected
 
     await communicator.send_json_to({
-        "action": "join_room",
-        "user_id": fake_user.id
+        "action": "join_room"
     })
 
     response = await communicator.receive_json_from()    
@@ -95,12 +94,6 @@ async def test_invite_and_join_room_success():
     invite_refresh = RefreshToken.for_user(invite_user)
     invite_token = str(invite_refresh.access_token)
 
-    invite_time = datetime(2024, 2, 13, 12, 0, 0)
-    iso_8601_invite_time = invite_time.isoformat()
-    
-    accept_time = datetime(2024, 2, 13, 12, 0, 30)
-    iso_8601_accept_time = accept_time.isoformat()
-
 
     tournament = Tournament.objects.create()
 
@@ -125,16 +118,13 @@ async def test_invite_and_join_room_success():
     assert join_connected
 
     await join_communicator.send_json_to({
-        "action": "join_room",
-        "user_id": fake_user.id
+        "action": "join_room"    
     })
 
     #fake_user가 invite_user를 초대
     await join_communicator.send_json_to({
         "action": "invite_room",
-        "user_id": fake_user.id,
-        "invite_user_id": invite_user.id,
-        "invite_time": iso_8601_invite_time
+        "invite_user_id": invite_user.id
     })
 
     join_response = await join_communicator.receive_json_from()    
@@ -148,9 +138,7 @@ async def test_invite_and_join_room_success():
 
     await invite_queue_communicator.send_json_to({
         "action": "join_invite_tournament_queue",
-        "tournament_id": join_response["tournament_id"],
-        "accept_time": iso_8601_accept_time,
-        "user_id": invite_user.id
+        "tournament_id": join_response["tournament_id"]
     })
 
     invite_queue_response = await invite_queue_communicator.receive_json_from() 
@@ -168,8 +156,7 @@ async def test_invite_and_join_room_success():
     assert invite_connected
 
     await invite_communicator.send_json_to({
-        "action": "join_room",
-        "user_id": invite_user.id
+        "action": "join_room"    
     })
 
     invite_response = await invite_communicator.receive_json_from()    
@@ -225,8 +212,7 @@ async def test_join_final_room_success():
     assert another_connected
 
     await another_communicator.send_json_to({
-        "action": "join_final",
-        "user_id": another_user.id
+        "action": "join_final"
     })
 
     #fake_user가 발급 받은 게임방 아이디로 접속
@@ -237,8 +223,7 @@ async def test_join_final_room_success():
     assert connected
 
     await communicator.send_json_to({
-        "action": "join_final",
-        "user_id": fake_user.id
+        "action": "join_final"
     })
 
     response = await communicator.receive_json_from()    
