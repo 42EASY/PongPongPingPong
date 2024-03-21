@@ -5,6 +5,7 @@ import EndGame from "./pages/EndGame.js";
 import GameRoom from "./pages/GameRoom.js";
 import Register from "./pages/Register.js";
 import Redirect from "./components/Login/Redirect.js";
+import NotFound from "./pages/NotFound.js";
 
 const routes = [
   { path: "/", page: Login, style: "login" },
@@ -14,6 +15,7 @@ const routes = [
   { path: "/gameroom", page: GameRoom, style: "gameroom" },
   { path: "/game", page: Game, style: "game" },
   { path: "/endgame", page: EndGame, style: "endgame" },
+  { path: "/404", page: NotFound, style: "notfound" },
 ];
 
 function checkUrl(requestedUrl) {
@@ -33,7 +35,7 @@ export default function changeUrl(requestedUrl, element) {
   $sidebar.innerHTML = "";
 
   const match = checkUrl(requestedUrl);
-  if (match === undefined) return; //todo: 404 페이지 띄우기
+  if (match === undefined) changeUrl("/404");
 
   const cssPath = `/src/styles/${match.style}.css`;
   document.getElementById("styles").setAttribute("href", cssPath);
