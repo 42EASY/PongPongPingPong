@@ -153,7 +153,7 @@
   height: 10px;
   background-color: var(--green);
   border-bottom-left-radius: 10px;
-  animation: fill 3s linear forwards;
+  animation: fill 4s linear forwards;
 }
 
 @keyframes fill {
