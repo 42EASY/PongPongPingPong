@@ -414,7 +414,7 @@ async def test_invited_tournament_queue_success():
 
     await communicator.send_json_to({
         "action": "join_invite_tournament_queue",
-        "tournament_id": fake_tournament.id
+        "room_id": fake_tournament.id
     })
 
     response = await communicator.receive_json_from()    
@@ -462,12 +462,12 @@ async def test_invited_tournament_queue_fail_no_value():
 
     await communicator.send_json_to({
         "action": "join_invite_tournament_queue",
-        "tournament_id": fake_tournament.id
+        "room_id": fake_tournament.id
     })
 
     response = await communicator.receive_json_from()    
 
-    assert response["message"] == "잘못된 tournament_id 입니다"
+    assert response["message"] == "잘못된 room_id 입니다"
 
     await communicator.disconnect()
     
@@ -508,7 +508,7 @@ async def test_invited_tournament_queue_fail_no_invited_info():
 
     await communicator.send_json_to({
         "action": "join_invite_tournament_queue",
-        "tournament_id": fake_tournament.id
+        "room_id": fake_tournament.id
     })
 
     response = await communicator.receive_json_from()    
@@ -555,7 +555,7 @@ async def test_invited_tournament_queue_fail_invitied_info_no_user_id():
 
     await communicator.send_json_to({
         "action": "join_invite_tournament_queue",
-        "tournament_id": fake_tournament.id
+        "room_id": fake_tournament.id
     })
 
     response = await communicator.receive_json_from()    
@@ -588,12 +588,12 @@ async def test_invited_tournament_queue_invalid_tournament_id():
 
     await communicator.send_json_to({
         "action": "join_invite_tournament_queue",
-        "tournament_id": -1
+        "room_id": -1
     })
 
     response = await communicator.receive_json_from()    
 
-    assert response["message"] == "잘못된 tournament id 입니다"
+    assert response["message"] == "잘못된 room_id 입니다"
 
     await communicator.disconnect()
 

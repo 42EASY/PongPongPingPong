@@ -190,7 +190,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         await self.send_json({
                 "status": "success",
-                "tournament_id": join_game_key
+                "room_id": join_game_key
             })
 
 
@@ -246,19 +246,19 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         await self.send_json({
                 'status': 'game create success',
-                'tournament_id': tournament.id
+                'room_id': tournament.id
             })
         
 
 
     #tournament 모드에서 초대를 받는 경우
     async def join_invite_tournament(self, text_data_json):
-        tournament_id = text_data_json["tournament_id"]
+        tournament_id = text_data_json["room_id"]
 
         if (Tournament.objects.filter(id = tournament_id).exists() == False):
             await self.send_json({
                 "status": "fail",
-                "message": "잘못된 tournament id 입니다"
+                "message": "잘못된 room_id 입니다"
             })
             return
 
@@ -290,7 +290,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         if (value is None):
             await self.send_json({
                 "status": "fail",
-                "message": "잘못된 tournament_id 입니다"
+                "message": "잘못된 room_id 입니다"
             })
             return
         
