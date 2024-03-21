@@ -8,6 +8,9 @@ from tournaments.models import Tournament
 from members.models import Members
 from games.distributed_lock import DistributedLock
 
+prefix_normal = "normal_"
+prefix_tournament = "tournament_"
+
 #TODO: registered 꽉 차면 삭제하는 로직 검증하기
 class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
@@ -62,7 +65,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         keys = None
         if self.lock.acquire_lock():
             try:
-                keys = cache.keys('tournament_*')
+                keys = cache.keys(prefix_tournament + '*')
             except:
                 self.lock.release_lock()
                 await self.send_json({
@@ -164,7 +167,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
             if self.lock.acquire_lock():
                 try:
-                    cache.set('tournament_' + str(new_tournament.id),  json.dumps(new_tournament_value))
+                    cache.set(prefix_tournament + str(new_tournament.id),  json.dumps(new_tournament_value))
                 except:
                     self.lock.release_lock()
                     await self.send_json({
@@ -220,7 +223,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         if self.lock.acquire_lock():
             try:
-                cache.set('tournament_' + str(tournament.id),  json.dumps(value))
+                cache.set(prefix_tournament + str(tournament.id),  json.dumps(value))
             except:
                 self.lock.release_lock()
                 await self.send_json({
@@ -262,7 +265,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         value = None
         if self.lock.acquire_lock():
             try:
-                value = cache.get("tournament_" + str(tournament_id))
+                value = cache.get(prefix_tournament + str(tournament_id))
             except:
                 self.lock.release_lock()
                 await self.send_json({
@@ -350,7 +353,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         if self.lock.acquire_lock():
             try:
-                cache.set("tournament_" + str(tournament_id), updated_value)
+                cache.set(prefix_tournament + str(tournament_id), updated_value)
             except:
                 self.lock.release_lock()
                 await self.send_json({
@@ -381,7 +384,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         keys = None
         if self.lock.acquire_lock():
             try:
-                keys = cache.keys('normal_*')
+                keys = cache.keys(prefix_normal + '*')
             except:
                 self.lock.release_lock()
                 await self.send_json({
@@ -571,7 +574,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
             if self.lock.acquire_lock():
                 try:
-                    cache.set('normal_' + str(new_game.id),  json.dumps(new_game_value))
+                    cache.set(prefix_normal + str(new_game.id),  json.dumps(new_game_value))
                 except:
                     self.lock.release_lock()
                     await self.send_json({
@@ -628,7 +631,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         if self.lock.acquire_lock():
             try:
-                cache.set('normal_' + str(game.id),  json.dumps(value))
+                cache.set(prefix_normal + str(game.id),  json.dumps(value))
             except:
                 self.lock.release_lock()
                 await self.send_json({
@@ -676,7 +679,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         value = None
         if self.lock.acquire_lock():
             try:
-                value = cache.get('normal_' + str(game_id))
+                value = cache.get(prefix_normal + str(game_id))
             except:
                 self.lock.release_lock()
                 await self.send_json({
@@ -737,7 +740,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     
         if self.lock.acquire_lock():
             try:
-                cache.set('normal_' + str(game_id), updated_value)
+                cache.set(prefix_normal + str(game_id), updated_value)
             except:
                 self.lock.release_lock()
                 await self.send_json({
@@ -768,7 +771,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         new_value = None
         if self.lock.acquire_lock():
             try:
-                new_value = cache.get('normal_' + str(game_id))
+                new_value = cache.get(prefix_normal + str(game_id))
             except:
                 self.lock.release_lock()
                 await self.send_json({

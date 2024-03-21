@@ -7,6 +7,9 @@ from tournaments.models import TournamentGame, Tournament
 from django.db.models import Count, Q
 from games.distributed_lock import DistributedLock
 
+prefix_normal = "normal_"
+prefix_tournament = "tournament_"
+
 class GameRoomConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         path = self.scope['path']
@@ -52,7 +55,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
     async def invite_room(self, text_data_json):
         invite_user_id = text_data_json["invite_user_id"]
 
-        key = 'tournament_' + str(self.room_id)
+        key = prefix_tournament + str(self.room_id)
 
         value = None
         if self.lock.acquire_lock():
@@ -109,7 +112,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
     #방에 입장 후 게임 시작 대기
     async def join_room(self, text_data_json):
-        key = "tournament_" + str(self.room_id)
+        key = prefix_tournament + str(self.room_id)
         
         value = None
         if self.lock.acquire_lock():
@@ -340,7 +343,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
     #결승 게임 시작 대기
     async def join_final(self, text_data_json):
 
-        key = "tournament_" + str(self.room_id)
+        key = prefix_tournament + str(self.room_id)
 
         if self.lock.acquire_lock():
             try:
