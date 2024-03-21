@@ -21,23 +21,14 @@
   z-index: 999;
 }
 
-.testButton {
-  width: 100px;
-  height: 100px;
-}
-
 .modalWrapper {
   display: flex;
   flex-direction: column;
   background-color: var(--white);
-  border-radius: 10px;
-  padding: 15px 25px;
+  border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   letter-spacing: -0.8px;
-}
-
-.modalWrapper * {
-  margin: 5px 0px;
+  overflow: hidden;
 }
 
 .modalHeader {
@@ -50,13 +41,14 @@
   align-content: center;
   font-weight: bold;
   font-size: 18px;
+  margin: 18px 20px;
 }
 
 #x {
   display: flex;
   font-size: 25px;
   align-items: center;
-  margin-left: 25px;
+  margin: 18px 20px;
   color: var(--gray);
 }
 
@@ -68,23 +60,19 @@
 .modalBody {
   display: flex;
   color: var(--gray);
-  margin-bottom: 15px;
-  margin-right: 10px;
+  margin: 0px 20px;
   flex-direction: column;
-  align-items: center;
   font-size: 16px;
 }
 
-#QR {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 300px;
+.modalText {
+  margin: 5px 0px;
 }
 
 .radioBox {
   display: flex;
   width: 100%;
+  margin: 8px 3px;
 }
 
 [type="radio"] {
@@ -113,28 +101,70 @@
   color: var(--gray);
 }
 
-.modalFooter {
-  display: flex;
-  justify-content: end;
+.footerBtnBox {
+  margin: 15px 20px;
 }
 
-.modalFooter * {
-  margin: 0px 5px;
-  border-radius: 10px;
+.rightAlign {
+  float: right;
+}
+
+.centerAlign {
+  display: flex;
+  justify-content: center;
+  align-content: center;
 }
 
 .secondaryButton {
   border-color: var(--gray);
+  margin-left: 8px;
 }
 
 .primaryButton {
   background-color: var(--green);
   color: var(--white);
   border-color: var(--green);
+  margin-left: 8px;
 }
 
 .singleButton {
   background-color: var(--green);
-  width: 100%;
   color: var(--white);
+  width: 100%;
+}
+
+/* --- exception --- */
+/* gameServe */
+.bi-arrow-left {
+  font-size: 50px;
+  display: flex;
+  justify-content: center;
+  margin: 0px 27px 27px 27px;
+}
+.bi-arrow-right {
+  font-size: 50px;
+  display: flex;
+  justify-content: center;
+  margin: 0px 27px 27px 27px;
+}
+
+.timerBar {
+  width: 100%;
+  height: 10px;
+  background-color: var(--green);
+  border-bottom-left-radius: 10px;
+  animation: fill 3s linear forwards;
+}
+
+@keyframes fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.timerWrapper {
+  margin: 30px 50px;
 }

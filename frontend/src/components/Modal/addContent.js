@@ -8,11 +8,13 @@ export default function addContentElement(content) {
     case "text":
       $contentElement = document.createElement("div");
       $contentElement.innerHTML = content.text;
+      $contentElement.classList.add("modalText");
       break;
     case "image":
       $contentElement = document.createElement("img");
       $contentElement.setAttribute("src", content.src);
       $contentElement.setAttribute("alt", content.alt);
+      $contentElement.classList.add("modalImage");
       break;
     case "input":
       $contentElement = document.createElement("input");
@@ -21,18 +23,20 @@ export default function addContentElement(content) {
       $contentElement.placeholder = content.placeHolder;
       break;
     case "radio":
-      $contentElement = document.createElement("div");
-      $contentElement.classList.add("radioBox");
+      $contentElement = document.createElement("label");
+      const $radioBox = document.createElement("div");
+      $radioBox.classList.add("radioBox");
+      $contentElement.appendChild($radioBox);
 
       const $radioButton = document.createElement("input");
       $radioButton.type = "radio";
       $radioButton.name = content.name;
       $radioButton.value = content.text;
-      $contentElement.appendChild($radioButton);
+      $radioBox.appendChild($radioButton);
 
       const $label = document.createElement("label");
       $label.textContent = content.text;
-      $contentElement.appendChild($label);
+      $radioBox.appendChild($label);
 
       if (content.explanation) {
         const $explanation = document.createElement("div");

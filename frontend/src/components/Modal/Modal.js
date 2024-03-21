@@ -1,3 +1,4 @@
+import { startCount } from "../GameRoom/TimerRing.js";
 import addModal from "./adddModal.js";
 import getModalContent from "./ModalsInfo.js";
 
@@ -32,27 +33,40 @@ export default function Modal(modalName, argu) {
       });
     }
 
-    // gameMode modal 버튼 이름 변경 listener
-    if (modalName === "gameMode") {
-      const $radioButtons =
-        $modalWrapper.querySelectorAll('input[name="game"]');
-      for (const $radioButton of $radioButtons) {
-        $radioButton.addEventListener("change", () => {
-          if ($radioButton.value === "토너먼트")
-            document.querySelector(".singleButton").innerHTML = "🏓게임 시작🏓";
-          else document.querySelector(".singleButton").innerHTML = "다음";
-        });
-      }
-    }
     // gameServe modal 자동 닫힘 예외처리
     if (modalName === "gameLeftServe" || modalName === "gameRightServe") {
+      let sec = 60;
       setTimeout(() => {
         $app.removeChild($modalWrapper);
         resolve(true);
-      }, 3000);
+      }, sec * 1000);
+    }
+    if (modalName === "waitingPlayer" || modalName === "waitingInvitation") {
+      let sec = 60;
+      startCount($modalWrapper, sec);
+      setTimeout(() => {
+        $app.removeChild($modalWrapper);
+        resolve(true);
+      }, sec * 1000);
+    }
+    // radio button 텍스트 눌러도 체크 + gameMode의 버튼 text내용 변경
+    const $labels = $modalWrapper.querySelectorAll(".modalBody label");
+    for (const $label of $labels) {
+      $label.addEventListener("click", function () {
+        const $radioInput = $label.querySelector('input[type="radio"]');
+        if ($radioInput) {
+          $radioInput.checked = true;
+          if (modalName === "gameMode" && $radioInput.value === "토너먼트") {
+            document.querySelector(".singleButton").innerHTML = "🏓게임 시작🏓";
+          } else if (modalName === "gameMode") {
+            document.querySelector(".singleButton").innerHTML = "다음";
+          }
+        }
+      });
     }
   });
 
+  // input값 가져오기
   function getInputValue(modalName) {
     if (modalName === "otp") {
       const otpInput = document.querySelector('input[name="otp"]');
@@ -64,3 +78,8 @@ export default function Modal(modalName, argu) {
     return false;
   }
 }
+
+// [v] todo: waitingPlayer, waitingInvitation 예외처리
+// [v] tood: ㄴ css 수정
+// [v] todo: serve timer 추가
+// [v] todo: ㄴ css 수정

@@ -1,3 +1,11 @@
+import TimerRing from "../GameRoom/TimerRing.js";
+
+export function TimerBar() {
+  const $timerBar = document.createElement("div");
+  $timerBar.classList.add("timerBar");
+  return $timerBar;
+}
+
 export default function getModalContent(modalName, argu) {
   const onlyYes = {
     title: "title",
@@ -47,7 +55,7 @@ export default function getModalContent(modalName, argu) {
       bodyContent: [
         {
           type: "image",
-          src: "./src/images/qr.png", // argu로 받기
+          src: argu,
           alt: "qr code",
         },
         {
@@ -144,9 +152,10 @@ export default function getModalContent(modalName, argu) {
     },
 
     waitingPlayer: {
-      title: "대전자 찾는 중",
+      title: "대전자 찾는 중 . . .",
       hideCloseButton: true,
       backdropCloseDisabled: true,
+      bodyContent: [TimerRing()],
       footerContent: [
         {
           type: "singleButton",
@@ -157,9 +166,10 @@ export default function getModalContent(modalName, argu) {
     },
 
     waitingInvitation: {
-      title: "초대 수락 대기 중",
+      title: "초대 수락 대기 중 . . .",
       hideCloseButton: true,
       backdropCloseDisabled: true,
+      bodyContent: [TimerRing()],
       footerContent: [
         {
           type: "singleButton",
@@ -174,7 +184,7 @@ export default function getModalContent(modalName, argu) {
       bodyContent: [
         {
           type: "image",
-          src: "./src/images/League_table.png", // argu로 받기
+          src: argu,
           alt: "league_table",
         },
       ],
@@ -185,7 +195,7 @@ export default function getModalContent(modalName, argu) {
       bodyContent: [
         {
           type: "image",
-          src: "./src/images/League_table.png", // argu로 받기
+          src: argu,
           alt: "league_table",
         },
       ],
@@ -196,6 +206,7 @@ export default function getModalContent(modalName, argu) {
       hideCloseButton: true,
       backdropCloseDisabled: true,
       bodyContent: [{ type: "i", class: "bi bi-arrow-left" }],
+      footerContent: [TimerBar()],
     },
 
     gameRightServe: {
@@ -203,6 +214,7 @@ export default function getModalContent(modalName, argu) {
       hideCloseButton: true,
       backdropCloseDisabled: true,
       bodyContent: [{ type: "i", class: "bi bi-arrow-right" }],
+      footerContent: [TimerBar()],
     },
 
     // yes or no
