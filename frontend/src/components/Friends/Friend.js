@@ -21,7 +21,6 @@ export default function Friend(user) {
 
   const $friendImage = document.createElement("img");
   $friendImage.classList.add("profileImg");
-  if (user.image_url === null) user.image_url = "./src/images/none_profile.png";
   $friendImage.setAttribute("src", user.image_url);
   $friendImage.setAttribute("alt", "profile_image");
 
