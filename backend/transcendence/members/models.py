@@ -10,7 +10,7 @@ class Members(models.Model):
         IN_GAME = 'IN_GAME', 'In_Game'
 
     id = models.BigAutoField(primary_key=True)
-    nickname = models.CharField(max_length=255)
+    nickname = models.CharField(max_length=255, unique=True)
     email = models.CharField(max_length=255)
     is_2fa = models.BooleanField(null=True)
     image_url = models.CharField(max_length=255, null=True)
