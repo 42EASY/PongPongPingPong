@@ -10,11 +10,9 @@ export default function Blockeds(data) {
   const keyword = document.getElementById("searchInput").value;
   if (len === 0) {
     if (keyword === "") {
-      $listWrapper.style.flexDirection = "unset";
       const $noFriend = NoFriend();
       $listWrapper.appendChild($noFriend);
     } else {
-      console.log("nosearch");
       const $noSearch = NoSearch();
       $listWrapper.appendChild($noSearch);
     }

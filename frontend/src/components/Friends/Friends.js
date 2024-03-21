@@ -10,7 +10,6 @@ export default function Friends(data) {
   const keyword = document.getElementById("searchInput").value;
   if (len === 0) {
     if (keyword === "") {
-      $listWrapper.style.flexDirection = "unset";
       const $noFriend = NoFriend();
       $listWrapper.appendChild($noFriend);
     } else {
@@ -23,6 +22,5 @@ export default function Friends(data) {
       $listWrapper.appendChild($friend);
     }
   }
-
   return $listWrapper;
 }
