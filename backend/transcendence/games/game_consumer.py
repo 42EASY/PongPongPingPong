@@ -149,10 +149,16 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
             registered_user = parsed_value["registered_user"]
 
-            self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
-
-            self.opponent = Members.objects.get(id = self.user_participant.opponent_id)
-            self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent.id), game_id = self.game)
+            try:
+                self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
+                self.opponent = Members.objects.get(id = self.user_participant.opponent_id)
+                self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent.id), game_id = self.game)            
+            except:
+                await self.send_json({
+                    "status": "fail",
+                    "message": "db에서 오류가 발생했습니다"
+                })
+                return
 
             flag = False;
             idx = -1

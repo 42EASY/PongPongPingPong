@@ -406,7 +406,16 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         for key in keys:
             game_id = key[7:]
-            game = Game.objects.get(id = int(game_id))
+            
+            try:
+                game = Game.objects.get(id = int(game_id))
+            except:
+                await self.send_json({
+                    "status": "fail",
+                    "message": "db에서 오류가 발생했습니다"
+                })
+                return
+
 
             if (game.game_option.lower() != game_mode.lower()):
                 continue
@@ -471,8 +480,16 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 flag = True
 
                 join_game_key = key
-               
-                Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
+
+                try :
+                    Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
+                except:
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "db에서 오류가 발생했습니다"
+                    })
+                    return
+                
                 break
 
         
@@ -510,7 +527,15 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             for user_info in registered_result_users:
                 id = user_info["user_id"]
 
-                user = Members.objects.get(id = id)
+                try:
+                    user = Members.objects.get(id = id)
+                except:
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "db에서 오류가 발생했습니다"
+                    })
+                    return
+
 
                 data = {
                     "user_id": id,
@@ -565,7 +590,14 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 })
                 return
            
-            Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = new_game, score = 0)
+            try:
+                Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = new_game, score = 0)
+            except:
+                await self.send_json({
+                    "status": "fail",
+                    "message": "db에서 오류가 발생했습니다"
+                })
+                return
 
 
 
@@ -615,7 +647,14 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
         
-        Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
+        try:
+            Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
+        except:
+            await self.send_json({
+                "status": "fail",
+                "message": "db에서 오류가 발생했습니다"
+            })
+            return
 
         await self.send_json({
                 'status': 'game create success',
@@ -716,8 +755,14 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
 
-
-        Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = Game.objects.get(id = game_id), score = 0)
+        try:
+            Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = Game.objects.get(id = game_id), score = 0)
+        except:
+            await self.send_json({
+                "status": "fail",
+                "message": "db에서 오류가 발생했습니다"
+            })
+            return
 
         #게임 시작할 것이라는 response를 모두에게 전달
         new_value = None
@@ -751,7 +796,14 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         for user_info in registered_users:
             id = user_info["user_id"]
 
-            user = Members.objects.get(id = id)
+            try:
+                user = Members.objects.get(id = id)
+            except:
+                await self.send_json({
+                    "status": "fail",
+                    "message": "db에서 오류가 발생했습니다"
+                })
+                return
 
             data = {
                 "user_id": id,
