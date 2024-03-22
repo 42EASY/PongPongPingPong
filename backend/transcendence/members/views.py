@@ -91,10 +91,21 @@ class MemberView(APIView):
 				if serializer.is_valid():
 					serializer.save()
 				else:
-					return JsonResponse({
-						'code':409,
-						'message': 'Dulicate nicknames'
-					}, status=409)
+					# 닉네임 중복 에러 처리
+					if 'nickname' in serializer.errors and any("Duplicate nicknames" in msg for msg in serializer.errors['nickname']):
+						return JsonResponse({
+							'code': 409,
+							'message': 'Duplicate nicknames'
+						}, status=409)
+					# 기타 유효성 검사 에러 처리
+					else:
+						errors = serializer.errors
+						first_error_field = next(iter(errors))
+						first_error_message = errors[first_error_field][0]
+						return JsonResponse({
+							'code': 400,
+							'message': first_error_message
+						}, status=400)
 
 		except:
 			return JsonResponse({

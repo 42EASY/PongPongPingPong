@@ -8,6 +8,14 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.cache import cache
 from django.utils import timezone
 import requests
+import random
+import string
+
+def new_random_nickname(length=15):
+		characters = string.ascii_letters + string.digits
+		# 랜덤 문자열 생성
+		random_string = ''.join(random.choice(characters) for _ in range(length))
+		return random_string
 
 class LoginView(APIView):
 	def post(self, request):
@@ -39,12 +47,13 @@ class LoginView(APIView):
 		})
 
 		user_info = user_info_response.json()
+		new_nickname = new_random_nickname()
 
 		user_data = {
-			'nickname': user_info.get('login'),
+			'nickname': new_nickname,
 			'email': user_info.get('email'),
 			'is_2fa': False,
-			'image_url': user_info.get('image_url'),
+			'image_url': settings.DEFAULT_IMAGE_URL,
 			'created_at': timezone.now(),
 			'modified_at': timezone.now(),
 			'deleted_at': None,
