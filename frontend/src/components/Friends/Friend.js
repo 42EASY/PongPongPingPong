@@ -61,7 +61,7 @@ export default function Friend(user) {
   // 친구 끊기 클릭 이벤트
   const $unfriendOpt = $options.querySelector("#unfriendOpt");
   $unfriendOpt.addEventListener("click", () => {
-    Modal("deleteFriend").then((result) => {
+    Modal("deleteFriend", user.nickname).then((result) => {
       if (result.isPositive) {
         deleteFriend(user.user_id);
         $friendWrapper.style.display = "none";
@@ -72,7 +72,7 @@ export default function Friend(user) {
   // 친구 차단하기 클릭 이벤트
   const $blockOpt = $options.querySelector("#blockOpt");
   $blockOpt.addEventListener("click", () => {
-    Modal("blockFriend").then((result) => {
+    Modal("blockFriend", user.nickname).then((result) => {
       if (result.isPositive) {
         postBlock(user.user_id);
         $friendWrapper.style.display = "none";

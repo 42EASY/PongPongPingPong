@@ -13,7 +13,7 @@ export default function Blocked(user) {
   $blockedButton.classList.add("btn", "blockedButton");
   $blockedButton.innerHTML = "차단 해제";
   $blockedButton.addEventListener("click", () => {
-    Modal("unblockFriend").then((result) => {
+    Modal("unblockFriend", user.nickname).then((result) => {
       if (result.isPositive) {
         deleteBlock(user.user_id);
         $blockedWrapper.style.display = "none";

@@ -30,7 +30,7 @@ export default function Chat(user, cnt) {
 
   //채팅방 닫기 버튼 클릭 시 이벤트
   $closeButton.addEventListener("click", () => {
-    Modal("exitChatting").then((result) => {
+    Modal("exitChatting", user.nickname).then((result) => {
       if (result.isPositive) {
         delChatContent(user.user_id);
         $chatWrapper.style.display = "none";

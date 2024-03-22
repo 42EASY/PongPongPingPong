@@ -4,7 +4,7 @@ import { postFriend, deleteFriend, deleteBlock } from "./UserApi.js";
 import Modal from "../Modal/Modal.js";
 import ChatRoom from "../../pages/ChatRoom.js";
 
-export default function OtherBtn(id, status) {
+export default function OtherBtn(user, status) {
   const $OtherBtnWrapper = document.createElement("div");
   const $FriendStatusBtn = document.createElement("button");
   const $FriendStatusIcon = document.createElement("i");
@@ -12,7 +12,7 @@ export default function OtherBtn(id, status) {
   const $MoreFunctionBox = document.createElement("div");
   const $MoreFunctionBtn = document.createElement("button");
   const $MoreFucntionIcon = document.createElement("i");
-  const $MoreMenu = MoreMenu(id);
+  const $MoreMenu = MoreMenu(user);
 
   $OtherBtnWrapper.appendChild($FriendStatusBtn);
   $OtherBtnWrapper.appendChild($MessageBtn);
@@ -52,19 +52,19 @@ export default function OtherBtn(id, status) {
 
   $FriendStatusBtn.onclick = () => {
     if (status === "NONE") {
-      postFriend(id);
+      postFriend(user.user_id);
       onChangeStatus("FRIEND");
     } else if (status === "BLOCK") {
-      Modal("unblockFriend").then((result) => {
+      Modal("unblockFriend", user.nickname).then((result) => {
         if (result.isPositive) {
-          deleteBlock(id);
+          deleteBlock(user.user_id);
           onChangeStatus("NONE");
         }
       });
     } else if (status === "FRIEND") {
-      Modal("deleteFriend").then((result) => {
+      Modal("deleteFriend", user.nickname).then((result) => {
         if (result.isPositive) {
-          deleteFriend(id);
+          deleteFriend(user.user_id);
           onChangeStatus("NONE");
         }
       });
@@ -81,7 +81,7 @@ export default function OtherBtn(id, status) {
     const $overlay = document.querySelector(".overlay");
     $sidebar.classList.add("showSidebar");
     $overlay.classList.add("showOverlay");
-    ChatRoom(id);
+    ChatRoom(user.user_id);
   });
 
   $MoreFunctionBtn.addEventListener("click", () => {
