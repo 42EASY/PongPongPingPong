@@ -45,6 +45,12 @@ async function fetchBlockeds(keyword) {
   return BlockedList(blist.result.data);
 }
 
+function appendData(data) {
+  let $listWrapper = document.querySelector(".friendsWrapper");
+  $listWrapper.innerHTML = "";
+  $listWrapper.appendChild(data);
+}
+
 export default async function Friends() {
   const $sidebar = document.querySelector(".sidebar");
   $sidebar.innerHTML = "";
@@ -63,11 +69,11 @@ export default async function Friends() {
   $friendsWrapper.appendChild($search);
 
   //친구 목록
-  const $listWrapper = document.createElement("div");
+  let $listWrapper = document.createElement("div");
   $listWrapper.classList.add("listWrapper");
   $friendsWrapper.appendChild($listWrapper);
 
-  $listWrapper.appendChild(await fetchFriends(""));
+  $friendsWrapper.replaceChild(await fetchFriends(""), $listWrapper);
 
   //사이드바 외부 영역
   const $overlay = document.createElement("div");
@@ -88,15 +94,24 @@ export default async function Friends() {
     curPage = 1;
     hasMore = true;
     $searchInput.value = "";
-    $listWrapper.innerHTML = "";
     if (e.target.classList.contains("friendList")) {
       $friendList.classList.add("friendsTitleSelect", "titleSelect");
       $blockedList.classList.remove("friendsTitleSelect", "titleSelect");
-      $listWrapper.appendChild(await fetchFriends(""));
+      const $data = await fetchFriends($searchInput.value);
+      try {
+        $friendsWrapper.replaceChild($data, $listWrapper);
+      } catch (error) {
+        appendData($data);
+      }
     } else if (e.target.classList.contains("blockedList")) {
       $friendList.classList.remove("friendsTitleSelect", "titleSelect");
       $blockedList.classList.add("friendsTitleSelect", "titleSelect");
-      $listWrapper.appendChild(await fetchBlockeds(""));
+      const $data = await fetchBlockeds($searchInput.value);
+      try {
+        $friendsWrapper.replaceChild($data, $listWrapper);
+      } catch (error) {
+        appendData($data);
+      }
     }
   });
 
@@ -105,10 +120,21 @@ export default async function Friends() {
   $searchInput.addEventListener("keyup", async () => {
     curPage = 1;
     hasMore = true;
-    $listWrapper.innerHTML = "";
-    if (isFriends)
-      $listWrapper.appendChild(await fetchFriends($searchInput.value));
-    else $listWrapper.appendChild(await fetchBlockeds($searchInput.value));
+    if (isFriends) {
+      const $data = await fetchFriends($searchInput.value);
+      try {
+        $friendsWrapper.replaceChild($data, $listWrapper);
+      } catch (error) {
+        appendData($data);
+      }
+    } else {
+      const $data = await fetchBlockeds($searchInput.value);
+      try {
+        $friendsWrapper.replaceChild($data, $listWrapper);
+      } catch (error) {
+        appendData($data);
+      }
+    }
   });
 
   //todo: scroll event
