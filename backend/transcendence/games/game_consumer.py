@@ -10,7 +10,11 @@ from jwt import decode as jwt_decode, exceptions as jwt_exceptions
 from django.conf import settings
 from games.distributed_lock import DistributedLock
 
+prefix_normal = "normal_"
+prefix_tournament = "tournament_"
+
 class GameConsumer(AsyncJsonWebsocketConsumer):
+
     async def connect(self):
         path = self.scope['path']
         self.game_id = path.strip('/').split('/')[-1]
@@ -32,7 +36,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
         #노멀 게임인 경우
         if (self.game_mode == Game.GameMode.NORMAL):
-            self.key = 'normal_' + self.game_id
+            self.key = prefix_normal + self.game_id
 
             value = None
             if self.lock.acquire_lock():
@@ -121,7 +125,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         if (self.game_mode == Game.GameMode.TOURNAMENT):
             self.tournament_game = TournamentGame.objects.get(game_id = self.game)
 
-            self.key = 'tournament_' + str(self.tournament_game.tournament_id.id)
+            self.key = prefix_tournament + str(self.tournament_game.tournament_id.id)
 
             value = None
             if self.lock.acquire_lock():
@@ -149,10 +153,16 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
             registered_user = parsed_value["registered_user"]
 
-            self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
-
-            self.opponent = Members.objects.get(id = self.user_participant.opponent_id)
-            self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent.id), game_id = self.game)
+            try:
+                self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
+                self.opponent = Members.objects.get(id = self.user_participant.opponent_id)
+                self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent.id), game_id = self.game)            
+            except:
+                await self.send_json({
+                    "status": "fail",
+                    "message": "db에서 오류가 발생했습니다"
+                })
+                return
 
             flag = False;
             idx = -1
