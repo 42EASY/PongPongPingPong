@@ -75,6 +75,10 @@
   height: 45px;
 }
 
+.navSearchItemSelected {
+  background-color: var(--lightGreen);
+}
+
 .navSearchItem:hover {
   background-color: var(--lightGreen);
 }

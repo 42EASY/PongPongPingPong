@@ -300,8 +300,10 @@ input:focus {
 
 .noFriendWrapper {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   gap: 24px;
 }
@@ -326,7 +328,6 @@ input:focus {
 .noSearchWrapper {
   width: 100%;
   display: flex;
-  justify-content: center;
   gap: 8px;
   padding-top: 12px;
   padding-bottom: 12px;
@@ -608,4 +609,5 @@ input:focus {
   flex-direction: column;
   justify-content: start;
   align-items: center;
+  overflow-y: scroll;
 }

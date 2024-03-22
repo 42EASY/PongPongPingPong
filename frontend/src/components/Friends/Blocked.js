@@ -13,7 +13,7 @@ export default function Blocked(user) {
   $blockedButton.classList.add("btn", "blockedButton");
   $blockedButton.innerHTML = "차단 해제";
   $blockedButton.addEventListener("click", () => {
-    Modal("unblockFriend").then((result) => {
+    Modal("unblockFriend", user.nickname).then((result) => {
       if (result.isPositive) {
         deleteBlock(user.user_id);
         $blockedWrapper.style.display = "none";
@@ -23,7 +23,6 @@ export default function Blocked(user) {
 
   const $blockedImage = document.createElement("img");
   $blockedImage.classList.add("profileImg");
-  if (user.image_url === null) user.image_url = "./src/images/none_profile.png";
   $blockedImage.setAttribute("src", user.image_url);
   $blockedImage.setAttribute("alt", "profile_image");
 

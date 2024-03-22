@@ -6,7 +6,7 @@ import { getUserInfo } from "../components/Main/UserApi.js";
 import { getUserId } from "../state/State.js";
 import { addChatContent } from "../state/ChatState.js";
 
-function sendMessage(id, me) {
+async function sendMessage(id, me) {
   const $chatInput = document.querySelector(".chatInput");
   const $chatContents = document.querySelector("#chatContents");
   const data = {
@@ -16,6 +16,7 @@ function sendMessage(id, me) {
   };
   $chatContents.appendChild(ChatContent(me.result, data));
   addChatContent(id, data);
+  $chatInput.value = "";
 }
 
 export default async function ChatRoom(id) {
@@ -31,7 +32,7 @@ export default async function ChatRoom(id) {
 
   //채팅 내용
   const $chatContents = ChatContents(user.result, me.result);
-  $chatContents.id = "chatContetns";
+  $chatContents.id = "chatContents";
   $chatsWrapper.appendChild($chatContents);
 
   //채팅 입력칸

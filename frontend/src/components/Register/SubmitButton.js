@@ -74,7 +74,7 @@ function callApi(nickname, is2fa) {
       if (data.code === 200) {
         setIs2fa(data.result.is_2fa);
         setNickname(data.result.nickname);
-        setImage(data.result.image);
+        setImage(data.result.image_url);
         changeUrl("/main"); //todo: 메인 페이지 이동 불필요. 닉네임 에러 삭제 필요
       } else if (data.code === 409) {
         //중복된 닉네임

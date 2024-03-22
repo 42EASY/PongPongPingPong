@@ -29,7 +29,7 @@ export default function MyProfile(id, user) {
   $ProfileNameBox.appendChild($ProfileBtnBox);
   $ProfileBtnBox.id = "profileBtnBox";
   if (isMe) $ProfileBtnBox.appendChild(MyBtn());
-  else $ProfileBtnBox.appendChild(OtherBtn(id, user.relation));
+  else $ProfileBtnBox.appendChild(OtherBtn(user, user.relation));
   $ProfileInfoBox.appendChild(
     GameCount({
       total: user.game_count,
