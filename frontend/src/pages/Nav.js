@@ -108,8 +108,8 @@ export default async function Nav() {
 
   //friends 클릭이벤트
   const $friendsButton = document.querySelector(".navFriends");
-  $friendsButton.addEventListener("click", (e) => {
-    Friends();
+  $friendsButton.addEventListener("click", async () => {
+    await Friends();
     const $sidebar = document.querySelector(".sidebarArea");
     const $overlay = document.querySelector(".overlay");
     $sidebar.classList.add("showSidebar");
