@@ -55,6 +55,8 @@ export default async function Friends() {
   const $sidebar = document.querySelector(".sidebar");
   $sidebar.innerHTML = "";
 
+  curPage = 1;
+
   //전체 영역
   const $friendsWrapper = document.createElement("div");
   $friendsWrapper.classList.add("sidebarArea");
