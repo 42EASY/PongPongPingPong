@@ -262,6 +262,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
             #game과 participant, tournamentgame 생성
             try:
+                #승률을 기준으로 정렬한 sorted_matching_value[0]과 sorted_matching_value[1]이 서로 한 게임을 하도록 game, participant, tournament 테이블 생성
                 game1 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
 
                 Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[0]["user_id"]), game_id = game1, score = 0, opponent_id = sorted_matching_value[1]["user_id"])
@@ -269,6 +270,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
                 TournamentGame.objects.create(game_id = game1, tournament_id = self.tournament, round = TournamentGame.Round.SEMI_FINAL)
 
+                #승률을 기준으로 정렬한 sorted_matching_value[2]과 sorted_matching_value[3]이 서로 한 게임을 하도록 game, participant, tournament 테이블 생성
                 game2 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
 
                 Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[2]["user_id"]), game_id = game2, score = 0, opponent_id = sorted_matching_value[3]["user_id"])
