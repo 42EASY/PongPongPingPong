@@ -16,6 +16,7 @@ async function sendMessage(id, me) {
   };
   $chatContents.appendChild(ChatContent(me.result, data));
   addChatContent(id, data);
+  $chatInput.value = "";
 }
 
 export default async function ChatRoom(id) {
