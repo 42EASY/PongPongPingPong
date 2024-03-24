@@ -5,12 +5,11 @@ until pg_isready -h ${POSTGRES_HOST} -p ${POSTGRES_PORT} -U ${POSTGRES_USER}; do
   sleep 2
 done
 
-python /app/transcendence/manage.py makemigrations members
-python /app/transcendence/manage.py makemigrations games
-python /app/transcendence/manage.py makemigrations social
-python /app/transcendence/manage.py makemigrations tournaments
+python /app/transcendence/manage.py makemigrations
 
 python /app/transcendence/manage.py migrate
+
+python /app/transcendence/manage.py loaddata members/fixtures/members-data.json social/fixtures/Friend-data.json
 
 cd /app/transcendence
 
