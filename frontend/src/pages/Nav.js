@@ -44,29 +44,6 @@ export default async function Nav() {
   $input.addEventListener("keyup", async (e) => {
     const keyword = e.target.value;
     $searchList.style.display = "block";
-    if (keyword.length !== 0) {
-      const list = await getUserList(keyword, 1, 5);
-      if (list !== prevList) {
-        arr = new Map();
-        $searchList.innerHTML = "";
-        for (let i = 0; i < list.result.data.length; i++) {
-          const $searchItem = document.createElement("div");
-          $searchItem.classList.add("list-group-item", "navSearchItem");
-          $searchItem.id = "navSearchItem" + i;
-          $searchItem.innerHTML = list.result.data[i].nickname;
-          $searchList.appendChild($searchItem);
-          arr.set($searchItem.innerHTML, list.result.data[i].user_id);
-        }
-        prevList = list;
-      }
-      $searchList.addEventListener("click", (e) => {
-        changeUrl("/main", arr.get(e.target.innerHTML));
-      });
-    } else {
-      $searchList.style.display = "none";
-      prevList = "";
-      $searchList.innerHTML = "";
-    }
     let $item;
     if (e.key === "ArrowUp" || e.key === "ArrowDown") {
       let max = arr.size - 1;
@@ -92,6 +69,29 @@ export default async function Nav() {
         );
     } else {
       idx = -1;
+      if (keyword.length !== 0) {
+        const list = await getUserList(keyword, 1, 5);
+        if (list !== prevList) {
+          arr = new Map();
+          $searchList.innerHTML = "";
+          for (let i = 0; i < list.result.data.length; i++) {
+            const $searchItem = document.createElement("div");
+            $searchItem.classList.add("list-group-item", "navSearchItem");
+            $searchItem.id = "navSearchItem" + i;
+            $searchItem.innerHTML = list.result.data[i].nickname;
+            $searchList.appendChild($searchItem);
+            arr.set($searchItem.innerHTML, list.result.data[i].user_id);
+            $searchItem.onclick = (e) => {
+              changeUrl("/main", arr.get(e.target.innerHTML));
+            };
+          }
+          prevList = list;
+        }
+      } else {
+        $searchList.style.display = "none";
+        prevList = "";
+        $searchList.innerHTML = "";
+      }
     }
   });
 
