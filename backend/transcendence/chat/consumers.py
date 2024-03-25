@@ -8,7 +8,10 @@ import json
 import redis
 
 # Redis 클라이언트 설정
-redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0)
+redis_client = redis.Redis(host='redis', port=6379, db=0)
+
+def json_encode(data):
+    return json.dumps(data, ensure_ascii=False)
 
 # 메시지 타임스탬프를 float로 변환하는 함수
 def parse_timestamp_to_float(timestamp_str):
@@ -28,6 +31,8 @@ class ChatConsumer(NotifyConsumer):
 			await self.send_message(data)
 		elif action == 'fetch_messages':
 			await self.fetch_messages(data)
+		elif action == 'update_read_time':
+			await self.update_read_time(data)
 
 	async def fetch_chat_list(self):
 		user_id = self.user.id
@@ -43,8 +48,9 @@ class ChatConsumer(NotifyConsumer):
 				"unread_messages_count": unread_count,
 				"user_info" : user_info,
 			})
+
 		# 클라이언트에 채팅 목록과 각 채팅방의 안 읽은 메시지 수 전송
-		await self.send(text_data=json.dumps({
+		await self.send(text_data=json_encode({
 			"action": "fetch_chat_list",
 			"data": chats_info
 		}))
@@ -90,15 +96,15 @@ class ChatConsumer(NotifyConsumer):
 					}
 				)
 		else:
-			await self.send(text_data=json.dumps({
+			await self.send(text_data=json_encode({
 				"status": "fail",
 				"message": "현재 오프라인 상태의 유저입니다."
-			}, ensure_ascii=False))
+			}))
 		
 	async def receive_message(self, event):
 		message_data = event['message_data']
 
-		await self.send(text_data=json.dumps({
+		await self.send(text_data=json_encode({
 			"action": "receive_message",
 			**message_data,
 		}))
@@ -110,11 +116,16 @@ class ChatConsumer(NotifyConsumer):
 		await self.update_last_read_time(self.user.id, room_name)
 
 		# 클라이언트에게 메시지 목록 전송
-		await self.send(text_data=json.dumps({
+		await self.send(text_data=json_encode({
 			"action": "fetch_messages",
 			"room_name": room_name,
 			"messages": messages
 		}))
+	
+	async def update_read_time(self, data):
+		room_name = data['room_name']
+
+		await self.update_last_read_time(self.user.id, room_name)
 
 	@sync_to_async
 	def load_messages(self, room_name):
@@ -124,7 +135,7 @@ class ChatConsumer(NotifyConsumer):
 
 
 	async def chat_message(self, event):
-		await self.send(text_data=json.dumps({
+		await self.send(text_data=json_encode({
 			event['message']
 		}))
 
@@ -145,7 +156,7 @@ class ChatConsumer(NotifyConsumer):
 		
 		# 채팅방이 존재하지 않으면 생성
 		if not redis_client.exists(room_name):
-			redis_client.set(room_name, json.dumps([]))
+			redis_client.set(room_name, json_encode([]))
 			# 채팅방에 A와 B를 참여시킴
 		redis_client.sadd(f"user_chats:{sender_id}", room_name)
 		redis_client.sadd(f"user_chats:{receiver_id}", room_name)
@@ -155,7 +166,7 @@ class ChatConsumer(NotifyConsumer):
 	@sync_to_async
 	def store_message(self, room_name, message):
 		# Redis 리스트에 메시지 저장
-		redis_client.rpush(f"chat_messages:{room_name}", json.dumps(message))
+		redis_client.rpush(f"chat_messages:{room_name}", json_encode(message))
 		
 		# 메시지 리스트의 크기를 제한 (최신 500개의 메시지만 유지)
 		redis_client.ltrim(f"chat_messages:{room_name}", -500, -1)
