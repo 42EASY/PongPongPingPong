@@ -32,7 +32,7 @@ services:
     networks:
       - transcendence
     volumes:
-      - ./backend/transcendence/media:/app/transcendence/media
+      - ./backend/transcendence:/app/transcendence
     depends_on:
       - db
       - redis
