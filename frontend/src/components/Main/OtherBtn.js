@@ -81,7 +81,7 @@ export default function OtherBtn(user, status) {
     const $overlay = document.querySelector(".overlay");
     $sidebar.classList.add("showSidebar");
     $overlay.classList.add("showOverlay");
-    ChatRoom(user.user_id);
+    ChatRoom(user);
   });
 
   $MoreFunctionBtn.addEventListener("click", () => {

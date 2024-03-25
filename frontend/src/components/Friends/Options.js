@@ -1,7 +1,7 @@
 import changeUrl from "../../Router.js";
 import ChatRoom from "../../pages/ChatRoom.js";
 
-export default function Options(id) {
+export default function Options(user) {
   const $OptionsWrapper = document.createElement("div");
   $OptionsWrapper.classList.add("optionsWrapper");
 
@@ -14,7 +14,7 @@ export default function Options(id) {
   $profileOpt.innerHTML = "프로필 상세보기";
   $Options.appendChild($profileOpt);
   $profileOpt.addEventListener("click", () => {
-    changeUrl("/main", id);
+    changeUrl("/main", user.user_id);
   });
 
   const $messageOpt = document.createElement("li");
@@ -22,7 +22,7 @@ export default function Options(id) {
   $messageOpt.innerHTML = "메시지 보내기";
   $Options.appendChild($messageOpt);
   $messageOpt.addEventListener("click", () => {
-    ChatRoom(id);
+    ChatRoom(user);
   });
 
   const $gameOpt = document.createElement("li");
