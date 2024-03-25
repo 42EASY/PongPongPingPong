@@ -18,13 +18,17 @@ export default function Chat() {
   $chatsWrapper.classList.add("sidebarArea");
   $sidebar.appendChild($chatsWrapper);
 
+  const $titleBox = document.createElement("div");
+  $titleBox.classList.add("titleBox");
+  $chatsWrapper.appendChild($titleBox);
+
   //타이틀
   const $title = Title();
-  $chatsWrapper.appendChild($title);
+  $titleBox.appendChild($title);
 
   //검색
   const $search = Search();
-  $chatsWrapper.appendChild($search);
+  $titleBox.appendChild($search);
 
   //채팅 목록
   const $listWrapper = document.createElement("div");

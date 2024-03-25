@@ -1,8 +1,8 @@
 import { getChatContent } from "../../../state/ChatState.js";
-import { getUserId } from "../../../state/State.js";
+import { getMyInfo, getUserId } from "../../../state/State.js";
 import ChatContent from "./ChatContent.js";
 
-export default function ChatContents(user, me) {
+export default function ChatContents(user) {
   const $chatContentsWrapper = document.createElement("div");
   $chatContentsWrapper.classList.add("chatContentsWrapper");
 
@@ -12,7 +12,7 @@ export default function ChatContents(user, me) {
     for (let i = 0; i < chatList.length; i++) {
       if (chatList[i].id !== getUserId())
         $chat = ChatContent(user, chatList[i]);
-      else $chat = ChatContent(me, chatList[i]);
+      else $chat = ChatContent(getMyInfo(), chatList[i]);
       $chatContentsWrapper.appendChild($chat);
     }
   }

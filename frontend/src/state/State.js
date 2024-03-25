@@ -91,6 +91,14 @@ const getImage = () => {
   return localStorage.getItem("image");
 };
 
+const getMyInfo = () => {
+  return {
+    user_id: getUserId(),
+    nickname: getNickname(),
+    image_url: getImage(),
+  };
+};
+
 const logout = () => {
   const url = "http://localhost:8000/api/v1/auth/logout";
 
@@ -123,5 +131,6 @@ export {
   getIs2fa,
   getNickname,
   getImage,
+  getMyInfo,
   logout,
 };
