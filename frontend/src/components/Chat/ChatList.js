@@ -1,7 +1,6 @@
 import Chat from "./Chat.js";
 import NoChat from "./NoChat.js";
 import NoSearch from "../Friends/NoSearch.js";
-import { getUserInfo } from "../Main/UserApi.js";
 
 export default async function ChatList(data) {
   const $chatListWrapper = document.createElement("div");
@@ -21,8 +20,9 @@ export default async function ChatList(data) {
     }
   } else {
     for (let i = 0; i < len; i++) {
-      const user = await getUserInfo(data[i].id);
-      const $chat = Chat(user.result, data[i].cnt);
+      const user = data[i].user_info;
+      const cnt = data[i].unread_messages_count;
+      const $chat = Chat(user, cnt);
       $chatListWrapper.appendChild($chat);
     }
   }
