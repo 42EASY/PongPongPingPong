@@ -6,7 +6,7 @@ import { getFriends, getBlockeds } from "../components/Friends/ListApi.js";
 
 let isFriends = true;
 let curPage = 1;
-let dataSize = 10;
+let dataSize = 20;
 let isFetching = false;
 let hasMore = true;
 
@@ -62,20 +62,28 @@ export default async function Friends() {
   $friendsWrapper.classList.add("sidebarArea");
   $sidebar.appendChild($friendsWrapper);
 
+  const $titleBox = document.createElement("div");
+  $titleBox.classList.add("titleBox");
+  $friendsWrapper.appendChild($titleBox);
+
   //타이틀
   const $title = Title();
-  $friendsWrapper.appendChild($title);
+  $titleBox.appendChild($title);
 
   //검색
   const $search = Search();
-  $friendsWrapper.appendChild($search);
+  $titleBox.appendChild($search);
 
   //친구 목록
   let $listWrapper = document.createElement("div");
   $listWrapper.classList.add("listWrapper");
   $friendsWrapper.appendChild($listWrapper);
 
-  $friendsWrapper.replaceChild(await fetchFriends(""), $listWrapper);
+  let $friends = document.createElement("div");
+  $friends.classList.add("friendsWrapper");
+  $listWrapper.appendChild($friends);
+
+  $listWrapper.replaceChild(await fetchFriends(""), $friends);
 
   //사이드바 외부 영역
   const $overlay = document.createElement("div");
@@ -101,7 +109,7 @@ export default async function Friends() {
       $blockedList.classList.remove("friendsTitleSelect", "titleSelect");
       const $data = await fetchFriends($searchInput.value);
       try {
-        $friendsWrapper.replaceChild($data, $listWrapper);
+        $listWrapper.replaceChild($data, $friends);
       } catch (error) {
         appendData($data);
       }
@@ -110,7 +118,7 @@ export default async function Friends() {
       $blockedList.classList.add("friendsTitleSelect", "titleSelect");
       const $data = await fetchBlockeds($searchInput.value);
       try {
-        $friendsWrapper.replaceChild($data, $listWrapper);
+        $listWrapper.replaceChild($data, $friends);
       } catch (error) {
         appendData($data);
       }
@@ -125,14 +133,14 @@ export default async function Friends() {
     if (isFriends) {
       const $data = await fetchFriends($searchInput.value);
       try {
-        $friendsWrapper.replaceChild($data, $listWrapper);
+        $listWrapper.replaceChild($data, $friends);
       } catch (error) {
         appendData($data);
       }
     } else {
       const $data = await fetchBlockeds($searchInput.value);
       try {
-        $friendsWrapper.replaceChild($data, $listWrapper);
+        $listWrapper.replaceChild($data, $friends);
       } catch (error) {
         appendData($data);
       }
@@ -140,4 +148,16 @@ export default async function Friends() {
   });
 
   //todo: scroll event
+  $friendsWrapper.addEventListener("scroll", async () => {
+    if (isFetching || !hasMore) return;
+    if (
+      $friendsWrapper.scrollTop + $friendsWrapper.clientHeight >=
+      $friendsWrapper.scrollHeight
+    ) {
+      let data;
+      if (isFriends) data = await fetchFriends($searchInput.value);
+      else data = await fetchBlockeds($searchInput.value);
+      $listWrapper.appendChild(data);
+    }
+  });
 }
