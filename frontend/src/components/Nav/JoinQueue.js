@@ -2,7 +2,8 @@ import changeUrl from "../../Router.js";
 import { getAccessToken } from "../../state/State.js";
 
 const url = `ws://0.0.0.0:8000/ws/join_queue/?token=${getAccessToken()}`;
-const socket = new WebSocket(url);
+let socket;
+if (!socket) socket = new WebSocket(url);
 
 socket.onopen = () => {
   console.log("[open]");
@@ -27,8 +28,8 @@ export function joinNormalQueue(data) {
         //todo: chat game_id
       }
       if (res.status === "game_start_soon") {
-        res[mode] = data.game_mode;
-        res[option] = "NORMAL";
+        res["mode"] = data.game_mode;
+        res["option"] = "NORMAL";
         changeUrl("/game", res);
       }
     };
@@ -49,10 +50,13 @@ export function joinTournamentQueue(data) {
     socket.send(JSON.stringify(data));
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
+      console.log(res);
       if (res.status === "game create success") {
         //todo: chat room_id
       }
       if (res.status === "success") {
+        res["mode"] = "SEMI_FINAL";
+        console.log(res);
         changeUrl("/gameroom", res);
       }
     };
