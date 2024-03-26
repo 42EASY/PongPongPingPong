@@ -66,10 +66,15 @@ export default function ChatRoom(user) {
   $chatsWrapper.innerHTML = "";
 
   const me = getMyInfo();
+  console.log(me);
   const roomName = createRoomName(me.user_id, user.user_id);
 
   //타이틀
-  const $title = Title(user.result);
+  const $titleBox = document.createElement("div");
+  $titleBox.classList.add("titleBox");
+  $chatsWrapper.appendChild($titleBox);
+
+  const $title = Title(user);
   $titleBox.appendChild($title);
 
   // 이전 채팅 내용 받아오기
