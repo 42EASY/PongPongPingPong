@@ -17,7 +17,8 @@ export default function Friend(user) {
   const $optionsIcon = document.createElement("i");
   $optionsIcon.classList.add("bi", "bi-three-dots-vertical");
 
-  const $options = Options(user.user_id);
+  // MEMO: user_id -> user 객체로 변경
+  const $options = Options(user);
 
   const $friendImage = document.createElement("img");
   $friendImage.classList.add("profileImg");
