@@ -29,10 +29,6 @@ export default function Chat() {
   const $title = Title();
   $titleBox.appendChild($title);
 
-  //검색
-  const $search = Search();
-  $titleBox.appendChild($search);
-
   //채팅 목록
   const $listWrapper = document.createElement("div");
   $listWrapper.classList.add("listWrapper");
