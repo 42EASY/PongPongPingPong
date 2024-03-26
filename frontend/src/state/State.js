@@ -93,7 +93,7 @@ const getImage = () => {
 
 const getMyInfo = () => {
   return {
-    user_id: getUserId(),
+    user_id: parseInt(getUserId()),
     nickname: getNickname(),
     image_url: getImage(),
   };
