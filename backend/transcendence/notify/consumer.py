@@ -2,22 +2,23 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from social.models import Friend
+from members.models import Members
 import json
 import redis
 
-redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0)
+redis_client = redis.Redis(host='redis', port=6379, db=0)
+
+def json_encode(data):
+    return json.dumps(data, ensure_ascii=False)
 
 class NotifyConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.user = self.scope["user"]
 		await self.accept()
 
-		if self.user.is_authenticated:
-			await self.add_channel_name(self.user.id, self.channel_name)
-			# 사용자를 온라인으로 표시하는 로직
-			await self.mark_user_online(self.user.id)
-			# 친구들에게 사용자의 상태 변경 알림
-			await self.notify_friends_user_online(self.user.id)
+		await self.add_channel_name(self.user.id, self.channel_name)
+		# 사용자를 온라인으로 표시하는 로직
+		await self.mark_user_online(self.user.id)
 
 	async def disconnect(self, close_code):
 		user_id = self.user.id
@@ -34,8 +35,6 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 				await self.delete_chat_room_if_empty(room_name)
 			# 유저 채팅방 삭제
 			await self.delete_user_chats(user_id)
-			# 사용자의 친구들에게 사용자가 오프라인임을 알림
-			await self.notify_friends_user_offline(user_id)
 	
 	@sync_to_async
 	def add_channel_name(self, user_id, channel_name):
@@ -52,11 +51,13 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 	@sync_to_async
 	def mark_user_online(self, user_id):
 		# Redis를 이용해 사용자를 온라인으로 표시
+		Members.objects.filter(id=user_id).update(status='ONLINE')
 		redis_client.sadd("online_users", user_id)
 
 	@sync_to_async
 	def mark_user_offline(self, user_id):
 		# Redis를 이용해 사용자를 오프라인으로 표시
+		Members.objects.filter(id=user_id).update(status='OFFLINE')
 		redis_client.srem("online_users", user_id)
 
 	@sync_to_async
@@ -101,6 +102,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 	@sync_to_async
 	def is_user_online(self, user_id):
 		online_users = redis_client.smembers("online_users")
+		print(online_users)
 		return str(user_id).encode() in online_users
 
 	async def notify_friends_user_online(self, user_id):
@@ -131,8 +133,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 	
 	async def notify_new_chat(self, event):
 		sender_info = event['sender_info']
-
-		await self.send(text_data=json.dumps({
+		await self.send(text_data=json_encode({
 			"action": "notify_new_chat",
 			"sender": sender_info
 		}))
@@ -142,7 +143,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 		user_id = event['user_id']
 
 		# 클라이언트에게 상태 변경 알림을 전송
-		await self.send(text_data=json.dumps({
+		await self.send(text_data=json_encode({
 			'action': 'update_friends_status',
 			'user_id': user_id,
 			'status': 'ONLINE',
@@ -152,7 +153,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 		user_id = event['user_id']
 
 		# 클라이언트에게 상태 변경 알림을 전송
-		await self.send(text_data=json.dumps({
+		await self.send(text_data=json_encode({
 			'action': 'update_friends_status',
 			'user_id': user_id,
 			'status': 'OFFLINE',
