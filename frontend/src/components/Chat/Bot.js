@@ -1,3 +1,5 @@
+import ChatRoom from "../../pages/ChatRoom.js";
+
 export default function Bot() {
   const $botWrapper = document.createElement("div");
   $botWrapper.classList.add("chatWrapper");
@@ -18,7 +20,9 @@ export default function Bot() {
   $profileInfo.appendChild($profileName);
   $botWrapper.appendChild($profileInfo);
 
-  $botWrapper.addEventListener("dbclick", () => {});
+  $botWrapper.addEventListener("click", () => {
+    ChatRoom();
+  });
 
   return $botWrapper;
 }
