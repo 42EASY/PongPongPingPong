@@ -436,7 +436,6 @@ input:focus {
   align-items: start;
   justify-content: center;
   border-radius: 4px;
-  background-color: var(--lightGray);
   cursor: pointer;
 }
 
@@ -472,6 +471,26 @@ input:focus {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.8;
+}
+
+.botChatContent {
+  font-size: 20px;
+  font-weight: 400;
+  padding: 4px;
+}
+
+.chatContentBtn {
+  font-size: 16px;
+  font-weight: 400;
+  color: white;
+  background-color: var(--green);
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+
+.invalidBtn {
+  pointer-events: none;
+  background-color: var(--gray);
 }
 
 .infoWrapper {
