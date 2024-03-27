@@ -624,3 +624,12 @@ input:focus {
   align-items: center;
   margin-top: 120px;
 }
+
+.chatRoomListWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  margin-top: 48px;
+}
