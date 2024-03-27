@@ -35,7 +35,9 @@ export default function Redirect() {
           data.result.user_id,
           data.result.access_token,
           data.result.email,
-          data.result.is_2fa
+          data.result.is_2fa,
+          data.result.nickname,
+          data.result.image_url
         );
         if (data.result.is_2fa === true) {
           console.log("모달"); //todo: 2차인증 모달창 띄우기
@@ -46,7 +48,9 @@ export default function Redirect() {
           data.result.user_id,
           data.result.access_token,
           data.result.email,
-          data.result.is_2fa
+          data.result.is_2fa,
+          data.result.nickname,
+          data.result.image_url
         );
         changeUrl("/register", true);
       }
