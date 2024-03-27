@@ -1,5 +1,6 @@
 import changeUrl from "../../Router.js";
 import ChatRoom from "../../pages/ChatRoom.js";
+import { inviteGame } from "../Nav/InviteQueue.js";
 
 export default function Options(user) {
   const $OptionsWrapper = document.createElement("div");
@@ -29,7 +30,9 @@ export default function Options(user) {
   $gameOpt.classList.add("list-group-item", "optionsItem");
   $gameOpt.innerHTML = "게임 초대하기";
   $Options.appendChild($gameOpt);
-  // todo: 게임 초대하기
+  $gameOpt.addEventListener("click", () => {
+    inviteGame(id, status);
+  });
 
   const $unfriendOpt = document.createElement("li");
   $unfriendOpt.classList.add("list-group-item", "optionsItem", "optionListRed");

@@ -1,11 +1,11 @@
 import Nav from "./Nav.js";
 import WaitingPlayer from "../components/GameRoom/WaitingPlayer.js";
-import { getAccessToken, getUserId } from "../state/State.js";
-import Modal from "../components/Modal/Modal.js";
-import { startCount } from "../components/GameRoom/TimerRing.js";
+import { getAccessToken } from "../state/State.js";
 import changeUrl from "../Router.js";
 
-export default function GameRoom(tournament_id) {
+let socket;
+
+export default function GameRoom(data) {
   Nav();
 
   const $app = document.querySelector(".App");
@@ -19,37 +19,58 @@ export default function GameRoom(tournament_id) {
   $waitingPlayers.id = "waitingPlayers";
   $gameRoom.appendChild($waitingPlayers);
 
-  // const url = `ws://localhost:8000/ws/join_room/${tournament_id.toString()}/?token=${getAccessToken()}`;
-  // let socket = new WebSocket(url);
-  // let data = {};
-  // socket.onopen = () => {
-  //   socket.send(JSON.stringify(data));
-  // };
-  // socket.onmessage = (e) => {
-  //   const res = JSON.stringify(e.data);
-  // };
-
+  let playerLength = 4;
+  if (data.mode === "FINAL") playerLength = 2;
   const waitingPlayersArr = [];
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < playerLength; i++) {
     waitingPlayersArr[i] = document.createElement("div");
     waitingPlayersArr[i].id = "waitingPlayer" + i;
     $waitingPlayers.appendChild(waitingPlayersArr[i]);
   }
-  //0 : profile, 1: empty, 2: waiting friend
-  for (let i = 0; i < 4; i++) {
-    waitingPlayersArr[i].innerHTML = "";
-    if (i == 0) {
-      waitingPlayersArr[i].appendChild(WaitingPlayer(0));
-    } else if (i == 1) {
-      waitingPlayersArr[i].appendChild(WaitingPlayer(2));
-      let sec = 10;
-      startCount(waitingPlayersArr[i], sec);
-      setTimeout(() => {
-        waitingPlayersArr[i].innerHTML = "";
-        waitingPlayersArr[i].appendChild(WaitingPlayer(1));
-      }, sec * 1000);
-    } else {
-      waitingPlayersArr[i].appendChild(WaitingPlayer(1));
+
+  const url = `ws://0.0.0.0:8000/ws/join_room/${
+    data.room_id
+  }/?token=${getAccessToken()}`;
+  if (!socket) socket = new WebSocket(url);
+
+  socket.onopen = () => {
+    if (data.mode === "SEMI_FINAL")
+      socket.send(JSON.stringify({ action: "join_room" }));
+    else if (data.mode === "FINAL")
+      socket.send(
+        JSON.stringify({ action: "join_final", room_id: data.room_id })
+      );
+  };
+
+  socket.onmessage = (e) => {
+    let res = JSON.parse(e.data);
+    if (res.status === "semi_final_game_start_soon") {
+      res["mode"] = "SEMI_FINAL";
+      changeUrl("/game", res);
     }
-  }
+    if (res.status === "final_game_start_soon") {
+      res["mode"] = "FINAL";
+      changeUrl("/game", res);
+    }
+    //todo: semi_final userlist || final userlist
+    if (res.status === "") {
+      let i;
+      for (i = 0; i < res.list.length; i++) {
+        waitingPlayersArr[i].innerHTML = WaitingPlayer(res.list[i]).innerHTML;
+      }
+      for (let j = i; j < playerLength; j++) {
+        waitingPlayersArr[j].innerHTML = WaitingPlayer().innerHTML;
+      }
+    }
+  };
+
+  socket.onclose = (e) => {
+    if (e.wasClean) console.log("[close] - normal");
+    else console.log("[close] - abnormal");
+  };
+
+  socket.onerror = (e) => {
+    console.log("[error]");
+    console.log(e);
+  };
 }
