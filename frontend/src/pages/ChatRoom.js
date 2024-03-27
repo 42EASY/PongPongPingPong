@@ -54,11 +54,13 @@ async function receiveMessage(user, data, roomName) {
   }))
 }
 
-async function fetchMessages(list) {
+function fetchMessages(list) {
   const $chatContentsWrapper = document.querySelector(".chatContentsWrapper");
 
-  const $list = await Messages(list);
-  $chatContentsWrapper.appendChild($list);
+  for (const message of list) {
+    const $chat = ChatContent(message.sender, message);
+    $chatContentsWrapper.appendChild($chat);
+  }
 }
 
 export default function ChatRoom(user) {
@@ -83,20 +85,20 @@ export default function ChatRoom(user) {
   $chatContentsWrapper.id = "chatContents";
   $chatsWrapper.appendChild($chatContentsWrapper);
 
-  socket.send(JSON.stringify({ 
+  socket.send(JSON.stringify({
     action: "fetch_messages",
     room_name: roomName,
   }))
 
   socket.onmessage = function(event) {
     const data = JSON.parse(event.data);
-    console.log("onmessage");
     if (data.action === "fetch_messages") {
       const messages = data.messages;
-      console.log(messages);
       fetchMessages(messages);
+      $chatsWrapper.scrollTop = $chatsWrapper.scrollHeight;
     } else if (data.action === "receive_message") {
       receiveMessage(user, data, roomName);
+      $chatsWrapper.scrollTop = $chatsWrapper.scrollHeight;
     }
   };
 
