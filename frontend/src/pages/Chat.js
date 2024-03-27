@@ -2,12 +2,25 @@ import Title from "../components/Chat/Title.js";
 import Search from "../components/Friends/Search.js";
 import List from "../components/Chat/ChatList.js";
 import WebSocketManager from '../state/WebSocketManager.js';
+import ChatRoom from "../components/Chat/Chat.js";
+import NoChat from "../components/Chat/NoChat.js";
 
-async function fetchChats(list) {
-  const $wrapper = document.querySelector(".listWrapper");
+function fetchChats(data) {
+  const $chatRoomListWrapper = document.querySelector(".chatRoomListWrapper");
 
-  const $list = await List(list);
-  $wrapper.appendChild($list);
+  const len = data.length;
+
+  if (len === 0) {
+    const $noChat = NoChat();
+    $chatRoomListWrapper.appendChild($noChat);
+  } else {
+    for (let i = 0; i < len; i++) {
+      const user = data[i].user_info;
+      const cnt = data[i].unread_messages_count;
+      const $chat = ChatRoom(user, cnt);
+      $chatRoomListWrapper.appendChild($chat);
+    }
+  }
 }
 
 export default function Chat() {
@@ -30,10 +43,10 @@ export default function Chat() {
   $titleBox.appendChild($title);
 
   //채팅 목록
-  const $listWrapper = document.createElement("div");
-  $listWrapper.classList.add("listWrapper");
-  $chatsWrapper.appendChild($listWrapper);
-  
+  let $chatRoomListWrapper = document.createElement("div");
+  $chatRoomListWrapper.classList.add("chatRoomListWrapper");
+  $chatsWrapper.appendChild($chatRoomListWrapper);
+
   socket.send(JSON.stringify({ action: "fetch_chat_list" }));
 
   socket.onmessage = function(event) {
