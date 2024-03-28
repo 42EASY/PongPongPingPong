@@ -1,31 +1,23 @@
 import Chat from "./Chat.js";
 import NoChat from "./NoChat.js";
-import NoSearch from "../Friends/NoSearch.js";
-import { getUserInfo } from "../Main/UserApi.js";
 
 export default async function ChatList(data) {
-  const $chatListWrapper = document.createElement("div");
-  $chatListWrapper.classList.add("chatListWrapper");
+  const $chatRoomListWrapper = document.createElement("div");
+  $chatRoomListWrapper.classList.add("chatRoomListWrapper");
 
   const len = data.length;
-  const keyword = document.getElementById("searchInput").value;
 
   if (len === 0) {
-    if (keyword === "") {
-      $chatListWrapper.style.flexDirection = "unset";
-      const $noChat = NoChat();
-      $chatListWrapper.appendChild($noChat);
-    } else {
-      const $noSearch = NoSearch();
-      $chatListWrapper.appendChild($noSearch);
-    }
+    const $noChat = NoChat();
+    $chatRoomListWrapper.appendChild($noChat);
   } else {
     for (let i = 0; i < len; i++) {
-      const user = await getUserInfo(data[i].id);
-      const $chat = Chat(user.result, data[i].cnt);
-      $chatListWrapper.appendChild($chat);
+      const user = data[i].user_info;
+      const cnt = data[i].unread_messages_count;
+      const $chat = Chat(user, cnt);
+      $chatRoomListWrapper.appendChild($chat);
     }
   }
 
-  return $chatListWrapper;
+  return $chatRoomListWrapper;
 }

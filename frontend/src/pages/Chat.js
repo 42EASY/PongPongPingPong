@@ -1,17 +1,33 @@
 import Title from "../components/Chat/Title.js";
 import Search from "../components/Friends/Search.js";
 import List from "../components/Chat/ChatList.js";
+import WebSocketManager from '../state/WebSocketManager.js';
+import ChatRoom from "../components/Chat/Chat.js";
+import NoChat from "../components/Chat/NoChat.js";
 
-async function fetchChats(list) {
-  const $wrapper = document.querySelector(".listWrapper");
+function fetchChats(data) {
+  const $chatRoomListWrapper = document.querySelector(".chatRoomListWrapper");
 
-  const $list = await List(list);
-  $wrapper.appendChild($list);
+  const len = data.length;
+
+  if (len === 0) {
+    const $noChat = NoChat();
+    $chatRoomListWrapper.appendChild($noChat);
+  } else {
+    for (let i = 0; i < len; i++) {
+      const user = data[i].user_info;
+      const cnt = data[i].unread_messages_count;
+      const $chat = ChatRoom(user, cnt);
+      $chatRoomListWrapper.appendChild($chat);
+    }
+  }
 }
 
 export default function Chat() {
   const $sidebar = document.querySelector(".sidebar");
   $sidebar.innerHTML = "";
+
+  const socket = WebSocketManager.getInstance();
 
   //사이드바 영역
   const $chatsWrapper = document.createElement("div");
@@ -26,23 +42,20 @@ export default function Chat() {
   const $title = Title();
   $titleBox.appendChild($title);
 
-  //검색
-  const $search = Search();
-  $titleBox.appendChild($search);
-
   //채팅 목록
-  const $listWrapper = document.createElement("div");
-  $listWrapper.classList.add("listWrapper");
-  $chatsWrapper.appendChild($listWrapper);
+  let $chatRoomListWrapper = document.createElement("div");
+  $chatRoomListWrapper.classList.add("chatRoomListWrapper");
+  $chatsWrapper.appendChild($chatRoomListWrapper);
 
-  /*
-  todo : 메세지 수신한 경우 예시
-  socket.onmessage = () => {
-    const list = [{ id: 2, cnt: 0 }, { id: 3, cnt: 4 }]);
-    addChatContents(id, {socket response});
-    fetchChats(list);
-  }
-  */
+  socket.send(JSON.stringify({ action: "fetch_chat_list" }));
+
+  socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    if (data.action === "fetch_chat_list") {
+      const list = data.data;
+      fetchChats(list);
+    }
+  };
 
   //사이드바 외부 영역
   const $overlay = document.createElement("div");

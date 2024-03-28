@@ -1,42 +1,106 @@
 import Title from "../components/Chat/ChatRoom/Title.js";
-import ChatContents from "../components/Chat/ChatRoom/ChatContents.js";
+import Messages from "../components/Chat/ChatRoom/ChatContents.js";
 import ChatContent from "../components/Chat/ChatRoom/ChatContent.js";
 import ChatInput from "../components/Chat/ChatRoom/ChatInput.js";
-import { getUserInfo } from "../components/Main/UserApi.js";
-import { getMyInfo, getUserId } from "../state/State.js";
-import { addChatContent } from "../state/ChatState.js";
+import { getMyInfo } from "../state/State.js";
+import WebSocketManager from '../state/WebSocketManager.js';
 
-async function sendMessage(id) {
+const socket = WebSocketManager.getInstance();
+
+function createRoomName(meId, userId) {
+  const roomName = `chat_${Math.min(meId, userId)}_${Math.max(meId, userId)}`;
+  return roomName;
+}
+
+async function sendMessage(user, me, roomName) {
   const $chatInput = document.querySelector(".chatInput");
   const $chatContents = document.querySelector("#chatContents");
+
+  // 입력 필드가 비어 있으면 함수 실행을 중단
+  if ($chatInput.value.trim() === "") {
+    return;
+  }
+
+  // TODO: 로컬과 서버 시간 맞추기
   const data = {
-    id: getUserId(),
-    timestamp: new Date().toISOString(),
+    sender_id: me.user_id,
+    receiver_id: user.user_id,
     message: $chatInput.value,
+    timestamp: new Date().toISOString(),
   };
-  $chatContents.appendChild(ChatContent(getMyInfo(), data));
-  addChatContent(id, data);
+
+  const messageToSend = JSON.stringify({
+    action: "send_message",
+    ...data,
+  });
+  socket.send(messageToSend);
+
+  socket.send(JSON.stringify({
+    action: "update_read_time",
+    room_name: roomName,
+  }))
+
+  $chatContents.appendChild(ChatContent(me, data));
   $chatInput.value = "";
 }
 
-export default async function ChatRoom(id) {
+async function receiveMessage(user, data, roomName) {
+  const $chatContents = document.querySelector("#chatContents");
+
+  $chatContents.appendChild(ChatContent(user, data));
+  socket.send(JSON.stringify({
+    action: "update_read_time",
+    room_name: roomName,
+  }))
+}
+
+function fetchMessages(list) {
+  const $chatContentsWrapper = document.querySelector(".chatContentsWrapper");
+
+  for (const message of list) {
+    const $chat = ChatContent(message.sender, message);
+    $chatContentsWrapper.appendChild($chat);
+  }
+}
+
+export default function ChatRoom(user) {
   const $chatsWrapper = document.querySelector(".sidebarArea");
   $chatsWrapper.innerHTML = "";
 
-  const user = await getUserInfo(id);
+  const me = getMyInfo();
+  console.log(me);
+  const roomName = createRoomName(me.user_id, user.user_id);
 
+  //타이틀
   const $titleBox = document.createElement("div");
   $titleBox.classList.add("titleBox");
   $chatsWrapper.appendChild($titleBox);
 
-  //타이틀
-  const $title = Title(user.result);
+  const $title = Title(user);
   $titleBox.appendChild($title);
 
-  //채팅 내용
-  const $chatContents = ChatContents(user.result);
-  $chatContents.id = "chatContents";
-  $chatsWrapper.appendChild($chatContents);
+  // 이전 채팅 내용 받아오기
+  const $chatContentsWrapper = document.createElement("div");
+  $chatContentsWrapper.classList.add("chatContentsWrapper");
+  $chatContentsWrapper.id = "chatContents";
+  $chatsWrapper.appendChild($chatContentsWrapper);
+
+  socket.send(JSON.stringify({
+    action: "fetch_messages",
+    room_name: roomName,
+  }))
+
+  socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    if (data.action === "fetch_messages") {
+      const messages = data.messages;
+      fetchMessages(messages);
+      $chatsWrapper.scrollTop = $chatsWrapper.scrollHeight;
+    } else if (data.action === "receive_message") {
+      receiveMessage(user, data, roomName);
+      $chatsWrapper.scrollTop = $chatsWrapper.scrollHeight;
+    }
+  };
 
   //채팅 입력칸
   const $chatInputBox = ChatInput();
@@ -45,7 +109,7 @@ export default async function ChatRoom(id) {
   //채팅 전송 버튼 클릭 시 이벤트
   const $chatSubmit = document.querySelector(".chatSubmit");
   $chatSubmit.addEventListener("click", () => {
-    sendMessage(id);
+    sendMessage(user, me, roomName);
     $chatsWrapper.scrollTop = $chatsWrapper.scrollHeight;
   });
 
@@ -53,8 +117,8 @@ export default async function ChatRoom(id) {
   const $chatInput = document.querySelector(".chatInput");
   $chatInput.focus();
   $chatInput.addEventListener("keyup", (e) => {
-    if (e.keyCode === 13) {
-      sendMessage(id);
+    if (e.keyCode === 13 && $chatInput.value.trim() !== "") {
+      sendMessage(user, me, roomName);
       $chatsWrapper.scrollTop = $chatsWrapper.scrollHeight;
     }
   });

@@ -104,6 +104,11 @@ export default async function Friends() {
     curPage = 1;
     hasMore = true;
     $searchInput.value = "";
+    $friendsWrapper.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+
+    let childNodes = $listWrapper.childNodes;
+    for (let i = childNodes.length - 1; i > 0; i--)
+      $listWrapper.removeChild(childNodes[i]);
     if (e.target.classList.contains("friendList")) {
       $friendList.classList.add("friendsTitleSelect", "titleSelect");
       $blockedList.classList.remove("friendsTitleSelect", "titleSelect");
@@ -127,9 +132,15 @@ export default async function Friends() {
 
   //검색 입력 이벤트
   const $searchInput = document.getElementById("searchInput");
+  $searchInput.addEventListener("focus", () => {
+    $friendsWrapper.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  });
   $searchInput.addEventListener("keyup", async () => {
     curPage = 1;
     hasMore = true;
+    let childNodes = $listWrapper.childNodes;
+    for (let i = childNodes.length - 1; i > 0; i--)
+      $listWrapper.removeChild(childNodes[i]);
     if (isFriends) {
       const $data = await fetchFriends($searchInput.value);
       try {
@@ -147,7 +158,7 @@ export default async function Friends() {
     }
   });
 
-  //todo: scroll event
+  //scroll event
   $friendsWrapper.addEventListener("scroll", async () => {
     if (isFetching || !hasMore) return;
     if (

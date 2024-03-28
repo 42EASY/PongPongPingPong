@@ -1,8 +1,11 @@
 import ChatRoom from "../../pages/ChatRoom.js";
 import { delChatContent } from "../../state/ChatState.js";
 import Modal from "../Modal/Modal.js";
+import WebSocketManager from "../../state/WebSocketManager.js";
 
 export default function Chat(user, cnt) {
+  const socket = WebSocketManager.getInstance();
+  
   const $chatWrapper = document.createElement("div");
   $chatWrapper.classList.add("chatWrapper");
 
@@ -57,8 +60,8 @@ export default function Chat(user, cnt) {
   });
 
   //채팅방 더블클릭 시 이벤트
-  $chatWrapper.addEventListener("dblclick", () => {
-    ChatRoom(user.user_id);
+  $chatWrapper.addEventListener("click", () => {
+    ChatRoom(user);
   });
 
   return $chatWrapper;
