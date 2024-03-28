@@ -421,7 +421,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 self.lock.release_lock()
                 await self.send_json({
                     "status": "fail",
-                    "message": "redis에 접근 중 오류가 발생했습니다"
+                    "message": "존재하지 않는 게임입니다"
                 })
                 return  
             
@@ -981,7 +981,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 self.lock.release_lock()
                 await self.send_json({
                     "status": "fail",
-                    "message": "redis에 접근 중 오류가 발생했습니다"
+                    "message": "존재하지 않는 게임입니다"
                 })
                 return  
             
