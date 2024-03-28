@@ -26,7 +26,7 @@ class LoginView(APIView):
 				'code': 400,
 				'message': 'Bad request'
 			}, status=400)
-		
+
 		token_response = requests.post('https://api.intra.42.fr/oauth/token', data={
 			'grant_type': 'authorization_code',
 			'client_id': settings.SOCIAL_AUTH_42_KEY,
@@ -34,7 +34,7 @@ class LoginView(APIView):
 			'code': code,
 			'redirect_uri': settings.LOGIN_CALLBACK_URI,
 		})
-	
+
 		ft_access_token = token_response.json().get('access_token')
 		if not ft_access_token:
 			return JsonResponse({
@@ -69,7 +69,7 @@ class LoginView(APIView):
 		refresh_token_lifetime = int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds())
 
 		cache.set(refresh_token, member.id, timeout=refresh_token_lifetime)
-		
+
 		res = JsonResponse({
 			'code': 201 if created else 200,
 			'message': 'created' if created else 'ok',
@@ -79,6 +79,8 @@ class LoginView(APIView):
 				'user_id': member.id,
 				'email': member.email,
 				'is_2fa': member.is_2fa,
+				'nickname': member.nickname,
+				'image_url': member.image_url,
 			}
 		})
 

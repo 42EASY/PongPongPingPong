@@ -1,10 +1,12 @@
 //set
-const setLoginState = (state, userId, accessToken, email, is2fa) => {
+const setLoginState = (state, userId, accessToken, email, is2fa, nickname, image_url) => {
   localStorage.setItem("isLogin", state);
   localStorage.setItem("accessToken", accessToken);
   localStorage.setItem("userId", userId);
   localStorage.setItem("email", email);
   localStorage.setItem("is2fa", is2fa);
+  localStorage.setItem("nickname", nickname);
+  localStorage.setItem("image", image_url);
 };
 
 const setLogoutState = () => {
