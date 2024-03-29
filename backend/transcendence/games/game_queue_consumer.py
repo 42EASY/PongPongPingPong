@@ -441,7 +441,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         if (value is None):
             await self.send_json({
                 "status": "fail",
-                "message": "잘못된 room_id 입니다"
+                "message": "존재하지 않는 게임입니다"
             })
             return
         
@@ -1000,7 +1000,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         if (value is None):
             await self.send_json({
                 'status': 'fail',
-                'message': '잘못된 game_id 입니다'
+                'message': '존재하지 않는 게임입니다'
             })
             return
     
