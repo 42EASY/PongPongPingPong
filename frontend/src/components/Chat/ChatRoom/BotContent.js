@@ -52,7 +52,7 @@ export default function BotContent(data) {
     $botContentBox.appendChild($botContentBtn);
 
     $botContentBtn.onclick = () => {
-      // todo: gameResultTabe 모달 띄우기
+      Modal("gameResultTable", data.players);
     };
   }
   if (data.action === "bot_notify_invited_normal_game") {
