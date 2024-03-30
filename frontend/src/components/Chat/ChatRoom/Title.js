@@ -16,8 +16,11 @@ export default function Title(user) {
   $title.classList.add("chatTitle");
   $title.innerHTML = user.nickname;
 
-  const $closeButton = document.createElement("i");
-  $closeButton.classList.add("closeButton", "bi", "bi-x-lg");
+  const $closeButton = document.createElement("div");
+  $closeButton.classList.add("closeButton");
+  const $closeButtonIcon = document.createElement("i");
+  $closeButtonIcon.classList.add("bi", "bi-x-lg");
+  $closeButton.appendChild($closeButtonIcon);
 
   $chatRoomInfo.appendChild($profileImg);
   $chatRoomInfo.appendChild($title);

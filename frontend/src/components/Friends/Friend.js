@@ -17,11 +17,11 @@ export default function Friend(user) {
   const $optionsIcon = document.createElement("i");
   $optionsIcon.classList.add("bi", "bi-three-dots-vertical");
 
-  const $options = Options(user.user_id);
+  // MEMO: user_id -> user 객체로 변경
+  const $options = Options(user);
 
   const $friendImage = document.createElement("img");
   $friendImage.classList.add("profileImg");
-  if (user.image_url === null) user.image_url = "./src/images/none_profile.png";
   $friendImage.setAttribute("src", user.image_url);
   $friendImage.setAttribute("alt", "profile_image");
 
@@ -62,7 +62,7 @@ export default function Friend(user) {
   // 친구 끊기 클릭 이벤트
   const $unfriendOpt = $options.querySelector("#unfriendOpt");
   $unfriendOpt.addEventListener("click", () => {
-    Modal("deleteFriend").then((result) => {
+    Modal("deleteFriend", user.nickname).then((result) => {
       if (result.isPositive) {
         deleteFriend(user.user_id);
         $friendWrapper.style.display = "none";
@@ -73,7 +73,7 @@ export default function Friend(user) {
   // 친구 차단하기 클릭 이벤트
   const $blockOpt = $options.querySelector("#blockOpt");
   $blockOpt.addEventListener("click", () => {
-    Modal("blockFriend").then((result) => {
+    Modal("blockFriend", user.nickname).then((result) => {
       if (result.isPositive) {
         postBlock(user.user_id);
         $friendWrapper.style.display = "none";

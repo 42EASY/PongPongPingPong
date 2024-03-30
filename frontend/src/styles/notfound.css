@@ -1,0 +1,45 @@
+:root {
+  --green: #3ec70b;
+}
+
+.notFound {
+  width: 100%;
+  height: 1000px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.errHeader {
+  font-size: 50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.errImage {
+  width: 1000px;
+  position: absolute;
+  z-index: -1;
+  opacity: 30%;
+}
+
+.errBody {
+  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.homeButton {
+  margin-top: 40px;
+  width: 200px;
+  color: white;
+  background-color: var(--green);
+  display: flex;
+  justify-content: space-evenly;
+  font-size: 20px;
+}

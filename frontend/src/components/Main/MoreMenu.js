@@ -1,8 +1,9 @@
 import OtherBtn from "./OtherBtn.js";
 import Modal from "../Modal/Modal.js";
 import { postBlock } from "./UserApi.js";
+import { inviteGame } from "../Nav/InviteQueue.js";
 
-export default function MoreMenu(id) {
+export default function MoreMenu(user) {
   const $MoreMenuWrapper = document.createElement("div");
   const $MoreMenu = document.createElement("ul");
   const $InviteGameOption = document.createElement("li");
@@ -25,16 +26,16 @@ export default function MoreMenu(id) {
   $BlockOption.append("차단하기");
 
   $InviteGameOption.addEventListener("click", () => {
-    // todo: 게임 초대
+    inviteGame(user.user_id, user.status);
   });
 
   $BlockOption.addEventListener("click", () => {
-    Modal("blockFriend").then((result) => {
+    Modal("blockFriend", user.nickname).then((result) => {
       if (result.isPositive) {
-        postBlock(id);
+        postBlock(user.user_id, user.status);
         const $ProfileBtnBox = document.querySelector("#profileBtnBox");
         $ProfileBtnBox.innerHTML = "";
-        $ProfileBtnBox.appendChild(OtherBtn(id, "BLOCK"));
+        $ProfileBtnBox.appendChild(OtherBtn(user.user_id, "BLOCK"));
       }
     });
   });

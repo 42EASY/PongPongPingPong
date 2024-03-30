@@ -67,21 +67,23 @@ export default function TwoFactorAuth(is2fa) {
 
     if (is2fa === "true") {
       //is2fa가 true인 경우, otp 인증
-      Modal("otp").then(async (result) => {
-        if (result.isPositive === true) {
-          const status = await call2faOtqApi(result.input);
-          console.log(status);
-          if (status === true) {
-            console.log("2차 인증 성공");
-            setIs2fa(false);
-            return;
-          } else if (status === false) {
-            console.log("2차 인증 실패");
+      Modal("tfa", `data:image/png;base64,${data.result.encoded_image}`).then(
+        async (result) => {
+          if (result.isPositive === true) {
+            const status = await call2faOtqApi(result.input);
+            console.log(status);
+            if (status === true) {
+              console.log("2차 인증 성공");
+              setIs2fa(false);
+              return;
+            } else if (status === false) {
+              console.log("2차 인증 실패");
+            }
           }
+          $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
+          $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
         }
-        $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
-        $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
-      });
+      );
     }
   });
 

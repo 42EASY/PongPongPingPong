@@ -1,10 +1,12 @@
 //set
-const setLoginState = (state, userId, accessToken, email, is2fa) => {
+const setLoginState = (state, userId, accessToken, email, is2fa, nickname, image_url) => {
   localStorage.setItem("isLogin", state);
   localStorage.setItem("accessToken", accessToken);
   localStorage.setItem("userId", userId);
   localStorage.setItem("email", email);
   localStorage.setItem("is2fa", is2fa);
+  localStorage.setItem("nickname", nickname);
+  localStorage.setItem("image", image_url);
 };
 
 const setLogoutState = () => {
@@ -91,6 +93,14 @@ const getImage = () => {
   return localStorage.getItem("image");
 };
 
+const getMyInfo = () => {
+  return {
+    user_id: parseInt(getUserId()),
+    nickname: getNickname(),
+    image_url: getImage(),
+  };
+};
+
 const logout = () => {
   const url = "http://localhost:8000/api/v1/auth/logout";
 
@@ -123,5 +133,6 @@ export {
   getIs2fa,
   getNickname,
   getImage,
+  getMyInfo,
   logout,
 };

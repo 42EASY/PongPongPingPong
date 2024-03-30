@@ -1,0 +1,60 @@
+:root {
+	--green: #3ec70b;
+	--lightGreen: #e2f7db;
+	--lightGray: #e5e7eb;
+	--gray: #6b7280;
+	--darkGray: #d1d5db;
+	--white: #ffffff;
+  }
+  
+
+.toast {
+    visibility: visible;
+	box-sizing: border-box;
+
+	position: fixed;
+	width: 330px;
+	height: 46px;
+
+	background: #FFFFFF;
+	border: 1px solid var(--lightGray);
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+
+	text-align: center;
+	z-index: 10;
+    left: 50%;
+    transform: translateX(-50%); /* 가운데 정렬을 위해 수정 */
+    top: 50px;
+    font-size: 17px;
+
+	display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast::before {
+	content: '';
+	display: inline-block;
+	width: 24px; /* 이미지 크기 조정 */
+	height: 24px;
+	background-image: url('../images/sponge.png'); /* 이미지 경로 */
+	background-size: cover;
+	margin-right: 8px; /* 텍스트와의 간격 조정 */
+  }
+  
+
+.toast.show {
+    visibility: visible;
+    animation: toast-fadein 0.5s, toast-fadeout 0.5s 2.5s;
+}
+
+@keyframes toast-fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes toast-fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}

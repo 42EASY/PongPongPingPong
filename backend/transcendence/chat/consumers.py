@@ -1,314 +1,194 @@
-# consumers.py
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
-from channels.db import database_sync_to_async
 from datetime import datetime
-from django.conf import settings
-from social.models import Friend
+from notify.consumer import NotifyConsumer
+from channels.db import database_sync_to_async
 from members.models import Members
 import json
 import redis
 
 # Redis 클라이언트 설정
-redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0)
+redis_client = redis.Redis(host='redis', port=6379, db=0)
 
-class BaseConsumer(AsyncWebsocketConsumer):
-	async def connect(self):
-		self.user = self.scope["user"]
-		await self.accept()
-		# 사용자를 온라인으로 표시
-		await self.mark_user_online(self.user.id)
-		await self.broadcast_user_status(self.user.id, "online")
-		# 사용자의 channel name을 redis 에 저장
-		await self.save_channel_name(self.user.id, self.channel_name)
+def json_encode(data):
+    return json.dumps(data, ensure_ascii=False)
 
-	async def disconnect(self, close_code):
-		# 사용자를 오프라인으로 표시
-		await self.mark_user_offline(self.user.id)
-		await self.broadcast_user_status(self.user.id, "offline")
-		await self.delete_channel_name(self.user.id)
+# 메시지 타임스탬프를 float로 변환하는 함수
+def parse_timestamp_to_float(timestamp_str):
+    # ISO 8601 형식의 문자열을 datetime 객체로 변환
+    dt = datetime.fromisoformat(timestamp_str)
+    # datetime 객체를 Unix 타임스탬프(float)로 변환
+    return dt.timestamp()
 
-
-	@sync_to_async
-	def save_channel_name(self, user_id, channel_name):
-		redis_client.set(f"user_channel_{user_id}", channel_name)
-
-	@sync_to_async
-	def delete_channel_name(self, user_id):
-		redis_client.delete(f"user_channel_{user_id}")
-
-	@sync_to_async
-	def mark_user_online(self, user_id):
-		redis_client.sadd("online_users", user_id)
-
-	@sync_to_async
-	def mark_user_offline(self, user_id):
-		redis_client.srem("online_users", user_id)
-
-	@sync_to_async
-	def is_user_online(self, user_id):
-		return redis_client.sismember("online_users", user_id)
-
-	@database_sync_to_async
-	def get_user_friends(self, user_id):
-		friends = Friend.objects.filter(target=user_id).values_list('user', flat=True)
-		return Members.objects.filter(id__in=friends)
-
-	@sync_to_async
-	def get_channel_name(self, user_id):
-		channel_name = redis_client.get(f"user_channel_{user_id}")
-		if channel_name is not None:
-			return channel_name.decode('utf-8')
-		return None
-
-	async def broadcast_user_status(self, user_id, status):
-		friends = await self.get_user_friends(user_id)
-		for friend in friends:
-			if await self.is_user_online(friend.id):
-				friend_channel_name = await self.get_channel_name(friend.id)
-				if friend_channel_name:
-					await self.channel_layer.send(
-						friend_channel_name,
-						{
-							"type": "update_friends_status",
-							"text" : json.dumps({
-								"user_id": user_id,
-								"status": status
-							})
-						}
-					)
-	
-	async def update_friends_status(self, event):
-		# event에서 사용자 상태 정보를 추출
-		text_data_json = json.loads(event['text'])
-
-		user_id = text_data_json['user_id']
-		status = text_data_json['status']
-
-		# 클라이언트에게 상태 변경 알림을 전송
-		await self.send(text_data=json.dumps({
-			'action': 'update_friends_status',
-			'user_id': user_id,
-			'status': status,
-		}))
-
-def create_room_name(user_id, target_user_id):
-	sorted_ids = sorted([int(user_id), int(target_user_id)])
-	
-	room_name = f"{sorted_ids[0]}_{sorted_ids[1]}"
-	
-	return room_name
-	
-class ChatConsumer(BaseConsumer):
-	async def connect(self):
-		await super().connect()
-		self.target_user_id = self.scope['url_route']['kwargs']['target_user_id']
-		user_id = self.scope['user'].id
-
-		if await self.is_user_online(self.target_user_id):
-			room_name = create_room_name(user_id, self.target_user_id)
-			self.room_name = room_name
-			self.room_group_name = f'chat_{self.room_name}'
-
-			# 비동기 함수를 직접 호출
-			room_exists = await self.chat_room_exists(self.room_name)
-			
-			if not room_exists:
-				room_data = {
-					"created_at": str(datetime.now()),
-					"participants": [user_id, self.target_user_id]
-				}
-				await self.save_chat_room_to_redis(self.room_name, room_data)
-
-			# 채팅방에 연결
-			await self.channel_layer.group_add(
-				self.room_group_name,
-				self.channel_name
-			)
-		else:
-			await self.send(text_data=json.dumps({
-				'status' : 'join_chat_failed'
-			}))
-
-	async def disconnect(self, close_code):
-		# 채팅방 그룹에서 사용자를 제거
-		await self.channel_layer.group_discard(
-			self.room_group_name,
-			self.channel_name
-		)
-
-		await self.delete_chat_room_to_redis(self.room_name)
-
-		await super().disconnect(close_code)
-
+class ChatConsumer(NotifyConsumer):
 	async def receive(self, text_data):
-		# 메시지를 JSON 형태로 파싱
-		text_data_json = json.loads(text_data)
-		
-		await self.handle_chat(text_data_json)
-
-	async def handle_chat(self, data):
+		data = json.loads(text_data)
 		action = data['action']
-		if action == 'join_chat':
-			self.join_chat()
+
+		if action == 'fetch_chat_list':
+			await self.fetch_chat_list()
 		elif action == 'send_message':
-			message = data['message']
-			room_name = data['room_name']
-			if room_name == self.room_group_name:
-				await self.send_message(self.target_user_id, message)
-		elif action == 'invite_normal_game':
-			invitee_id = self.target_user_id
-			option = data['option']
-			room_name = data['room_name']
-			if room_name == self.room_group_name:
-				await self.invite_normal_game(invitee_id, option)
-		elif action == 'invite_tournament_game':
-			invitee_id = self.target_user_id
-			room_name = data['room_name']
-			if room_name == self.room_group_name:
-				await self.invite_tournament_game(invitee_id)
+			await self.send_message(data)
+		elif action == 'fetch_messages':
+			await self.fetch_messages(data)
+		elif action == 'update_read_time':
+			await self.update_read_time(data)
 
+	async def fetch_chat_list(self):
+		user_id = self.user.id
+		chat_list = await self.get_chat_list(user_id)
+		chats_info = []
+		for room_name in chat_list:
+			_, other_user_id = room_name.split('_')[1:]  # A와 B 중 나머지 하나
+			other_user_id = int(other_user_id) if other_user_id != str(user_id) else int(_)
+			unread_count = await self.get_unread_messages_count(user_id, room_name)
+			user_info = await self.get_member_info(other_user_id)
+			chats_info.append({
+				"room_name": room_name,
+				"unread_messages_count": unread_count,
+				"user_info" : user_info,
+			})
 
-	@sync_to_async
-	def chat_room_exists(self, room_name):
-		# Redis에서 채팅방 키의 존재 여부를 확인
-		return redis_client.exists(f'chat_room:{room_name}')
-
-	@sync_to_async
-	def save_chat_room_to_redis(self, room_name, room_data):
-		# room_data는 딕셔너리 형태이며, JSON 문자열로 변환하여 저장
-		redis_client.set(f"chat_room:{room_name}", json.dumps(room_data))
-
-	@sync_to_async
-	def delete_chat_room_to_redis(self, room_name):
-		redis_client.delete(f"chat_room:{room_name}")
-
-	async def join_chat(self):
-		await self.send(text_data=json.dumps({
-			'status' : 'join_chat_success',
-			'room_group_name' : self.room_group_name
+		# 클라이언트에 채팅 목록과 각 채팅방의 안 읽은 메시지 수 전송
+		await self.send(text_data=json_encode({
+			"action": "fetch_chat_list",
+			"data": chats_info
 		}))
 
-	async def send_message(self, target_user_id, message):
-		 # 현재 시간을 UTC로 기록
-		timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+	async def send_message(self, data):
+		sender_id = data['sender_id']
+		receiver_id = data['receiver_id']
 
-		message_data = {
-			'message': message,
-			'timestamp': timestamp,
-			'sender_id': self.user.id,
-		}
+		receiver_online = await self.is_user_online(receiver_id)
 
-		# 수신자의 channel_name 조회
-		receiver_channel_name = await self.get_channel_name(target_user_id)
+		if receiver_online:
+			room_name = await self.get_or_create_room(sender_id, receiver_id)
 
-		if receiver_channel_name:
-			# 수신자의 채널에 메시지 전송
-			await self.channel_layer.group_send(
-				self.room_group_name,
-				{
-					'type': 'chat_message',
-					'text': json.dumps(message_data),
-				}
-			)
+			sender_info = await self.get_member_info(sender_id)
+			receiver_info = await self.get_member_info(receiver_id)
+			message = data['message']
+
+			# 메시지 데이터에 발신자와 수신자의 프로필 정보 포함
+			message_data = {
+				"sender": sender_info,
+				"receiver": receiver_info,
+				"message": message,
+				"timestamp": datetime.utcnow().isoformat()
+			}
+
+			await self.store_message(room_name, message_data)
+
+			receiver_channels = await self.get_channel_names(receiver_id)
+
+			for channel_name in receiver_channels:
+				await self.channel_layer.send(
+					channel_name,
+					{
+						"type": "notify_new_chat",
+						"sender_info": sender_info,
+					}
+				)
+				await self.channel_layer.send(
+					channel_name,
+					{
+						"type": "receive_message",
+						"message_data": message_data,
+					}
+				)
+		else:
+			await self.send(text_data=json_encode({
+				"status": "fail",
+				"message": "현재 오프라인 상태의 유저입니다."
+			}))
+		
+	async def receive_message(self, event):
+		message_data = event['message_data']
+
+		await self.send(text_data=json_encode({
+			"action": "receive_message",
+			**message_data,
+		}))
+
+	async def fetch_messages(self, data):
+		room_name = data['room_name']
+		messages = await self.load_messages(room_name)
+
+		await self.update_last_read_time(self.user.id, room_name)
+
+		# 클라이언트에게 메시지 목록 전송
+		await self.send(text_data=json_encode({
+			"action": "fetch_messages",
+			"room_name": room_name,
+			"messages": messages
+		}))
+	
+	async def update_read_time(self, data):
+		room_name = data['room_name']
+
+		await self.update_last_read_time(self.user.id, room_name)
+
+	@sync_to_async
+	def load_messages(self, room_name):
+		# Redis에서 해당 채팅방의 모든 메시지 불러오기
+		messages = redis_client.lrange(f"chat_messages:{room_name}", 0, -1)
+		return [json.loads(message) for message in messages]
+
 
 	async def chat_message(self, event):
-		text_data_json = json.loads(event['text'])
-		message = text_data_json['message']
-		timestamp = text_data_json['timestamp']
-		sender_id = text_data_json['sender_id']
-
-		if sender_id != self.user.id:
-			# 파싱된 메시지 데이터를 클라이언트에게 전송
-			await self.send(text_data=json.dumps({
-				'action' : 'receive_message',
-				'room_name' : self.room_group_name,
-				'message': message,
-				'timestamp': timestamp,
-				'sender_id': sender_id,
-			}))
-
-	async def invite_normal_game(self, invitee_id, game_option):
-		 # 현재 시간을 UTC로 기록
-		timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-
-		# TODO: 게임 정보 받아오기 ..
-		game = {
-			'game_id' : 1,
-			'option' : game_option
-		}
-
-		message_data = {
-			'game': game,
-			'room_name' : self.room_group_name,
-			'inviter_id' : self.user.id,
-			'timestamp': timestamp,
-		}
-
-		invitee_channel_name = await self.get_channel_name(invitee_id)
-
-		if invitee_channel_name:
-			# 수신자에게 메시지 전송
-			await self.channel_layer.send(
-				invitee_channel_name,
-				{
-					'type': 'notice_invite_normal_game',
-					'text': json.dumps(message_data),
-				}
-			)
-	
-	async def notice_invite_normal_game(self, event):
-		text_data_json = json.loads(event['text'])
-
-		game = text_data_json['game']
-		inviter_id = text_data_json['inviter_id']
-		timestamp = text_data_json['timestamp']
-
-		await self.send(text_data=json.dumps({
-			'action' : 'invited_normal_game',
-			'game' : game,
-			'room_name' : self.room_group_name,
-			'inviter_id' : inviter_id,
-			'timestamp' : timestamp,
+		await self.send(text_data=json_encode({
+			event['message']
 		}))
-	
-	async def invite_tournament_game(self, invitee_id):
-		 # 현재 시간을 UTC로 기록
-		timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
 
-		# TODO: 토너먼트 로직 추가 (게임방 만들기 등...)
-		# tournament id를 줄지? 아니면.. room_id? (게임 대기방)을 줄지..
+	@sync_to_async
+	def get_unread_messages_count(self, user_id, room_name):
+		# 사용자가 마지막으로 읽은 시간 가져오기
+		last_read_time = redis_client.get(f"last_read_time:{room_name}:{user_id}")
+		if not last_read_time:
+			last_read_time = 0
+		# 마지막으로 읽은 시간 이후의 메시지 수 계산
+		messages = redis_client.lrange(f"chat_messages:{room_name}", 0, -1)
+		unread_count = sum(1 for message in messages if parse_timestamp_to_float(json.loads(message)['timestamp']) > float(last_read_time))
+		return unread_count
 
-		message_data = {
-			'tournament_id': 1,
-			'inviter_id' : self.user.id,
-			'room_name' : self.room_group_name,
-			'timestamp': timestamp,
-		}
+	@sync_to_async
+	def get_or_create_room(self, sender_id, receiver_id):
+		room_name = f"chat_{min(sender_id, receiver_id)}_{max(sender_id, receiver_id)}"
+		
+		# 채팅방이 존재하지 않으면 생성
+		if not redis_client.exists(room_name):
+			redis_client.set(room_name, json_encode([]))
+			# 채팅방에 A와 B를 참여시킴
+		redis_client.sadd(f"user_chats:{sender_id}", room_name)
+		redis_client.sadd(f"user_chats:{receiver_id}", room_name)
 
-		invitee_channel_name = await self.get_channel_name(invitee_id)
+		return room_name
 
-		if invitee_channel_name:
-			# 수신자에게 메시지 전송
-			await self.channel_layer.send(
-				invitee_channel_name,
-				{
-					'type': 'notice_invite_tournament_game',
-					'text': json.dumps(message_data),
-				}
-			)
+	@sync_to_async
+	def store_message(self, room_name, message):
+		# Redis 리스트에 메시지 저장
+		redis_client.rpush(f"chat_messages:{room_name}", json_encode(message))
+		
+		# 메시지 리스트의 크기를 제한 (최신 500개의 메시지만 유지)
+		redis_client.ltrim(f"chat_messages:{room_name}", -500, -1)
 
-	async def notice_invite_tournament_game(self, event):
-		text_data_json = json.loads(event['text'])
+	@database_sync_to_async
+	def get_member_info(self, user_id):
+		try:
+			member = Members.objects.get(id=user_id)
+			return {
+				"user_id": member.id,
+				"nickname": member.nickname,
+				"image_url": member.image_url
+			}
+		except Members.DoesNotExist:
+			return {
+				"status": "fail",
+				"message": "Member does not exist."
+			}
 
-		tournament_id = text_data_json['tournament_id']
-		inviter_id = text_data_json['inviter_id']
-		timestamp = text_data_json['timestamp']
-
-		await self.send(text_data=json.dumps({
-			'action' : 'invited_tournament_game',
-			'tournament_id' : tournament_id,
-			'room_name' : self.room_group_name,
-			'inviter_id' : inviter_id,
-			'timestamp' : timestamp,
-		}))
+	@sync_to_async
+	def update_last_read_time(self, user_id, room_name):
+		# 현재 시간을 Unix 타임스탬프로 변환
+		current_time = datetime.utcnow().timestamp()
+		# 마지막으로 읽은 시간을 Redis에 저장
+		redis_client.set(f"last_read_time:{room_name}:{user_id}", current_time)
