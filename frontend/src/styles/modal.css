@@ -1,6 +1,7 @@
 :root {
   --black: #000;
   --white: #fff;
+  --lightGreen: #e2f7db;
   --green: #3ec70b;
   --darkGray: #6b7280;
   --gray: #adadad;
@@ -167,4 +168,86 @@
 
 .timerWrapper {
   margin: 30px 50px;
+}
+
+.tableWrapper {
+  width: 400px;
+}
+
+.matchedWrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 26px;
+}
+
+.playerBox {
+  width: 80%;
+  height: 64px;
+  background-color: var(--lightGreen);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 1.6px;
+}
+
+.versusBox {
+  margin: 0px 18px;
+}
+
+.playerBoxSelected {
+  background-color: var(--green);
+  color: var(--white);
+}
+
+.rankingWrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.rankingBox {
+  height: 64px;
+  font-size: 40px;
+  font-weight: bold;
+  color: var(--green);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 8px 0px 10px;
+}
+
+.ordinalNum {
+  height: 64px;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--green);
+  margin-left: 4px;
+}
+
+.playerBox3rd {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+.player3rd {
+  width: 48%;
+  height: 64px;
+  background-color: var(--lightGray);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

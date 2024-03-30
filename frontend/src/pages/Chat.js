@@ -1,9 +1,8 @@
 import Title from "../components/Chat/Title.js";
-import Search from "../components/Friends/Search.js";
-import List from "../components/Chat/ChatList.js";
-import WebSocketManager from '../state/WebSocketManager.js';
+import WebSocketManager from "../state/WebSocketManager.js";
 import ChatRoom from "../components/Chat/Chat.js";
 import NoChat from "../components/Chat/NoChat.js";
+import Bot from "../components/Chat/Bot.js";
 
 function fetchChats(data) {
   const $chatRoomListWrapper = document.querySelector(".chatRoomListWrapper");
@@ -47,9 +46,12 @@ export default function Chat() {
   $chatRoomListWrapper.classList.add("chatRoomListWrapper");
   $chatsWrapper.appendChild($chatRoomListWrapper);
 
+  // todo: bot 위치 수정
+  $chatRoomListWrapper.appendChild(Bot(0));
+
   socket.send(JSON.stringify({ action: "fetch_chat_list" }));
 
-  socket.onmessage = function(event) {
+  socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
     if (data.action === "fetch_chat_list") {
       const list = data.data;

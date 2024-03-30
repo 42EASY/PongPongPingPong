@@ -3,7 +3,7 @@ import Messages from "../components/Chat/ChatRoom/ChatContents.js";
 import ChatContent from "../components/Chat/ChatRoom/ChatContent.js";
 import ChatInput from "../components/Chat/ChatRoom/ChatInput.js";
 import { getMyInfo } from "../state/State.js";
-import WebSocketManager from '../state/WebSocketManager.js';
+import WebSocketManager from "../state/WebSocketManager.js";
 
 const socket = WebSocketManager.getInstance();
 
@@ -21,12 +21,10 @@ async function sendMessage(user, me, roomName) {
     return;
   }
 
-  // TODO: 로컬과 서버 시간 맞추기
   const data = {
     sender_id: me.user_id,
     receiver_id: user.user_id,
     message: $chatInput.value,
-    timestamp: new Date().toISOString(),
   };
 
   const messageToSend = JSON.stringify({
@@ -35,10 +33,12 @@ async function sendMessage(user, me, roomName) {
   });
   socket.send(messageToSend);
 
-  socket.send(JSON.stringify({
-    action: "update_read_time",
-    room_name: roomName,
-  }))
+  socket.send(
+    JSON.stringify({
+      action: "update_read_time",
+      room_name: roomName,
+    })
+  );
 
   $chatContents.appendChild(ChatContent(me, data));
   $chatInput.value = "";
@@ -48,10 +48,12 @@ async function receiveMessage(user, data, roomName) {
   const $chatContents = document.querySelector("#chatContents");
 
   $chatContents.appendChild(ChatContent(user, data));
-  socket.send(JSON.stringify({
-    action: "update_read_time",
-    room_name: roomName,
-  }))
+  socket.send(
+    JSON.stringify({
+      action: "update_read_time",
+      room_name: roomName,
+    })
+  );
 }
 
 function fetchMessages(list) {
@@ -85,12 +87,14 @@ export default function ChatRoom(user) {
   $chatContentsWrapper.id = "chatContents";
   $chatsWrapper.appendChild($chatContentsWrapper);
 
-  socket.send(JSON.stringify({
-    action: "fetch_messages",
-    room_name: roomName,
-  }))
+  socket.send(
+    JSON.stringify({
+      action: "fetch_messages",
+      room_name: roomName,
+    })
+  );
 
-  socket.onmessage = function(event) {
+  socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
     if (data.action === "fetch_messages") {
       const messages = data.messages;
