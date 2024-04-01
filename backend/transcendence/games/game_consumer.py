@@ -210,9 +210,28 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
-        #TODO: 게임 중간에 나가면, 나가지 않은 사람이 이긴사람 처리
 
-        print(close_code)
+        #TODO: 결승인지 아닌지 구분하기 - 결승이면 게임 끝났다는 방송 message가 달라짐
+        #game이 다 끝나지 않은 경우
+        if (self.user_participant.score < 10 and self.opponent_participant.score < 10):
+            #점수 상관없이 먼저 접속 끊은 쪽이 lose
+            self.user_participant.result = Participant.Result.LOSE;
+            self.opponent_participant.result = Participant.Result.WIN
+
+            self.user_participant.save()
+            self.opponent_participant.save()
+
+            #상대에게 게임이 끝냈다고 방송
+            if (self.opponent_channel_name != -1):
+                await self.channel_layer.send(
+                    self.opponent_channel_name,
+                    {
+                        'type': 'broadcast_game_status',
+                        'message': 'game end',
+                        'game_status': 'disconnect'
+                    })
+
+    
 
     #connect 이후 receive 및 send 할 내용 정의
     async def receive(self, text_data):

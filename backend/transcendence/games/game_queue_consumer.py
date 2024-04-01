@@ -18,6 +18,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         self.game_group_id = "10"
 
         self.user = self.scope['user']
+        
+        self.key = "-1"
 
         self.lock = DistributedLock()
     
@@ -31,6 +33,75 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         await self.channel_layer.group_discard(
             self.game_group_id, self.channel_name
         )
+        
+        #TODO: 토너먼트인 경우 여기서 disconnect를 하고 room으로 넘어갈 경우 여기서 정보를 삭제해버리기 떄문에 오류 발생함
+        
+        #의도치 않는 disconnect인지 검사
+        if (self.key != "-1") :
+            value = None
+
+            if self.lock.acquire_lock():
+                try:
+                    value = cache.get(self.key)
+                except:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    })
+                    return
+            
+                self.lock.release_lock()
+            else:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "lock 획득 중 오류가 발생했습니다"
+                })
+                return
+
+            #노말이면, 그냥 redis 삭제
+            if (self.key[0] == 'n'):
+                cache.delete(self.key)
+
+            #토너먼트면 혼자 있는 경우에는 redis 삭제, 2명 이상 부터는 registered_user에서 pop
+            elif (self.key[0] == 't'):
+                parsed_value = json.loads(value)
+                registered_info = parsed_value["registered_user"]
+
+                #혼자 있는 경우에는 redis 삭제
+                if (len(registered_info) == 1):
+                    cache.delete(self.key)
+                else :
+                    idx = -1
+                    for info in registered_info:
+                        idx = idx + 1
+                        if (info["user_id"] == self.user.id):
+                            parsed_value["registered_user"].pop(idx)
+
+                    
+                    updated_value = json.dumps(parsed_value)
+
+                    if self.lock.acquire_lock():
+                        try:
+                            cache.set(self.key, updated_value)
+                        except:
+                            self.lock.release_lock()
+                            await self.send_json({
+                                "status": "fail",
+                                "message": "redis에 접근 중 오류가 발생했습니다"
+                            })
+                            return  
+            
+                        self.lock.release_lock()
+        
+                    else:
+                        self.lock.release_lock()
+                        await self.send_json({
+                            "status": "fail",
+                            "message": "lock 획득 중 오류가 발생했습니다"
+                        })
+                        return
 
     
     async def receive(self, text_data):
@@ -268,6 +339,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             
             join_game_key = new_tournament.id
 
+        self.key = prefix_tournament + str(join_game_key)
 
         await self.send_json({
                 "status": "success",
@@ -323,7 +395,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
             
-        
+        self.key = prefix_tournament + str(tournament.id)
 
         await self.send_json({
                 'status': 'game create success',
@@ -351,7 +423,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 self.lock.release_lock()
                 await self.send_json({
                     "status": "fail",
-                    "message": "redis에 접근 중 오류가 발생했습니다"
+                    "message": "존재하지 않는 게임입니다"
                 })
                 return  
             
@@ -371,7 +443,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         if (value is None):
             await self.send_json({
                 "status": "fail",
-                "message": "잘못된 room_id 입니다"
+                "message": "존재하지 않는 게임입니다"
             })
             return
         
@@ -520,6 +592,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 "message": "lock 획득 중 오류가 발생했습니다"
             })
             return
+
+        self.key = prefix_tournament + str(tournament_id)
 
         await self.send_json({
             'status': "success"
@@ -768,7 +842,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 }
                 user_info_data.append(data)
 
-
+            self.key = join_game_key
 
             for user_info in registered_result_users:
                          
@@ -814,6 +888,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 })
                 return
            
+            self.key = prefix_normal + str(new_game.id)
+
             try:
                 Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = new_game, score = 0)
             except:
@@ -879,6 +955,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 "message": "db에서 오류가 발생했습니다"
             })
             return
+        
+        self.key = prefix_normal + str(game.id)
 
         await self.send_json({
                 'status': 'game create success',
@@ -905,7 +983,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 self.lock.release_lock()
                 await self.send_json({
                     "status": "fail",
-                    "message": "redis에 접근 중 오류가 발생했습니다"
+                    "message": "존재하지 않는 게임입니다"
                 })
                 return  
             
@@ -924,7 +1002,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         if (value is None):
             await self.send_json({
                 'status': 'fail',
-                'message': '잘못된 game_id 입니다'
+                'message': '존재하지 않는 게임입니다'
             })
             return
     
@@ -1123,6 +1201,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                     'game_id': game_id,
                     'player_info': player_info
                 })
+            
+        self.key = prefix_normal + str(game_id)
     
 
 
