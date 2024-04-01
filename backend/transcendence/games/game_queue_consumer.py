@@ -33,7 +33,9 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         await self.channel_layer.group_discard(
             self.game_group_id, self.channel_name
         )
-
+        
+        #TODO: 토너먼트인 경우 여기서 disconnect를 하고 room으로 넘어갈 경우 여기서 정보를 삭제해버리기 떄문에 오류 발생함
+        
         #의도치 않는 disconnect인지 검사
         if (self.key != "-1") :
             value = None
