@@ -4,6 +4,7 @@ from datetime import datetime
 from notify.consumer import NotifyConsumer
 from channels.db import database_sync_to_async
 from members.models import Members
+from social.models import Block
 import json
 import redis
 
@@ -41,6 +42,9 @@ class ChatConsumer(NotifyConsumer):
 		for room_name in chat_list:
 			_, other_user_id = room_name.split('_')[1:]  # A와 B 중 나머지 하나
 			other_user_id = int(other_user_id) if other_user_id != str(user_id) else int(_)
+			# 차단한 유저의 채팅방은 가져오지 않음
+			if await self.is_blocked(user_id, other_user_id):
+				continue
 			unread_count = await self.get_unread_messages_count(user_id, room_name)
 			user_info = await self.get_member_info(other_user_id)
 			chats_info.append({
@@ -58,6 +62,15 @@ class ChatConsumer(NotifyConsumer):
 	async def send_message(self, data):
 		sender_id = data['sender_id']
 		receiver_id = data['receiver_id']
+
+		#TODO: 프론트에서 유저 상태 관리를 하도록 하고, 
+		# 만약 프론트에서 걸러지지 않아 서버로 요청이 왔다면 다시 유저의 상태를 업데이트 하는 로직으로 변경
+		if await self.is_blocked(sender_id, receiver_id):
+			await self.send(text_data=json_encode({
+				"status": "fail",
+				"message": "차단한 유저에겐 메세지를 보낼 수 없습니다."
+			}))
+			return
 
 		receiver_online = await self.is_user_online(receiver_id)
 
@@ -77,6 +90,11 @@ class ChatConsumer(NotifyConsumer):
 			}
 
 			await self.store_message(room_name, message_data)
+
+			# 보내는 유저는 차단하지 않고, 받는 유저가 보내는 유저를 차단한 경우는 메세지가 보내지지 않도록 함
+			# 차단을 푼 경우에는 메세지가 보이도록 해야하므로 저장까지는 함
+			if await self.is_blocked(receiver_id, sender_id):
+				return
 
 			receiver_channels = await self.get_channel_names(receiver_id)
 
@@ -111,6 +129,7 @@ class ChatConsumer(NotifyConsumer):
 
 	async def fetch_messages(self, data):
 		room_name = data['room_name']
+		# TODO: 채팅방에 들어갔을 때 메세지를 받아오는 메서드, 차단 여부를 검사할지?
 		messages = await self.load_messages(room_name)
 
 		await self.update_last_read_time(self.user.id, room_name)
@@ -192,3 +211,8 @@ class ChatConsumer(NotifyConsumer):
 		current_time = datetime.utcnow().timestamp()
 		# 마지막으로 읽은 시간을 Redis에 저장
 		redis_client.set(f"last_read_time:{room_name}:{user_id}", current_time)
+
+	@database_sync_to_async
+	def is_blocked(self, user_id, target_id):
+		# user가 target을 차단했는지 확인
+		return Block.objects.filter(user_id=user_id, target_id=target_id).exists()
