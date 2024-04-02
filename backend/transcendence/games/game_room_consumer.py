@@ -29,10 +29,143 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        #TODO: disconnect 구현
-        print(close_code)
-        # await self.disconnect()
 
+        value = None
+        if self.lock.acquire_lock():
+            try:
+                value = cache.get(prefix_tournament + self.room_id)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+
+        #redis에 있는 값에서 user정보 제거
+
+        parsed_value = json.loads(value)
+        registered_info = parsed_value["registered_user"]
+        join_info = parsed_value["join_user"]
+        join_final_info = parsed_value["join_final_user"]
+
+        #registered_user 값 제거
+        idx = -1
+        for info in registered_info:
+            idx = idx + 1
+            if (info["user_id"] == int(self.user.id)):
+                parsed_value["registered_user"].pop(idx)
+
+        #join_user 값 제거
+        idx = -1
+        for info in join_info:
+            idx = idx + 1
+            if (info == int(self.user.id)):
+                parsed_value["join_user"].pop(idx)
+        
+        #join_final_user 값 제거
+        idx = -1
+        flag = False
+        for info in join_final_info:
+            idx = idx + 1
+            if (info == int(self.user.id)):
+                parsed_value["join_final_user"].pop(idx)
+                flag = True
+            
+        #만일 결승 진행중에 disconnect가 된 거면, 게임 종료 처리 
+        if (flag == True):
+            try:
+                opponent = Members.objects.get(id = parsed_value["join_final_user"][0])
+                
+                #결승에 대한 게임 db가 만들어져있지 않다면 새롭게 만들어서 승패 처리
+                if (len(TournamentGame.objects.filter(tournament_id = self.tournament)) < 3):
+                    game = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
+            
+                    TournamentGame.objects.create(game_id = game, tournament_id = self.tournament, round = TournamentGame.Round.FINAL)
+
+                    Participant.objects.create(user_id = self.user.id, game_id = game, score = 0, opponent_id = opponent.id, result = Participant.Result.LOSE)
+                    Participant.objects.create(user_id = opponent.id, game_id = game, score = 0, opponent_id = self.user.id, result = Participant.Result.WIN)
+
+                #결승에 대한 게임 db가 있으면 승패 업데이트
+                else:
+                    game_ids = TournamentGame.objects.filter(tournament_id = self.tournament).values_list('game_id', flat = True)
+                    
+                    # 가져온 game_id 리스트를 이용하여 Participant 모델에서 해당하는 레코드들을 필터
+        
+                    user_participants = Participant.objects.get(user_id = self.user, opponent_id = opponent.id, game_id__in = game_ids)
+                    opponent_participants = Participant.objects.get(user_id = opponent, opponent_id = self.user.id, game_id__in = game_ids)
+            
+                    user_participants.result = Participant.Result.LOSE
+                    opponent_participants.result = Participant.Result.WIN
+
+                    user_participants.save()
+                    opponent_participants.save()
+                    
+            except:
+                await self.send_json({
+                    "status": "fail",
+                    "message": "db에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            #redis 값 삭제
+            if self.lock.acquire_lock():
+                try:
+                    cache.delete(prefix_tournament + self.room_id)
+                except:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    })
+                    return  
+            
+                self.lock.release_lock()
+        
+            else:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "lock 획득 중 오류가 발생했습니다"
+                })
+                return
+
+        #redis값 갱신
+        else:
+            updated_value = json.dumps(parsed_value)
+            if self.lock.acquire_lock():
+                try:
+                    cache.set(prefix_tournament + self.room_id, updated_value)
+                except:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    })
+                    return  
+            
+                self.lock.release_lock()
+        
+            else:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "lock 획득 중 오류가 발생했습니다"
+                })
+                return
+
+
+        #TODO: 게임 결과 방송
+        
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)

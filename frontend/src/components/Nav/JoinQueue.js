@@ -24,9 +24,6 @@ export function joinNormalQueue(data) {
     socket.send(JSON.stringify(data));
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
-      if (res.status === "game create success") {
-        //todo: chat game_id
-      }
       if (res.status === "game_start_soon") {
         res["mode"] = data.game_mode;
         res["option"] = "NORMAL";
@@ -34,6 +31,37 @@ export function joinNormalQueue(data) {
       }
     };
   }
+}
+
+export function joinInviteNormalQueue(data) {
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(data));
+    socket.onmessage = (e) => {
+      let res = JSON.parse(e.data);
+      if (res.status === "game_start_soon") {
+        res["mode"] = data.game_mode;
+        res["option"] = "NORMAL";
+        changeUrl("/game", res);
+      }
+      if (res.status === "fail") return false;
+    };
+  }
+  return false;
+}
+
+export function joinInviteTournamentQueue(data) {
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(data));
+    socket.onmessage = (e) => {
+      let res = JSON.parse(e.data);
+      if (res.statue === "success") {
+        res["mode"] = "SEMI_FINAL";
+        changeUrl("/gameroom", res);
+      }
+      if (res.status === "fail") return false;
+    };
+  }
+  return false;
 }
 
 export function cancelNormalQueue(data) {
@@ -50,13 +78,8 @@ export function joinTournamentQueue(data) {
     socket.send(JSON.stringify(data));
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
-      console.log(res);
-      if (res.status === "game create success") {
-        //todo: chat room_id
-      }
       if (res.status === "success") {
         res["mode"] = "SEMI_FINAL";
-        console.log(res);
         changeUrl("/gameroom", res);
       }
     };
