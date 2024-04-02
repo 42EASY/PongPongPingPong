@@ -148,7 +148,7 @@
   justify-content: center;
   margin: 0px 27px 27px 27px;
 }
-.modalBody > .timerBar {
+.modalFooter > .timerBar {
   width: 100%;
   height: 10px;
   background-color: var(--green);

@@ -59,6 +59,13 @@ export default function Board(mode, option) {
       this.serve = Math.random() < 0.5 ? this.leftPlayer : this.rightPlayer;
       this.timer = this.round = 0;
 
+      Modal(
+        this.serve === this.leftPlayer ? "gameLeftServe" : "gameRightServe"
+      ).then((result) => {
+        this.running = true;
+        window.requestAnimationFrame(() => this.loop());
+      });
+
       this.draw();
       this.listen();
     },
@@ -171,21 +178,14 @@ export default function Board(mode, option) {
       }
     },
 
-    // Draw the objects to the canvas element
+    // canvas 그리기
     draw: function () {
-      // Clear the Canvas
       context.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Set the fill style to black
       context.fillStyle = "#000000";
-
-      // Draw the background
       context.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Set the fill style to white (For the paddles and the ball)
       context.fillStyle = "#ffffff";
 
-      // Draw the leftPlayer
+      // leftPlayer
       context.fillRect(
         this.leftPlayer.x,
         this.leftPlayer.y,
@@ -193,7 +193,7 @@ export default function Board(mode, option) {
         this.leftPlayer.height
       );
 
-      // Draw the rightPlayer
+      // rightPlayer
       context.fillRect(
         this.rightPlayer.x,
         this.rightPlayer.y,
@@ -201,7 +201,7 @@ export default function Board(mode, option) {
         this.rightPlayer.height
       );
 
-      // Draw the net (Line in the middle)
+      // 가운데 선
       context.beginPath();
       context.setLineDash([10, 10]);
       context.moveTo(canvas.width / 2, canvas.height);
@@ -210,7 +210,7 @@ export default function Board(mode, option) {
       context.strokeStyle = "#ffffff";
       context.stroke();
 
-      // Draw the Ball
+      // 공
       if (this._turnDelayIsOver()) {
         context.beginPath();
         context.arc(
@@ -224,11 +224,10 @@ export default function Board(mode, option) {
         context.fill();
       }
 
-      // Set the default canvas font and align it to the center
       context.font = "bold 70px sans-serif";
       context.textAlign = "center";
 
-      // Draw the players score (left)
+      // left score
       context.fillStyle = "#ffffff";
       context.fillText(
         this.leftPlayer.score.toString().padStart(2, "0"),
@@ -236,7 +235,7 @@ export default function Board(mode, option) {
         70
       );
 
-      // Draw the paddles score (right)
+      // right score
       context.fillText(
         this.rightPlayer.score.toString().padStart(2, "0"),
         canvas.width / 2 + 60,
@@ -254,15 +253,12 @@ export default function Board(mode, option) {
 
     listen: function () {
       document.addEventListener("keydown", (key) => {
-        // Handle the 'Press any key to begin' function and start the game.
-        if (this.running === false) {
-          this.running = true;
-          window.requestAnimationFrame(() => this.loop());
+        if (this.running) {
+          if (key.key === "w") this.leftPlayer.move = DIRECTION.UP;
+          if (key.key === "s") this.leftPlayer.move = DIRECTION.DOWN;
+          if (key.key === "ArrowUp") this.rightPlayer.move = DIRECTION.UP;
+          if (key.key === "ArrowDown") this.rightPlayer.move = DIRECTION.DOWN;
         }
-        if (key.key === "w") this.leftPlayer.move = DIRECTION.UP;
-        if (key.key === "s") this.leftPlayer.move = DIRECTION.DOWN;
-        if (key.key === "ArrowUp") this.rightPlayer.move = DIRECTION.UP;
-        if (key.key === "ArrowDown") this.rightPlayer.move = DIRECTION.DOWN;
       });
 
       // Stop the player from moving when there are no keys being pressed.

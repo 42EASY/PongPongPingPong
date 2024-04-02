@@ -2,6 +2,7 @@ import { getUserId } from "../state/State.js";
 import { getUserInfo } from "../components/Main/UserApi.js";
 import Info from "../components/Game/Info.js";
 import Board from "../components/Game/Board.js";
+import Modal from "../components/Modal/Modal.js";
 
 // 2p / normal / tournament
 // classic / speed
