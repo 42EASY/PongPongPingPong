@@ -59,6 +59,7 @@ export default function Redirect() {
     });
 }
 
+//todo: otp 인증 실패 시 재귀처리 필요
 function login2fa() {
   Modal("otp").then(async (result) => {
     if (result.isPositive === true) {
