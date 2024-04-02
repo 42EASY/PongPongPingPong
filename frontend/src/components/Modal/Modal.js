@@ -41,7 +41,7 @@ export default function Modal(modalName, argu) {
         resolve(true);
       }, sec * 1000);
     }
-    if (modalName === "waitingPlayer" || modalName === "waitingInvitation") {
+    if (modalName === "waitingInvitation") {
       let sec = 60;
       startCount($modalWrapper, sec);
       setTimeout(() => {
