@@ -35,74 +35,10 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         )
         
         #TODO: 토너먼트인 경우 여기서 disconnect를 하고 room으로 넘어갈 경우 여기서 정보를 삭제해버리기 떄문에 오류 발생함
+
+        #TODO: 일반적인 상황에서 disconnect가 되는 경우와, disconnect가 되면 안되는 상황에서 되는 경우(cancle_queue 메소드 불러오기)를 생각해서 구현하기
         
-        #의도치 않는 disconnect인지 검사
-        if (self.key != "-1") :
-            value = None
-
-            if self.lock.acquire_lock():
-                try:
-                    value = cache.get(self.key)
-                except:
-                    self.lock.release_lock()
-                    await self.send_json({
-                        "status": "fail",
-                        "message": "redis에 접근 중 오류가 발생했습니다"
-                    })
-                    return
-            
-                self.lock.release_lock()
-            else:
-                self.lock.release_lock()
-                await self.send_json({
-                    "status": "fail",
-                    "message": "lock 획득 중 오류가 발생했습니다"
-                })
-                return
-
-            #노말이면, 그냥 redis 삭제
-            if (self.key[0] == 'n'):
-                cache.delete(self.key)
-
-            #토너먼트면 혼자 있는 경우에는 redis 삭제, 2명 이상 부터는 registered_user에서 pop
-            elif (self.key[0] == 't'):
-                parsed_value = json.loads(value)
-                registered_info = parsed_value["registered_user"]
-
-                #혼자 있는 경우에는 redis 삭제
-                if (len(registered_info) == 1):
-                    cache.delete(self.key)
-                else :
-                    idx = -1
-                    for info in registered_info:
-                        idx = idx + 1
-                        if (info["user_id"] == self.user.id):
-                            parsed_value["registered_user"].pop(idx)
-
-                    
-                    updated_value = json.dumps(parsed_value)
-
-                    if self.lock.acquire_lock():
-                        try:
-                            cache.set(self.key, updated_value)
-                        except:
-                            self.lock.release_lock()
-                            await self.send_json({
-                                "status": "fail",
-                                "message": "redis에 접근 중 오류가 발생했습니다"
-                            })
-                            return  
-            
-                        self.lock.release_lock()
         
-                    else:
-                        self.lock.release_lock()
-                        await self.send_json({
-                            "status": "fail",
-                            "message": "lock 획득 중 오류가 발생했습니다"
-                        })
-                        return
-
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -121,6 +57,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             await self.invite_tournament(text_data_json)
         elif (action == "join_tournament_queue"):
             await self.join_tournament(text_data_json)
+        elif (action == "cancel_queue"):
+            await self.cancel_queue()            
 
         else:
             await self.send_json({
@@ -1204,6 +1142,78 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             
         self.key = prefix_normal + str(game_id)
     
+
+    #normal 빠른시작, normal 초대 후 대기 action 이후 취소하는 경우
+    async def cancel_queue(self):
+        #의도치 않는 disconnect인지 검사
+        if (self.key == "-1") :
+            return
+        
+        value = None
+
+        if self.lock.acquire_lock():
+            try:
+                value = cache.get(self.key)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+
+        #노말이면, 그냥 redis 삭제
+        if (self.key[0] == 'n'):
+            cache.delete(self.key)
+
+        #토너먼트면 혼자 있는 경우에는 redis 삭제, 2명 이상 부터는 registered_user에서 pop
+        elif (self.key[0] == 't'):
+            parsed_value = json.loads(value)
+            registered_info = parsed_value["registered_user"]
+
+            #혼자 있는 경우에는 redis 삭제
+            if (len(registered_info) == 1):
+                cache.delete(self.key)
+            else :
+                idx = -1
+                for info in registered_info:
+                    idx = idx + 1
+                    if (info["user_id"] == self.user.id):
+                        parsed_value["registered_user"].pop(idx)
+
+                    
+                updated_value = json.dumps(parsed_value)
+
+                if self.lock.acquire_lock():
+                    try:
+                        cache.set(self.key, updated_value)
+                    except:
+                        self.lock.release_lock()
+                        await self.send_json({
+                            "status": "fail",
+                            "message": "redis에 접근 중 오류가 발생했습니다"
+                        })
+                        return  
+            
+                    self.lock.release_lock()
+        
+                else:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "lock 획득 중 오류가 발생했습니다"
+                    })
+                    return
+
 
 
     async def broadcast_game_start(self, event):
