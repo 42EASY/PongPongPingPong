@@ -96,16 +96,7 @@ body,
   height: 30px;
 }
 
-.bi-arrow-right {
-  order: 1;
-}
-
 .btn:hover {
   background-color: var(--green);
   color: var(--white);
 }
-/*
-.btn:hover .btnImg {
-  fill: var(--white);
-}
-*/
