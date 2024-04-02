@@ -1,6 +1,8 @@
 import { setLoginState } from "../../state/State.js";
 import changeUrl from "../../Router.js";
-import WebSocketManager from '../../state/WebSocketManager.js';
+import WebSocketManager from "../../state/WebSocketManager.js";
+import { call2faOtqApi } from "../Register/TwoFactorAuth.js";
+import Modal from "../Modal/Modal.js";
 
 export default function Redirect() {
   const $app = document.querySelector(".App");
@@ -40,7 +42,7 @@ export default function Redirect() {
           data.result.image_url
         );
         if (data.result.is_2fa === true) {
-          console.log("모달"); //todo: 2차인증 모달창 띄우기
+          login2fa();
         } else changeUrl("/main");
       } else if (data.code === 201) {
         setLoginState(
@@ -55,4 +57,21 @@ export default function Redirect() {
         changeUrl("/register", true);
       }
     });
+}
+
+function login2fa() {
+  Modal("otp").then(async (result) => {
+    if (result.isPositive === true) {
+      const status = await call2faOtqApi(result.input);
+      console.log(status);
+      if (status === true) {
+        console.log("2차 인증 성공");
+        changeUrl("/main");
+        return;
+      } else if (status === false) {
+        console.log("2차 인증 실패");
+        login2fa();
+      }
+    }
+  });
 }

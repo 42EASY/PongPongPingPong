@@ -66,7 +66,7 @@ export default function getModalContent(modalName, argu) {
       footerContent: [
         {
           type: "singleButton",
-          text: "확인",
+          text: "스캔 완료",
           class: "btn singleButton close positive",
         },
       ],

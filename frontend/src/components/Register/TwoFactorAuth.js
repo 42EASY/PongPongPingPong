@@ -66,24 +66,22 @@ export default function TwoFactorAuth(is2fa) {
     console.log(is2fa);
 
     if (is2fa === "true") {
-      //is2fa가 true인 경우, otp 인증
-      Modal("tfa", `data:image/png;base64,${data.result.encoded_image}`).then(
-        async (result) => {
-          if (result.isPositive === true) {
-            const status = await call2faOtqApi(result.input);
-            console.log(status);
-            if (status === true) {
-              console.log("2차 인증 성공");
-              setIs2fa(false);
-              return;
-            } else if (status === false) {
-              console.log("2차 인증 실패");
-            }
+      Modal("otp").then(async (result) => {
+        if (result.isPositive === true) {
+          const status = await call2faOtqApi(result.input);
+          console.log(status);
+          if (status === true) {
+            console.log("2차 인증 성공");
+            setIs2fa(true);
+            return;
+          } else if (status === false) {
+            console.log("2차 인증 실패");
+            return;
           }
-          $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
-          $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
         }
-      );
+        $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
+        $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
+      });
     }
   });
 
@@ -93,21 +91,6 @@ export default function TwoFactorAuth(is2fa) {
     $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
 
     call2faQrApi();
-    Modal("otp").then(async (result) => {
-      if (result.isPositive === true) {
-        const status = await call2faOtqApi(result.input);
-        console.log(status);
-        if (status === true) {
-          console.log("2차 인증 성공");
-          setIs2fa(true);
-          return;
-        } else if (status === false) {
-          console.log("2차 인증 실패");
-        }
-      }
-      $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
-      $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
-    });
   });
 
   return $twoFactorAuthWrapper;
@@ -128,11 +111,30 @@ function call2faQrApi() {
     .then((data) => {
       console.log(data);
       if (data.code === 200) {
-        Modal("tfa");
-        const $modalBodyQr = document.querySelector(".modalBody img");
-        $modalBodyQr.setAttribute(
-          "src",
-          `data:image/png;base64,${data.result.encoded_image}`
+        Modal("tfa", `data:image/png;base64,${data.result.encoded_image}`).then(
+          async (result) => {
+            if (result.isPositive === true) {
+              console.log(result);
+              Modal("otp").then(async (result) => {
+                if (result.isPositive === true) {
+                  const status = await call2faOtqApi(result.input);
+                  console.log(status);
+                  if (status === true) {
+                    console.log("2차 인증 성공");
+                    setIs2fa(true);
+                    $twoFactorAuthActive.classList.remove(
+                      "twoFactorAuthSelect"
+                    );
+                    $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
+                    return;
+                  } else if (status === false) {
+                    console.log("2차 인증 실패");
+                    return;
+                  }
+                }
+              });
+            }
+          }
         );
       } else if (data.code === 401) {
         setNewAccessToken();
@@ -142,7 +144,7 @@ function call2faQrApi() {
 }
 
 //2차 인증 OTP API 호출
-async function call2faOtqApi(otpNum) {
+export async function call2faOtqApi(otpNum) {
   const url = "http://localhost:8000/api/v1/auth/2fa/";
 
   const res = await fetch(url, {
