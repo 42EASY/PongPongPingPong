@@ -1,7 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from datetime import datetime
-from notify.consumer import NotifyConsumer
 from channels.db import database_sync_to_async
 from members.models import Members
 from social.models import Block
@@ -12,16 +11,34 @@ import redis
 redis_client = redis.Redis(host='redis', port=6379, db=0)
 
 def json_encode(data):
-    return json.dumps(data, ensure_ascii=False)
+	try:
+		return json.dumps(data, ensure_ascii=False)
+	except (TypeError, ValueError) as e:
+		print(f"JSON encoding error: {e}")
+		return None
 
 # 메시지 타임스탬프를 float로 변환하는 함수
 def parse_timestamp_to_float(timestamp_str):
-    # ISO 8601 형식의 문자열을 datetime 객체로 변환
-    dt = datetime.fromisoformat(timestamp_str)
-    # datetime 객체를 Unix 타임스탬프(float)로 변환
-    return dt.timestamp()
+	try:
+		dt = datetime.fromisoformat(timestamp_str)
+		return dt.timestamp()
+	except ValueError as e:
+		print(f"Timestamp parsing error: {e}")
+		return None
 
-class ChatConsumer(NotifyConsumer):
+class ChatConsumer(AsyncWebsocketConsumer):
+	async def connect(self):
+		self.user = self.scope["user"]
+		await self.accept()
+
+		user_id = self.user.id
+
+		await self.add_channel_name(user_id, self.channel_name)
+
+	async def disconnect(self, close_code):
+		user_id = self.user.id
+		await self.remove_channel_name(user_id, self.channel_name)
+
 	async def receive(self, text_data):
 		data = json.loads(text_data)
 		action = data['action']
@@ -30,8 +47,8 @@ class ChatConsumer(NotifyConsumer):
 			await self.fetch_chat_list()
 		elif action == 'send_message':
 			await self.send_message(data)
-		elif action == 'fetch_messages':
-			await self.fetch_messages(data)
+		elif action == 'enter_chat_room':
+			await self.enter_chat_room(data)
 		elif action == 'update_read_time':
 			await self.update_read_time(data)
 
@@ -63,61 +80,46 @@ class ChatConsumer(NotifyConsumer):
 		sender_id = data['sender_id']
 		receiver_id = data['receiver_id']
 
-		#TODO: 프론트에서 유저 상태 관리를 하도록 하고, 
-		# 만약 프론트에서 걸러지지 않아 서버로 요청이 왔다면 다시 유저의 상태를 업데이트 하는 로직으로 변경
 		if await self.is_blocked(sender_id, receiver_id):
-			await self.send(text_data=json_encode({
-				"status": "fail",
-				"message": "차단한 유저에겐 메세지를 보낼 수 없습니다."
-			}))
-			return
+			return await self.send_fail_message("blocked_chat_user", "차단한 유저에겐 메세지를 보낼 수 없습니다.")
+		
+		if not await self.is_user_online(receiver_id):
+			return await self.send_fail_message("offline_chat_user", "현재 오프라인 상태의 유저입니다.")
 
-		receiver_online = await self.is_user_online(receiver_id)
+		await self.process_message_sending(sender_id, receiver_id, data)
 
-		if receiver_online:
-			room_name = await self.get_or_create_room(sender_id, receiver_id)
+	async def send_fail_message(self, error_type, message):
+		await self.send(text_data=json_encode({
+			"status": "fail",
+			"type": error_type,
+			"message": message
+		}))
 
-			sender_info = await self.get_member_info(sender_id)
-			receiver_info = await self.get_member_info(receiver_id)
-			message = data['message']
+	async def process_message_sending(self, sender_id, receiver_id, data):
+		room_name = await self.get_or_create_room(sender_id, receiver_id)
+		sender_info = await self.get_member_info(sender_id)
+		receiver_info = await self.get_member_info(receiver_id)
+		message_data = self.create_message_data(sender_info, receiver_info, data['message'])
+		await self.store_message(room_name, message_data)
 
-			# 메시지 데이터에 발신자와 수신자의 프로필 정보 포함
-			message_data = {
-				"sender": sender_info,
-				"receiver": receiver_info,
-				"message": message,
-				"timestamp": datetime.utcnow().isoformat()
-			}
+		if await self.is_blocked(receiver_id, sender_id):
+			return  # 차단된 경우, 메시지는 저장하지만 전송하지 않음
 
-			await self.store_message(room_name, message_data)
+		await self.notify_receiver(receiver_id, sender_info, message_data)
 
-			# 보내는 유저는 차단하지 않고, 받는 유저가 보내는 유저를 차단한 경우는 메세지가 보내지지 않도록 함
-			# 차단을 푼 경우에는 메세지가 보이도록 해야하므로 저장까지는 함
-			if await self.is_blocked(receiver_id, sender_id):
-				return
+	async def notify_receiver(self, receiver_id, sender_info, message_data):
+		receiver_channels = await self.get_channel_names(receiver_id)
+		for channel_name in receiver_channels:
+			await self.channel_layer.send(channel_name, {"type": "notify_new_chat", "sender_info": sender_info})
+			await self.channel_layer.send(channel_name, {"type": "receive_message", "message_data": message_data})
 
-			receiver_channels = await self.get_channel_names(receiver_id)
-
-			for channel_name in receiver_channels:
-				await self.channel_layer.send(
-					channel_name,
-					{
-						"type": "notify_new_chat",
-						"sender_info": sender_info,
-					}
-				)
-				await self.channel_layer.send(
-					channel_name,
-					{
-						"type": "receive_message",
-						"message_data": message_data,
-					}
-				)
-		else:
-			await self.send(text_data=json_encode({
-				"status": "fail",
-				"message": "현재 오프라인 상태의 유저입니다."
-			}))
+	def create_message_data(self, sender_info, receiver_info, message):
+		return {
+			"sender": sender_info,
+			"receiver": receiver_info,
+			"message": message,
+			"timestamp": datetime.utcnow().isoformat()
+		}
 		
 	async def receive_message(self, event):
 		message_data = event['message_data']
@@ -127,9 +129,20 @@ class ChatConsumer(NotifyConsumer):
 			**message_data,
 		}))
 
-	async def fetch_messages(self, data):
+	async def enter_chat_room(self, data):
 		room_name = data['room_name']
-		# TODO: 채팅방에 들어갔을 때 메세지를 받아오는 메서드, 차단 여부를 검사할지?
+
+		_, other_user_id = room_name.split('_')[1:]  # A와 B 중 나머지 하나
+		other_user_id = int(other_user_id) if other_user_id != str(self.user.id) else int(_)
+
+		is_online, is_blocked = await self.notify_chat_partners_status(self.user.id, other_user_id)
+
+		if (is_online == False):
+			return await self.send_fail_message("offline_chat_user", "현재 오프라인 상태의 유저입니다.")
+		
+		if (is_blocked == True):
+			return await self.send_fail_message("blocked_chat_user", "차단한 유저에겐 메세지를 보낼 수 없습니다.")
+
 		messages = await self.load_messages(room_name)
 
 		await self.update_last_read_time(self.user.id, room_name)
@@ -151,12 +164,6 @@ class ChatConsumer(NotifyConsumer):
 		# Redis에서 해당 채팅방의 모든 메시지 불러오기
 		messages = redis_client.lrange(f"chat_messages:{room_name}", 0, -1)
 		return [json.loads(message) for message in messages]
-
-
-	async def chat_message(self, event):
-		await self.send(text_data=json_encode({
-			event['message']
-		}))
 
 	@sync_to_async
 	def get_unread_messages_count(self, user_id, room_name):
@@ -216,3 +223,86 @@ class ChatConsumer(NotifyConsumer):
 	def is_blocked(self, user_id, target_id):
 		# user가 target을 차단했는지 확인
 		return Block.objects.filter(user_id=user_id, target_id=target_id).exists()
+
+	@sync_to_async
+	def add_channel_name(self, user_id, channel_name):
+		redis_client.sadd(f"user_channels_{user_id}", channel_name)
+
+	@sync_to_async
+	def remove_channel_name(self, user_id, channel_name):
+		redis_client.srem(f"user_channels_{user_id}", channel_name)
+
+	@sync_to_async
+	def delete_user_chats(self, user_id):
+		redis_client.delete(f"user_chats:{user_id}")
+
+	@sync_to_async
+	def get_channel_names(self, user_id):
+		channel_names_bytes = redis_client.smembers(f"user_channels_{user_id}")
+		channel_names = {name.decode('utf-8') for name in channel_names_bytes}
+		return channel_names
+
+	@sync_to_async
+	def get_chat_list(self, user_id):
+		chat_room_names = redis_client.smembers(f"user_chats:{user_id}")
+		# 바이트 문자열을 문자열로 디코딩
+		chat_rooms = [room_name.decode('utf-8') for room_name in chat_room_names]
+		return chat_rooms
+
+	@sync_to_async
+	def is_user_online(self, user_id):
+		return redis_client.sismember("online_users", user_id)
+
+	async def notify_new_chat(self, event):
+		sender_info = event['sender_info']
+		await self.send(text_data=json_encode({
+			"action": "notify_new_chat",
+			"sender": sender_info
+		}))
+	
+	@sync_to_async
+	def delete_user_chats(self, user_id):
+		redis_client.delete(f"user_chats:{user_id}")
+
+	@sync_to_async
+	def get_user_online_status(self, partner_id):
+		return Members.objects.filter(id=partner_id, status=Members.Status.ONLINE).exists()
+
+	
+	async def notify_chat_partners_status(self, user_id, partner_id):
+		is_online = await self.is_user_online(partner_id)
+		is_blocked = await self.is_user_blocked(user_id, partner_id)
+
+		# 클라이언트에게 상태 정보 전송
+		await self.send(text_data=json_encode({
+			"action": "notify_chat_partner_status",
+			"partner_id": partner_id,
+			"is_online": is_online,
+			"is_blocked": is_blocked,
+		}))
+
+		return is_online, is_blocked
+
+	@database_sync_to_async
+	def is_user_blocked(self, user_id, partner_id):
+		return Block.objects.filter(user_id=user_id, target_id=partner_id).exists()
+
+	async def user_online(self, event):
+		user_id = event['user_id']
+
+		# 클라이언트에게 상태 변경 알림을 전송
+		await self.send(text_data=json_encode({
+			'action': 'update_user_status',
+			'user_id': user_id,
+			'status': Members.Status.ONLINE,
+		}))
+	
+	async def user_offline(self, event):
+		user_id = event['user_id']
+
+		# 클라이언트에게 상태 변경 알림을 전송
+		await self.send(text_data=json_encode({
+			'action': 'update_user_status',
+			'user_id': user_id,
+			'status': Members.Status.OFFLINE,
+		}))

@@ -1,8 +1,6 @@
 import { getAccessToken } from "./State.js";
-import showToast from '../components/Toast/Toast.js';
-import { chatUserState } from "./ChatUserState.js";
 
-var WebSocketManager = (function () {
+var ChatSocketManager = (function () {
     var instance;
     var reconnectInterval = 1000; // 재연결 시도 간격 초기값
     var maxReconnectAttempts = 5; // 최대 재연결 시도 횟수
@@ -10,7 +8,7 @@ var WebSocketManager = (function () {
 
     function init() {
         // 실제 웹 소켓 연결을 생성하고 관리하는 로직
-        const socketUrl = `ws://localhost:8000/ws/notify/?token=${getAccessToken()}`;
+        const socketUrl = `ws://localhost:8000/ws/chat/?token=${getAccessToken()}`;
         var ws = new WebSocket(socketUrl);
 
         ws.onopen = function () {
@@ -36,26 +34,6 @@ var WebSocketManager = (function () {
             ws.close(); // 에러 발생 시 연결을 명시적으로 닫음
         };
 
-        ws.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            if (data.action === "notify_new_chat") {
-              console.log(data);
-              showToast('새로운 채팅이 왔습니다.');
-            }
-            if (data.action === 'notify_chat_partner_status') {
-                console.log(data);
-                const userId = data.partner_id;
-                const isOnline = data.is_online;
-                const isBlocked = data.is_blocked;
-                chatUserState.addUserState(userId, { isOnline, isBlocked });
-            }
-            if (data.action === "update_user_status") {
-                const userId = data.user_id;
-                const isOnline = data.status === "ONLINE";
-                chatUserState.setUserState(userId, {isOnline : isOnline});
-            }
-          }
-
         return ws;
     }
 
@@ -69,4 +47,4 @@ var WebSocketManager = (function () {
     };
 })();
 
-export default WebSocketManager;
+export default ChatSocketManager;
