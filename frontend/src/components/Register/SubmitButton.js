@@ -89,7 +89,7 @@ function callApi(nickname, is2fa) {
 
 export default function SubmitButton(text) {
   const $submitButton = document.createElement("div");
-  $submitButton.classList.add("submitButton");
+  $submitButton.classList.add("submitButton", "btn");
   $submitButton.innerHTML = text;
 
   $submitButton.addEventListener("click", () => {

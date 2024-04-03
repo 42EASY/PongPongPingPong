@@ -1,5 +1,5 @@
 import Title from "../components/Chat/Title.js";
-import WebSocketManager from "../state/WebSocketManager.js";
+import ChatSocketManager from "../state/ChatSocketManager.js";
 import ChatRoom from "../components/Chat/Chat.js";
 import NoChat from "../components/Chat/NoChat.js";
 import Bot from "../components/Chat/Bot.js";
@@ -26,7 +26,7 @@ export default function Chat() {
   const $sidebar = document.querySelector(".sidebar");
   $sidebar.innerHTML = "";
 
-  const socket = WebSocketManager.getInstance();
+  const socket = ChatSocketManager.getInstance();
 
   //사이드바 영역
   const $chatsWrapper = document.createElement("div");

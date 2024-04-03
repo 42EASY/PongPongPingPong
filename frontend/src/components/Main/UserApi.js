@@ -1,4 +1,5 @@
 import { getAccessToken, setNewAccessToken } from "../../state/State.js";
+import { chatUserState } from "../../state/ChatUserState.js";
 
 const baseUrl = "http://localhost:8000";
 
@@ -64,6 +65,8 @@ export async function postBlock(id) {
   if (json.code === 401) {
     setNewAccessToken();
     postBlock(id);
+  } else if (json.code === 201) {
+    chatUserState.setUserState(id, { isBlocked: true });
   }
 }
 
@@ -80,5 +83,7 @@ export async function deleteBlock(id) {
   if (json.code === 401) {
     setNewAccessToken();
     deleteBlock(id);
+  } else if (json.code === 200) {
+    chatUserState.setUserState(id, { isBlocked: false });
   }
 }

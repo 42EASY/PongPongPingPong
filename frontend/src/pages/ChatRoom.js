@@ -1,11 +1,12 @@
 import Title from "../components/Chat/ChatRoom/Title.js";
-import Messages from "../components/Chat/ChatRoom/ChatContents.js";
 import ChatContent from "../components/Chat/ChatRoom/ChatContent.js";
 import ChatInput from "../components/Chat/ChatRoom/ChatInput.js";
 import { getMyInfo } from "../state/State.js";
-import WebSocketManager from "../state/WebSocketManager.js";
+import ChatSocketManager from "../state/ChatSocketManager.js";
+import { chatUserState } from "../state/ChatUserState.js";
+import Modal from "../components/Modal/Modal.js";
 
-const socket = WebSocketManager.getInstance();
+const socket = ChatSocketManager.getInstance();
 
 function createRoomName(meId, userId) {
   const roomName = `chat_${Math.min(meId, userId)}_${Math.max(meId, userId)}`;
@@ -19,6 +20,19 @@ async function sendMessage(user, me, roomName) {
   // 입력 필드가 비어 있으면 함수 실행을 중단
   if ($chatInput.value.trim() === "") {
     return;
+  }
+
+  // 사용자 상태 확인
+  const userStatus = chatUserState.getUserState()[user.user_id];
+  if (userStatus) {
+      // isBlocked가 true이거나 isOnline이 false일 경우 메시지 전송 방지
+      if (!userStatus.isOnline) {
+        Modal("chatFail_offlineUser");
+        return ;
+      } else if (userStatus.isBlocked) {
+        Modal("chatFail_blockedUser");
+        return ;
+      }
   }
 
   const data = {
@@ -70,7 +84,6 @@ export default function ChatRoom(user) {
   $chatsWrapper.innerHTML = "";
 
   const me = getMyInfo();
-  console.log(me);
   const roomName = createRoomName(me.user_id, user.user_id);
 
   //타이틀
@@ -89,13 +102,15 @@ export default function ChatRoom(user) {
 
   socket.send(
     JSON.stringify({
-      action: "fetch_messages",
+      action: "enter_chat_room",
       room_name: roomName,
     })
   );
 
   socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
+    console.log(data);
+    
     if (data.action === "fetch_messages") {
       const messages = data.messages;
       fetchMessages(messages);
@@ -103,6 +118,25 @@ export default function ChatRoom(user) {
     } else if (data.action === "receive_message") {
       receiveMessage(user, data, roomName);
       $chatsWrapper.scrollTop = $chatsWrapper.scrollHeight;
+    } else if (data.action === "notify_chat_partner_status") {
+      const userId = data.partner_id;
+      const isOnline = data.is_online;
+      const isBlocked = data.is_blocked;
+      chatUserState.addUserState(userId, { isOnline, isBlocked });
+    } else if (data.action === "update_user_status") {
+      const userId = data.user_id;
+      const isOnline = data.status === "ONLINE";
+      chatUserState.setUserState(userId, {isOnline : isOnline});
+    }
+
+    if (data.status === "fail") {
+      if (data.type === "blocked_chat_user") {
+        Modal("chatFail_blockedUser");
+        chatUserState.setUserState(user.user_id, {isBlocked : true});
+      }
+      else if (data.type === "offline_chat_user")
+        Modal("chatFail_offlineUser");
+        chatUserState.setUserState(user.user_id, {isOnline : false});
     }
   };
 

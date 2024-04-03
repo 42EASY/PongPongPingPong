@@ -3,22 +3,33 @@ from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from social.models import Friend
 from members.models import Members
+from social.models import Block
 import json
 import redis
 
 redis_client = redis.Redis(host='redis', port=6379, db=0)
 
 def json_encode(data):
-    return json.dumps(data, ensure_ascii=False)
+	try:
+		return json.dumps(data, ensure_ascii=False)
+	except (TypeError, ValueError) as e:
+		print(f"JSON encoding error: {e}")
+		return None
 
 class NotifyConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.user = self.scope["user"]
 		await self.accept()
 
-		await self.add_channel_name(self.user.id, self.channel_name)
+		user_id = self.user.id
+
+		await self.add_channel_name(user_id, self.channel_name)
 		# 사용자를 온라인으로 표시하는 로직
-		await self.mark_user_online(self.user.id)
+		await self.mark_user_online(user_id)
+		# 채팅 상대방들 상태 확인
+		await self.fetch_and_notify_chat_partners_status(user_id)
+		# 채팅 상대방에게 온라인 상태 알림
+		await self.notify_chat_partners_user_online(user_id)
 
 	async def disconnect(self, close_code):
 		user_id = self.user.id
@@ -29,12 +40,8 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 		if channel_set_size == 0:
 			# 사용자를 오프라인으로 표시하는 로직
 			await self.mark_user_offline(user_id)
-			# 사용자 채팅룸 가져오기
-			user_chat_rooms = await self.get_chat_list(user_id)
-			for room_name in user_chat_rooms:
-				await self.delete_chat_room_if_empty(room_name)
-			# 유저 채팅방 삭제
-			await self.delete_user_chats(user_id)
+			# 오프라인임을 채팅 파트너에게 알림
+			await self.notify_chat_partners_user_offline(user_id)
 	
 	@sync_to_async
 	def add_channel_name(self, user_id, channel_name):
@@ -51,18 +58,14 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 	@sync_to_async
 	def mark_user_online(self, user_id):
 		# Redis를 이용해 사용자를 온라인으로 표시
-		Members.objects.filter(id=user_id).update(status='ONLINE')
+		Members.objects.filter(id=user_id).update(status=Members.Status.ONLINE)
 		redis_client.sadd("online_users", user_id)
 
 	@sync_to_async
 	def mark_user_offline(self, user_id):
 		# Redis를 이용해 사용자를 오프라인으로 표시
-		Members.objects.filter(id=user_id).update(status='OFFLINE')
+		Members.objects.filter(id=user_id).update(status=Members.Status.OFFLINE)
 		redis_client.srem("online_users", user_id)
-
-	@sync_to_async
-	def delete_user_chats(self, user_id):
-		redis_client.delete(f"user_chats:{user_id}")
 
 	@sync_to_async
 	def get_channel_names(self, user_id):
@@ -101,9 +104,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 
 	@sync_to_async
 	def is_user_online(self, user_id):
-		online_users = redis_client.smembers("online_users")
-		print(online_users)
-		return str(user_id).encode() in online_users
+		return redis_client.sismember("online_users", user_id)
 
 	async def notify_friends_user_online(self, user_id):
 		friends_ids = await self.get_user_friends(user_id)
@@ -144,9 +145,9 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 
 		# 클라이언트에게 상태 변경 알림을 전송
 		await self.send(text_data=json_encode({
-			'action': 'update_friends_status',
+			'action': 'update_user_status',
 			'user_id': user_id,
-			'status': 'ONLINE',
+			'status': Members.Status.ONLINE,
 		}))
 	
 	async def user_offline(self, event):
@@ -154,7 +155,92 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 
 		# 클라이언트에게 상태 변경 알림을 전송
 		await self.send(text_data=json_encode({
-			'action': 'update_friends_status',
+			'action': 'update_user_status',
 			'user_id': user_id,
-			'status': 'OFFLINE',
+			'status': Members.Status.OFFLINE,
+		}))
+
+	@sync_to_async
+	def get_partner_user_ids(self, user_id, chat_list):
+		partner_ids = set()
+		for chat_name in chat_list:
+			_, user_id_str, partner_id_str = chat_name.split('_')
+			partner_id = user_id_str if user_id_str != str(user_id) else partner_id_str
+			partner_ids.add(int(partner_id))
+		return list(partner_ids)
+
+	@database_sync_to_async
+	def is_user_blocked(self, user_id, partner_id):
+		return Block.objects.filter(user_id=user_id, target_id=partner_id).exists()
+
+	@database_sync_to_async
+	def get_user_online_status(self, partner_id):
+		return Members.objects.filter(id=partner_id, status=Members.Status.ONLINE).exists()
+
+	async def fetch_and_notify_chat_partners_status(self, user_id):
+		chat_list = await self.get_chat_list(user_id)
+		partner_ids = await self.get_partner_user_ids(user_id, chat_list)
+
+		for partner_id in partner_ids:
+			is_online = await self.get_user_online_status(partner_id)
+			is_blocked = await self.is_user_blocked(user_id, partner_id)
+
+			# 클라이언트에게 상태 정보 전송
+			await self.send(text_data=json_encode({
+				"action": "notify_chat_partner_status",
+				"partner_id": partner_id,
+				"is_online": is_online,
+				"is_blocked": is_blocked,
+			}))
+
+	async def notify_chat_partners_user_online(self, user_id):
+		# 사용자 채팅룸 가져오기
+		user_chat_rooms = await self.get_chat_list(user_id)
+		
+		# 각 채팅방에 대해
+		for room_name in user_chat_rooms:
+			_, other_user_id = room_name.split('_')[1:]  # A와 B 중 나머지 하나
+			other_user_id = int(other_user_id) if other_user_id != str(user_id) else int(_)
+			
+			# 상대방 사용자의 채널 이름들을 가져온다
+			other_user_channels = await self.get_channel_names(other_user_id)
+			
+			# 각 채널에 오프라인 상태 알림을 전송한다
+			for channel_name in other_user_channels:
+				await self.channel_layer.send(
+					channel_name,
+					{
+						"type": "user_online",
+						"user_id": user_id,
+					}
+				)
+
+	async def notify_chat_partners_user_offline(self, user_id):
+		# 사용자 채팅룸 가져오기
+		user_chat_rooms = await self.get_chat_list(user_id)
+		
+		# 각 채팅방에 대해
+		for room_name in user_chat_rooms:
+			_, other_user_id = room_name.split('_')[1:]  # A와 B 중 나머지 하나
+			other_user_id = int(other_user_id) if other_user_id != str(user_id) else int(_)
+			
+			# 상대방 사용자의 채널 이름들을 가져온다
+			other_user_channels = await self.get_channel_names(other_user_id)
+			
+			# 각 채널에 오프라인 상태 알림을 전송한다
+			for channel_name in other_user_channels:
+				await self.channel_layer.send(
+					channel_name,
+					{
+						"type": "user_offline",
+						"user_id": user_id,
+					}
+				)
+
+	async def receive_message(self, event):
+		message_data = event['message_data']
+
+		await self.send(text_data=json_encode({
+			"action": "receive_message",
+			**message_data,
 		}))
