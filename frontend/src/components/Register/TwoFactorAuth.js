@@ -2,6 +2,7 @@ import {
   setNewAccessToken,
   getAccessToken,
   setIs2fa,
+  getIs2fa,
 } from "../../state/State.js";
 import Modal from "../Modal/Modal.js";
 
@@ -66,24 +67,14 @@ export default function TwoFactorAuth(is2fa) {
     console.log(is2fa);
 
     if (is2fa === "true") {
-      //is2fa가 true인 경우, otp 인증
-      Modal("tfa", `data:image/png;base64,${data.result.encoded_image}`).then(
-        async (result) => {
-          if (result.isPositive === true) {
-            const status = await call2faOtqApi(result.input);
-            console.log(status);
-            if (status === true) {
-              console.log("2차 인증 성공");
-              setIs2fa(false);
-              return;
-            } else if (status === false) {
-              console.log("2차 인증 실패");
-            }
-          }
+      call2faOtpModal().then((result) => {
+        if (result === true) {
+          setIs2fa(false);
+        } else {
           $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
           $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
         }
-      );
+      });
     }
   });
 
@@ -92,21 +83,25 @@ export default function TwoFactorAuth(is2fa) {
     $twoFactorAuthActive.classList.add("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
 
-    call2faQrApi();
-    Modal("otp").then(async (result) => {
-      if (result.isPositive === true) {
-        const status = await call2faOtqApi(result.input);
-        console.log(status);
-        if (status === true) {
-          console.log("2차 인증 성공");
-          setIs2fa(true);
-          return;
-        } else if (status === false) {
-          console.log("2차 인증 실패");
+    call2faQrApi().then((result) => {
+      console.log(result);
+      if (result === true) {
+        call2faOtpModal().then((result) => {
+          if (result === true) {
+            setIs2fa(true);
+          } else {
+            if (getIs2fa() === false) {
+              $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
+              $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
+            }
+          }
+        });
+      } else {
+        if (getIs2fa() === false) {
+          $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
+          $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
         }
       }
-      $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
-      $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
     });
   });
 
@@ -115,59 +110,92 @@ export default function TwoFactorAuth(is2fa) {
 
 //2차 인증 QR코드 API 호출
 function call2faQrApi() {
-  const url = "http://localhost:8000/api/v1/auth/2fa/";
+  return new Promise((resolve) => {
+    const url = "http://localhost:8000/api/v1/auth/2fa/";
 
-  fetch(url, {
-    method: "GET",
-    headers: {
-      "content-Type": "application/json",
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      if (data.code === 200) {
-        Modal("tfa");
-        const $modalBodyQr = document.querySelector(".modalBody img");
-        $modalBodyQr.setAttribute(
-          "src",
-          `data:image/png;base64,${data.result.encoded_image}`
-        );
-      } else if (data.code === 401) {
-        setNewAccessToken();
-        call2faQrApi();
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "content-Type": "application/json",
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.code === 200) {
+          Modal(
+            "tfa",
+            `data:image/png;base64,${data.result.encoded_image}`
+          ).then((result) => {
+            if (result.isPositive === true) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          });
+        } else if (data.code === 401) {
+          setNewAccessToken();
+          call2faQrApi();
+        }
+      });
+  });
+}
+
+//2차 인증 OTP 모달 호출
+export function call2faOtpModal() {
+  return new Promise((resolve) => {
+    Modal("otp").then(async (result) => {
+      if (result.isPositive === true) {
+        call2faOtqApi(result.input).then((status) => {
+          if (status === true) {
+            console.log("2차 인증 성공");
+            resolve(true);
+          } else if (status === false) {
+            console.log("2차 인증 실패");
+            resolve(false);
+          }
+        });
+      } else {
+        resolve(false);
       }
     });
+  });
 }
 
 //2차 인증 OTP API 호출
-async function call2faOtqApi(otpNum) {
-  const url = "http://localhost:8000/api/v1/auth/2fa/";
+function call2faOtqApi(otpNum) {
+  return new Promise((resolve) => {
+    const url = "http://localhost:8000/api/v1/auth/2fa/";
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "content-Type": "application/json",
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
-    body: JSON.stringify({
-      otp_code: otpNum,
-    }),
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "content-Type": "application/json",
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+      body: JSON.stringify({
+        otp_code: otpNum,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code === 200) {
+          Modal("tfaSuccess").then((result) => {
+            resolve(true);
+          });
+        } else if (data.code === 401 && data.message === "2차 인증 실패") {
+          Modal("tfaFail").then((result) => {
+            resolve(false);
+          });
+        } else if (data.code === 401) {
+          setNewAccessToken();
+          call2faOtqApi();
+        } else {
+          Modal("tfaFail").then((result) => {
+            resolve(false);
+          });
+        }
+      });
   });
-  const data = await res.json();
-  console.log(data);
-  if (data.code === 200) {
-    Modal("tfaSuccess");
-    return true;
-  } else if (data.code === 401 && data.message === "2차 인증 실패") {
-    Modal("tfaFail");
-    return false;
-  } else if (data.code === 401) {
-    setNewAccessToken();
-    call2faOtqApi();
-  } else {
-    Modal("tfaFail");
-    return false;
-  }
 }

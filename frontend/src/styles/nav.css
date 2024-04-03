@@ -31,6 +31,7 @@
   font-size: 25px;
   font-weight: 500;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .navBrandImage {
@@ -93,6 +94,7 @@
   border-radius: 70%;
   overflow: hidden;
   background-color: var(--lightGray);
+  cursor: pointer;
 }
 
 .navProfileBtnImage {
