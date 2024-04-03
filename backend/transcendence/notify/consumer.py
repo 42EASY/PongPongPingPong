@@ -58,13 +58,13 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 	@sync_to_async
 	def mark_user_online(self, user_id):
 		# Redis를 이용해 사용자를 온라인으로 표시
-		Members.objects.filter(id=user_id).update(status='ONLINE')
+		Members.objects.filter(id=user_id).update(status=Members.Status.ONLINE)
 		redis_client.sadd("online_users", user_id)
 
 	@sync_to_async
 	def mark_user_offline(self, user_id):
 		# Redis를 이용해 사용자를 오프라인으로 표시
-		Members.objects.filter(id=user_id).update(status='OFFLINE')
+		Members.objects.filter(id=user_id).update(status=Members.Status.OFFLINE)
 		redis_client.srem("online_users", user_id)
 
 	@sync_to_async
@@ -147,7 +147,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json_encode({
 			'action': 'update_user_status',
 			'user_id': user_id,
-			'status': 'ONLINE',
+			'status': Members.Status.ONLINE,
 		}))
 	
 	async def user_offline(self, event):
@@ -157,7 +157,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json_encode({
 			'action': 'update_user_status',
 			'user_id': user_id,
-			'status': 'OFFLINE',
+			'status': Members.Status.OFFLINE,
 		}))
 
 	@sync_to_async
@@ -175,7 +175,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def get_user_online_status(self, partner_id):
-		return Members.objects.filter(id=partner_id, status='ONLINE').exists()
+		return Members.objects.filter(id=partner_id, status=Members.Status.ONLINE).exists()
 
 	async def fetch_and_notify_chat_partners_status(self, user_id):
 		chat_list = await self.get_chat_list(user_id)

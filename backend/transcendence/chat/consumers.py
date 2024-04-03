@@ -266,7 +266,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	@sync_to_async
 	def get_user_online_status(self, partner_id):
-		return Members.objects.filter(id=partner_id, status='ONLINE').exists()
+		return Members.objects.filter(id=partner_id, status=Members.Status.ONLINE).exists()
 
 	
 	async def notify_chat_partners_status(self, user_id, partner_id):
@@ -294,7 +294,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json_encode({
 			'action': 'update_user_status',
 			'user_id': user_id,
-			'status': 'ONLINE',
+			'status': Members.Status.ONLINE,
 		}))
 	
 	async def user_offline(self, event):
@@ -304,5 +304,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json_encode({
 			'action': 'update_user_status',
 			'user_id': user_id,
-			'status': 'OFFLINE',
+			'status': Members.Status.OFFLINE,
 		}))
