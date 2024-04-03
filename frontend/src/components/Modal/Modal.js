@@ -35,7 +35,7 @@ export default function Modal(modalName, argu) {
 
     // gameServe modal 자동 닫힘 예외처리
     if (modalName === "gameLeftServe" || modalName === "gameRightServe") {
-      let sec = 4;
+      let sec = 3;
       setTimeout(() => {
         $app.removeChild($modalWrapper);
         resolve(true);
