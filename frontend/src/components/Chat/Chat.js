@@ -1,10 +1,10 @@
 import ChatRoom from "../../pages/ChatRoom.js";
 import { delChatContent } from "../../state/ChatState.js";
 import Modal from "../Modal/Modal.js";
-import WebSocketManager from "../../state/WebSocketManager.js";
+import ChatSocketManager from "../../state/ChatSocketManager.js";
 
 export default function Chat(user, cnt) {
-  const socket = WebSocketManager.getInstance();
+  const socket = ChatSocketManager.getInstance();
   
   const $chatWrapper = document.createElement("div");
   $chatWrapper.classList.add("chatWrapper");
