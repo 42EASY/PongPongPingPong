@@ -404,3 +404,78 @@ async def test_join_final_room_disconnect():
         dummy_user1.delete()
         dummy_user2.delete()
         another_user.delete()
+
+
+#-------------------------------------------------------------------------------
+
+#게임방 입장 방송 테스트
+@pytest.mark.asyncio
+async def test_join_room_broadcast_success():
+    try:
+        channel_layer = get_channel_layer()
+
+        # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
+        fake_user = Members.objects.create(nickname = 'test_1a', email = 'testUser@test.com', is_2fa = False)
+        refresh = RefreshToken.for_user(fake_user)
+        fake_token = str(refresh.access_token)
+
+
+        #더미 데이터 입력 
+        dummy_user1 = Members.objects.create(nickname = 'dummy1_1a', email = 'dummy@test.com', is_2fa = False)
+        dummy_user2 = Members.objects.create(nickname = 'dummy2_1a', email = 'dummy@test.com', is_2fa = False)
+        dummy_user3 = Members.objects.create(nickname = 'dummy3_1a', email = 'dummy@test.com', is_2fa = False)
+    
+        dummy_refresh =RefreshToken.for_user(dummy_user2)
+        dummy_token = str(refresh.access_token)
+
+        tournament = Tournament.objects.create()
+
+        value = {
+            "registered_user": [
+                { "user_id" : dummy_user1.id, "channel_id": "123"},
+                { "user_id" : dummy_user2.id, "channel_id": "123"},
+                { "user_id" : dummy_user3.id, "channel_id": "123"},
+                { "user_id" : fake_user.id, "channel_id": "123"}],
+            "invited_info": [],
+            "join_user": [ dummy_user1.id ],
+            "join_final_user": []
+        }
+
+        cache.set('tournament_' + str(tournament.id), json.dumps(value))
+
+
+        #발급 받은 게임방 아이디로 접속
+        communicator = WebsocketCommunicator(GameRoomConsumer.as_asgi(), "/ws/join_room/" + str(tournament.id) +"?token=" + fake_token)
+        communicator.scope = await mock_authenticate(communicator.scope, fake_user)
+        connected, subprotocol = await communicator.connect()
+
+        assert connected
+
+        await communicator.send_json_to({
+            "action": "join_room"
+        })
+
+        await communicator.receive_json_from()    
+
+        dummy_communicator = WebsocketCommunicator(GameRoomConsumer.as_asgi(), "/ws/join_room/" + str(tournament.id) +"?token=" + dummy_token)
+        dummy_communicator.scope = await mock_authenticate(dummy_communicator.scope, dummy_user2)
+        dummy_connected, dummy_subprotocol = await dummy_communicator.connect()
+
+
+        assert dummy_connected
+
+        await dummy_communicator.send_json_to({
+            "action": "join_room"
+        })
+
+        response = await communicator.receive_json_from()
+
+        assert len(response["player_info"]) == 3
+
+        await communicator.disconnect()
+
+    finally:
+        fake_user.delete()
+        dummy_user1.delete()
+        dummy_user2.delete()
+        dummy_user3.delete()
