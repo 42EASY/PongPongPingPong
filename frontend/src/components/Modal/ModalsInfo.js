@@ -232,6 +232,8 @@ export default function getModalContent(modalName, argu) {
     inviteFail_fullRoom: JSON.parse(JSON.stringify(inviteFail)),
     inviteFail_offline: JSON.parse(JSON.stringify(inviteFail)),
     inviteFail_inGame: JSON.parse(JSON.stringify(inviteFail)),
+    chatFail_blockedUser: JSON.parse(JSON.stringify(onlyYes)),
+    chatFail_offlineUser: JSON.parse(JSON.stringify(onlyYes)),
   };
 
   // yes or no
@@ -276,6 +278,14 @@ export default function getModalContent(modalName, argu) {
 
   modals.inviteFail_inGame.bodyContent[0].text =
     "게임 중인 상태의 사용자는 초대할 수 없습니다";
+
+  modals.chatFail_blockedUser.title = "채팅을 보낼 수 없습니다";
+  modals.chatFail_blockedUser.bodyContent[0].text =
+    "차단한 사용자에게 채팅을 보낼 수 없습니다";
+
+  modals.chatFail_offlineUser.title = "채팅을 보낼 수 없습니다";
+  modals.chatFail_offlineUser.bodyContent[0].text =
+    "오프라인 상태의 사용자에게 채팅을 보낼 수 없습니다";
 
   return modals[modalName] || null;
 }
