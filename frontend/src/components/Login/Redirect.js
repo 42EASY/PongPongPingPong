@@ -1,7 +1,7 @@
 import { setLoginState } from "../../state/State.js";
 import changeUrl from "../../Router.js";
 import WebSocketManager from "../../state/WebSocketManager.js";
-import { call2faOtqApi } from "../Register/TwoFactorAuth.js";
+import { call2faOtpModal } from "../Register/TwoFactorAuth.js";
 import Modal from "../Modal/Modal.js";
 
 export default function Redirect() {
@@ -42,7 +42,11 @@ export default function Redirect() {
           data.result.image_url
         );
         if (data.result.is_2fa === true) {
-          login2fa();
+          call2faOtpModal().then((result) => {
+            if (result === true) {
+              changeUrl("/main");
+            } else changeUrl("/");
+          });
         } else changeUrl("/main");
       } else if (data.code === 201) {
         setLoginState(
@@ -59,7 +63,6 @@ export default function Redirect() {
     });
 }
 
-//todo: otp 인증 실패 시 재귀처리 필요
 function login2fa() {
   Modal("otp").then(async (result) => {
     if (result.isPositive === true) {
@@ -71,7 +74,7 @@ function login2fa() {
         return;
       } else if (status === false) {
         console.log("2차 인증 실패");
-        login2fa();
+        return;
       }
     }
   });
