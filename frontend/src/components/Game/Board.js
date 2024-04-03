@@ -1,8 +1,12 @@
 import EndGame from "../../pages/EndGame.js";
 import Modal from "../../components/Modal/Modal.js";
 
-export default function Board(mode, option) {
-  console.log(`${mode} , ${option}`);
+// <data>
+// mode : 2p/normal/tournament
+// option : classic/speed
+
+export default function Board(data) {
+  console.log("BOARD DATA: ", data);
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
@@ -14,7 +18,7 @@ export default function Board(mode, option) {
     RIGHT: 4,
   };
 
-  const maxScore = 3;
+  const maxScore = 1;
 
   const Ball = {
     new: function () {
@@ -25,7 +29,7 @@ export default function Board(mode, option) {
         y: canvas.height / 2 - 9,
         moveX: DIRECTION.IDLE,
         moveY: DIRECTION.IDLE,
-        speed: option === "speed" ? 13 : 4,
+        speed: data.option === "speed" ? 11 : 6,
       };
     },
   };
@@ -74,7 +78,12 @@ export default function Board(mode, option) {
       const path = `./src/styles${requestedUrl}.css`;
       document.getElementById("styles").setAttribute("href", path);
       history.pushState(null, null, window.location.pathname);
-      EndGame(mode, this.leftPlayer.score, this.rightPlayer.score);
+      EndGame({
+        mode: data.mode,
+        leftScore: this.leftPlayer.score,
+        rightScore: this.rightPlayer.score,
+        round: 1, // 수정필요
+      });
     },
 
     // Update all objects (move the player, paddle, ball, increment the score, etc.)
@@ -94,10 +103,8 @@ export default function Board(mode, option) {
         else if (this.leftPlayer.move === DIRECTION.DOWN)
           this.leftPlayer.y += this.leftPlayer.speed;
 
-        // On new serve (start of each turn) move the ball to the correct side
-        // and randomize the direction to add some challenge.
+        // 서브할 때 공 방향 랜덤으로 설정
         if (Pong._turnDelayIsOver.call(this) && this.turnOver) {
-          // 서브할 때 공 설정 -> 이거 그냥 공 초기화할 때 해도 되지 않나
           this.ball.moveX =
             this.serve === this.leftPlayer ? DIRECTION.LEFT : DIRECTION.RIGHT;
           this.ball.moveY = [DIRECTION.UP, DIRECTION.DOWN][
@@ -163,18 +170,6 @@ export default function Board(mode, option) {
             this.ball.moveX = DIRECTION.LEFT;
           }
         }
-      }
-
-      // // Handle the end of round transition
-      // // Check to see if the player won the round.
-      if (
-        this.leftPlayer.score === maxScore ||
-        this.rightPlayer.score === maxScore
-      ) {
-        this.gameOver = true;
-        setTimeout(function () {
-          Pong.changeUrl("/endgame");
-        }, 1000);
       }
     },
 
@@ -252,6 +247,7 @@ export default function Board(mode, option) {
     },
 
     listen: function () {
+      // 키 눌렸을 때
       document.addEventListener("keydown", (key) => {
         if (this.running) {
           if (key.key === "w") this.leftPlayer.move = DIRECTION.UP;
@@ -261,7 +257,7 @@ export default function Board(mode, option) {
         }
       });
 
-      // Stop the player from moving when there are no keys being pressed.
+      // 키 안 눌렸을 때
       document.addEventListener("keyup", (key) => {
         if (key.key === "w" || key.key === "s")
           this.leftPlayer.move = DIRECTION.IDLE;
@@ -272,18 +268,29 @@ export default function Board(mode, option) {
 
     // Reset the ball location, the player turns and set a delay before the next round begins.
     _resetTurn: function (victor) {
+      victor.score++;
       this.turnOver = true;
       this.ball = Ball.new.call(this);
       this.serve =
         this.serve === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
       this.timer = new Date().getTime();
-
-      victor.score++;
+      if (
+        this.leftPlayer.score === maxScore ||
+        this.rightPlayer.score === maxScore
+      ) {
+        this.gameOver = true;
+        setTimeout(() => {
+          Pong.changeUrl("/endgame");
+        }, 1000);
+      } else
+        Modal(
+          this.serve === this.leftPlayer ? "gameLeftServe" : "gameRightServe"
+        );
     },
 
     // Wait for a delay to have passed after each turn.
     _turnDelayIsOver: function () {
-      return new Date().getTime() - this.timer >= 1000;
+      return new Date().getTime() - this.timer >= 3000;
     },
   };
 

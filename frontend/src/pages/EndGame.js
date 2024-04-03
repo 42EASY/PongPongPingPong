@@ -2,27 +2,27 @@ import Result from "../components/Game/GameResult.js";
 import EndBtn from "../components/Game/EndBtn.js";
 import EndConfetti from "../components/Game/EndConfetti.js";
 
-// argu : mode, score, round
-export default function EndGame(mode, leftScore, rightScore, round) {
-  //--- hardcoding ---
-  mode = "tournament";
-  leftScore = 1;
-  rightScore = 2;
-  round = 2;
-  //------------------
+// <data>
+// mode
+// leftScore
+// rightScore
+// round
+
+export default function EndGame(data) {
+  console.log("END GAME: ", data);
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 
-  const hasWon = leftScore < rightScore ? true : false;
+  const hasWon = data.leftScore < data.rightScore ? true : false;
   const hasGameLeft =
-    mode === "tournament" && round === 1 && hasWon ? true : false;
+    data.mode === "tournament" && data.round === 1 && hasWon ? true : false;
 
   const $printBox = document.createElement("div");
   $printBox.classList.add("printBox");
   $app.appendChild($printBox);
-  $printBox.appendChild(Result(mode, leftScore, rightScore));
-  $printBox.appendChild(EndBtn(mode, hasGameLeft));
-  if (hasWon || mode === "2p") EndConfetti();
+  $printBox.appendChild(Result(data.mode, data.leftScore, data.rightScore));
+  $printBox.appendChild(EndBtn(data.mode, hasGameLeft));
+  if (hasWon || data.mode === "2p") EndConfetti();
 }
 
 //  mode | txt         | btn                   | modal
