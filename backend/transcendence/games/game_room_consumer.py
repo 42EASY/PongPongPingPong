@@ -6,6 +6,7 @@ from games.models import Game, Participant
 from tournaments.models import TournamentGame, Tournament
 from django.db.models import Count, Q
 from games.distributed_lock import DistributedLock
+import time
 
 prefix_normal = "normal_"
 prefix_tournament = "tournament_"
@@ -289,6 +290,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             idx += 1
             if (user_value["user_id"] == self.user.id):
                 #channel_id 갱신
+                #TODO: 추후에 registered_user에 channel_id를 갱신하는 것이 아니라, join_user에 channel_name 저장하도록 하기
                 parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
                 flag = True
                 break
@@ -348,10 +350,52 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             })
             return
 
+        #한명씩 들어올 때마다 이미 registered 되어있는 사람들한테 유저 정보 뿌리기
+        
+        #플레이어 info 가져오기
         new_parsed_value = json.loads(new_value)
+        new_registered_user = new_parsed_value["registered_user"]
+        new_join_user = new_parsed_value["join_user"]
+        
+        try:
+            player_entrance_info = []
+
+            for user_id in new_join_user:
+                user_model = Members.objects.get(id = int(user_id))
+
+                player_info = {
+                    "user_id": user_id,
+                    "image_url": user_model.image_url,
+                    "nickname": user_model.nickname
+                }
+
+                player_entrance_info.append(player_info)
+        except:
+            await self.send_json({
+                "status": "fail",
+                "message": "db 접근 중 오류가 발생했습니다"
+            })
+            return
+
+
+        #방에 이미 입장해있는 사람들한테 정보 방송하기
+        for user_id in new_join_user:
+            
+            for user_value in new_registered_user:
+                
+                if (user_value["user_id"] == user_id):
+                    await self.channel_layer.send(
+                        user_value["channel_id"],
+                        {
+                            'type': 'broadcast_player_entrance',
+                            'player_info': player_entrance_info
+                        })
+
 
         #만일 4명이 방에 다 들어오면 방에 있는 모두에게 게임 시작 알림
         if (len(new_parsed_value["join_user"]) == 4):
+            #잠시 5초동안 정지
+            time.sleep(5)
 
             matching_value = []
 
@@ -671,6 +715,15 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json({
             "status": "game_start_soon",
             "game_id": game_id,
+            "player_info": player_info
+        })
+
+    #플레이어 입장 방송
+    async def broadcast_player_entrance(self, event):
+        player_info = event["player_info"]
+
+        await self.send_json({
+            "status": "player_entrance",
             "player_info": player_info
         })
         
