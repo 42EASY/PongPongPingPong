@@ -1,7 +1,11 @@
 import ContactInfo from "./ContactInfo.js";
-import { chatUserState } from "../../../state/ChatUserState.js";
+import InfoButton from "./InfoBtn.js";
+import { getUserInfo } from "../../../components/Main/UserApi.js";
 
-export default function Info(user) {
+export default async function Info(user) {
+  const userInfo = await getUserInfo(user.user_id);
+  console.log(userInfo);
+
   const $infoWrapper = document.createElement("div");
   $infoWrapper.classList.add("infoWrapper");
 
@@ -38,12 +42,11 @@ export default function Info(user) {
   $infoStatus.classList.add("friendStatus");
   const $infoStatusText = document.createElement("div");
   $infoStatusText.classList.add("infoStatusText");
-  const userStatus = chatUserState.getUserState()[user.user_id];
   var userStatusText;
-  if (userStatus.isOnline) {
+  if (userInfo.result.status === "ONLINE") {
     $infoStatus.classList.add("online");
     userStatusText = "온라인";
-  } else if (!userStatus.isOnline) {
+  } else if (userInfo.result.status === "OFFLINE") {
     $infoStatus.classList.add("offline");
     userStatusText = "오프라인";
   }
@@ -51,45 +54,7 @@ export default function Info(user) {
   $infoStatusWrapper.appendChild($infoStatus);
   $infoStatusWrapper.appendChild($infoStatusText);
 
-  const $infoButtonWrapper = document.createElement("div");
-  $infoButtonWrapper.classList.add("infoButtonWrapper");
-
-  const $requestGameButton = document.createElement("div");
-  $requestGameButton.classList.add("requestGameButton", "infoButton");
-  const $requestGameButtonIcon = document.createElement("i");
-  $requestGameButtonIcon.classList.add("bi", "bi-rocket-takeoff");
-  const $requestGameButtonText = document.createElement("div");
-  $requestGameButtonText.classList.add("requestGameButtonText");
-  $requestGameButtonText.innerHTML = "게임신청";
-  //todo: 게임신청 버튼 클릭 시 게임신청 모달 띄우기
-
-  const $addFriendButton = document.createElement("div");
-  $addFriendButton.classList.add("addFriendButton", "infoButton");
-  const $addFriendButtonIcon = document.createElement("i");
-  $addFriendButtonIcon.classList.add("bi", "bi-person-plus");
-  const $addFriendButtonText = document.createElement("div");
-  $addFriendButtonText.classList.add("addFriendButtonText");
-  $addFriendButtonText.innerHTML = "친구추가";
-  //todo: 친구추가 버튼 클릭 시 친구하기
-
-  const $blockingButton = document.createElement("div");
-  $blockingButton.classList.add("blockingButton", "infoButton");
-  const $blockingButtonIcon = document.createElement("i");
-  $blockingButtonIcon.classList.add("bi", "bi-person-slash");
-  const $blockingButtonText = document.createElement("div");
-  $blockingButtonText.classList.add("blockingButtonText");
-  $blockingButtonText.innerHTML = "차단하기";
-  //todo: 차단하기 버튼 클릭 시 차단하기
-
-  $requestGameButton.appendChild($requestGameButtonIcon);
-  $requestGameButton.appendChild($requestGameButtonText);
-  $addFriendButton.appendChild($addFriendButtonIcon);
-  $addFriendButton.appendChild($addFriendButtonText);
-  $blockingButton.appendChild($blockingButtonIcon);
-  $blockingButton.appendChild($blockingButtonText);
-  $infoButtonWrapper.appendChild($requestGameButton);
-  $infoButtonWrapper.appendChild($addFriendButton);
-  $infoButtonWrapper.appendChild($blockingButton);
+  const $infoButtonWrapper = InfoButton(userInfo.result);
 
   $infoHeader.appendChild($infoNameWrapper);
   $infoHeader.appendChild($infoStatusWrapper);
