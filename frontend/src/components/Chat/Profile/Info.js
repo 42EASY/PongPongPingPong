@@ -1,10 +1,6 @@
 import InfoButton from "./InfoBtn.js";
-import { getUserInfo } from "../../../components/Main/UserApi.js";
 
 export default async function Info(user) {
-  const userInfo = await getUserInfo(user.user_id);
-  console.log(userInfo);
-
   const $infoWrapper = document.createElement("div");
   $infoWrapper.classList.add("infoWrapper");
 
@@ -42,10 +38,10 @@ export default async function Info(user) {
   const $infoStatusText = document.createElement("div");
   $infoStatusText.classList.add("infoStatusText");
   var userStatusText;
-  if (userInfo.result.status === "ONLINE") {
+  if (user.status === "ONLINE") {
     $infoStatus.classList.add("online");
     userStatusText = "온라인";
-  } else if (userInfo.result.status === "OFFLINE") {
+  } else if (user.status === "OFFLINE") {
     $infoStatus.classList.add("offline");
     userStatusText = "오프라인";
   }
@@ -53,7 +49,7 @@ export default async function Info(user) {
   $infoStatusWrapper.appendChild($infoStatus);
   $infoStatusWrapper.appendChild($infoStatusText);
 
-  const $infoButtonWrapper = InfoButton(userInfo.result);
+  const $infoButtonWrapper = InfoButton(user);
 
   $infoHeader.appendChild($infoNameWrapper);
   $infoHeader.appendChild($infoStatusWrapper);
