@@ -8,7 +8,7 @@ export default function Profile(user) {
   console.log(user);
 
   //타이틀
-  const $title = Title(user.user_id);
+  const $title = Title(user);
   $chatsWrapper.appendChild($title);
 
   //프로필 정보
