@@ -5,6 +5,7 @@ import GameInfo from "../components/Chat/Profile/GameInfo.js";
 export default function Profile(user) {
   const $chatsWrapper = document.querySelector(".sidebarArea");
   $chatsWrapper.innerHTML = "";
+  console.log(user);
 
   //타이틀
   const $title = Title(user.user_id);

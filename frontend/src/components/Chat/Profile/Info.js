@@ -1,4 +1,5 @@
 import ContactInfo from "./ContactInfo.js";
+import { chatUserState } from "../../../state/ChatUserState.js";
 
 export default function Info(user) {
   const $infoWrapper = document.createElement("div");
@@ -32,11 +33,21 @@ export default function Info(user) {
 
   const $infoStatusWrapper = document.createElement("div");
   $infoStatusWrapper.classList.add("infoStatusWrapper");
+
   const $infoStatus = document.createElement("div");
   $infoStatus.classList.add("friendStatus");
   const $infoStatusText = document.createElement("div");
   $infoStatusText.classList.add("infoStatusText");
-  $infoStatusText.innerHTML = user.status;
+  const userStatus = chatUserState.getUserState()[user.user_id];
+  var userStatusText;
+  if (userStatus.isOnline) {
+    $infoStatus.classList.add("online");
+    userStatusText = "온라인";
+  } else if (!userStatus.isOnline) {
+    $infoStatus.classList.add("offline");
+    userStatusText = "오프라인";
+  }
+  $infoStatusText.innerHTML = userStatusText;
   $infoStatusWrapper.appendChild($infoStatus);
   $infoStatusWrapper.appendChild($infoStatusText);
 
