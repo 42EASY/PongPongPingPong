@@ -2,9 +2,9 @@ import changeUrl from "../Router.js";
 import NavBar from "../components/Nav/NavBar.js";
 import Chat from "../pages/Chat.js";
 import Friends from "./Friends.js";
-import { getUserList, postLogout } from "../components/Nav/NavApi.js";
+import { getUserList } from "../components/Nav/NavApi.js";
 import FastGameStart from "../components/Nav/FastGameStart.js";
-import Modal from "../components/Modal/Modal.js";
+import { logout } from "../state/State.js";
 
 export default async function Nav() {
   const $navbar = document.querySelector(".nav");
@@ -25,7 +25,7 @@ export default async function Nav() {
 
   // 로그아웃 클릭이벤트
   $navProfileMenu.addEventListener("click", () => {
-    postLogout();
+    logout();
     changeUrl("/");
   });
 
@@ -64,8 +64,9 @@ export default async function Nav() {
     } else if (e.key === "Enter") {
       if (idx !== -1)
         changeUrl(
-          "/main",
-          arr.get(document.getElementById("navSearchItem" + idx).innerHTML)
+          `/main=${arr.get(
+            document.getElementById("navSearchItem" + idx).innerHTML
+          )}`
         );
     } else {
       idx = -1;
@@ -82,7 +83,7 @@ export default async function Nav() {
             $searchList.appendChild($searchItem);
             arr.set($searchItem.innerHTML, list.result.data[i].user_id);
             $searchItem.onclick = (e) => {
-              changeUrl("/main", arr.get(e.target.innerHTML));
+              changeUrl(`/main=${arr.get(e.target.innerHTML)}`);
             };
           }
           prevList = list;
