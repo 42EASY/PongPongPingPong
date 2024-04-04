@@ -390,7 +390,7 @@ async def test_disconnect():
         game_end_response = await opponent_communicator.receive_json_from()
 
     
-        assert game_end_response["status"] == "game end"
+        assert game_end_response["status"] == "game_over"
 
         fake_participant = Participant.objects.get(user_id = fake_user.id, game_id = invite_response["game_id"])
     
