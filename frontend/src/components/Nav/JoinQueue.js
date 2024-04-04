@@ -67,9 +67,6 @@ export function joinInviteTournamentQueue(data) {
 export function cancelNormalQueue(data) {
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify(data));
-    socket.onmessage = (e) => {
-      console.log(JSON.parse(e.data));
-    };
   }
 }
 
