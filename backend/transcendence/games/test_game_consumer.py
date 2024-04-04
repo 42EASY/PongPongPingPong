@@ -110,9 +110,10 @@ async def test_normal_round_win_success():
             if (i != 9):
                 await fake_communicator.receive_json_from()
         
-        game_over_response= await fake_communicator.receive_json_from()
+        game_over_response = await fake_communicator.receive_json_from()
 
-        assert game_over_response["status"] == "normal_game_over"
+        print(game_over_response)
+        assert game_over_response["status"] == "game_over"
 
     finally:
         fake_user.delete()
@@ -301,7 +302,7 @@ async def test_tournament_round_win():
         
         game_over_response= await fake_communicator.receive_json_from()
 
-        assert game_over_response["status"] == "normal_game_over"
+        assert game_over_response["status"] == "game_over"
 
     finally:
         fake_user.delete()

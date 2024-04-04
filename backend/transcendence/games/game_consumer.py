@@ -212,6 +212,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
     async def disconnect(self, close_code):
 
         #TODO: 결승인지 아닌지 구분하기 - 결승이면 게임 끝났다는 방송 message가 달라짐
+        #TODO: 방송 시 게임 결과도 반환하기
         #game이 다 끝나지 않은 경우
         if (self.user_participant.score < 10 and self.opponent_participant.score < 10):
             #점수 상관없이 먼저 접속 끊은 쪽이 lose
@@ -327,7 +328,35 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
         #10점인 경우 게임 over 알림
         if (self.user_participant.score == 10):
-            if (self.game_mode == Game.GameMode.NORMAL):
+            
+            self.user_participant.result = Participant.Result.WIN
+            self.opponent_participant.result = Participant.Result.LOSE
+
+            self.user_participant.save()
+            self.opponent_participant.save()
+            
+            
+            #게임 종료 방송
+            await self.channel_layer.send(
+                self.channel_name,
+                {
+                    'type': 'broadcast_game_status',
+                    'message': 'game_over',
+                    'game_status': [{ "user_id" : self.user.id, "score": self.user_participant.score }, 
+                                    { "user_id" : self.opponent.id, "score" : self.opponent_participant.score}]
+                })
+            
+            await self.channel_layer.send(
+                    self.opponent_channel_name,
+                    {
+                        'type': 'broadcast_game_status',
+                        'message': 'game_over',
+                        'game_status': [{ "user_id" : self.user.id, "score": self.user_participant.score }, 
+                                    { "user_id" : self.opponent.id, "score" : self.opponent_participant.score}]
+                    })
+
+            #normal 게임이거나, tournament 결승 게임인 경우 redis 삭제
+            if (self.game_mode == Game.GameMode.NORMAL or self.tournament_game.round == TournamentGame.Round.FINAL):                
                 if self.lock.acquire_lock():
                     try:
                         cache.delete(self.key)
@@ -347,34 +376,9 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                         "message": "lock 획득 중 오류가 발생했습니다"
                     })
                     return
-                
-            #TODO: 토너먼트인 경우 final이면 cache.delete
+            
 
-            self.user_participant.result = Participant.Result.WIN
-            self.opponent_participant.result = Participant.Result.LOSE
-
-            self.user_participant.save()
-            self.opponent_participant.save()
-
-            await self.channel_layer.send(
-                self.channel_name,
-                {
-                    'type': 'broadcast_game_status',
-                    'message': 'normal_game_over',
-                    'game_status': [{ "user_id" : self.user.id, "score": self.user_participant.score }, 
-                                    { "user_id" : self.opponent.id, "score" : self.opponent_participant.score}]
-                })
-            await self.channel_layer.send(
-                self.opponent_channel_name,
-                {
-                    'type': 'broadcast_game_status',
-                    'message': 'normal_game_over',
-                    'game_status': [{ "user_id" : self.user.id, "score": self.user_participant.score }, 
-                                    { "user_id" : self.opponent.id, "score" : self.opponent_participant.score}]
-                })
-
-
-
+        #승점 10점이 아닌 경우
         else:
            await self.channel_layer.send(
                 self.channel_name,
