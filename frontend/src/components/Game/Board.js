@@ -1,8 +1,12 @@
 import EndGame from "../../pages/EndGame.js";
 import Modal from "../../components/Modal/Modal.js";
 
-export default function Board(mode, option) {
-  console.log(`${mode} , ${option}`);
+// <data>
+// mode : 2p/normal/tournament
+// option : classic/speed
+
+export default function Board(data) {
+  console.log("BOARD DATA: ", data);
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
@@ -14,7 +18,7 @@ export default function Board(mode, option) {
     RIGHT: 4,
   };
 
-  const maxScore = 3;
+  const maxScore = 1;
 
   const Ball = {
     new: function () {
@@ -25,7 +29,7 @@ export default function Board(mode, option) {
         y: canvas.height / 2 - 9,
         moveX: DIRECTION.IDLE,
         moveY: DIRECTION.IDLE,
-        speed: option === "speed" ? 13 : 4,
+        speed: data.option === "speed" ? 11 : 6,
       };
     },
   };
@@ -59,6 +63,13 @@ export default function Board(mode, option) {
       this.serve = Math.random() < 0.5 ? this.leftPlayer : this.rightPlayer;
       this.timer = this.round = 0;
 
+      Modal(
+        this.serve === this.leftPlayer ? "gameLeftServe" : "gameRightServe"
+      ).then((result) => {
+        this.running = true;
+        window.requestAnimationFrame(() => this.loop());
+      });
+
       this.draw();
       this.listen();
     },
@@ -67,7 +78,12 @@ export default function Board(mode, option) {
       const path = `./src/styles${requestedUrl}.css`;
       document.getElementById("styles").setAttribute("href", path);
       history.pushState(null, null, window.location.pathname);
-      EndGame(mode, this.leftPlayer.score, this.rightPlayer.score);
+      EndGame({
+        mode: data.mode,
+        leftScore: this.leftPlayer.score,
+        rightScore: this.rightPlayer.score,
+        round: 1, // 수정필요
+      });
     },
 
     // Update all objects (move the player, paddle, ball, increment the score, etc.)
@@ -87,10 +103,8 @@ export default function Board(mode, option) {
         else if (this.leftPlayer.move === DIRECTION.DOWN)
           this.leftPlayer.y += this.leftPlayer.speed;
 
-        // On new serve (start of each turn) move the ball to the correct side
-        // and randomize the direction to add some challenge.
+        // 서브할 때 공 방향 랜덤으로 설정
         if (Pong._turnDelayIsOver.call(this) && this.turnOver) {
-          // 서브할 때 공 설정 -> 이거 그냥 공 초기화할 때 해도 되지 않나
           this.ball.moveX =
             this.serve === this.leftPlayer ? DIRECTION.LEFT : DIRECTION.RIGHT;
           this.ball.moveY = [DIRECTION.UP, DIRECTION.DOWN][
@@ -157,35 +171,16 @@ export default function Board(mode, option) {
           }
         }
       }
-
-      // // Handle the end of round transition
-      // // Check to see if the player won the round.
-      if (
-        this.leftPlayer.score === maxScore ||
-        this.rightPlayer.score === maxScore
-      ) {
-        this.gameOver = true;
-        setTimeout(function () {
-          Pong.changeUrl("/endgame");
-        }, 1000);
-      }
     },
 
-    // Draw the objects to the canvas element
+    // canvas 그리기
     draw: function () {
-      // Clear the Canvas
       context.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Set the fill style to black
       context.fillStyle = "#000000";
-
-      // Draw the background
       context.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Set the fill style to white (For the paddles and the ball)
       context.fillStyle = "#ffffff";
 
-      // Draw the leftPlayer
+      // leftPlayer
       context.fillRect(
         this.leftPlayer.x,
         this.leftPlayer.y,
@@ -193,7 +188,7 @@ export default function Board(mode, option) {
         this.leftPlayer.height
       );
 
-      // Draw the rightPlayer
+      // rightPlayer
       context.fillRect(
         this.rightPlayer.x,
         this.rightPlayer.y,
@@ -201,7 +196,7 @@ export default function Board(mode, option) {
         this.rightPlayer.height
       );
 
-      // Draw the net (Line in the middle)
+      // 가운데 선
       context.beginPath();
       context.setLineDash([10, 10]);
       context.moveTo(canvas.width / 2, canvas.height);
@@ -210,7 +205,7 @@ export default function Board(mode, option) {
       context.strokeStyle = "#ffffff";
       context.stroke();
 
-      // Draw the Ball
+      // 공
       if (this._turnDelayIsOver()) {
         context.beginPath();
         context.arc(
@@ -224,11 +219,10 @@ export default function Board(mode, option) {
         context.fill();
       }
 
-      // Set the default canvas font and align it to the center
       context.font = "bold 70px sans-serif";
       context.textAlign = "center";
 
-      // Draw the players score (left)
+      // left score
       context.fillStyle = "#ffffff";
       context.fillText(
         this.leftPlayer.score.toString().padStart(2, "0"),
@@ -236,7 +230,7 @@ export default function Board(mode, option) {
         70
       );
 
-      // Draw the paddles score (right)
+      // right score
       context.fillText(
         this.rightPlayer.score.toString().padStart(2, "0"),
         canvas.width / 2 + 60,
@@ -253,19 +247,17 @@ export default function Board(mode, option) {
     },
 
     listen: function () {
+      // 키 눌렸을 때
       document.addEventListener("keydown", (key) => {
-        // Handle the 'Press any key to begin' function and start the game.
-        if (this.running === false) {
-          this.running = true;
-          window.requestAnimationFrame(() => this.loop());
+        if (this.running) {
+          if (key.key === "w") this.leftPlayer.move = DIRECTION.UP;
+          if (key.key === "s") this.leftPlayer.move = DIRECTION.DOWN;
+          if (key.key === "ArrowUp") this.rightPlayer.move = DIRECTION.UP;
+          if (key.key === "ArrowDown") this.rightPlayer.move = DIRECTION.DOWN;
         }
-        if (key.key === "w") this.leftPlayer.move = DIRECTION.UP;
-        if (key.key === "s") this.leftPlayer.move = DIRECTION.DOWN;
-        if (key.key === "ArrowUp") this.rightPlayer.move = DIRECTION.UP;
-        if (key.key === "ArrowDown") this.rightPlayer.move = DIRECTION.DOWN;
       });
 
-      // Stop the player from moving when there are no keys being pressed.
+      // 키 안 눌렸을 때
       document.addEventListener("keyup", (key) => {
         if (key.key === "w" || key.key === "s")
           this.leftPlayer.move = DIRECTION.IDLE;
@@ -276,18 +268,29 @@ export default function Board(mode, option) {
 
     // Reset the ball location, the player turns and set a delay before the next round begins.
     _resetTurn: function (victor) {
+      victor.score++;
       this.turnOver = true;
       this.ball = Ball.new.call(this);
       this.serve =
         this.serve === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
       this.timer = new Date().getTime();
-
-      victor.score++;
+      if (
+        this.leftPlayer.score === maxScore ||
+        this.rightPlayer.score === maxScore
+      ) {
+        this.gameOver = true;
+        setTimeout(() => {
+          Pong.changeUrl("/endgame");
+        }, 1000);
+      } else
+        Modal(
+          this.serve === this.leftPlayer ? "gameLeftServe" : "gameRightServe"
+        );
     },
 
     // Wait for a delay to have passed after each turn.
     _turnDelayIsOver: function () {
-      return new Date().getTime() - this.timer >= 1000;
+      return new Date().getTime() - this.timer >= 3000;
     },
   };
 

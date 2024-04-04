@@ -1,5 +1,3 @@
-import EndBtn from "../Game/EndBtn.js";
-
 export default function GameResult(mode, leftScore, rightScore) {
   const $resultWrapper = document.createElement("div");
   $resultWrapper.classList.add("resultWrapper");
@@ -12,9 +10,10 @@ export default function GameResult(mode, leftScore, rightScore) {
 
   $resultWrapper.appendChild($winOrLose);
   $resultWrapper.appendChild($scores);
-  $resultWrapper.appendChild(EndBtn(mode));
 
-  $winOrLose.innerHTML = leftScore > rightScore ? "WIN" : "LOSE";
+  if (mode === "2p")
+    $winOrLose.innerHTML = leftScore > rightScore ? "1p WIN" : "2p WIN";
+  else $winOrLose.innerHTML = leftScore < rightScore ? "WIN" : "LOSE";
   $scores.innerHTML =
     leftScore.toString().padStart(2, "0") +
     " - " +

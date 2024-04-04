@@ -1,32 +1,70 @@
-export default function EndBtn(mode) {
-  const $btnBox = document.createElement("div");
-  const $fstBtn = document.createElement("button");
-  const $sndBtn = document.createElement("button");
-  const $fstTxt = document.createElement("div");
-  const $sndTxt = document.createElement("div");
-  const $fstIcn = document.createElement("i");
-  const $sndIcn = document.createElement("i");
+import Chat from "../../pages/Chat.js";
 
-  $btnBox.classList.add("btnBox");
-  $fstBtn.classList.add("btn", "addFriend");
-  $sndBtn.classList.add("btn", mode === "normal" ? "exit" : "chatting");
-  $fstTxt.classList.add("btnTxt", "fstTxt");
-  $sndTxt.classList.add("btnTxt", "sndTxt");
-  $fstIcn.classList.add("bi", "bi-person-plus", "fstIcn");
-  $sndIcn.classList.add(
-    "bi",
-    mode === "normal" ? "bi-arrow-right" : "bi-chat-left-dots",
-    "sndIcn"
-  );
+function chatting() {
+  Chat();
+  const $sidebar = document.querySelector(".sidebarArea");
+  const $overlay = document.querySelector(".overlay");
+  $sidebar.classList.add("showSidebar");
+  $overlay.classList.add("showOverlay");
+}
 
-  $btnBox.appendChild($fstBtn);
-  $btnBox.appendChild($sndBtn);
-  $fstBtn.appendChild($fstIcn);
-  $sndBtn.appendChild($sndIcn);
-  $fstBtn.appendChild($fstTxt);
-  $sndBtn.appendChild($sndTxt);
+//exit button : main으로->로그인 안해서 테스트 엌케하지..
+function exit() {}
 
-  $fstTxt.innerHTML = "친구 추가";
-  $sndTxt.innerHTML = mode === "normal" ? "나가기" : "채팅";
-  return $btnBox;
+//friend button : 모달->친구추가
+function friend() {}
+
+export default function EndBtn(mode, hasGameLeft) {
+  const $btnWrapper = document.createElement("div");
+  $btnWrapper.classList.add("btnWrapper");
+  const $exitBtn = document.createElement("button");
+  const $exitTxt = document.createElement("div");
+  const $exitIcn = document.createElement("i");
+  $exitBtn.classList.add("btn", "exit");
+  $exitTxt.classList.add("btnTxt");
+  $exitIcn.classList.add("bi", "bi-arrow-right");
+  $exitTxt.innerHTML = "나가기";
+  $exitBtn.appendChild($exitTxt);
+  $exitBtn.appendChild($exitIcn);
+
+  const $friendBtn = document.createElement("button");
+  const $friendTxt = document.createElement("div");
+  const $friendIcn = document.createElement("i");
+  $friendBtn.classList.add("btn", "addFriend");
+  $friendTxt.classList.add("btnTxt");
+  $friendIcn.classList.add("bi", "bi-person-plus");
+  $friendTxt.innerHTML = "친구추가";
+  $friendBtn.appendChild($friendTxt);
+  $friendBtn.appendChild($friendIcn);
+
+  const $chatBtn = document.createElement("button");
+  const $chatTxt = document.createElement("div");
+  const $chatIcn = document.createElement("i");
+  $chatBtn.classList.add("btn", "chatting");
+  $chatTxt.classList.add("btnTxt");
+  $chatIcn.classList.add("bi", "bi-chat-left-dots");
+  $chatTxt.innerHTML = "채팅";
+  $chatBtn.appendChild($chatTxt);
+  $chatBtn.appendChild($chatIcn);
+
+  if (mode === "2p") $btnWrapper.appendChild($exitBtn);
+  else if (mode === "normal") {
+    $btnWrapper.appendChild($friendBtn);
+    $btnWrapper.appendChild($exitBtn);
+  } else if (mode === "tournament") {
+    $btnWrapper.appendChild($friendBtn);
+    $btnWrapper.appendChild(hasGameLeft ? $chatBtn : $exitBtn);
+  }
+
+  $exitBtn.addEventListener("click", () => {
+    exit();
+  });
+  $friendBtn.addEventListener("click", () => {
+    friend();
+  });
+  $chatBtn.addEventListener("click", () => {
+    chatting();
+  });
+
+  return $btnWrapper;
 }

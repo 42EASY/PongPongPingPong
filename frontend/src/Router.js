@@ -42,11 +42,13 @@ export default function changeUrl(requestedUrl, element) {
 
   if (match.page !== Redirect) history.pushState(null, null, match.path);
 
-  if (match.page === EndGame) match.page("tournament", 1, 3);
-  else if (
+  // if (match.page === EndGame) match.page("tournament", 1, 3, 1);
+  if (
     match.page === Register ||
     match.page === Main ||
-    match.page === GameRoom
+    match.page === GameRoom ||
+    match.page === Game ||
+    match.page === EndGame
   )
     match.page(element);
   else match.page();
