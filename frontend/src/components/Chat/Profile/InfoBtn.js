@@ -26,7 +26,6 @@ export default function InfoBtn(user) {
   const $addFriendButtonText = document.createElement("div");
   $addFriendButtonText.classList.add("addFriendButtonText");
   $addFriendButtonText.innerHTML = "친구추가";
-  //todo: 친구추가 버튼 클릭 시 친구하기
 
   const $blockingButton = document.createElement("div");
   $blockingButton.classList.add("blockingButton", "infoButton");
@@ -35,7 +34,6 @@ export default function InfoBtn(user) {
   const $blockingButtonText = document.createElement("div");
   $blockingButtonText.classList.add("blockingButtonText");
   $blockingButtonText.innerHTML = "차단하기";
-  //todo: 차단하기 버튼 클릭 시 차단하기
 
   $requestGameButton.appendChild($requestGameButtonIcon);
   $requestGameButton.appendChild($requestGameButtonText);
