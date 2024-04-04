@@ -1,4 +1,3 @@
-import ContactInfo from "./ContactInfo.js";
 import InfoButton from "./InfoBtn.js";
 import { getUserInfo } from "../../../components/Main/UserApi.js";
 
@@ -62,9 +61,6 @@ export default async function Info(user) {
 
   $infoWrapper.appendChild($infoProfileImg);
   $infoWrapper.appendChild($infoHeader);
-
-  const $contactInfo = ContactInfo();
-  $infoWrapper.appendChild($contactInfo);
 
   return $infoWrapper;
 }
