@@ -35,7 +35,7 @@ export default function MoreMenu(user) {
         postBlock(user.user_id, user.status);
         const $ProfileBtnBox = document.querySelector("#profileBtnBox");
         $ProfileBtnBox.innerHTML = "";
-        $ProfileBtnBox.appendChild(OtherBtn(user.user_id, "BLOCK"));
+        $ProfileBtnBox.appendChild(OtherBtn(user, "BLOCK"));
       }
     });
   });
