@@ -394,8 +394,6 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
         #만일 4명이 방에 다 들어오면 방에 있는 모두에게 게임 시작 알림
         if (len(new_parsed_value["join_user"]) == 4):
-            #잠시 5초동안 정지
-            time.sleep(5)
 
             matching_value = []
 
