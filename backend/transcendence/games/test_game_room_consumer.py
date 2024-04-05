@@ -85,24 +85,23 @@ async def test_join_room_success():
 @pytest.mark.asyncio
 async def test_invite_and_join_room_success():
 
+    fake_user = Members.objects.create(nickname = 'test_1b', email = 'testUser@test.com', is_2fa = False)
+    dummy_user1 = Members.objects.create(nickname = 'dummy1_1b', email = 'dummy@test.com', is_2fa = False)
+    dummy_user2 = Members.objects.create(nickname = 'dummy2_1b', email = 'dummy@test.com', is_2fa = False)
+    
+    invite_user = Members.objects.create(nickname = 'invite_1b', email = 'invite@test.com', is_2fa = False)
+        
     try:
         channel_layer = get_channel_layer()
 
         # 테스트용 토큰 발급(비동기적으로 실행되기에 테스트용 데이터를 pytest.fixture로 하나로 묶을 수 없음)
-        fake_user = Members.objects.create(nickname = 'test_1b', email = 'testUser@test.com', is_2fa = False)
         refresh = RefreshToken.for_user(fake_user)
         fake_token = str(refresh.access_token)
 
-
-        #더미 데이터 입력 
-        dummy_user1 = Members.objects.create(nickname = 'dummy1_1b', email = 'dummy@test.com', is_2fa = False)
-        dummy_user2 = Members.objects.create(nickname = 'dummy2_1b', email = 'dummy@test.com', is_2fa = False)
-    
-        invite_user = Members.objects.create(nickname = 'invite_1b', email = 'invite@test.com', is_2fa = False)
         invite_refresh = RefreshToken.for_user(invite_user)
         invite_token = str(invite_refresh.access_token)
 
-
+        #더미 데이터 입력 
         tournament = Tournament.objects.create()
 
         value = {
@@ -146,7 +145,7 @@ async def test_invite_and_join_room_success():
 
         await invite_queue_communicator.send_json_to({
             "action": "join_invite_tournament_queue",
-            "room_id": join_response["tournament_id"]
+            "room_id": join_response["room_id"]
         })
 
         invite_queue_response = await invite_queue_communicator.receive_json_from() 
@@ -168,10 +167,15 @@ async def test_invite_and_join_room_success():
             "action": "join_room"    
         })
 
-        invite_response = await invite_communicator.receive_json_from()    
+        await join_communicator.receive_json_from()
+        
+        join_response = await join_communicator.receive_json_from()    
+       
+
+        invite_response = await invite_communicator.receive_json_from()  
 
         assert invite_response["status"] == "game_start_soon"
-
+        
         await invite_communicator.disconnect()
         await join_communicator.disconnect()
     
