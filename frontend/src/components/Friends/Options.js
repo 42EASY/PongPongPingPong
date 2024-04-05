@@ -15,7 +15,7 @@ export default function Options(user) {
   $profileOpt.innerHTML = "프로필 상세보기";
   $Options.appendChild($profileOpt);
   $profileOpt.addEventListener("click", () => {
-    changeUrl("/main", user.user_id);
+    changeUrl(`/main=${user.user_id}`);
   });
 
   const $messageOpt = document.createElement("li");

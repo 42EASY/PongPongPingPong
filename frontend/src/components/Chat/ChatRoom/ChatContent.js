@@ -1,15 +1,21 @@
 import Profile from "../../../pages/Profile.js";
 import { getUserId } from "../../../state/State.js";
 
-export function formatTimestamp() {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  return `${year}-${month}-${day} ${hours}:${minutes}`;
+export function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  
+  const formatter = new Intl.DateTimeFormat('default', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false, // 24시간 형식 사용
+  });
+
+  return formatter.format(date);
 }
+
 
 export default function ChatContent(user, data) {
   const $chatContentWrapper = document.createElement("div");
@@ -32,7 +38,7 @@ export default function ChatContent(user, data) {
 
   const $chatContentTime = document.createElement("div");
   $chatContentTime.classList.add("chatContentTime");
-  $chatContentTime.innerText = formatTimestamp();
+  $chatContentTime.innerText = formatTimestamp(data.timestamp);
 
   const $chatContent = document.createElement("div");
   $chatContent.classList.add("chatContent");

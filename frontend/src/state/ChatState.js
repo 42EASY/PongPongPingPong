@@ -27,3 +27,9 @@ export const getChatContent = (id) => {
   if (elem) return elem.list;
   return null;
 };
+
+export const getTimestamp = () => {
+  const now = new Date();
+  const isoString = now.toISOString();
+  return isoString;
+};

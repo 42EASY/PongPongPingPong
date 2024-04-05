@@ -20,6 +20,8 @@ def json_encode(data):
 # 메시지 타임스탬프를 float로 변환하는 함수
 def parse_timestamp_to_float(timestamp_str):
 	try:
+		# UTC Z 제거
+		timestamp_str = timestamp_str[:-1]
 		dt = datetime.fromisoformat(timestamp_str)
 		return dt.timestamp()
 	except ValueError as e:
@@ -51,6 +53,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.enter_chat_room(data)
 		elif action == 'update_read_time':
 			await self.update_read_time(data)
+		elif action == 'leave_chat_room':
+			await self.leave_chat_room(data)
 
 	async def fetch_chat_list(self):
 		user_id = self.user.id
@@ -85,7 +89,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		
 		if not await self.is_user_online(receiver_id):
 			return await self.send_fail_message("offline_chat_user", "현재 오프라인 상태의 유저입니다.")
-
+		
 		await self.process_message_sending(sender_id, receiver_id, data)
 
 	async def send_fail_message(self, error_type, message):
@@ -97,9 +101,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def process_message_sending(self, sender_id, receiver_id, data):
 		room_name = await self.get_or_create_room(sender_id, receiver_id)
+		
+		await self.rejoin_chat_room(sender_id, room_name)
+		
 		sender_info = await self.get_member_info(sender_id)
 		receiver_info = await self.get_member_info(receiver_id)
-		message_data = self.create_message_data(sender_info, receiver_info, data['message'])
+		message_data = self.create_message_data(sender_info, receiver_info, data)
 		await self.store_message(room_name, message_data)
 
 		if await self.is_blocked(receiver_id, sender_id):
@@ -113,12 +120,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.channel_layer.send(channel_name, {"type": "notify_new_chat", "sender_info": sender_info})
 			await self.channel_layer.send(channel_name, {"type": "receive_message", "message_data": message_data})
 
-	def create_message_data(self, sender_info, receiver_info, message):
+	def create_message_data(self, sender_info, receiver_info, data):
 		return {
 			"sender": sender_info,
 			"receiver": receiver_info,
-			"message": message,
-			"timestamp": datetime.utcnow().isoformat()
+			"message": data['message'],
+			"timestamp": data['timestamp'],
 		}
 		
 	async def receive_message(self, event):
@@ -131,39 +138,103 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def enter_chat_room(self, data):
 		room_name = data['room_name']
+		timestamp = data['timestamp']
+		user_id = self.user.id
 
 		_, other_user_id = room_name.split('_')[1:]  # A와 B 중 나머지 하나
-		other_user_id = int(other_user_id) if other_user_id != str(self.user.id) else int(_)
+		other_user_id = int(other_user_id) if other_user_id != str(user_id) else int(_)
 
-		is_online, is_blocked = await self.notify_chat_partners_status(self.user.id, other_user_id)
+		await self.notify_chat_partners_status(user_id, other_user_id)
+		await self.rejoin_chat_room(user_id, room_name)
 
-		if (is_online == False):
-			return await self.send_fail_message("offline_chat_user", "현재 오프라인 상태의 유저입니다.")
-		
-		if (is_blocked == True):
-			return await self.send_fail_message("blocked_chat_user", "차단한 유저에겐 메세지를 보낼 수 없습니다.")
+		messages = await self.load_messages(user_id, room_name)
 
-		messages = await self.load_messages(room_name)
-
-		await self.update_last_read_time(self.user.id, room_name)
+		await self.update_last_read_time(user_id, room_name, timestamp)
 
 		# 클라이언트에게 메시지 목록 전송
 		await self.send(text_data=json_encode({
 			"action": "fetch_messages",
 			"room_name": room_name,
-			"messages": messages
+			"messages": messages,
 		}))
 	
 	async def update_read_time(self, data):
 		room_name = data['room_name']
+		timestamp = data['timestamp']
 
-		await self.update_last_read_time(self.user.id, room_name)
+		await self.update_last_read_time(self.user.id, room_name, timestamp)
+
+	async def leave_chat_room(self, data):
+		user_id = self.user.id
+		room_name = data['room_name']
+		timestamp = data['timestamp']
+
+		await self.remove_user_from_chat(user_id, room_name)
+		await self.set_left_time(user_id, room_name, timestamp)
+
+		# 모든 사용자가 채팅방을 나갔는지 확인
+		if await self.is_room_empty(room_name):
+			await self.delete_chat_history(room_name)
+			
+	@sync_to_async
+	def set_left_time(self, user_id, room_name, timestamp):
+		redis_client.set(f"left_time:{room_name}:{user_id}", timestamp)
 
 	@sync_to_async
-	def load_messages(self, room_name):
-		# Redis에서 해당 채팅방의 모든 메시지 불러오기
+	def remove_user_from_chat(self, user_id, room_name):
+		# 유저를 채팅방에서 제거하고 나간 상태를 기록
+		redis_client.srem(f"user_chats:{user_id}", room_name)
+		redis_client.sadd(f"left_chat_rooms:{user_id}", room_name)
+
+	@sync_to_async
+	def is_room_empty(self, room_name):
+		_, other_user_id = room_name.split('_')[1:]  # A와 B 중 나머지 하나
+		other_user_id = int(other_user_id) if other_user_id != str(self.user.id) else int(_)
+
+		# 채팅방에 남아있는 유저가 있는지 확인
+		user = redis_client.sismember(f"user_chats:{self.user.id}", room_name)
+		other_user = redis_client.sismember(f"user_chats:{other_user_id}", room_name)
+		return user == False and other_user == False
+
+	@sync_to_async
+	def delete_chat_history(self, room_name):
+		# 채팅방의 대화 기록 삭제
+		redis_client.delete(f"chat_messages:{room_name}")
+
+	@sync_to_async
+	def get_chat_list(self, user_id):
+		# 사용자가 나간 채팅방은 제외하고 채팅방 목록 가져오기
+		chat_room_names = redis_client.smembers(f"user_chats:{user_id}")
+		left_rooms = redis_client.smembers(f"left_chat_rooms:{user_id}")
+		active_rooms = chat_room_names - left_rooms
+		# 바이트 문자열을 문자열로 디코딩
+		chat_rooms = [room_name.decode('utf-8') for room_name in active_rooms]
+		return chat_rooms
+
+	@sync_to_async
+	def load_messages(self, user_id, room_name):
+		# 유저의 마지막 참여 시점 가져오기
+		left_time = redis_client.get(f"left_time:{room_name}:{user_id}")
+		if left_time is None or 0:
+			left_time = 0
+		else:
+			left_time = parse_timestamp_to_float(left_time.decode('utf-8'))
+
+		# 해당 시점 이후의 메시지만 필터링하여 불러오기
 		messages = redis_client.lrange(f"chat_messages:{room_name}", 0, -1)
-		return [json.loads(message) for message in messages]
+		filtered_messages = [
+			json.loads(message) for message in messages 
+			if parse_timestamp_to_float(json.loads(message)['timestamp']) > left_time]
+
+		return filtered_messages
+
+	@sync_to_async
+	def rejoin_chat_room(self, user_id, room_name):
+		if redis_client.sismember(f"left_chat_rooms:{user_id}", room_name):
+			# 유저가 나간 채팅방 목록에서 해당 채팅방을 제거
+			redis_client.srem(f"left_chat_rooms:{user_id}", room_name)
+			# 유저 채팅방 목록에 다시 추가
+			redis_client.sadd(f"user_chats:{user_id}", room_name)
 
 	@sync_to_async
 	def get_unread_messages_count(self, user_id, room_name):
@@ -171,9 +242,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		last_read_time = redis_client.get(f"last_read_time:{room_name}:{user_id}")
 		if not last_read_time:
 			last_read_time = 0
+		else:
+			last_read_time = parse_timestamp_to_float(last_read_time.decode('utf-8'))
 		# 마지막으로 읽은 시간 이후의 메시지 수 계산
 		messages = redis_client.lrange(f"chat_messages:{room_name}", 0, -1)
-		unread_count = sum(1 for message in messages if parse_timestamp_to_float(json.loads(message)['timestamp']) > float(last_read_time))
+		unread_count = sum(1 for message in messages if parse_timestamp_to_float(json.loads(message)['timestamp']) > last_read_time)
 		return unread_count
 
 	@sync_to_async
@@ -213,11 +286,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			}
 
 	@sync_to_async
-	def update_last_read_time(self, user_id, room_name):
-		# 현재 시간을 Unix 타임스탬프로 변환
-		current_time = datetime.utcnow().timestamp()
+	def update_last_read_time(self, user_id, room_name, time):
 		# 마지막으로 읽은 시간을 Redis에 저장
-		redis_client.set(f"last_read_time:{room_name}:{user_id}", current_time)
+		redis_client.set(f"last_read_time:{room_name}:{user_id}", time)
 
 	@database_sync_to_async
 	def is_blocked(self, user_id, target_id):
@@ -280,8 +351,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			"is_online": is_online,
 			"is_blocked": is_blocked,
 		}))
-
-		return is_online, is_blocked
 
 	@database_sync_to_async
 	def is_user_blocked(self, user_id, partner_id):
