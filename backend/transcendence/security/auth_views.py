@@ -68,7 +68,7 @@ class LoginView(APIView):
 
 		refresh_token_lifetime = int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds())
 
-		cache.set(refresh_token, member.id, timeout=refresh_token_lifetime)
+		cache.set(f"refresh_token:{member.id}", refresh_token, timeout=refresh_token_lifetime)
 
 		res = JsonResponse({
 			'code': 201 if created else 200,
@@ -103,7 +103,7 @@ class LogoutView(APIView):
 				'result':{}
 			}, status=200)
 
-			res.delete_cookie('refresh_token')
+			res.delete_cookie('refresh_token', path='/')
 
 			return res
 		except Members.DoesNotExist:
