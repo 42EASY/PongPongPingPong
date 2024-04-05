@@ -105,7 +105,7 @@ const tdata = [
   },
 ];
 
-export default function GameHistory() {
+export default function GameHistory(user_id) {
   const $GameHistoryWrapper = document.createElement("div");
   const $GameHistoryNav = document.createElement("div");
   const $GameHistoryBtn = document.createElement("div");
@@ -131,12 +131,9 @@ export default function GameHistory() {
   $TournamentHistoryBtn.append("토너먼트 전적");
   $HistoryBoard.classList.add("historyBoard");
   let tmpGameResult = GameResult(data);
-  tmpGameResult.style.marginBottom = "16px";
   $HistoryBoard.appendChild(tmpGameResult);
   tmpGameResult = GameResult(data2); //Todo: 2줄 -> 반복문으로 수정
-  GameResults(4, false);
-  tmpGameResult.style.marginBottom = "16px";
-  $HistoryBoard.appendChild(tmpGameResult);
+  GameResults(user_id, true);
 
   $GameHistoryBtn.onclick = () => {
     if (!$GameHistoryBtn.classList.contains("historyBtnSelected")) {

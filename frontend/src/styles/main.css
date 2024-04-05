@@ -255,6 +255,7 @@
   display: flex;
   border-radius: 12px;
   overflow: hidden;
+  margin-bottom: 16px;
 }
 
 .resultWrapperLose {

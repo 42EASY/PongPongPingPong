@@ -23,6 +23,6 @@ export default async function Main() {
   $page.appendChild($profile);
   $page.classList.add("main");
 
-  const $history = GameHistory();
+  const $history = GameHistory(id);
   $page.appendChild($history);
 }
