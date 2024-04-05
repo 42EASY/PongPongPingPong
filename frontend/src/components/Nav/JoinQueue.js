@@ -25,8 +25,8 @@ export function joinNormalQueue(data) {
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
       if (res.status === "game_start_soon") {
-        res["mode"] = data.game_mode;
-        res["option"] = "NORMAL";
+        res["mode"] = "NORMAL";
+        res["option"] = data.game_mode;
         changeUrl("/game", res);
       }
     };
@@ -39,8 +39,8 @@ export function joinInviteNormalQueue(data) {
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
       if (res.status === "game_start_soon") {
-        res["mode"] = data.game_mode;
-        res["option"] = "NORMAL";
+        res["mode"] = "NORMAL";
+        res["option"] = data.game_mode;
         changeUrl("/game", res);
       }
       if (res.status === "fail") return false;
@@ -55,7 +55,7 @@ export function joinInviteTournamentQueue(data) {
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
       if (res.statue === "success") {
-        res["mode"] = "SEMI_FINAL";
+        res["option"] = "SEMI_FINAL";
         changeUrl("/gameroom", res);
       }
       if (res.status === "fail") return false;
@@ -76,7 +76,7 @@ export function joinTournamentQueue(data) {
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
       if (res.status === "success") {
-        res["mode"] = "SEMI_FINAL";
+        res["option"] = "SEMI_FINAL";
         changeUrl("/gameroom", res);
       }
     };
