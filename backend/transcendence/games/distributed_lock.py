@@ -5,7 +5,7 @@ class DistributedLock:
     def __init__(self):
         self.lock_key = "lock:game_queue"
         #TODO: host 변경하기
-        self.redis_conn = redis.StrictRedis(host='localhost', port=6379, db=0)
+        self.redis_conn = redis.StrictRedis(host='redis', port=6379, db=0)
         self.acquire_timeout = 10
         
     def acquire_lock(self):
