@@ -120,6 +120,7 @@ const logout = () => {
       "content-Type": "application/json",
       Authorization: `Bearer ${getAccessToken()}`,
     },
+    credentials: "include",
   })
     .then((res) => res.json())
     .then((data) => {
