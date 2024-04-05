@@ -1,52 +1,37 @@
 import Result from "../components/Game/GameResult.js";
-import confetti from "https://cdn.skypack.dev/canvas-confetti";
+import EndBtn from "../components/Game/EndBtn.js";
+import EndConfetti from "../components/Game/EndConfetti.js";
 
-export default function EndGame(mode, leftScore, rightScore) {
+// <data>
+// mode
+// leftScore
+// rightScore
+// round
+
+export default function EndGame(data) {
+  console.log("END GAME: ", data);
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 
-  $app.appendChild(Result(mode, leftScore, rightScore));
-  if (leftScore > rightScore) {
-    let lastCallTime = performance.now(); // 마지막 호출 시간
-    const callInterval = 200; // 호출 간격
+  const hasWon = data.leftScore < data.rightScore ? true : false;
+  const hasGameLeft =
+    data.mode === "tournament" && data.round === 1 && hasWon ? true : false;
 
-    const doItNow = (evt, hard) => {
-      const currentTime = performance.now();
-      if (currentTime - lastCallTime < callInterval) return;
-      lastCallTime = currentTime;
-      const direction = Math.sign(lastX - evt.clientX);
-      lastX = evt.clientX;
-      const particleCount = hard ? r(122, 300) : r(40, 50);
-      confetti({
-        particleCount,
-        angle: r(90, 90 + direction * 30),
-        spread: r(60, 80),
-        origin: {
-          x: evt.clientX / window.innerWidth,
-          y: evt.clientY / window.innerHeight,
-        },
-      });
-    };
-    console.log(confetti);
-    const doIt = (evt) => {
-      doItNow(evt, false);
-    };
-
-    const doItHard = (evt) => {
-      doItNow(evt, true);
-    };
-
-    let lastX = 0;
-    $app.addEventListener("mousemove", doIt);
-    $app.addEventListener("click", doItHard);
-
-    function r(mi, ma) {
-      return parseInt(Math.random() * (ma - mi) + mi);
-    }
-
-    setTimeout(function () {
-      $app.removeEventListener("mousemove", doIt);
-      $app.removeEventListener("click", doItHard);
-    }, 5000);
-  }
+  const $printBox = document.createElement("div");
+  $printBox.classList.add("printBox");
+  $app.appendChild($printBox);
+  $printBox.appendChild(Result(data.mode, data.leftScore, data.rightScore));
+  $printBox.appendChild(EndBtn(data.mode, hasGameLeft));
+  if (hasWon || data.mode === "2p") EndConfetti();
 }
+
+//  mode | txt         | btn                   | modal
+// ==========================================================
+//  2p   | w,l / l,w   | exit                  |
+// ----------------------------------------------------------
+//  norm | win / lose  | friend,exit           |
+// ----------------------------------------------------------
+//  tour | win / lose  | R1 win  : friend,chat | table,timer
+//                     | R1 lose : friend,exit |
+//                     | R2      : friend,exit | table
+// ==========================================================

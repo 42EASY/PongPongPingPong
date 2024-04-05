@@ -1,4 +1,6 @@
 import TimerRing from "../GameRoom/TimerRing.js";
+import TournamentTable from "./TournamentTable.js";
+import GameResultTable from "./GameResultTable.js";
 
 export function TimerBar() {
   const $timerBar = document.createElement("div");
@@ -6,13 +8,13 @@ export function TimerBar() {
   return $timerBar;
 }
 
-export default function getModalContent(modalName, argu) {
-  const onlyYes = {
-    title: "title",
+function getOnlyYesModal(titleText, bodyText) {
+  return {
+    title: titleText,
     bodyContent: [
       {
         type: "text",
-        text: "",
+        text: bodyText,
       },
     ],
     footerContent: [
@@ -23,13 +25,15 @@ export default function getModalContent(modalName, argu) {
       },
     ],
   };
+}
 
-  const yesOrNo = {
-    title: "title",
+function getYesOrNoModal(titleText, bodyText, yesButtonText) {
+  return {
+    title: titleText,
     bodyContent: [
       {
         type: "text",
-        text: "body text",
+        text: bodyText,
       },
     ],
     footerContent: [
@@ -40,252 +44,292 @@ export default function getModalContent(modalName, argu) {
       },
       {
         type: "primaryButton",
-        text: "확인",
+        text: yesButtonText,
         class: "btn primaryButton close positive",
       },
     ],
   };
-
-  const inviteFail = JSON.parse(JSON.stringify(onlyYes));
-  inviteFail.title = "사용자를 초대할 수 없습니다";
-
-  const modals = {
-    tfa: {
-      title: "2차 인증 설정",
-      bodyContent: [
-        {
-          type: "image",
-          src: argu,
-          alt: "qr code",
-        },
-        {
-          type: "text",
-          text: "Google OTP(Autheticator) 앱에서 QR코드를 스캔해주세요",
-        },
-      ],
-      footerContent: [
-        {
-          type: "singleButton",
-          text: "스캔 완료",
-          class: "btn singleButton close positive",
-        },
-      ],
-    },
-
-    otp: {
-      title: "OTP 인증번호 입력",
-      bodyContent: [
-        {
-          type: "text",
-          text: "Google OTP(Autheticator) 앱의\n인증번호 6자리를 입력해주세요",
-        },
-        {
-          type: "input",
-          name: "otp",
-          placeHolder: "인증번호를 입력하세요",
-        },
-      ],
-      footerContent: [
-        {
-          type: "singleButton",
-          text: "확인",
-          class: "btn singleButton close otpSummit positive",
-        },
-      ],
-    },
-
-    gameMode: {
-      title: "게임 모드 선택",
-      bodyContent: [
-        {
-          type: "radio",
-          text: "2P 게임",
-          name: "game",
-          explanation:
-            "하나의 키보드에서 두 명의 플레이어 간 게임이 진행됩니다",
-        },
-        {
-          type: "radio",
-          text: "일반 게임",
-          name: "game",
-          explanation: "1:1 방식으로 진행됩니다",
-        },
-        {
-          type: "radio",
-          text: "토너먼트",
-          name: "game",
-          explanation: "4명이 모여 토너먼트 방식으로 진행됩니다",
-        },
-      ],
-      footerContent: [
-        {
-          type: "singleButton",
-          text: "다음",
-          class: "btn singleButton positive close",
-        },
-      ],
-    },
-
-    gameOption: {
-      title: "게임 옵션 선택",
-      bodyContent: [
-        {
-          type: "radio",
-          text: "클래식",
-          name: "game",
-          explanation: "Pong 게임 방식으로 진행됩니다",
-        },
-        {
-          type: "radio",
-          text: "스피드",
-          name: "game",
-          explanation: "공의 속도가 더 빠릅니다",
-        },
-      ],
-      footerContent: [
-        {
-          type: "singleButton",
-          text: "🏓게임 시작🏓",
-          class: "btn singleButton positive close",
-        },
-      ],
-    },
-
-    waitingPlayer: {
-      title: "대전자 찾는 중 . . .",
-      hideCloseButton: true,
-      backdropCloseDisabled: true,
-      bodyContent: [TimerRing()],
-      footerContent: [
-        {
-          type: "singleButton",
-          text: "취소",
-          class: "btn singleButton close",
-        },
-      ],
-    },
-
-    waitingInvitation: {
-      title: "초대 수락 대기 중 . . .",
-      hideCloseButton: true,
-      backdropCloseDisabled: true,
-      bodyContent: [TimerRing()],
-      footerContent: [
-        {
-          type: "singleButton",
-          text: "취소",
-          class: "btn singleButton close",
-        },
-      ],
-    },
-
-    tournamentTable: {
-      title: "토너먼트 대진표",
-      bodyContent: [
-        {
-          type: "image",
-          src: argu,
-          alt: "league_table",
-        },
-      ],
-    },
-
-    gameResultTable: {
-      title: "게임 종료되었습니다",
-      bodyContent: [
-        {
-          type: "image",
-          src: argu,
-          alt: "league_table",
-        },
-      ],
-    },
-
-    gameLeftServe: {
-      title: "공 이동 방향",
-      hideCloseButton: true,
-      backdropCloseDisabled: true,
-      bodyContent: [{ type: "i", class: "bi bi-arrow-left" }],
-      footerContent: [TimerBar()],
-    },
-
-    gameRightServe: {
-      title: "공 이동 방향",
-      hideCloseButton: true,
-      backdropCloseDisabled: true,
-      bodyContent: [{ type: "i", class: "bi bi-arrow-right" }],
-      footerContent: [TimerBar()],
-    },
-
-    // yes or no
-    deleteFriend: JSON.parse(JSON.stringify(yesOrNo)),
-    blockFriend: JSON.parse(JSON.stringify(yesOrNo)),
-    unblockFriend: JSON.parse(JSON.stringify(yesOrNo)),
-    exitChatting: JSON.parse(JSON.stringify(yesOrNo)),
-
-    // only yes
-    invalidGame: JSON.parse(JSON.stringify(onlyYes)),
-    tfaSuccess: JSON.parse(JSON.stringify(onlyYes)),
-    tfaFail: JSON.parse(JSON.stringify(onlyYes)),
-    matchingFail: JSON.parse(JSON.stringify(onlyYes)),
-    inviteFail_alreadyInvited: JSON.parse(JSON.stringify(inviteFail)),
-    inviteFail_fullRoom: JSON.parse(JSON.stringify(inviteFail)),
-    inviteFail_offline: JSON.parse(JSON.stringify(inviteFail)),
-    inviteFail_inGame: JSON.parse(JSON.stringify(inviteFail)),
-    chatFail_blockedUser: JSON.parse(JSON.stringify(onlyYes)),
-    chatFail_offlineUser: JSON.parse(JSON.stringify(onlyYes)),
+}
+//------------------------------
+function get_otp(argu) {
+  return {
+    title: "2차 인증 설정",
+    bodyContent: [
+      {
+        type: "image",
+        src: argu,
+        alt: "qr code",
+      },
+      {
+        type: "text",
+        text: "Google OTP(Autheticator) 앱에서 QR코드를 스캔해주세요",
+      },
+    ],
+    footerContent: [
+      {
+        type: "singleButton",
+        text: "확인",
+        class: "btn singleButton close positive",
+      },
+    ],
   };
+}
+function get_tfa() {
+  return {
+    title: "OTP 인증번호 입력",
+    bodyContent: [
+      {
+        type: "text",
+        text: "Google OTP(Autheticator) 앱의\n인증번호 6자리를 입력해주세요",
+      },
+      {
+        type: "input",
+        name: "otp",
+        placeHolder: "인증번호를 입력하세요",
+      },
+    ],
+    footerContent: [
+      {
+        type: "singleButton",
+        text: "확인",
+        class: "btn singleButton close otpSummit positive",
+      },
+    ],
+  };
+}
+function get_gameMode() {
+  return {
+    title: "게임 모드 선택",
+    bodyContent: [
+      {
+        type: "radio",
+        text: "2P 게임",
+        name: "game",
+        explanation: "하나의 키보드에서 두 명의 플레이어 간 게임이 진행됩니다",
+      },
+      {
+        type: "radio",
+        text: "일반 게임",
+        name: "game",
+        explanation: "1:1 방식으로 진행됩니다",
+      },
+      {
+        type: "radio",
+        text: "토너먼트",
+        name: "game",
+        explanation: "4명이 모여 토너먼트 방식으로 진행됩니다",
+      },
+    ],
+    footerContent: [
+      {
+        type: "singleButton",
+        text: "다음",
+        class: "btn singleButton positive close",
+      },
+    ],
+  };
+}
+function get_gameOption() {
+  return {
+    title: "게임 옵션 선택",
+    bodyContent: [
+      {
+        type: "radio",
+        text: "클래식",
+        name: "game",
+        explanation: "Pong 게임 방식으로 진행됩니다",
+      },
+      {
+        type: "radio",
+        text: "스피드",
+        name: "game",
+        explanation: "공의 속도가 더 빠릅니다",
+      },
+    ],
+    footerContent: [
+      {
+        type: "singleButton",
+        text: "🏓게임 시작🏓",
+        class: "btn singleButton positive close",
+      },
+    ],
+  };
+}
+function get_waitingPlayer() {
+  return {
+    title: "대전자 찾는 중 . . .",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
+    bodyContent: [TimerRing()],
+    footerContent: [
+      {
+        type: "singleButton",
+        text: "취소",
+        class: "btn singleButton close",
+      },
+    ],
+  };
+}
+function get_waitingInvitation() {
+  return {
+    title: "초대 수락 대기 중 . . .",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
+    bodyContent: [TimerRing()],
+    footerContent: [
+      {
+        type: "singleButton",
+        text: "취소",
+        class: "btn singleButton close",
+      },
+    ],
+  };
+}
+function get_tournamentTable(argu) {
+  return {
+    title: "토너먼트 대진표",
+    bodyContent: [TournamentTable(argu.players)],
+  };
+}
+function get_gameResultTable(argu) {
+  return {
+    title: "게임 종료되었습니다",
+    bodyContent: [GameResultTable(argu)],
+  };
+}
+function get_gameLeftServe() {
+  return {
+    title: "공 이동 방향",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
+    bodyContent: [{ type: "i", class: "bi bi-arrow-left" }],
+    footerContent: [TimerBar()],
+  };
+}
+function get_gameRightServe() {
+  return {
+    title: "공 이동 방향",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
+    bodyContent: [{ type: "i", class: "bi bi-arrow-right" }],
+    footerContent: [TimerBar()],
+  };
+}
 
-  // yes or no
-  modals.deleteFriend.title = `${argu} 님과 친구를 끊으시겠습니까?`;
-  modals.deleteFriend.bodyContent[0].text =
-    "이 사용자를 다시 친구 추가할 수 있습니다";
-  modals.deleteFriend.footerContent[1].text = "친구끊기";
+function get_deleteFriend(argu) {
+  return getYesOrNoModal(
+    `${argu} 님과 친구를 끊으시겠습니까?`,
+    "이 사용자를 다시 친구 추가할 수 있습니다",
+    "친구끊기"
+  );
+}
+function get_blockFriend(argu) {
+  return getYesOrNoModal(
+    `${argu} 님을 차단하시겠습니까?`,
+    "Friends > 차단 목록에서 해제할 수 있습니다.",
+    "차단하기"
+  );
+}
+function get_unblockFriend(argu) {
+  return getYesOrNoModal(
+    `${argu} 님을 차단 해제하시겠습니까?`,
+    `이제 ${argu} 님의 메세지를 받을 수 있습니다.`,
+    "해제하기"
+  );
+}
+function get_exitChatting(argu) {
+  return getYesOrNoModal(
+    "채팅방에서 나가시겠습니까?",
+    `${argu} 님과의 대화 내역이 모두 삭제됩니다.`,
+    "나가기"
+  );
+}
+function get_invalidGame() {
+  return getOnlyYesModal(
+    "게임을 찾을 수 없습니다",
+    "이미 만료되었거나, 유효하지 않은 게임입니다"
+  );
+}
+function get_tfaSuccess() {
+  return getOnlyYesModal("2차인증에 성공했습니다", "");
+}
+function get_tfaFail() {
+  return getOnlyYesModal("2차인증에 실패했습니다", "다시 시도해 주세요");
+}
+function get_matchingFail() {
+  return getOnlyYesModal("대전자를 찾을 수 없습니다", "");
+}
+function get_inviteFail_alreadyInvited() {
+  return getOnlyYesModal(
+    "사용자를 초대할 수 없습니다",
+    "이미 초대되었거나 초대 대기 중인 사용자는 초대할 수 없습니다"
+  );
+}
+function get_inviteFail_fullRoom() {
+  return getOnlyYesModal(
+    "사용자를 초대할 수 없습니다",
+    "게임방이 꽉 차면 더이상 사용자를 초대할 수 없습니다"
+  );
+}
+function get_inviteFail_offline() {
+  return getOnlyYesModal(
+    "사용자를 초대할 수 없습니다",
+    "오프라인 상태의 사용자는 초대할 수 없습니다"
+  );
+}
+function get_inviteFail_inGame() {
+  return getOnlyYesModal(
+    "사용자를 초대할 수 없습니다",
+    "게임 중인 상태의 사용자는 초대할 수 없습니다"
+  );
+}
 
-  modals.blockFriend.title = `${argu} 님을 차단하시겠습니까?`;
-  modals.blockFriend.bodyContent[0].text =
-    "Friends > 차단 목록에서 해제할 수 있습니다.";
-  modals.blockFriend.footerContent[1].text = "차단하기";
-
-  modals.unblockFriend.title = `${argu} 님을 차단 해제하시겠습니까?`;
-  modals.unblockFriend.bodyContent[0].text = `이제 ${argu} 님의 메세지를 받을 수 있습니다.`;
-  modals.unblockFriend.footerContent[1].text = "해제하기";
-
-  modals.exitChatting.title = "채팅방에서 나가시겠습니까?";
-  modals.exitChatting.bodyContent[0].text = `${argu} 님과의 대화 내역이 모두 삭제됩니다.`;
-  modals.exitChatting.footerContent[1].text = "나가기";
-
-  // only Yes
-  modals.invalidGame.title = "게임을 찾을 수 없습니다";
-  modals.invalidGame.bodyContent[0].text =
-    "이미 만료되었거나, 유효하지 않은 게임입니다";
-
-  modals.tfaSuccess.title = "2차인증에 성공했습니다";
-
-  modals.tfaFail.title = "2차인증에 실패했습니다";
-  modals.tfaFail.bodyContent[0].text = "다시 시도해 주세요";
-
-  modals.matchingFail.title = "대전자를 찾을 수 없습니다";
-
-  modals.inviteFail_alreadyInvited.bodyContent[0].text =
-    "이미 초대되었거나 초대 대기 중인 사용자는 초대할 수 없습니다";
-
-  modals.inviteFail_fullRoom.bodyContent[0].text =
-    "게임방이 꽉 차면 더이상 사용자를 초대할 수 없습니다";
-
-  modals.inviteFail_offline.bodyContent[0].text =
-    "오프라인 상태의 사용자는 초대할 수 없습니다";
-
-  modals.inviteFail_inGame.bodyContent[0].text =
-    "게임 중인 상태의 사용자는 초대할 수 없습니다";
-
-  modals.chatFail_blockedUser.title = "채팅을 보낼 수 없습니다";
-  modals.chatFail_blockedUser.bodyContent[0].text =
-    "차단한 사용자에게 채팅을 보낼 수 없습니다";
-
-  modals.chatFail_offlineUser.title = "채팅을 보낼 수 없습니다";
-  modals.chatFail_offlineUser.bodyContent[0].text =
-    "오프라인 상태의 사용자에게 채팅을 보낼 수 없습니다";
-
-  return modals[modalName] || null;
+//==============================================
+export default function getModalContent(modalName, argu) {
+  switch (modalName) {
+    case "otp":
+      return get_otp(argu);
+    case "tfa":
+      return get_tfa(argu);
+    case "gameMode":
+      return get_gameMode();
+    case "gameOption":
+      return get_gameOption();
+    case "waitingPlayer":
+      return get_waitingPlayer();
+    case "waitingInvitation":
+      return get_waitingInvitation();
+    case "tournamentTable":
+      return get_tournamentTable(argu);
+    case "gameResultTable":
+      return get_gameResultTable(argu);
+    case "gameLeftServe":
+      return get_gameLeftServe();
+    case "gameRightServe":
+      return get_gameRightServe();
+    case "deleteFriend":
+      return get_deleteFriend(argu);
+    case "blockFriend":
+      return get_blockFriend(argu);
+    case "unblockFriend":
+      return get_unblockFriend(argu);
+    case "exitChatting":
+      return get_exitChatting(argu);
+    case "invalidGame":
+      return get_invalidGame();
+    case "tfaSuccess":
+      return get_tfaSuccess(); // undefined
+    case "tfaFail":
+      return get_tfaFail();
+    case "matchingFail": // undefined
+      return get_matchingFail();
+    case "inviteFail_alreadyInvited":
+      return get_inviteFail_alreadyInvited();
+    case "inviteFail_fullRoom":
+      return get_inviteFail_fullRoom();
+    case "inviteFail_offline":
+      return get_inviteFail_offline();
+    case "inviteFail_inGame":
+      return get_inviteFail_inGame();
+  }
 }
