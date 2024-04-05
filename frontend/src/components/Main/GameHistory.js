@@ -1,6 +1,7 @@
 import GameResult from "./GameResult.js";
 import NoHistory from "./NoHistory.js";
 import TournamentResult from "./TournamentResult.js";
+import GameResults from "./GameResults.js";
 
 const noHistory = false;
 
@@ -133,6 +134,7 @@ export default function GameHistory() {
   tmpGameResult.style.marginBottom = "16px";
   $HistoryBoard.appendChild(tmpGameResult);
   tmpGameResult = GameResult(data2); //Todo: 2줄 -> 반복문으로 수정
+  GameResults(4, false);
   tmpGameResult.style.marginBottom = "16px";
   $HistoryBoard.appendChild(tmpGameResult);
 
