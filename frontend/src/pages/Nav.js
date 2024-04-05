@@ -26,7 +26,6 @@ export default async function Nav() {
   // 로그아웃 클릭이벤트
   $navProfileMenu.addEventListener("click", () => {
     logout();
-    changeUrl("/");
   });
 
   const $input = document.querySelector("#navSearch");
