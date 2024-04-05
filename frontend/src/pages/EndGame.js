@@ -2,12 +2,6 @@ import Result from "../components/Game/GameResult.js";
 import EndBtn from "../components/Game/EndBtn.js";
 import EndConfetti from "../components/Game/EndConfetti.js";
 
-// <data>
-// mode
-// leftScore
-// rightScore
-// round
-
 export default function EndGame(data) {
   console.log("END GAME: ", data);
   const $app = document.querySelector(".App");

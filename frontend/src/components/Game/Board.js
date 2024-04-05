@@ -1,12 +1,20 @@
 import EndGame from "../../pages/EndGame.js";
 import Modal from "../../components/Modal/Modal.js";
-
-// <data>
-// mode : 2p/normal/tournament
-// option : classic/speed
+import GameSocketManager from "../../state/GameSocketManager.js";
 
 export default function Board(data) {
   console.log("BOARD DATA: ", data);
+  const socket = GameSocketManager.getInstance(data.game_id);
+  console.log("START GAME!!!!!!");
+
+  // sendAction, onmessage test
+  socket.sendAction({ action: "press_key", key: 1 });
+  socket.onmessage = (e) => {
+    const res = JSON.parse(e.data);
+    console.log(res);
+    console.log("-----------");
+  };
+
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
@@ -18,7 +26,7 @@ export default function Board(data) {
     RIGHT: 4,
   };
 
-  const maxScore = 1;
+  const maxScore = 10;
 
   const Ball = {
     new: function () {
@@ -29,7 +37,7 @@ export default function Board(data) {
         y: canvas.height / 2 - 9,
         moveX: DIRECTION.IDLE,
         moveY: DIRECTION.IDLE,
-        speed: data.option === "speed" ? 11 : 6,
+        speed: data.option === "SPEED" ? 1 : 1,
       };
     },
   };
@@ -72,18 +80,15 @@ export default function Board(data) {
 
       this.draw();
       this.listen();
+      if (data.mode === "NORMAL" || data.mode === "TOURNAMENT")
+        this.remoteListen();
     },
 
     changeUrl: function (requestedUrl) {
       const path = `./src/styles${requestedUrl}.css`;
       document.getElementById("styles").setAttribute("href", path);
       history.pushState(null, null, window.location.pathname);
-      EndGame({
-        mode: data.mode,
-        leftScore: this.leftPlayer.score,
-        rightScore: this.rightPlayer.score,
-        round: 1, // 수정필요
-      });
+      EndGame(data);
     },
 
     // Update all objects (move the player, paddle, ball, increment the score, etc.)
@@ -250,24 +255,63 @@ export default function Board(data) {
       // 키 눌렸을 때
       document.addEventListener("keydown", (key) => {
         if (this.running) {
-          if (key.key === "w") this.leftPlayer.move = DIRECTION.UP;
-          if (key.key === "s") this.leftPlayer.move = DIRECTION.DOWN;
-          if (key.key === "ArrowUp") this.rightPlayer.move = DIRECTION.UP;
-          if (key.key === "ArrowDown") this.rightPlayer.move = DIRECTION.DOWN;
+          if (data.mode === "2P" && key.key === "w")
+            this.leftPlayer.move = DIRECTION.UP;
+          if (data.mode === "2P" && key.key === "s")
+            this.leftPlayer.move = DIRECTION.DOWN;
+          if (key.key === "ArrowUp") {
+            this.rightPlayer.move = DIRECTION.UP;
+            if (data.mode === "NORMAL" || data.mode === "TOURNAMENT")
+              socket.sendAction({ action: "press_key", key: 0 });
+          }
+          if (key.key === "ArrowDown") {
+            this.rightPlayer.move = DIRECTION.DOWN;
+            if (data.mode === "NORMAL" || data.mode === "TOURNAMENT")
+              socket.sendAction({ action: "press_key", key: 1 });
+          }
         }
       });
 
-      // 키 안 눌렸을 때
+      // 키 뗐을 때
       document.addEventListener("keyup", (key) => {
-        if (key.key === "w" || key.key === "s")
+        if (data.mode === "2P" && (key.key === "w" || key.key === "s"))
           this.leftPlayer.move = DIRECTION.IDLE;
-        if (key.key === "ArrowUp" || key.key === "ArrowDown")
+        if (key.key === "ArrowUp" || key.key === "ArrowDown") {
           this.rightPlayer.move = DIRECTION.IDLE;
+          if (data.mode === "NORMAL" || data.mode === "TOURNAMENT")
+            socket.sendAction({ action: "release_key" });
+        } //sendAction 추가 필요
       });
+    },
+
+    remoteListen: function () {
+      // on message는 소켓 당 한 번만 하면 되나.....?
+      socket.onmessage = (e) => {
+        const res = JSON.parse(e.data);
+        console.log("press key onmessage!!!!!!!!!!!!!!!");
+        console.log(res);
+        // 키 눌렀을 때
+        if (res.status === "press_key") {
+          // [TODO] status->action으로 수정
+          if (res.key === 0) this.leftPlayer.move = DIRECTION.UP;
+          if (res.key === 1) this.leftPlayer.move = DIRECTION.DOWN;
+        }
+        // 키 뗐을 때
+        if (res.status === "releases_key") {
+          // [TODO] status->action으로 수정
+          this.leftPlayer.move = DIRECTION.IDLE;
+        }
+      };
     },
 
     // Reset the ball location, the player turns and set a delay before the next round begins.
     _resetTurn: function (victor) {
+      if (
+        (data.mode === "NORMAL" || data.mode === "TOURNAMENT") &&
+        victor === this.rightPlayer
+      )
+        socket.sendAction({ action: "round_win" });
+
       victor.score++;
       this.turnOver = true;
       this.ball = Ball.new.call(this);
