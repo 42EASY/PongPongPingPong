@@ -1,5 +1,6 @@
 export default function GameResult(data) {
-  const cur_user_id = 1;
+  console.log(data);
+  const cur_user_id = 5;
   const $ResultWrapper = document.createElement("div");
   const $ResultMark = document.createElement("div");
 
@@ -77,7 +78,6 @@ export default function GameResult(data) {
   $ResultPlayer1MedalBox.classList.add("resultPlayerMedalBox");
   $ResultPlayer1ImageBox.classList.add("resultPlayerImageBox");
   $ResultPlayer1Image.classList.add("resultPlayerImage");
-  console.log(data);
   $ResultPlayer1Image.setAttribute("src", data.player_one.image_url);
   $ResultPlayer1Image.setAttribute("alt", "player_one_image");
   $ResultPlayerScore.classList.add("resultPlayerScore");
