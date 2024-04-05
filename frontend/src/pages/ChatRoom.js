@@ -5,6 +5,7 @@ import { getMyInfo } from "../state/State.js";
 import ChatSocketManager from "../state/ChatSocketManager.js";
 import { chatUserState } from "../state/ChatUserState.js";
 import Modal from "../components/Modal/Modal.js";
+import { getTimestamp } from "../state/ChatState.js";
 
 const socket = ChatSocketManager.getInstance();
 
@@ -39,6 +40,7 @@ async function sendMessage(user, me, roomName) {
     sender_id: me.user_id,
     receiver_id: user.user_id,
     message: $chatInput.value,
+    timestamp: getTimestamp(),
   };
 
   const messageToSend = JSON.stringify({
@@ -51,6 +53,7 @@ async function sendMessage(user, me, roomName) {
     JSON.stringify({
       action: "update_read_time",
       room_name: roomName,
+      timestamp: getTimestamp(),
     })
   );
 
@@ -66,6 +69,7 @@ async function receiveMessage(user, data, roomName) {
     JSON.stringify({
       action: "update_read_time",
       room_name: roomName,
+      timestamp: getTimestamp(),
     })
   );
 }
@@ -104,6 +108,7 @@ export default function ChatRoom(user) {
     JSON.stringify({
       action: "enter_chat_room",
       room_name: roomName,
+      timestamp: getTimestamp(),
     })
   );
 
