@@ -1,4 +1,5 @@
 import InfoButton from "./InfoBtn.js";
+import changeUrl from "../../../Router.js";
 
 export default async function Info(user) {
   const $infoWrapper = document.createElement("div");
@@ -57,6 +58,10 @@ export default async function Info(user) {
 
   $infoWrapper.appendChild($infoProfileImg);
   $infoWrapper.appendChild($infoHeader);
+
+  $profileButton.addEventListener("click", () => {
+    changeUrl(`/main=${user.user_id}`);
+  });
 
   return $infoWrapper;
 }
