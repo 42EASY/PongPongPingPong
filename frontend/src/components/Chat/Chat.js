@@ -1,9 +1,9 @@
 import ChatRoom from "../../pages/ChatRoom.js";
-import { delChatContent } from "../../state/ChatState.js";
+import { delChatContent, getTimestamp } from "../../state/ChatState.js";
 import Modal from "../Modal/Modal.js";
 import ChatSocketManager from "../../state/ChatSocketManager.js";
 
-export default function Chat(user, cnt) {
+export default function Chat(user, cnt, roomName) {
   const socket = ChatSocketManager.getInstance();
   
   const $chatWrapper = document.createElement("div");
@@ -36,6 +36,12 @@ export default function Chat(user, cnt) {
     Modal("exitChatting", user.nickname).then((result) => {
       if (result.isPositive) {
         delChatContent(user.user_id);
+        const socket = ChatSocketManager.getInstance();
+        socket.send(JSON.stringify({
+          action: "leave_chat_room",
+          room_name: roomName,
+          timestamp: getTimestamp(),
+        }))
         $chatWrapper.style.display = "none";
       }
     });
@@ -60,7 +66,7 @@ export default function Chat(user, cnt) {
   });
 
   //채팅방 더블클릭 시 이벤트
-  $chatWrapper.addEventListener("click", () => {
+  $chatWrapper.addEventListener("dblclick", () => {
     ChatRoom(user);
   });
 
