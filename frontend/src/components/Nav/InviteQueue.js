@@ -27,8 +27,8 @@ export function inviteGame(id, status) {
               invite_user_id: id,
             });
             Modal("waitingInvitation").then((res) => {
-              // 모달 취소하기 버튼 눌렀을 경우
-              if (!res.isPositive) cancelNormalQueue({ action: "" });
+              if (!res.isPositive)
+                cancelNormalQueue({ action: "cancel_queue" });
             });
           }
         });

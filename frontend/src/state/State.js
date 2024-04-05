@@ -1,5 +1,15 @@
+import changeUrl from "../Router.js";
+
 //set
-const setLoginState = (state, userId, accessToken, email, is2fa, nickname, image_url) => {
+const setLoginState = (
+  state,
+  userId,
+  accessToken,
+  email,
+  is2fa,
+  nickname,
+  image_url
+) => {
   localStorage.setItem("isLogin", state);
   localStorage.setItem("accessToken", accessToken);
   localStorage.setItem("userId", userId);

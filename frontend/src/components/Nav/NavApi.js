@@ -20,19 +20,3 @@ export async function getUserList(keyword, page, size) {
   }
   return json;
 }
-
-export async function postLogout() {
-  const url = baseUrl + `/api/v1/auth/logout`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
-  });
-  const json = await res.json();
-  if (json.code === 401) {
-    setNewAccessToken();
-    postLogout();
-  }
-}

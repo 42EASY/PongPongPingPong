@@ -6,6 +6,7 @@ import GameRoom from "./pages/GameRoom.js";
 import Register from "./pages/Register.js";
 import Redirect from "./components/Login/Redirect.js";
 import NotFound from "./pages/NotFound.js";
+import { getUserId } from "./state/State.js";
 
 const routes = [
   { path: "/", page: Login, style: "login" },
@@ -19,10 +20,18 @@ const routes = [
 ];
 
 function checkUrl(requestedUrl) {
+  let findUrl = requestedUrl;
+  if (requestedUrl.startsWith("/main")) findUrl = "/main";
   let match = routes.find((route) => {
-    if (route.path === requestedUrl) return route;
+    if (route.path === findUrl) return route;
   });
-  return match;
+  const copy = { ...match };
+  if (requestedUrl.startsWith("/main")) {
+    const segPath = requestedUrl.split("=").filter(Boolean);
+    if (segPath.length === 2 && segPath[1] !== getUserId())
+      copy.path = requestedUrl;
+  }
+  return copy;
 }
 
 export default function changeUrl(requestedUrl, element) {
@@ -45,7 +54,6 @@ export default function changeUrl(requestedUrl, element) {
   // if (match.page === EndGame) match.page("tournament", 1, 3, 1);
   if (
     match.page === Register ||
-    match.page === Main ||
     match.page === GameRoom ||
     match.page === Game ||
     match.page === EndGame
