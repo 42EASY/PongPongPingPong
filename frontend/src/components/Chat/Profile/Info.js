@@ -25,7 +25,6 @@ export default async function Info(user) {
   const $profileButtonText = document.createElement("div");
   $profileButtonText.classList.add("profileButtonText");
   $profileButtonText.innerHTML = "상세 프로필 보기";
-  //todo: 상세 프로필 보기 버튼 클릭 시 상세 프로필로 이동
   $profileButton.appendChild($profileButtonIcon);
   $profileButton.appendChild($profileButtonText);
   $infoNameWrapper.appendChild($infoName);
