@@ -1,7 +1,7 @@
 import changeUrl from "../../Router.js";
 import { getAccessToken } from "../../state/State.js";
 
-const url = `ws://0.0.0.0:8000/ws/join_queue/?token=${getAccessToken()}`;
+const url = `ws://localhost:8000/ws/join_queue/?token=${getAccessToken()}`;
 let socket;
 if (!socket) socket = new WebSocket(url);
 
@@ -54,8 +54,8 @@ export function joinInviteTournamentQueue(data) {
     socket.send(JSON.stringify(data));
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
-      if (res.statue === "success") {
-        res["option"] = "SEMI_FINAL";
+      if (res.status === "success") {
+        res["round"] = "SEMI_FINAL";
         changeUrl("/gameroom", res);
       }
       if (res.status === "fail") return false;
@@ -76,7 +76,7 @@ export function joinTournamentQueue(data) {
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
       if (res.status === "success") {
-        res["option"] = "SEMI_FINAL";
+        res["round"] = "SEMI_FINAL";
         changeUrl("/gameroom", res);
       }
     };

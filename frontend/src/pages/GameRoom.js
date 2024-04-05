@@ -2,12 +2,12 @@ import Nav from "./Nav.js";
 import WaitingPlayer from "../components/GameRoom/WaitingPlayer.js";
 import { getAccessToken } from "../state/State.js";
 import changeUrl from "../Router.js";
+import Modal from "../components/Modal/Modal.js";
 
 let socket;
 
 export default function GameRoom(data) {
   Nav();
-
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
   const $page = document.createElement("div");
@@ -20,7 +20,7 @@ export default function GameRoom(data) {
   $gameRoom.appendChild($waitingPlayers);
 
   let playerLength = 4;
-  if (data.mode === "FINAL") playerLength = 2;
+  if (data.round === "FINAL") playerLength = 2;
   const waitingPlayersArr = [];
   for (let i = 0; i < playerLength; i++) {
     waitingPlayersArr[i] = document.createElement("div");
@@ -28,15 +28,16 @@ export default function GameRoom(data) {
     $waitingPlayers.appendChild(waitingPlayersArr[i]);
   }
 
-  const url = `ws://0.0.0.0:8000/ws/join_room/${
+  const url = `ws://localhost:8000/ws/join_room/${
     data.room_id
   }/?token=${getAccessToken()}`;
   if (!socket) socket = new WebSocket(url);
 
   socket.onopen = () => {
-    if (data.mode === "SEMI_FINAL")
+    console.log("[gameroom - open]");
+    if (data.round === "SEMI_FINAL")
       socket.send(JSON.stringify({ action: "join_room" }));
-    else if (data.mode === "FINAL")
+    else if (data.round === "FINAL")
       socket.send(
         JSON.stringify({ action: "join_final", room_id: data.room_id })
       );
@@ -44,33 +45,44 @@ export default function GameRoom(data) {
 
   socket.onmessage = (e) => {
     let res = JSON.parse(e.data);
+    console.log(res);
     if (res.status === "semi_final_game_start_soon") {
-      res["mode"] = "SEMI_FINAL";
-      changeUrl("/game", res);
+      res["mode"] = "TOURNAMENT";
+      res["option"] = "CLASSIC";
+      res["round"] = "SEMI_FINAL";
+      Modal("tournamentTable").then(() => {
+        changeUrl("/game", res);
+      });
     }
     if (res.status === "final_game_start_soon") {
-      res["mode"] = "FINAL";
-      changeUrl("/game", res);
+      res["mode"] = "TOURNAMENT";
+      res["option"] = "CLASSIC";
+      res["round"] = "FINAL";
+      Modal("tournamentTable").then(() => {
+        changeUrl("/game", res);
+      });
     }
-    //todo: semi_final userlist || final userlist
-    if (res.status === "") {
+
+    if (res.status === "player_entrance") {
       let i;
-      for (i = 0; i < res.list.length; i++) {
-        waitingPlayersArr[i].innerHTML = WaitingPlayer(res.list[i]).innerHTML;
+      for (i = 0; i < res.player_info.length; i++) {
+        waitingPlayersArr[i].innerHTML = "";
+        waitingPlayersArr[i].appendChild(WaitingPlayer(res.player_info[i]));
       }
       for (let j = i; j < playerLength; j++) {
-        waitingPlayersArr[j].innerHTML = WaitingPlayer().innerHTML;
+        waitingPlayersArr[j].innerHTML = "";
+        waitingPlayersArr[j].appendChild(WaitingPlayer());
       }
     }
   };
 
   socket.onclose = (e) => {
-    if (e.wasClean) console.log("[close] - normal");
-    else console.log("[close] - abnormal");
+    if (e.wasClean) console.log("[gameroom - close] - normal");
+    else console.log("[gameroom - close] - abnormal");
   };
 
   socket.onerror = (e) => {
-    console.log("[error]");
+    console.log("[gameroom - error]");
     console.log(e);
   };
 }
