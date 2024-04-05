@@ -239,7 +239,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         
         await self.send_json({
                 'status': 'invitation list registered',
-                'tournament_id': self.room_id
+                'room_id': self.room_id
             })
         
 
