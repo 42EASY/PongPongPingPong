@@ -1,4 +1,6 @@
 import Chat from "../../pages/Chat.js";
+import changeUrl from "../../Router.js";
+import { postFriend } from "../Main/UserApi.js";
 
 function chatting() {
   Chat();
@@ -8,13 +10,7 @@ function chatting() {
   $overlay.classList.add("showOverlay");
 }
 
-//exit button : main으로->로그인 안해서 테스트 엌케하지..
-function exit() {}
-
-//friend button : 모달->친구추가
-function friend() {}
-
-export default function EndBtn(mode, hasGameLeft) {
+export default function EndBtn(mode, opponent_id, hasGameLeft) {
   const $btnWrapper = document.createElement("div");
   $btnWrapper.classList.add("btnWrapper");
   const $exitBtn = document.createElement("button");
@@ -47,20 +43,20 @@ export default function EndBtn(mode, hasGameLeft) {
   $chatBtn.appendChild($chatTxt);
   $chatBtn.appendChild($chatIcn);
 
-  if (mode === "2p") $btnWrapper.appendChild($exitBtn);
-  else if (mode === "normal") {
+  if (mode === "2P") $btnWrapper.appendChild($exitBtn);
+  else if (mode === "NORMAL") {
     $btnWrapper.appendChild($friendBtn);
     $btnWrapper.appendChild($exitBtn);
-  } else if (mode === "tournament") {
+  } else if (mode === "TOURNAMENT") {
     $btnWrapper.appendChild($friendBtn);
     $btnWrapper.appendChild(hasGameLeft ? $chatBtn : $exitBtn);
   }
 
   $exitBtn.addEventListener("click", () => {
-    exit();
+    changeUrl("/main");
   });
   $friendBtn.addEventListener("click", () => {
-    friend();
+    postFriend(opponent_id);
   });
   $chatBtn.addEventListener("click", () => {
     chatting();

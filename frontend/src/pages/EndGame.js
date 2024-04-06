@@ -1,22 +1,45 @@
 import Result from "../components/Game/GameResult.js";
 import EndBtn from "../components/Game/EndBtn.js";
 import EndConfetti from "../components/Game/EndConfetti.js";
+import { getUserId } from "../state/State.js";
 
-export default function EndGame(data) {
-  console.log("END GAME: ", data);
+export default function EndGame({ info, result }) {
+  console.log("END GAME: ", info);
+  console.log(result);
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 
-  const hasWon = data.leftScore < data.rightScore ? true : false;
+  var leftScore, rightScore, opponent_id;
+  if (info.mode === "2P") {
+    leftScore = result.leftScore;
+    rightScore = result.rightScore;
+  } else {
+    if (result.game_status[0].user_id === getUserId()) {
+      // [0]이 본인
+      leftScore = result.game_status[0].score;
+      rightScore = result.game_status[1].score;
+      opponent_id = result.game_status[1].user_id;
+    } else {
+      // [1]이 본인
+      leftScore = result.game_status[1].score;
+      rightScore = result.game_status[0].score;
+      opponent_id = result.game_status[0].user_id;
+    }
+  }
+  console.log("score : ", leftScore, rightScore);
+
+  const hasWon = leftScore < rightScore ? true : false;
   const hasGameLeft =
-    data.mode === "tournament" && data.round === 1 && hasWon ? true : false;
+    info.mode === "TOURNAMENT" && info.round === "SEMI_FINAL" && hasWon
+      ? true
+      : false;
 
   const $printBox = document.createElement("div");
   $printBox.classList.add("printBox");
   $app.appendChild($printBox);
-  $printBox.appendChild(Result(data.mode, data.leftScore, data.rightScore));
-  $printBox.appendChild(EndBtn(data.mode, hasGameLeft));
-  if (hasWon || data.mode === "2p") EndConfetti();
+  $printBox.appendChild(Result(info.mode, leftScore, rightScore));
+  $printBox.appendChild(EndBtn(info.mode, opponent_id, hasGameLeft)); // opp_id!!!!!!
+  if (hasWon || info.mode === "2P") EndConfetti();
 }
 
 //  mode | txt         | btn                   | modal

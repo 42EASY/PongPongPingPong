@@ -2,23 +2,28 @@ import EndGame from "../../pages/EndGame.js";
 import Modal from "../../components/Modal/Modal.js";
 import GameSocketManager from "../../state/GameSocketManager.js";
 
-export default function Board(data) {
-  console.log("BOARD DATA: ", data);
-  const socket = GameSocketManager.getInstance(data.game_id);
+var socket;
+var socket_res;
+
+export default function Board(info) {
+  console.log("BOARD ARGU : ", info);
+  if (info.mode != "2P") socket = GameSocketManager.getInstance(info.game_id);
   console.log("START GAME!!!!!!");
 
   // sendAction, onmessage test
-  socket.sendAction({ action: "press_key", key: 1 });
-  socket.onmessage = (e) => {
-    const res = JSON.parse(e.data);
-    console.log(res);
-    console.log("-----------");
-  };
+  if (info.mode != "2P") {
+    socket.sendAction({ action: "press_key", key: 1 });
+    socket.onmessage = (e) => {
+      const res = JSON.parse(e.data);
+      console.log(res);
+      console.log("-----------");
+    };
+  }
 
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
-  const DIRECTION = {
+  const DIR = {
     IDLE: 0,
     UP: 1,
     DOWN: 2,
@@ -26,7 +31,7 @@ export default function Board(data) {
     RIGHT: 4,
   };
 
-  const maxScore = 10;
+  const maxScore = 1;
 
   const Ball = {
     new: function () {
@@ -35,9 +40,9 @@ export default function Board(data) {
         height: 18,
         x: canvas.width / 2 - 9,
         y: canvas.height / 2 - 9,
-        moveX: DIRECTION.IDLE,
-        moveY: DIRECTION.IDLE,
-        speed: data.option === "SPEED" ? 1 : 1,
+        moveX: DIR.IDLE,
+        moveY: DIR.IDLE,
+        speed: info.option === "SPEED" ? 10 : 3,
       };
     },
   };
@@ -50,7 +55,7 @@ export default function Board(data) {
         x: side === "left" ? 40 : canvas.width - 40 - 10,
         y: canvas.height / 2 - 35,
         score: 0,
-        move: DIRECTION.IDLE,
+        move: DIR.IDLE,
         speed: 10,
       };
     },
@@ -80,7 +85,7 @@ export default function Board(data) {
 
       this.draw();
       this.listen();
-      if (data.mode === "NORMAL" || data.mode === "TOURNAMENT")
+      if (info.mode === "NORMAL" || info.mode === "TOURNAMENT")
         this.remoteListen();
     },
 
@@ -88,7 +93,16 @@ export default function Board(data) {
       const path = `./src/styles${requestedUrl}.css`;
       document.getElementById("styles").setAttribute("href", path);
       history.pushState(null, null, window.location.pathname);
-      EndGame(data);
+      console.log("change url @@@@@@@@@@@@@@@@@@@@");
+      if (info.mode === "2P")
+        EndGame({
+          info: info,
+          result: {
+            leftScore: this.leftPlayer.score,
+            rightScore: this.rightPlayer.score,
+          },
+        });
+      else EndGame({ info: info, result: socket_res });
     },
 
     // Update all objects (move the player, paddle, ball, increment the score, etc.)
@@ -98,57 +112,60 @@ export default function Board(data) {
         if (this.ball.x <= 0) Pong._resetTurn.call(this, this.rightPlayer);
         if (this.ball.x >= this.canvas.width - this.ball.width)
           Pong._resetTurn.call(this, this.leftPlayer);
-        if (this.ball.y <= 0) this.ball.moveY = DIRECTION.DOWN;
+        if (this.ball.y <= 0) this.ball.moveY = DIR.DOWN;
         if (this.ball.y >= this.canvas.height - this.ball.height)
-          this.ball.moveY = DIRECTION.UP;
-
-        // Move player if they player.move value was updated by a keyboard event
-        if (this.leftPlayer.move === DIRECTION.UP)
-          this.leftPlayer.y -= this.leftPlayer.speed;
-        else if (this.leftPlayer.move === DIRECTION.DOWN)
-          this.leftPlayer.y += this.leftPlayer.speed;
+          this.ball.moveY = DIR.UP;
 
         // 서브할 때 공 방향 랜덤으로 설정
         if (Pong._turnDelayIsOver.call(this) && this.turnOver) {
+          // left or right
           this.ball.moveX =
-            this.serve === this.leftPlayer ? DIRECTION.LEFT : DIRECTION.RIGHT;
-          this.ball.moveY = [DIRECTION.UP, DIRECTION.DOWN][
-            Math.round(Math.random())
-          ];
-          this.ball.y =
-            Math.floor(Math.random() * this.canvas.height - 200) + 200;
+            this.serve === this.leftPlayer ? DIR.LEFT : DIR.RIGHT;
+          if (info.mode === "2P" || this.serve === this.rightPlayer) {
+            // up or down
+            this.ball.moveY = Math.random() < 0.5 ? DIR.UP : DIR.DOWN;
+            // 공의 초기 y 위치
+            this.ball.y =
+              Math.floor(Math.random() * this.canvas.height - 200) + 200;
+            // if (info.mode !== "2P")
+            //   socket.sendAction({ moveY: this.ball.moveY, y: this.ball.y });
+          } else {
+            // socket.onmessage = (e) => {
+            //   const res = JSON.parse(e.data);
+            //   this.ball.moveY = res.moveY;
+            //   this.ball.y = res.y;
+            // };
+          }
           this.turnOver = false; //turnOver, gameOver
         }
-
-        // If the player collides with the bound limits, update the x and y coords.
-        if (this.leftPlayer.y <= 0) this.leftPlayer.y = 0;
-        else if (
-          this.leftPlayer.y >=
-          this.canvas.height - this.leftPlayer.height
-        )
-          this.leftPlayer.y = this.canvas.height - this.leftPlayer.height;
-
         // Move ball in intended direction based on moveY and moveX values
-        if (this.ball.moveY === DIRECTION.UP)
-          this.ball.y -= this.ball.speed / 1.5;
-        else if (this.ball.moveY === DIRECTION.DOWN)
+        if (this.ball.moveY === DIR.UP) this.ball.y -= this.ball.speed / 1.5;
+        else if (this.ball.moveY === DIR.DOWN)
           this.ball.y += this.ball.speed / 1.5;
-        if (this.ball.moveX === DIRECTION.LEFT) this.ball.x -= this.ball.speed;
-        else if (this.ball.moveX === DIRECTION.RIGHT)
-          this.ball.x += this.ball.speed;
+        if (this.ball.moveX === DIR.LEFT) this.ball.x -= this.ball.speed;
+        else if (this.ball.moveX === DIR.RIGHT) this.ball.x += this.ball.speed;
 
-        // Handle right player UP and DOWN movement
-        if (this.rightPlayer.move === DIRECTION.UP)
+        // 왼쪽 플레이어 방향에 따른 위치 설정
+        if (this.leftPlayer.move === DIR.UP)
+          this.leftPlayer.y -= this.leftPlayer.speed;
+        else if (this.leftPlayer.move === DIR.DOWN)
+          this.leftPlayer.y += this.leftPlayer.speed;
+        // 벽에 충돌 시
+        if (this.leftPlayer.y >= this.canvas.height - this.leftPlayer.height)
+          this.leftPlayer.y = this.canvas.height - this.leftPlayer.height;
+        else if (this.leftPlayer.y <= 0) this.leftPlayer.y = 0;
+
+        // 오른쪽 플레이어 위치 설정
+        if (this.rightPlayer.move === DIR.UP)
           this.rightPlayer.y -= this.rightPlayer.speed;
-        else if (this.rightPlayer.move === DIRECTION.DOWN)
+        else if (this.rightPlayer.move === DIR.DOWN)
           this.rightPlayer.y += this.rightPlayer.speed;
-
-        // Handle right player wall collision
+        // 벽에 충돌 시
         if (this.rightPlayer.y >= this.canvas.height - this.rightPlayer.height)
           this.rightPlayer.y = this.canvas.height - this.rightPlayer.height;
         else if (this.rightPlayer.y <= 0) this.rightPlayer.y = 0;
 
-        // Handle leftPlayer-Ball collisions
+        // 왼쪽 패들에 공 충돌 시
         if (
           this.ball.x - this.ball.width <= this.leftPlayer.x &&
           this.ball.x >= this.leftPlayer.x - this.leftPlayer.width
@@ -158,11 +175,10 @@ export default function Board(data) {
             this.ball.y + this.ball.height >= this.leftPlayer.y
           ) {
             this.ball.x = this.leftPlayer.x + this.ball.width;
-            this.ball.moveX = DIRECTION.RIGHT;
+            this.ball.moveX = DIR.RIGHT;
           }
         }
-
-        // Handle rightPlayer-ball collision
+        // 오른쪽 패들에 공 충돌 시
         if (
           this.ball.x - this.ball.width <= this.rightPlayer.x &&
           this.ball.x >= this.rightPlayer.x - this.rightPlayer.width
@@ -172,7 +188,7 @@ export default function Board(data) {
             this.ball.y + this.ball.height >= this.rightPlayer.y
           ) {
             this.ball.x = this.rightPlayer.x - this.ball.width;
-            this.ball.moveX = DIRECTION.LEFT;
+            this.ball.moveX = DIR.LEFT;
           }
         }
       }
@@ -255,31 +271,32 @@ export default function Board(data) {
       // 키 눌렸을 때
       document.addEventListener("keydown", (key) => {
         if (this.running) {
-          if (data.mode === "2P" && key.key === "w")
-            this.leftPlayer.move = DIRECTION.UP;
-          if (data.mode === "2P" && key.key === "s")
-            this.leftPlayer.move = DIRECTION.DOWN;
+          if (info.mode === "2P") {
+            if (key.key === "w") this.leftPlayer.move = DIR.UP;
+            if (key.key === "s") this.leftPlayer.move = DIR.DOWN;
+          }
+
           if (key.key === "ArrowUp") {
-            this.rightPlayer.move = DIRECTION.UP;
-            if (data.mode === "NORMAL" || data.mode === "TOURNAMENT")
-              socket.sendAction({ action: "press_key", key: 0 });
+            this.rightPlayer.move = DIR.UP;
+            if (info.mode === "NORMAL" || info.mode === "TOURNAMENT")
+              socket.sendAction({ action: "press_key", key: 1 });
           }
           if (key.key === "ArrowDown") {
-            this.rightPlayer.move = DIRECTION.DOWN;
-            if (data.mode === "NORMAL" || data.mode === "TOURNAMENT")
-              socket.sendAction({ action: "press_key", key: 1 });
+            this.rightPlayer.move = DIR.DOWN;
+            if (info.mode === "NORMAL" || info.mode === "TOURNAMENT")
+              socket.sendAction({ action: "press_key", key: 0 });
           }
         }
       });
 
       // 키 뗐을 때
       document.addEventListener("keyup", (key) => {
-        if (data.mode === "2P" && (key.key === "w" || key.key === "s"))
-          this.leftPlayer.move = DIRECTION.IDLE;
+        if (info.mode === "2P" && (key.key === "w" || key.key === "s"))
+          this.leftPlayer.move = DIR.IDLE;
         if (key.key === "ArrowUp" || key.key === "ArrowDown") {
-          this.rightPlayer.move = DIRECTION.IDLE;
-          if (data.mode === "NORMAL" || data.mode === "TOURNAMENT")
-            socket.sendAction({ action: "release_key" });
+          this.rightPlayer.move = DIR.IDLE;
+          // if (info.mode === "NORMAL" || info.mode === "TOURNAMENT")
+          //   socket.sendAction({ action: "release_key" });
         } //sendAction 추가 필요
       });
     },
@@ -287,19 +304,23 @@ export default function Board(data) {
     remoteListen: function () {
       // on message는 소켓 당 한 번만 하면 되나.....?
       socket.onmessage = (e) => {
-        const res = JSON.parse(e.data);
-        console.log("press key onmessage!!!!!!!!!!!!!!!");
-        console.log(res);
+        socket_res = JSON.parse(e.data);
+        console.log("game onmessage!!!!!!!!!!!!!!!");
+        console.log(socket_res);
         // 키 눌렀을 때
-        if (res.status === "press_key") {
+        if (socket_res.status === "press_key") {
           // [TODO] status->action으로 수정
-          if (res.key === 0) this.leftPlayer.move = DIRECTION.UP;
-          if (res.key === 1) this.leftPlayer.move = DIRECTION.DOWN;
+          if (socket_res.key === 1) this.leftPlayer.move = DIR.UP;
+          if (socket_res.key === 0) this.leftPlayer.move = DIR.DOWN;
         }
         // 키 뗐을 때
-        if (res.status === "releases_key") {
-          // [TODO] status->action으로 수정
-          this.leftPlayer.move = DIRECTION.IDLE;
+        // if (res.status === "release_key") {
+        //   // [TODO] status->action으로 수정
+        //   this.leftPlayer.move = DIR.IDLE;
+        // }
+        // 게임 끝났을 때
+        if (socket_res.status === "game_over") {
+          console.log("game is over. will change url");
         }
       };
     },
@@ -307,10 +328,13 @@ export default function Board(data) {
     // Reset the ball location, the player turns and set a delay before the next round begins.
     _resetTurn: function (victor) {
       if (
-        (data.mode === "NORMAL" || data.mode === "TOURNAMENT") &&
+        (info.mode === "NORMAL" || info.mode === "TOURNAMENT") &&
         victor === this.rightPlayer
-      )
+      ) {
         socket.sendAction({ action: "round_win" });
+        // round win test
+        for (var i = 0; i < 9; i++) socket.sendAction({ action: "round_win" });
+      }
 
       victor.score++;
       this.turnOver = true;
@@ -319,13 +343,13 @@ export default function Board(data) {
         this.serve === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
       this.timer = new Date().getTime();
       if (
+        (info.mode !== "2P" && socket_res.status === "game_over") ||
         this.leftPlayer.score === maxScore ||
         this.rightPlayer.score === maxScore
       ) {
         this.gameOver = true;
-        setTimeout(() => {
-          Pong.changeUrl("/endgame");
-        }, 1000);
+        console.log("hehehheheheheheheheheheh eheeh eh hehe ");
+        Pong.changeUrl("/endgame");
       } else
         Modal(
           this.serve === this.leftPlayer ? "gameLeftServe" : "gameRightServe"

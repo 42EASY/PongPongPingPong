@@ -11,7 +11,7 @@ export default function GameResult(mode, leftScore, rightScore) {
   $resultWrapper.appendChild($winOrLose);
   $resultWrapper.appendChild($scores);
 
-  if (mode === "2p")
+  if (mode === "2P")
     $winOrLose.innerHTML = leftScore > rightScore ? "1p WIN" : "2p WIN";
   else $winOrLose.innerHTML = leftScore < rightScore ? "WIN" : "LOSE";
   $scores.innerHTML =
