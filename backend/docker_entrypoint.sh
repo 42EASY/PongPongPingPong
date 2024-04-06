@@ -9,7 +9,7 @@ python /app/transcendence/manage.py makemigrations
 
 python /app/transcendence/manage.py migrate
 
-python /app/transcendence/manage.py loaddata /app/transcendence/members/fixtures/members-data.json /app/transcendence/social/fixtures/Friend-data.json
+python /app/transcendence/manage.py loaddata /app/transcendence/members/fixtures/members-data.json /app/transcendence/social/fixtures/Friend-data.json /app/transcendence/games/fixtures/game-data.json /app/transcendence/games/fixtures/tournament-data.json /app/transcendence/games/fixtures/tournament-game-data.json /app/transcendence/games/fixtures/participant-data.json 
 
 cd /app/transcendence
 

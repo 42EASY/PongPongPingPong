@@ -1,0 +1,362 @@
+[
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 31,
+            "tournament_id": 1,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 32,
+            "tournament_id": 1,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 33,
+            "tournament_id": 1,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 34,
+            "tournament_id": 2,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 35,
+            "tournament_id": 2,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 36,
+            "tournament_id": 2,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 37,
+            "tournament_id": 3,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 38,
+            "tournament_id": 3,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 39,
+            "tournament_id": 3,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 40,
+            "tournament_id": 4,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 41,
+            "tournament_id": 4,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 42,
+            "tournament_id": 4,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 43,
+            "tournament_id": 5,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 44,
+            "tournament_id": 5,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 45,
+            "tournament_id": 5,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 46,
+            "tournament_id": 6,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 47,
+            "tournament_id": 6,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 48,
+            "tournament_id": 6,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 49,
+            "tournament_id": 7,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 50,
+            "tournament_id": 7,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 51,
+            "tournament_id": 7,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 52,
+            "tournament_id": 8,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 53,
+            "tournament_id": 8,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 54,
+            "tournament_id": 8,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 55,
+            "tournament_id": 9,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 56,
+            "tournament_id": 9,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 57,
+            "tournament_id": 9,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 58,
+            "tournament_id": 10,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 59,
+            "tournament_id": 10,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 60,
+            "tournament_id": 10,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 61,
+            "tournament_id": 11,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 62,
+            "tournament_id": 11,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 63,
+            "tournament_id": 11,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 64,
+            "tournament_id": 12,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 65,
+            "tournament_id": 12,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 66,
+            "tournament_id": 12,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 67,
+            "tournament_id": 13,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 68,
+            "tournament_id": 13,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 69,
+            "tournament_id": 13,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 70,
+            "tournament_id": 14,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 71,
+            "tournament_id": 14,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 72,
+            "tournament_id": 14,
+            "round": "FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 73,
+            "tournament_id": 15,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 74,
+            "tournament_id": 15,
+            "round": "SEMI_FINAL"
+        }
+    },
+    {
+        "model": "tournaments.tournamentgame",
+        "fields": {
+            "game_id": 75,
+            "tournament_id": 15,
+            "round": "FINAL"
+        }
+    }
+]
