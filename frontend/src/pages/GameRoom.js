@@ -1,10 +1,8 @@
 import Nav from "./Nav.js";
 import WaitingPlayer from "../components/GameRoom/WaitingPlayer.js";
-import { getAccessToken } from "../state/State.js";
 import changeUrl from "../Router.js";
 import Modal from "../components/Modal/Modal.js";
-
-let socket;
+import RoomSocketManager from "../state/RoomSocketManager.js";
 
 export default function GameRoom(data) {
   Nav();
@@ -28,10 +26,7 @@ export default function GameRoom(data) {
     $waitingPlayers.appendChild(waitingPlayersArr[i]);
   }
 
-  const url = `ws://localhost:8000/ws/join_room/${
-    data.room_id
-  }/?token=${getAccessToken()}`;
-  if (!socket) socket = new WebSocket(url);
+  const socket = RoomSocketManager.getInstance(data.room_id);
 
   socket.onopen = () => {
     console.log("[gameroom - open]");
@@ -74,15 +69,5 @@ export default function GameRoom(data) {
         waitingPlayersArr[j].appendChild(WaitingPlayer());
       }
     }
-  };
-
-  socket.onclose = (e) => {
-    if (e.wasClean) console.log("[gameroom - close] - normal");
-    else console.log("[gameroom - close] - abnormal");
-  };
-
-  socket.onerror = (e) => {
-    console.log("[gameroom - error]");
-    console.log(e);
   };
 }
