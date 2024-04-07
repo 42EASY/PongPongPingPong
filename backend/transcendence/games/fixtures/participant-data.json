@@ -1,0 +1,1502 @@
+[
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 1,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 1,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 2,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 2,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 3,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 3,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 4,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 4,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 5,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 5,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 6,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 6,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 7,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 7,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 8,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 8,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 9,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 9,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 10,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 10,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 11,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 11,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 12,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 12,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 13,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 13,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 14,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 14,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 15,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 15,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 16,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 16,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 17,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 17,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 18,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 18,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 19,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 19,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 20,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 20,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 21,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 21,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 22,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 22,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 23,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 23,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 24,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 24,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 25,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 25,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 26,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 26,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 27,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 27,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 28,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 28,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 29,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 29,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 30,
+            "score": 7,
+            "result": "LOSE",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 30,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 31,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 31,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 32,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 32,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 33,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 33,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 34,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 34,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 35,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 35,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 36,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 36,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 37,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 37,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 38,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 38,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 39,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 39,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 40,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 40,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 41,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 41,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 42,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 42,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 43,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 43,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 44,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 44,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 45,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 45,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 46,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 46,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 47,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 47,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 48,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 48,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 49,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 49,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 50,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 50,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 51,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 51,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 52,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 52,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 53,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 53,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 54,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 54,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 55,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 55,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 56,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 56,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 57,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 57,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 58,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 58,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 59,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 59,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 60,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 60,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 61,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 61,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 62,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 62,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 63,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 63,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 64,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 64,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 65,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 65,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 66,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 66,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 67,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 67,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 68,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 68,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 69,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 69,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 70,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 70,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 71,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 71,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 72,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 72,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 73,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 5
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 5,
+            "game_id": 73,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 74,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 4
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 4,
+            "game_id": 74,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 2,
+            "game_id": 75,
+            "score": 10,
+            "result": "WIN",
+            "opponent_id": 1
+        }
+    },
+    {
+        "model": "games.participant",
+        "fields": {
+            "user_id": 1,
+            "game_id": 75,
+            "score": 1,
+            "result": "LOSE",
+            "opponent_id": 2
+        }
+    }
+]

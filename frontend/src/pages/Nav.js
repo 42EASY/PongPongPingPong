@@ -5,6 +5,7 @@ import Friends from "./Friends.js";
 import { getUserList } from "../components/Nav/NavApi.js";
 import FastGameStart from "../components/Nav/FastGameStart.js";
 import { logout } from "../state/State.js";
+import RoomSocketManager from "../state/RoomSocketManager.js";
 
 export default async function Nav() {
   const $navbar = document.querySelector(".nav");
@@ -13,6 +14,10 @@ export default async function Nav() {
   //로고 클릭이벤트
   const $navBrand = document.querySelector(".navBrand");
   $navBrand.addEventListener("click", () => {
+    if (window.location.pathname === "/gameroom") {
+      const socket = RoomSocketManager.getInstance();
+      if (socket) socket.close();
+    }
     changeUrl("/main");
   });
 
@@ -61,6 +66,10 @@ export default async function Nav() {
       $item = document.getElementById("navSearchItem" + idx);
       $item.classList.add("navSearchItemSelected");
     } else if (e.key === "Enter") {
+      if (window.location.pathname === "/gameroom") {
+        const socket = RoomSocketManager.getInstance();
+        if (socket) socket.close();
+      }
       if (idx !== -1)
         changeUrl(
           `/main=${arr.get(
@@ -82,6 +91,10 @@ export default async function Nav() {
             $searchList.appendChild($searchItem);
             arr.set($searchItem.innerHTML, list.result.data[i].user_id);
             $searchItem.onclick = (e) => {
+              if (window.location.pathname === "/gameroom") {
+                const socket = RoomSocketManager.getInstance();
+                if (socket) socket.close();
+              }
               changeUrl(`/main=${arr.get(e.target.innerHTML)}`);
             };
           }
@@ -118,6 +131,7 @@ export default async function Nav() {
   //게임하러 가기 클릭이벤트
   const $navGameBtn = document.querySelector(".navGameBtn");
   $navGameBtn.addEventListener("click", () => {
+    if (window.location.pathname === "/gameroom") return;
     FastGameStart();
   });
 }

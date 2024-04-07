@@ -3,6 +3,7 @@ import changeUrl from "../../Router.js";
 import WebSocketManager from "../../state/WebSocketManager.js";
 import { call2faOtpModal } from "../Register/TwoFactorAuth.js";
 import Modal from "../Modal/Modal.js";
+import JoinSocketManager from "../../state/JoinSocketManager.js";
 
 export default function Redirect() {
   const $app = document.querySelector(".App");
@@ -30,7 +31,8 @@ export default function Redirect() {
     .then((res) => res.json())
     .then((data) => {
       console.log(data);
-      const socket = WebSocketManager.getInstance();
+      WebSocketManager.getInstance();
+      JoinSocketManager.getInstance();
       if (data.code === 200) {
         setLoginState(
           true,

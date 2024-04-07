@@ -1,0 +1,78 @@
+[
+    
+    {
+        "model": "tournaments.tournament",
+        "pk" : 1,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 2,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 3,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 4,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 5,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 6,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 7,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 8,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 9,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 10,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 11,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 12,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 13,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 14,
+        "fields": {}
+    },
+    {
+        "model": "tournaments.tournament",
+        "pk" : 15,
+        "fields": {}
+    }
+]
