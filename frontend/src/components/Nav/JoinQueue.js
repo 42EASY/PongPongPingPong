@@ -1,25 +1,8 @@
 import changeUrl from "../../Router.js";
-import { getAccessToken } from "../../state/State.js";
-
-const url = `ws://0.0.0.0:8000/ws/join_queue/?token=${getAccessToken()}`;
-let socket;
-if (!socket) socket = new WebSocket(url);
-
-socket.onopen = () => {
-  console.log("[open]");
-};
-
-socket.onclose = (e) => {
-  if (e.wasClean) console.log("[close] - normal");
-  else console.log("[close] - abnormal");
-};
-
-socket.onerror = (e) => {
-  console.log("[error]");
-  console.log(e);
-};
+import JoinSocketManager from "../../state/JoinSocketManager.js";
 
 export function joinNormalQueue(data) {
+  const socket = JoinSocketManager.getInstance();
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify(data));
     socket.onmessage = (e) => {
@@ -34,6 +17,7 @@ export function joinNormalQueue(data) {
 }
 
 export function joinInviteNormalQueue(data) {
+  const socket = JoinSocketManager.getInstance();
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify(data));
     socket.onmessage = (e) => {
@@ -50,12 +34,13 @@ export function joinInviteNormalQueue(data) {
 }
 
 export function joinInviteTournamentQueue(data) {
+  const socket = JoinSocketManager.getInstance();
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify(data));
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
-      if (res.statue === "success") {
-        res["option"] = "SEMI_FINAL";
+      if (res.status === "success") {
+        res["round"] = "SEMI_FINAL";
         changeUrl("/gameroom", res);
       }
       if (res.status === "fail") return false;
@@ -65,18 +50,20 @@ export function joinInviteTournamentQueue(data) {
 }
 
 export function cancelNormalQueue(data) {
+  const socket = JoinSocketManager.getInstance();
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify(data));
   }
 }
 
 export function joinTournamentQueue(data) {
+  const socket = JoinSocketManager.getInstance();
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify(data));
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
       if (res.status === "success") {
-        res["option"] = "SEMI_FINAL";
+        res["round"] = "SEMI_FINAL";
         changeUrl("/gameroom", res);
       }
     };
