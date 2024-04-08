@@ -312,7 +312,8 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             self.opponent_channel_name,
             {
                 'type': 'broadcast_press_key',
-                'message': 'press_key',
+                'status': 'success',
+                'action': 'press_key',
                 'key': key 
             })
         
@@ -321,7 +322,8 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
     async def broadcast_press_key(self, event):
 
         await self.send_json({
-                "status": event["message"],
+                "status": event["status"],
+                "action": event["action"],
                 "key": event["key"]
             })
 
