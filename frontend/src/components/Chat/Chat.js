@@ -9,6 +9,8 @@ export default function Chat(user, cnt, roomName) {
   const $chatWrapper = document.createElement("div");
   $chatWrapper.classList.add("chatWrapper");
 
+  $chatWrapper.setAttribute("roomName", roomName);
+  
   const $profileInfo = document.createElement("div");
   $profileInfo.classList.add("profileInfo");
 

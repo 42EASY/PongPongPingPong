@@ -27,7 +27,7 @@ export default function BotContent(data) {
 
   const $botContentTime = document.createElement("div");
   $botContentTime.classList.add("chatContentTime");
-  $botContentTime.innerHTML = formatTimestamp();
+  $botContentTime.innerHTML = formatTimestamp(data.timestamp);
 
   const $botContentBox = document.createElement("div");
 

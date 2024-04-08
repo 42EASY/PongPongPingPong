@@ -9,7 +9,7 @@ import { getTimestamp } from "../state/ChatState.js";
 
 const socket = ChatSocketManager.getInstance();
 
-function createRoomName(meId, userId) {
+export function createRoomName(meId, userId) {
   const roomName = `chat_${Math.min(meId, userId)}_${Math.max(meId, userId)}`;
   return roomName;
 }
