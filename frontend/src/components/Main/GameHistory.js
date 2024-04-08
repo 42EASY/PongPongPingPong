@@ -5,17 +5,15 @@ import GameResults from "./GameResults.js";
 
 const noHistory = false;
 
-export default function GameHistory(user_id) {
+export default async function GameHistory(user_id) {
   const $GameHistoryWrapper = document.createElement("div");
   const $GameHistoryNav = document.createElement("div");
   const $GameHistoryBtn = document.createElement("div");
   const $GameHistoryIcon = document.createElement("i");
   const $TournamentHistoryBtn = document.createElement("div");
   const $TournamentHistoryIcon = document.createElement("i");
-  const $HistoryBoard = document.createElement("div");
 
   $GameHistoryWrapper.appendChild($GameHistoryNav);
-  $GameHistoryWrapper.appendChild($HistoryBoard);
 
   $GameHistoryWrapper.classList.add("historyWrapper");
   $GameHistoryNav.classList.add("historyNav");
@@ -29,8 +27,8 @@ export default function GameHistory(user_id) {
   $TournamentHistoryBtn.classList.add("historyBtn");
   $TournamentHistoryBtn.appendChild($TournamentHistoryIcon);
   $TournamentHistoryBtn.append("토너먼트 전적");
-  $HistoryBoard.classList.add("historyBoard");
-  GameResults(user_id, true);
+  const $HistoryBoard = await GameResults(user_id, true);
+  $GameHistoryWrapper.appendChild($HistoryBoard);
 
   $GameHistoryBtn.onclick = () => {
     if (!$GameHistoryBtn.classList.contains("historyBtnSelected")) {

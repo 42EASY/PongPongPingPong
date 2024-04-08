@@ -7,18 +7,21 @@ let dataSize = 9;
 let isFetching = false;
 let hasMore = true;
 
-export default function GameResults(user_id, isGeneral) {
-  const $HistoryBoard = document.querySelector(".historyBoard");
-  getGameResults(user_id, isGeneral).then((result) => {
-    console.log(result);
-    result.forEach((data) => {
-      const tmp = GameResult(data); //todo: null인 이유 확인
-      $HistoryBoard.appendChild(tmp);
-    });
-  });
+export default async function GameResults(user_id, isGeneral) {
+  const results = await getGameResults(user_id, isGeneral);
+  const $HistoryBoard = document.createElement("div");
+  $HistoryBoard.classList.add("historyBoard");
+
+  for (const result of results) {
+    const $tmp = await GameResult(result);
+    console.log($tmp);
+    $HistoryBoard.appendChild($tmp);
+  }
+
+  return $HistoryBoard;
 }
 
-function getGameResults(user_id, isGeneral) {
+async function getGameResults(user_id, isGeneral) {
   return new Promise((resolve) => {
     isFetching = true;
     callGameHistoryApi(

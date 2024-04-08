@@ -1,4 +1,4 @@
-export default function GameResult(data) {
+export default async function GameResult(data) {
   console.log(data);
   const cur_user_id = 5;
   const $ResultWrapper = document.createElement("div");
