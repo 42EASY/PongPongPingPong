@@ -62,6 +62,8 @@ async function sendMessage(user, me, roomName) {
 }
 
 async function receiveMessage(user, data, roomName) {
+  if (data.sender.user_id !== user.user_id)
+    return ;
   const $chatContents = document.querySelector("#chatContents");
 
   $chatContents.appendChild(ChatContent(user, data));

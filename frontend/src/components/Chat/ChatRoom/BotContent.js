@@ -84,7 +84,7 @@ export default function BotContent(data) {
       if (
         !joinInviteTournamentQueue({
           action: "join_invite_tournament_queue",
-          room_id: data.game_id,
+          room_id: data.room_id,
         })
       ) {
         Modal("invalidGame");
