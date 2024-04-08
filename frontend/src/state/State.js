@@ -51,27 +51,30 @@ const setImage = (image) => {
 
 //access token 만료 시 로그인 연장 처리
 const setNewAccessToken = () => {
-  const url = "http://localhost:8000/api/v1/token/refresh";
+  return new Promise((resolve) => {
+    const url = "http://localhost:8000/api/v1/token/refresh";
 
-  fetch(url, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "content-Type": "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      if (data.code === 201 || data.code === 200) {
-        setIsLogin(true);
-        setAccessToken(data.result.access_token);
-      } else {
-        //재발급 실패한 경우 로그아웃 처리
-        logout();
-        return false;
-      }
-    });
+    fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.code === 201 || data.code === 200) {
+          setIsLogin(true);
+          setAccessToken(data.result.access_token);
+          resolve(true);
+        } else {
+          //재발급 실패한 경우 로그아웃 처리
+          logout();
+          resolve(false);
+        }
+      });
+  });
 };
 
 //get
@@ -112,23 +115,26 @@ const getMyInfo = () => {
 };
 
 const logout = () => {
-  const url = "http://localhost:8000/api/v1/auth/logout";
+  return new Promise((resolve) => {
+    const url = "http://localhost:8000/api/v1/auth/logout";
 
-  fetch(url, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "content-Type": "application/json",
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      setLogoutState();
-      changeUrl("/");
-    });
+    fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "content-Type": "application/json",
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setLogoutState();
+        changeUrl("/");
+        resolve();
+      });
+  });
 };
 
 export {

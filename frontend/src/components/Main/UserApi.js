@@ -14,8 +14,9 @@ export async function getUserInfo(id) {
   });
   const json = await res.json();
   if (json.code === 401) {
-    setNewAccessToken();
-    getUserInfo(id);
+    setNewAccessToken().then((result) => {
+      if (result === true) getUserInfo(id);
+    });
   }
   return json;
 }
