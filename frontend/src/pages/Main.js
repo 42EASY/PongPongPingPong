@@ -10,6 +10,7 @@ export default async function Main() {
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
   const $page = document.createElement("div");
+  $page.classList.add("mainWrapper");
   $app.appendChild($page);
 
   let id;

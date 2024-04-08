@@ -18,6 +18,9 @@
 
 .main {
   padding-top: 100px;
+  padding-bottom: 50px;
+  width: 100%;
+  height: 100%;
 }
 
 #profileWrapper {
@@ -254,7 +257,7 @@
   background-color: var(--winBg);
   display: flex;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: auto;
   margin-bottom: 16px;
 }
 

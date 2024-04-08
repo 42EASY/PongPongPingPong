@@ -1,5 +1,6 @@
 import { getAccessToken, setNewAccessToken } from "../../state/State.js";
 import GameResult from "./GameResult.js";
+import NoHistory from "./NoHistory.js";
 
 let noHistory = false;
 let curPage = 1;
@@ -8,15 +9,41 @@ let isFetching = false;
 let hasMore = true;
 
 export default async function GameResults(user_id, isGeneral) {
-  const results = await getGameResults(user_id, isGeneral);
+  noHistory = false;
+  curPage = 1;
+  hasMore = true;
+
   const $HistoryBoard = document.createElement("div");
   $HistoryBoard.classList.add("historyBoard");
+  const results = await getGameResults(user_id, isGeneral);
+
+  if (results.length === 0) {
+    noHistory = true;
+    $HistoryBoard.appendChild(NoHistory());
+    return $HistoryBoard;
+  }
 
   for (const result of results) {
     const $tmp = await GameResult(result);
-    console.log($tmp);
     $HistoryBoard.appendChild($tmp);
   }
+
+  //scroll event
+  document.addEventListener("scroll", async function scrollHandler() {
+    const $HistoryBoardTmp = document.querySelector(".historyBoard");
+    console.log(user_id);
+    if (isFetching || !hasMore) return;
+    if (
+      window.innerHeight + window.scrollY + 0.5 >=
+      document.body.offsetHeight
+    ) {
+      const newResults = await getGameResults(user_id, isGeneral);
+      for (const result of newResults) {
+        const $tmp = await GameResult(result);
+        $HistoryBoardTmp.appendChild($tmp);
+      }
+    }
+  });
 
   return $HistoryBoard;
 }
@@ -41,15 +68,13 @@ async function getGameResults(user_id, isGeneral) {
       } else {
         curPage++;
       }
-      if (result.data.length === 0) {
-        noHistory = true; //todo: 결과 없음 띄우기
-      }
       resolve(result.data);
     });
   });
 }
 
 function callGameHistoryApi(user_id, mode, page, size) {
+  console.log(page);
   return new Promise((resolve) => {
     const url = `http://localhost:8000/api/v1/members/${user_id}/records?mode=${mode}&page=${page}&size=${size}`;
 
