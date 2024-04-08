@@ -45,7 +45,7 @@ export default function GameRoom(data) {
       res["mode"] = "TOURNAMENT";
       res["option"] = "CLASSIC";
       res["round"] = "SEMI_FINAL";
-      Modal("tournamentTable").then(() => {
+      Modal("gameStartSoon", res).then(() => {
         changeUrl("/game", res);
       });
     }
@@ -53,7 +53,7 @@ export default function GameRoom(data) {
       res["mode"] = "TOURNAMENT";
       res["option"] = "CLASSIC";
       res["round"] = "FINAL";
-      Modal("tournamentTable").then(() => {
+      Modal("gameStartSoon", res).then(() => {
         changeUrl("/game", res);
       });
     }
