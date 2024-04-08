@@ -52,7 +52,7 @@ export default function EndBtn(mode, opponent, hasGameLeft) {
 
   if (mode === "2P") $btnWrapper.appendChild($exitBtn);
   else if (mode === "NORMAL") {
-    if (opponent.relation === "NONE") $btnWrapper.appendChild($friendBtn);
+    if (opponent.relation === "NONE") $btnWrapper.appendChild($friendBtn); // block이면 안뜸
     $btnWrapper.appendChild($exitBtn);
   } else if (mode === "TOURNAMENT") {
     if (opponent.relation === "NONE") $btnWrapper.appendChild($friendBtn);
@@ -64,6 +64,7 @@ export default function EndBtn(mode, opponent, hasGameLeft) {
   });
   $friendBtn.addEventListener("click", () => {
     postFriend(opponent.user_id);
+    $friendBtn.disabled = true;
   });
   $chatBtn.addEventListener("click", () => {
     chatting();
