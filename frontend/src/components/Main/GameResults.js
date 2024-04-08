@@ -29,6 +29,7 @@ export default async function GameResults(user_id, isGeneral) {
   }
 
   //scroll event
+  //todo: main 페이지로 빼기
   document.addEventListener("scroll", async function scrollHandler() {
     const $HistoryBoardTmp = document.querySelector(".historyBoard");
     console.log(user_id);

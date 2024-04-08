@@ -1,5 +1,5 @@
 export default async function GameResult(data) {
-  const cur_user_id = 5; //todo: 왜 쓰는 변수인지 확인
+  const cur_user_id = 5; //todo: 받아온 값으로 처리하도록 수정
   const $ResultWrapper = document.createElement("div");
   const $ResultMark = document.createElement("div");
 
