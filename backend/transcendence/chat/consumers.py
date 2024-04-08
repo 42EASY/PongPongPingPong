@@ -123,6 +123,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			**message_data,
 		}))
 
+	async def bot_chat(self, event):
+		await self.send(text_data=json_encode({
+			**event['data']
+		}))
+
 	async def enter_chat_room(self, data):
 		room_name = data['room_name']
 		timestamp = data['timestamp']

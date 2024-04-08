@@ -43,6 +43,18 @@ async def bot_send_notify(self, user_id):
 			}
 		)
 
+async def bot_chat_send(self, user_id, data):
+	channel_names = await get_chat_channel_names(user_id)
+
+	for channel_name in channel_names:
+		await self.channel_layer.send(
+			channel_name,
+			{
+				"type": "bot_chat",
+				"data": data,
+			}
+		)
+  
 async def make_bot_notify_message(action, data):
 	return {
 		"action": action,
@@ -51,10 +63,8 @@ async def make_bot_notify_message(action, data):
 	}
 
 # bot redis에 메세지 저장
-async def save_bot_notify(self, event):
-	message = event["data"]
-
-	redis_client.rpush(f"bot_notify_messages:{self.user.id}", json_encode(message))
+async def save_bot_notify(user_id, data):
+	redis_client.rpush(f"bot_notify_messages:{user_id}", json_encode(data))
 
 async def notify_chat_send(self, receiver_id, sender_info):
 	receiver_channel_names = await get_notify_channel_names(receiver_id)
@@ -67,6 +77,12 @@ async def notify_chat_send(self, receiver_id, sender_info):
 					"sender_info": sender_info,
 				}
 			)
+
+async def bot_notify_process(self, user_id, action, data):
+	message = await make_bot_notify_message(action, data)
+	await save_bot_notify(user_id, message)
+	await bot_send_notify(self, user_id)
+	await bot_chat_send(self, user_id, message)
 
 @sync_to_async
 def is_user_online(user_id):
