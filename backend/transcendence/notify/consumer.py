@@ -3,18 +3,10 @@ from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 from social.models import Friend
 from members.models import Members
-from social.models import Block
-import json
+from utils import json_encode, is_user_online, is_user_blocked, get_user_online_status
 import redis
 
 redis_client = redis.Redis(host='redis', port=6379, db=0)
-
-def json_encode(data):
-	try:
-		return json.dumps(data, ensure_ascii=False)
-	except (TypeError, ValueError) as e:
-		print(f"JSON encoding error: {e}")
-		return None
 
 class NotifyConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -23,7 +15,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 
 		user_id = self.user.id
 
-		await self.add_channel_name(user_id, self.channel_name)
+		await self.add_notify_channel_name(user_id, self.channel_name)
 		# 사용자를 온라인으로 표시하는 로직
 		await self.mark_user_online(user_id)
 		# 채팅 상대방들 상태 확인
@@ -33,9 +25,9 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 
 	async def disconnect(self, close_code):
 		user_id = self.user.id
-		await self.remove_channel_name(user_id, self.channel_name)
+		await self.remove_notify_channel_name(user_id, self.channel_name)
 
-		channel_set_size = await self.get_channel_set_size(user_id)
+		channel_set_size = await self.get_notify_channel_set_size(user_id)
 
 		if channel_set_size == 0:
 			# 사용자를 오프라인으로 표시하는 로직
@@ -44,16 +36,16 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 			await self.notify_chat_partners_user_offline(user_id)
 	
 	@sync_to_async
-	def add_channel_name(self, user_id, channel_name):
-		redis_client.sadd(f"user_channels_{user_id}", channel_name)
+	def add_notify_channel_name(self, user_id, channel_name):
+		redis_client.sadd(f"user_notify_channels_{user_id}", channel_name)
 
 	@sync_to_async
-	def remove_channel_name(self, user_id, channel_name):
-		redis_client.srem(f"user_channels_{user_id}", channel_name)
+	def remove_notify_channel_name(self, user_id, channel_name):
+		redis_client.srem(f"user_notify_channels_{user_id}", channel_name)
 
 	@sync_to_async
-	def get_channel_set_size(self, user_id):
-		return redis_client.scard(f"user_channels_{user_id}")
+	def get_notify_channel_set_size(self, user_id):
+		return redis_client.scard(f"user_notify_channels_{user_id}")
 	
 	@sync_to_async
 	def mark_user_online(self, user_id):
@@ -68,8 +60,8 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 		redis_client.srem("online_users", user_id)
 
 	@sync_to_async
-	def get_channel_names(self, user_id):
-		channel_names_bytes = redis_client.smembers(f"user_channels_{user_id}")
+	def get_notify_channel_names(self, user_id):
+		channel_names_bytes = redis_client.smembers(f"user_notify_channels_{user_id}")
 		channel_names = {name.decode('utf-8') for name in channel_names_bytes}
 		return channel_names
 
@@ -95,21 +87,17 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 		other_user_id = int(other_user_id_str)
 
 		# 사용자 온라인 상태 확인
-		user_online = await self.is_user_online(user_id)
-		other_user_online = await self.is_user_online(other_user_id)
+		user_online = await is_user_online(user_id)
+		other_user_online = await is_user_online(other_user_id)
 
 		if not user_online and not other_user_online:
 			# 두 사용자 모두 오프라인인 경우, 채팅방 메시지 삭제
 			redis_client.delete(f"chat_messages:{room_name}")
 
-	@sync_to_async
-	def is_user_online(self, user_id):
-		return redis_client.sismember("online_users", user_id)
-
 	async def notify_friends_user_online(self, user_id):
 		friends_ids = await self.get_user_friends(user_id)
 		for friend_id in friends_ids:
-			friend_channel_names = await self.get_channel_names(friend_id)
+			friend_channel_names = await self.get_notify_channel_names(friend_id)
 			for channel_name in friend_channel_names:
 				await self.channel_layer.send(
 					channel_name,
@@ -122,7 +110,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 	async def notify_friends_user_offline(self, user_id):
 		friends_ids = await self.get_user_friends(user_id)
 		for friend_id in friends_ids:
-			friend_channel_names = await self.get_channel_names(friend_id)
+			friend_channel_names = await self.get_notify_channel_names(friend_id)
 			for channel_name in friend_channel_names:
 				await self.channel_layer.send(
 					channel_name,
@@ -131,14 +119,6 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 						"user_id": user_id
 					}
 				)
-	
-	async def notify_new_chat(self, event):
-		sender_info = event['sender_info']
-		await self.send(text_data=json_encode({
-			"action": "notify_new_chat",
-			"sender": sender_info
-		}))
-
 	
 	async def user_online(self, event):
 		user_id = event['user_id']
@@ -169,21 +149,13 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 			partner_ids.add(int(partner_id))
 		return list(partner_ids)
 
-	@database_sync_to_async
-	def is_user_blocked(self, user_id, partner_id):
-		return Block.objects.filter(user_id=user_id, target_id=partner_id).exists()
-
-	@database_sync_to_async
-	def get_user_online_status(self, partner_id):
-		return Members.objects.filter(id=partner_id, status=Members.Status.ONLINE).exists()
-
 	async def fetch_and_notify_chat_partners_status(self, user_id):
 		chat_list = await self.get_chat_list(user_id)
 		partner_ids = await self.get_partner_user_ids(user_id, chat_list)
 
 		for partner_id in partner_ids:
-			is_online = await self.get_user_online_status(partner_id)
-			is_blocked = await self.is_user_blocked(user_id, partner_id)
+			is_online = await get_user_online_status(partner_id)
+			is_blocked = await is_user_blocked(user_id, partner_id)
 
 			# 클라이언트에게 상태 정보 전송
 			await self.send(text_data=json_encode({
@@ -203,7 +175,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 			other_user_id = int(other_user_id) if other_user_id != str(user_id) else int(_)
 			
 			# 상대방 사용자의 채널 이름들을 가져온다
-			other_user_channels = await self.get_channel_names(other_user_id)
+			other_user_channels = await self.get_notify_channel_names(other_user_id)
 			
 			# 각 채널에 오프라인 상태 알림을 전송한다
 			for channel_name in other_user_channels:
@@ -225,7 +197,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 			other_user_id = int(other_user_id) if other_user_id != str(user_id) else int(_)
 			
 			# 상대방 사용자의 채널 이름들을 가져온다
-			other_user_channels = await self.get_channel_names(other_user_id)
+			other_user_channels = await self.get_notify_channel_names(other_user_id)
 			
 			# 각 채널에 오프라인 상태 알림을 전송한다
 			for channel_name in other_user_channels:
@@ -243,4 +215,20 @@ class NotifyConsumer(AsyncWebsocketConsumer):
 		await self.send(text_data=json_encode({
 			"action": "receive_message",
 			**message_data,
+		}))
+
+	async def notify_new_chat(self, event):
+		sender_info = event['sender_info']
+
+		await self.send(text_data=json_encode({
+			"action": "notify_new_chat",
+			"sender": sender_info
+		}))
+
+	async def bot_notify(self, event):
+		user_id = event["user_id"]
+
+		await self.send(text_data=json_encode({
+			"action": "bot_notify",
+			"user_id": user_id
 		}))
