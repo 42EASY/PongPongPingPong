@@ -12,11 +12,8 @@ export default async function Game(data) {
   const $page = document.createElement("div");
   $page.classList.add("page");
 
-  const opponentInfo = await getUserInfo(getUserId());
-  const myInfo = await getUserInfo(getUserId());
-
-  const $info = Info(opponentInfo.result, myInfo.result);
-  const $board = Board(data);
+  const $info = await Info(data);
+  const $board = await Board(data);
 
   $page.appendChild($info);
   $page.appendChild($board);
