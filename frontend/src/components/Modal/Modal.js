@@ -33,8 +33,12 @@ export default function Modal(modalName, argu) {
       });
     }
 
-    // gameServe modal 자동 닫힘 예외처리
-    if (modalName === "gameLeftServe" || modalName === "gameRightServe") {
+    // gameServe, gameStartSoon 자동 닫힘 예외처리
+    if (
+      modalName === "gameLeftServe" ||
+      modalName === "gameRightServe" ||
+      modalName === "gameStartSoon"
+    ) {
       let sec = 3;
       setTimeout(() => {
         if ($modalWrapper && $modalWrapper.parentNode)

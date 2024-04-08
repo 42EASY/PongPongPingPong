@@ -197,6 +197,15 @@ function get_gameResultTable(argu) {
     bodyContent: [GameResultTable(argu)],
   };
 }
+function get_gameStartSoon(argu) {
+  return {
+    title: "게임이 곧 시작됩니다",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
+    bodyContent: [TournamentTable(argu.players)],
+    footerContent: [TimerBar()],
+  };
+}
 function get_gameLeftServe() {
   return {
     title: "공 이동 방향",
@@ -309,6 +318,8 @@ export default function getModalContent(modalName, argu) {
       return get_tournamentTable(argu);
     case "gameResultTable":
       return get_gameResultTable(argu);
+    case "gameStartSoon":
+      return get_gameStartSoon(argu);
     case "gameLeftServe":
       return get_gameLeftServe();
     case "gameRightServe":
