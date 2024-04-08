@@ -9,7 +9,7 @@ from urllib.parse import parse_qs
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
 from django.conf import settings
 from games.distributed_lock import DistributedLock
-import datetime
+from datetime import datetime, timezone
 
 prefix_normal = "normal_"
 prefix_tournament = "tournament_"
@@ -36,7 +36,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         self.game_mode = self.game.game_mode
         
         #start_time 저장
-        self.game.start_time = datetime.datetime.now()
+        self.game.start_time = datetime.now(timezone.utc)
         self.game.save()
 
         #노멀 게임인 경우
@@ -226,7 +226,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             self.opponent_participant.save()
 
             #end_time 저장
-            self.game.end_time = datetime.datetime.now()
+            self.game.end_time = datetime.now(timezone.utc)
             self.game.save()
 
             #상대에게 게임이 끝냈다고 방송
@@ -364,7 +364,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             self.opponent_participant.save()
             
             #end_time 저장
-            self.game.end_time = datetime.datetime.now()
+            self.game.end_time = datetime.now(timezone.utc)
             self.game.save()
             
             #게임 종료 방송
