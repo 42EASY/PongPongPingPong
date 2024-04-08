@@ -23,7 +23,6 @@ export default function EndConfetti() {
       },
     });
   };
-  console.log(confetti);
   const doIt = (evt) => {
     doItNow(evt, false);
   };

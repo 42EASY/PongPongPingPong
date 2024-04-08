@@ -197,6 +197,15 @@ function get_gameResultTable(argu) {
     bodyContent: [GameResultTable(argu)],
   };
 }
+function get_gameStartSoon(argu) {
+  return {
+    title: "게임이 곧 시작됩니다",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
+    bodyContent: [TournamentTable(argu.players)],
+    footerContent: [TimerBar()],
+  };
+}
 function get_gameLeftServe() {
   return {
     title: "공 이동 방향",
@@ -283,6 +292,24 @@ function get_inviteFail_inGame() {
     "게임 중인 상태의 사용자는 초대할 수 없습니다"
   );
 }
+function get_enterFail_fullRoom() {
+  return getOnlyYesModal(
+    "게임방에 참여할 수 없습니다",
+    "게임방이 꽉 차면 더이상 참여할 수 없습니다"
+  );
+}
+function get_chatFail_offline() {
+  return getOnlyYesModal(
+    "채팅을 보낼 수 없습니다",
+    "오프라인 상태의 사용자에게 채팅을 보낼 수 없습니다"
+  );
+}
+function get_chatFail_blockedUser() {
+  return getOnlyYesModal(
+    "채팅을 보낼 수 없습니다",
+    "차단한 사용자에게 채팅을 보낼 수 없습니다"
+  );
+}
 
 //==============================================
 export default function getModalContent(modalName, argu) {
@@ -303,6 +330,8 @@ export default function getModalContent(modalName, argu) {
       return get_tournamentTable(argu);
     case "gameResultTable":
       return get_gameResultTable(argu);
+    case "gameStartSoon":
+      return get_gameStartSoon(argu);
     case "gameLeftServe":
       return get_gameLeftServe();
     case "gameRightServe":
@@ -331,5 +360,11 @@ export default function getModalContent(modalName, argu) {
       return get_inviteFail_offline();
     case "inviteFail_inGame":
       return get_inviteFail_inGame();
+    case "enterFaill_fullRoom":
+      return get_enterFail_fullRoom();
+    case "chatFail_offline":
+      return get_chatFail_offline();
+    case "chatFail_blockedUser":
+      return get_chatFail_blockedUser();
   }
 }

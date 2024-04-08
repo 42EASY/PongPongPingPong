@@ -15,7 +15,7 @@ export default function FastGameStart() {
           if (option.input === "클래식") game_option = "CLASSIC";
           else if (option.input === "스피드") game_option = "SPEED";
           changeUrl("/game", {
-            mode: "2p",
+            mode: "2P",
             option: game_option,
           });
         }
