@@ -64,7 +64,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
             registered_user = parsed_value["registered_user"]
 
-            flag = False;
+            flag = False
             idx = -1
             for user in registered_user:
                 idx += 1
@@ -164,7 +164,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                 })
                 return
 
-            flag = False;
+            flag = False
             idx = -1
             for user in registered_user:
                 idx += 1
@@ -213,7 +213,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         #game이 다 끝나지 않은 경우
         if (self.user_participant.score < 10 and self.opponent_participant.score < 10):
             #점수 상관없이 먼저 접속 끊은 쪽이 lose
-            self.user_participant.result = Participant.Result.LOSE;
+            self.user_participant.result = Participant.Result.LOSE
             self.opponent_participant.result = Participant.Result.WIN
 
             self.user_participant.save()

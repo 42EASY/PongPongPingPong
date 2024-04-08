@@ -282,9 +282,9 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         parsed_value = json.loads(value)
 
         #registered 되어있는 유저인지 확인
-        registered_value = parsed_value["registered_user"];
+        registered_value = parsed_value["registered_user"]
         
-        flag = False;
+        flag = False
         idx = -1
         for user_value in registered_value:
             idx += 1
@@ -555,9 +555,9 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         parsed_value = json.loads(value)
 
         #registered 되어있는 유저인지 확인
-        registered_value = parsed_value["registered_user"];
+        registered_value = parsed_value["registered_user"]
         
-        flag = False;
+        flag = False
         idx = -1
         for user_value in registered_value:
             idx += 1
