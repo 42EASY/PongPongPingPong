@@ -43,6 +43,7 @@ export function joinInviteTournamentQueue(data) {
       let res = JSON.parse(e.data);
       if (res.status === "success") {
         res["round"] = "SEMI_FINAL";
+        res["room_id"] = data.room_id;
         socket.close();
         changeUrl("/gameroom", res);
       }
