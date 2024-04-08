@@ -25,6 +25,7 @@ function checkUrl(requestedUrl) {
   let match = routes.find((route) => {
     if (route.path === findUrl) return route;
   });
+  if (match === undefined) return match;
   const copy = { ...match };
   if (requestedUrl.startsWith("/main")) {
     const segPath = requestedUrl.split("=").filter(Boolean);

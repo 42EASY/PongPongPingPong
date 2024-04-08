@@ -14,7 +14,8 @@ export default async function ChatList(data) {
     for (let i = 0; i < len; i++) {
       const user = data[i].user_info;
       const cnt = data[i].unread_messages_count;
-      const $chat = Chat(user, cnt);
+      const roomName = data[i].room_name;
+      const $chat = Chat(user, cnt, roomName);
       $chatRoomListWrapper.appendChild($chat);
     }
   }

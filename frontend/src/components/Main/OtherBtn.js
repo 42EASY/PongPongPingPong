@@ -37,7 +37,11 @@ export default function OtherBtn(user, status) {
       $FriendStatusBtn.innerHTML = "";
       $FriendStatusBtn.appendChild($FriendStatusIcon);
       $FriendStatusBtn.append("친구 추가");
-      if (status === "BLOCK") $MoreFunctionBox.appendChild($MoreFunctionBtn);
+      if (status === "BLOCK") {
+        $OtherBtnWrapper.appendChild($MessageBtn);
+        $OtherBtnWrapper.appendChild($MoreFunctionBox);
+        $MoreFunctionBox.appendChild($MoreFunctionBtn);
+      }
     } else if (nextStatus === "FRIEND") {
       $FriendStatusBtn.classList.remove("statusNotFriend", "statusBlocked");
       $FriendStatusBtn.innerHTML = "친구";
@@ -45,6 +49,7 @@ export default function OtherBtn(user, status) {
       $FriendStatusBtn.classList.remove("statusNotFriend");
       $FriendStatusBtn.classList.add("statusBlocked");
       $FriendStatusBtn.innerHTML = "차단됨";
+      $MessageBtn.remove();
       $MoreFunctionBtn.remove();
     }
     status = nextStatus;
