@@ -6,6 +6,7 @@ from games.models import Game, Participant
 from tournaments.models import TournamentGame, Tournament
 from django.db.models import Count, Q
 from games.distributed_lock import DistributedLock
+from utils import get_member_info, bot_notify_process
 import time
 
 prefix_normal = "normal_"
@@ -490,6 +491,8 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     }
                 })
 
+            await self.notify_tournament_game_opponent(game1.id, sorted_matching_value[0]["user_id"])
+            await self.notify_tournament_game_opponent(game1.id, sorted_matching_value[1]["user_id"])
 
             #인덱스 2에게 정보 알리기
             await self.channel_layer.send(
@@ -518,7 +521,9 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                         "nickname": sorted_matching_value[2]["nickname"]
                     }
                 })
-        
+
+            await self.notify_tournament_game_opponent(game2.id, sorted_matching_value[2]["user_id"])
+            await self.notify_tournament_game_opponent(game2.id, sorted_matching_value[3]["user_id"])
 
 
     #결승 게임 시작 대기
@@ -732,3 +737,10 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             "player_info": player_info
         })
         
+    async def notify_tournament_game_opponent(self, game_id, opponent_id):
+        opponent = await get_member_info(opponent_id)
+        data = {
+            "game_id": game_id,
+            "opponent": opponent
+        }
+        await bot_notify_process(self, opponent_id, "bot_notify_tournament_game_opponent", data)
