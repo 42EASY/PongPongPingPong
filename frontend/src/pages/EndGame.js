@@ -2,30 +2,31 @@ import Result from "../components/Game/GameResult.js";
 import EndBtn from "../components/Game/EndBtn.js";
 import EndConfetti from "../components/Game/EndConfetti.js";
 import { getUserId } from "../state/State.js";
+import { getUserInfo } from "../components/Main/UserApi.js";
 
-export default function EndGame({ info, result }) {
-  console.log("END GAME: ", info);
-  console.log(result);
+export default async function EndGame({ info, result }) {
+  console.log("END GAME: ", info, result);
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 
-  var leftScore, rightScore, opponent_id;
+  var leftScore, rightScore, opponent;
   if (info.mode === "2P") {
     leftScore = result.leftScore;
     rightScore = result.rightScore;
+    opponent = getUserId();
   } else {
     if (result.game_status[0].user_id === Number(getUserId())) {
       // [1]상대 / [0]본인
       console.log("same ", result.game_status[0].user_id, getUserId());
       leftScore = result.game_status[1].score;
       rightScore = result.game_status[0].score;
-      opponent_id = result.game_status[1].user_id;
+      opponent = await getUserInfo(result.game_status[1].user_id);
     } else {
       // [0]상대 / [1]본인
       console.log("diff ", result.game_status[0].user_id, getUserId());
       leftScore = result.game_status[0].score;
       rightScore = result.game_status[1].score;
-      opponent_id = result.game_status[0].user_id;
+      opponent = await getUserInfo(result.game_status[0].user_id);
     }
   }
   console.log("score : ", leftScore, rightScore);
@@ -40,7 +41,10 @@ export default function EndGame({ info, result }) {
   $printBox.classList.add("printBox");
   $app.appendChild($printBox);
   $printBox.appendChild(Result(info.mode, leftScore, rightScore));
-  $printBox.appendChild(EndBtn(info.mode, opponent_id, hasGameLeft)); // opp_id!!!!!!
+  console.log("-------");
+  console.log(opponent);
+  console.log("-------");
+  $printBox.appendChild(EndBtn(info.mode, opponent.result, hasGameLeft));
   if (hasWon || info.mode === "2P") EndConfetti();
 }
 

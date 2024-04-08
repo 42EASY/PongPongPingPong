@@ -10,7 +10,12 @@ function chatting() {
   $overlay.classList.add("showOverlay");
 }
 
-export default function EndBtn(mode, opponent_id, hasGameLeft) {
+export default function EndBtn(mode, opponent, hasGameLeft) {
+  console.log("in EndBtn: ");
+  console.log(mode);
+  console.log(opponent);
+  console.log(hasGameLeft);
+
   const $btnWrapper = document.createElement("div");
   $btnWrapper.classList.add("btnWrapper");
   const $exitBtn = document.createElement("button");
@@ -43,12 +48,14 @@ export default function EndBtn(mode, opponent_id, hasGameLeft) {
   $chatBtn.appendChild($chatTxt);
   $chatBtn.appendChild($chatIcn);
 
+  if (mode !== "2P") console.log("relation: ", opponent.relation);
+
   if (mode === "2P") $btnWrapper.appendChild($exitBtn);
   else if (mode === "NORMAL") {
-    $btnWrapper.appendChild($friendBtn);
+    if (opponent.relation === "NONE") $btnWrapper.appendChild($friendBtn);
     $btnWrapper.appendChild($exitBtn);
   } else if (mode === "TOURNAMENT") {
-    $btnWrapper.appendChild($friendBtn);
+    if (opponent.relation === "NONE") $btnWrapper.appendChild($friendBtn);
     $btnWrapper.appendChild(hasGameLeft ? $chatBtn : $exitBtn);
   }
 
@@ -56,7 +63,7 @@ export default function EndBtn(mode, opponent_id, hasGameLeft) {
     changeUrl("/main");
   });
   $friendBtn.addEventListener("click", () => {
-    postFriend(opponent_id);
+    postFriend(opponent.user_id);
   });
   $chatBtn.addEventListener("click", () => {
     chatting();
