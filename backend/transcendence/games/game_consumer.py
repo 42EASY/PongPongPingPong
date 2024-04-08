@@ -285,10 +285,24 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             await self.round_over()
         elif (action == "press_key"):
             await self.press_key(text_data_json)
+        elif (action == "unpress_key"):
+            await self.unpress_key()
         else:
             await self.send_json({
                 "status": "fail",
                 "message": "잘못된 action 입니다"
+            })
+
+    #user가 key를 뗀 경우
+    async def unpress_key(self):
+    
+        #상대에게 키를 뗐음을 알리기
+        await self.channel_layer.send(
+            self.opponent_channel_name,
+            {
+                'type': 'broadcast_unpress_key',
+                'status': 'success',
+                'action': ' unpress_key',
             })
 
 
@@ -317,16 +331,6 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                 'key': key 
             })
         
-
-    #press key 알림
-    async def broadcast_press_key(self, event):
-
-        await self.send_json({
-                "status": event["status"],
-                "action": event["action"],
-                "key": event["key"]
-            })
-
 
 
     
@@ -420,3 +424,20 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             "status": event["message"],
             "game_status": event["game_status"]
         })
+
+        #press key 알림
+    async def broadcast_press_key(self, event):
+
+        await self.send_json({
+                "status": event["status"],
+                "action": event["action"],
+                "key": event["key"]
+            })
+
+    #unpress key 알림
+    async def broadcast_unpress_key(self, event):
+
+        await self.send_json({
+                "status": event["status"],
+                "action": event["action"]
+            })
