@@ -731,7 +731,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         
         #만일 flag == true면은 이미 있는 게임에 있는 사람 모두에게 게임 시작 알림
         if (flag == True):
-            result_value = None;
+            result_value = None
             if self.lock.acquire_lock():
                 try:
                     result_value = cache.get(join_game_key)

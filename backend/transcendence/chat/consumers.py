@@ -1,32 +1,15 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
-from datetime import datetime
 from channels.db import database_sync_to_async
 from members.models import Members
 from social.models import Block
+from utils import json_encode, parse_timestamp_to_float, get_member_info, get_chat_channel_names, is_user_online, is_user_blocked
+from utils import notify_chat_send
 import json
 import redis
 
 # Redis 클라이언트 설정
 redis_client = redis.Redis(host='redis', port=6379, db=0)
-
-def json_encode(data):
-	try:
-		return json.dumps(data, ensure_ascii=False)
-	except (TypeError, ValueError) as e:
-		print(f"JSON encoding error: {e}")
-		return None
-
-# 메시지 타임스탬프를 float로 변환하는 함수
-def parse_timestamp_to_float(timestamp_str):
-	try:
-		# UTC Z 제거
-		timestamp_str = timestamp_str[:-1]
-		dt = datetime.fromisoformat(timestamp_str)
-		return dt.timestamp()
-	except ValueError as e:
-		print(f"Timestamp parsing error: {e}")
-		return None
 
 class ChatConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -35,11 +18,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		user_id = self.user.id
 
-		await self.add_channel_name(user_id, self.channel_name)
+		await self.add_chat_channel_name(user_id, self.channel_name)
 
 	async def disconnect(self, close_code):
 		user_id = self.user.id
-		await self.remove_channel_name(user_id, self.channel_name)
+		await self.remove_chat_channel_name(user_id, self.channel_name)
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
@@ -55,6 +38,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.update_read_time(data)
 		elif action == 'leave_chat_room':
 			await self.leave_chat_room(data)
+		elif action == 'fetch_bot_notify_messages':
+			await self.get_bot_notify_messages(data)
 
 	async def fetch_chat_list(self):
 		user_id = self.user.id
@@ -67,7 +52,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			if await self.is_blocked(user_id, other_user_id):
 				continue
 			unread_count = await self.get_unread_messages_count(user_id, room_name)
-			user_info = await self.get_member_info(other_user_id)
+			user_info = await get_member_info(other_user_id)
 			chats_info.append({
 				"room_name": room_name,
 				"unread_messages_count": unread_count,
@@ -87,7 +72,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if await self.is_blocked(sender_id, receiver_id):
 			return await self.send_fail_message("blocked_chat_user", "차단한 유저에겐 메세지를 보낼 수 없습니다.")
 		
-		if not await self.is_user_online(receiver_id):
+		if not await is_user_online(receiver_id):
 			return await self.send_fail_message("offline_chat_user", "현재 오프라인 상태의 유저입니다.")
 		
 		await self.process_message_sending(sender_id, receiver_id, data)
@@ -104,8 +89,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		
 		await self.rejoin_chat_room(sender_id, room_name)
 		
-		sender_info = await self.get_member_info(sender_id)
-		receiver_info = await self.get_member_info(receiver_id)
+		sender_info = await get_member_info(sender_id)
+		receiver_info = await get_member_info(receiver_id)
 		message_data = self.create_message_data(sender_info, receiver_info, data)
 		await self.store_message(room_name, message_data)
 
@@ -115,9 +100,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		await self.notify_receiver(receiver_id, sender_info, message_data)
 
 	async def notify_receiver(self, receiver_id, sender_info, message_data):
-		receiver_channels = await self.get_channel_names(receiver_id)
+		receiver_channels = await get_chat_channel_names(receiver_id)
+
+		await notify_chat_send(self, receiver_id, sender_info)
+
 		for channel_name in receiver_channels:
-			await self.channel_layer.send(channel_name, {"type": "notify_new_chat", "sender_info": sender_info})
 			await self.channel_layer.send(channel_name, {"type": "receive_message", "message_data": message_data})
 
 	def create_message_data(self, sender_info, receiver_info, data):
@@ -270,21 +257,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		# 메시지 리스트의 크기를 제한 (최신 500개의 메시지만 유지)
 		redis_client.ltrim(f"chat_messages:{room_name}", -500, -1)
 
-	@database_sync_to_async
-	def get_member_info(self, user_id):
-		try:
-			member = Members.objects.get(id=user_id)
-			return {
-				"user_id": member.id,
-				"nickname": member.nickname,
-				"image_url": member.image_url
-			}
-		except Members.DoesNotExist:
-			return {
-				"status": "fail",
-				"message": "Member does not exist."
-			}
-
 	@sync_to_async
 	def update_last_read_time(self, user_id, room_name, time):
 		# 마지막으로 읽은 시간을 Redis에 저장
@@ -296,22 +268,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		return Block.objects.filter(user_id=user_id, target_id=target_id).exists()
 
 	@sync_to_async
-	def add_channel_name(self, user_id, channel_name):
-		redis_client.sadd(f"user_channels_{user_id}", channel_name)
+	def add_chat_channel_name(self, user_id, channel_name):
+		redis_client.sadd(f"user_chat_channels_{user_id}", channel_name)
 
 	@sync_to_async
-	def remove_channel_name(self, user_id, channel_name):
-		redis_client.srem(f"user_channels_{user_id}", channel_name)
+	def remove_chat_channel_name(self, user_id, channel_name):
+		redis_client.srem(f"user_chat_channels_{user_id}", channel_name)
 
 	@sync_to_async
 	def delete_user_chats(self, user_id):
 		redis_client.delete(f"user_chats:{user_id}")
-
-	@sync_to_async
-	def get_channel_names(self, user_id):
-		channel_names_bytes = redis_client.smembers(f"user_channels_{user_id}")
-		channel_names = {name.decode('utf-8') for name in channel_names_bytes}
-		return channel_names
 
 	@sync_to_async
 	def get_chat_list(self, user_id):
@@ -321,28 +287,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		return chat_rooms
 
 	@sync_to_async
-	def is_user_online(self, user_id):
-		return redis_client.sismember("online_users", user_id)
-
-	async def notify_new_chat(self, event):
-		sender_info = event['sender_info']
-		await self.send(text_data=json_encode({
-			"action": "notify_new_chat",
-			"sender": sender_info
-		}))
-	
-	@sync_to_async
 	def delete_user_chats(self, user_id):
 		redis_client.delete(f"user_chats:{user_id}")
 
-	@sync_to_async
-	def get_user_online_status(self, partner_id):
-		return Members.objects.filter(id=partner_id, status=Members.Status.ONLINE).exists()
-
-	
 	async def notify_chat_partners_status(self, user_id, partner_id):
-		is_online = await self.is_user_online(partner_id)
-		is_blocked = await self.is_user_blocked(user_id, partner_id)
+		is_online = await is_user_online(partner_id)
+		is_blocked = await is_user_blocked(user_id, partner_id)
 
 		# 클라이언트에게 상태 정보 전송
 		await self.send(text_data=json_encode({
@@ -351,10 +301,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			"is_online": is_online,
 			"is_blocked": is_blocked,
 		}))
-
-	@database_sync_to_async
-	def is_user_blocked(self, user_id, partner_id):
-		return Block.objects.filter(user_id=user_id, target_id=partner_id).exists()
 
 	async def user_online(self, event):
 		user_id = event['user_id']
@@ -374,4 +320,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'action': 'update_user_status',
 			'user_id': user_id,
 			'status': Members.Status.OFFLINE,
+		}))
+
+	# bot 메세지 리스트 가져오기
+	async def get_bot_notify_messages(self, data):
+		user_id = data["user_id"]
+
+		bot_notitfy_messages = redis_client.lrange(f"bot_notify_messages:{user_id}", 0, -1)
+		result = [json.loads(message) for message in bot_notitfy_messages]
+
+		await self.send(text_data=json_encode({
+			'action': 'fetch_bot_notify_messages',
+			'user_id': user_id,
+			'data': result,
 		}))
