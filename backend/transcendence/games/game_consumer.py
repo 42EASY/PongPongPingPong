@@ -69,6 +69,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
             registered_user = parsed_value["registered_user"]
 
+            #TODO: channel_id 갱신하는 부분 수정하기
             flag = False
             idx = -1
             for user in registered_user:
@@ -287,11 +288,25 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             await self.press_key(text_data_json)
         elif (action == "unpress_key"):
             await self.unpress_key()
+        elif (action == "round_start"):
+            await self.round_start(text_data_json)
         else:
             await self.send_json({
                 "status": "fail",
                 "message": "잘못된 action 입니다"
             })
+
+    #round_start (공 초기 위치 설정)
+    async def round_start(self, text_data_json):
+        await self.channel_layer.send(
+            self.opponent_channel_name,
+            {
+                'type': 'broadcast_round_start',
+                'status': 'success',
+                'action': 'round_start',
+                'ball_position': text_data_json["ball_position"]
+            })
+
 
     #user가 key를 뗀 경우
     async def unpress_key(self):
@@ -302,7 +317,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             {
                 'type': 'broadcast_unpress_key',
                 'status': 'success',
-                'action': ' unpress_key',
+                'action': 'unpress_key',
             })
 
 
@@ -441,3 +456,11 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                 "status": event["status"],
                 "action": event["action"]
             })
+
+    #round_start 알림
+    async def broadcast_round_win(self, event):
+        await self.send_json({
+            "status": event["status"],
+            "action": event["action"],
+            "ball_position" : event["ball_position"]
+        })
