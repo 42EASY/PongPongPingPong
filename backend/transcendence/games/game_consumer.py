@@ -9,6 +9,7 @@ from urllib.parse import parse_qs
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
 from django.conf import settings
 from games.distributed_lock import DistributedLock
+from datetime import datetime, timezone
 
 prefix_normal = "normal_"
 prefix_tournament = "tournament_"
@@ -33,6 +34,10 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             return
 
         self.game_mode = self.game.game_mode
+        
+        #start_time 저장
+        self.game.start_time = datetime.now(timezone.utc)
+        self.game.save()
 
         #노멀 게임인 경우
         if (self.game_mode == Game.GameMode.NORMAL):
@@ -64,6 +69,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
             registered_user = parsed_value["registered_user"]
 
+            #TODO: channel_id 갱신하는 부분 수정하기
             flag = False
             idx = -1
             for user in registered_user:
@@ -219,6 +225,10 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             self.user_participant.save()
             self.opponent_participant.save()
 
+            #end_time 저장
+            self.game.end_time = datetime.now(timezone.utc)
+            self.game.save()
+
             #상대에게 게임이 끝냈다고 방송
             if (self.opponent_channel_name != -1):
                 await self.channel_layer.send(
@@ -276,10 +286,38 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             await self.round_over()
         elif (action == "press_key"):
             await self.press_key(text_data_json)
+        elif (action == "unpress_key"):
+            await self.unpress_key()
+        elif (action == "round_start"):
+            await self.round_start(text_data_json)
         else:
             await self.send_json({
                 "status": "fail",
                 "message": "잘못된 action 입니다"
+            })
+
+    #round_start (공 초기 위치 설정)
+    async def round_start(self, text_data_json):
+        await self.channel_layer.send(
+            self.opponent_channel_name,
+            {
+                'type': 'broadcast_round_start',
+                'status': 'success',
+                'action': 'round_start',
+                'ball_position': text_data_json["ball_position"]
+            })
+
+
+    #user가 key를 뗀 경우
+    async def unpress_key(self):
+    
+        #상대에게 키를 뗐음을 알리기
+        await self.channel_layer.send(
+            self.opponent_channel_name,
+            {
+                'type': 'broadcast_unpress_key',
+                'status': 'success',
+                'action': 'unpress_key',
             })
 
 
@@ -303,19 +341,11 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             self.opponent_channel_name,
             {
                 'type': 'broadcast_press_key',
-                'message': 'press_key',
+                'status': 'success',
+                'action': 'press_key',
                 'key': key 
             })
         
-
-    #press key 알림
-    async def broadcast_press_key(self, event):
-
-        await self.send_json({
-                "status": event["message"],
-                "key": event["key"]
-            })
-
 
 
     
@@ -333,6 +363,9 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             self.user_participant.save()
             self.opponent_participant.save()
             
+            #end_time 저장
+            self.game.end_time = datetime.now(timezone.utc)
+            self.game.save()
             
             #게임 종료 방송
             await self.channel_layer.send(
@@ -405,4 +438,29 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json({
             "status": event["message"],
             "game_status": event["game_status"]
+        })
+
+        #press key 알림
+    async def broadcast_press_key(self, event):
+
+        await self.send_json({
+                "status": event["status"],
+                "action": event["action"],
+                "key": event["key"]
+            })
+
+    #unpress key 알림
+    async def broadcast_unpress_key(self, event):
+
+        await self.send_json({
+                "status": event["status"],
+                "action": event["action"]
+            })
+
+    #round_start 알림
+    async def broadcast_round_win(self, event):
+        await self.send_json({
+            "status": event["status"],
+            "action": event["action"],
+            "ball_position" : event["ball_position"]
         })

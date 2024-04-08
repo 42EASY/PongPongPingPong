@@ -199,7 +199,8 @@ async def test_normal_press_key_success():
 
         response = await opponent_communicator.receive_json_from()
 
-        assert response['status'] == 'press_key'
+        assert response['status'] == 'success'
+        assert response['action'] == 'press_key'
     
     finally:
         fake_user.delete()
