@@ -42,14 +42,6 @@ export default function Modal(modalName, argu) {
         resolve(true);
       }, sec * 1000);
     }
-    if (modalName === "waitingInvitation") {
-      let sec = 60;
-      startCount($modalWrapper, sec);
-      setTimeout(() => {
-        $app.removeChild($modalWrapper);
-        resolve(true);
-      }, sec * 1000);
-    }
     // radio button 텍스트 눌러도 체크 + gameMode의 버튼 text내용 변경
     const $labels = $modalWrapper.querySelectorAll(".modalBody label");
     for (const $label of $labels) {
@@ -79,8 +71,3 @@ export default function Modal(modalName, argu) {
     return false;
   }
 }
-
-// [v] todo: waitingPlayer, waitingInvitation 예외처리
-// [v] tood: ㄴ css 수정
-// [v] todo: serve timer 추가
-// [v] todo: ㄴ css 수정
