@@ -283,6 +283,12 @@ function get_inviteFail_inGame() {
     "게임 중인 상태의 사용자는 초대할 수 없습니다"
   );
 }
+function get_enterFail_fullRoom() {
+  return getOnlyYesModal(
+    "게임방에 참여할 수 없습니다",
+    "게임방이 꽉 차면 더이상 참여할 수 없습니다"
+  );
+}
 
 //==============================================
 export default function getModalContent(modalName, argu) {
@@ -331,5 +337,7 @@ export default function getModalContent(modalName, argu) {
       return get_inviteFail_offline();
     case "inviteFail_inGame":
       return get_inviteFail_inGame();
+    case "enterFaill_fullRoom":
+      return get_enterFail_fullRoom();
   }
 }
