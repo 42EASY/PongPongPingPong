@@ -1,8 +1,5 @@
-import { getUserId } from "../../state/State.js";
-import { getUserInfo } from "../Main/UserApi.js";
-
-export default async function Info(info) {
-  console.log("INFO: ", info);
+export default function Info(leftInfo, rightInfo) {
+  console.log("INFO: ", leftInfo, rightInfo);
   const $infoWrapper = document.createElement("div");
   const $leftBox = document.createElement("div");
   const $leftProfileImage = document.createElement("img");
@@ -12,22 +9,9 @@ export default async function Info(info) {
   const $rightProfileImage = document.createElement("img");
   const $rightName = document.createElement("div");
 
-  // 본인
-  const rightUserId =
-    info.player_info[0].user_id === getUserId()
-      ? info.player_info[0].user_id
-      : info.player_info[1].user_id;
-  const rightInfo = await getUserInfo(rightUserId);
-  // 상대
-  const leftUserId =
-    info.player_info[0].user_id === getUserId()
-      ? info.player_info[1].user_id
-      : info.player_info[0].user_id;
-  const leftInfo = await getUserInfo(leftUserId);
-
-  $leftProfileImage.setAttribute("src", leftInfo.result.image_url);
+  $leftProfileImage.setAttribute("src", leftInfo.image_url);
   $leftProfileImage.setAttribute("alt", "profile image");
-  $rightProfileImage.setAttribute("src", rightInfo.result.image_url);
+  $rightProfileImage.setAttribute("src", rightInfo.image_url);
   $rightProfileImage.setAttribute("alt", "profile image");
 
   $infoWrapper.classList.add("gameInfoWrapper");
@@ -47,9 +31,9 @@ export default async function Info(info) {
   $rightBox.appendChild($rightProfileImage);
   $rightBox.appendChild($rightName);
 
-  $leftName.innerHTML = leftInfo.result.nickname;
+  $leftName.innerHTML = leftInfo.nickname;
   $versus.innerHTML = "vs";
-  $rightName.innerHTML = rightInfo.result.nickname;
+  $rightName.innerHTML = rightInfo.nickname;
 
   return $infoWrapper;
 }
