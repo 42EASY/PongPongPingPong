@@ -66,8 +66,9 @@ function callGameHistoryApi(user_id, mode, page, size) {
           console.log(data);
           resolve(data.result);
         } else if (data.code === 401) {
-          setNewAccessToken();
-          callGameHistoryApi();
+          setNewAccessToken().then((result) => {
+            if (result === true) resolve(callGameHistoryApi());
+          });
         }
       });
   });

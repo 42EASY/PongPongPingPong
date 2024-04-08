@@ -45,46 +45,50 @@ function getCurrent2fa() {
 }
 
 function callApi(nickname, is2fa) {
-  if (nickname === "") return;
+  return new Promise((resolve) => {
+    if (nickname === "") resolve();
 
-  const url = "http://localhost:8000/api/v1/members";
-  const $uproadImageInput =
-    document.getElementsByClassName("uproadImageInput")[0];
+    const url = "http://localhost:8000/api/v1/members";
+    const $uproadImageInput =
+      document.getElementsByClassName("uproadImageInput")[0];
 
-  const data = {};
-  if (nickname !== getNickname()) data.nickname = nickname;
-  if (is2fa !== getIs2fa()) data.is_2fa = is2fa;
+    const data = {};
+    if (nickname !== getNickname()) data.nickname = nickname;
+    if (is2fa !== getIs2fa()) data.is_2fa = is2fa;
 
-  const formData = new FormData();
-  $uproadImageInput.files[0] !== undefined
-    ? formData.append("image", $uproadImageInput.files[0])
-    : "";
-  formData.append("data", JSON.stringify(data));
+    const formData = new FormData();
+    $uproadImageInput.files[0] !== undefined
+      ? formData.append("image", $uproadImageInput.files[0])
+      : "";
+    formData.append("data", JSON.stringify(data));
 
-  fetch(url, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
-    body: formData,
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      if (data.code === 200) {
-        setIs2fa(data.result.is_2fa);
-        setNickname(data.result.nickname);
-        setImage(data.result.image_url);
-        changeUrl("/main"); //todo: 메인 페이지 이동 불필요. 닉네임 에러 삭제 필요
-      } else if (data.code === 409) {
-        //중복된 닉네임
-        checkNickname(true);
-      } else if (data.code === 401) {
-        //토큰 만료
-        setNewAccessToken();
-        callApi(nickname, is2fa);
-      }
-    });
+    fetch(url, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.code === 200) {
+          setIs2fa(data.result.is_2fa);
+          setNickname(data.result.nickname);
+          setImage(data.result.image_url);
+          changeUrl("/main"); //todo: 메인 페이지 이동 불필요. 닉네임 에러 삭제 필요
+          resolve();
+        } else if (data.code === 409) {
+          //중복된 닉네임
+          resolve(checkNickname(true));
+        } else if (data.code === 401) {
+          //토큰 만료
+          setNewAccessToken().then((result) => {
+            if (result === true) resolve(callApi(nickname, is2fa));
+          });
+        }
+      });
+  });
 }
 
 export default function SubmitButton(text) {
