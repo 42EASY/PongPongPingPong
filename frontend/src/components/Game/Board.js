@@ -2,22 +2,13 @@ import EndGame from "../../pages/EndGame.js";
 import Modal from "../../components/Modal/Modal.js";
 import GameSocketManager from "../../state/GameSocketManager.js";
 
-var socket;
-var socket_res;
-
 export default function Board(info) {
+  var socket;
+  var socket_res;
   console.log("BOARD ARGU : ", info);
-  if (info.mode != "2P") socket = GameSocketManager.getInstance(info.game_id);
-  console.log("START GAME!!!!!!");
-
-  // sendAction, onmessage test
-  if (info.mode != "2P") {
-    socket.sendAction({ action: "press_key", key: 1 });
-    socket.onmessage = (e) => {
-      const res = JSON.parse(e.data);
-      console.log(res);
-      console.log("-----------");
-    };
+  if (info.mode !== "2P") {
+    socket = GameSocketManager.getInstance(info.game_id);
+    console.log("start!");
   }
 
   const canvas = document.createElement("canvas");
@@ -109,9 +100,14 @@ export default function Board(info) {
     update: function () {
       if (!this.gameOver) {
         // If the ball collides with the bound limits - correct the x and y coords.
-        if (this.ball.x <= 0) Pong._resetTurn.call(this, this.rightPlayer);
-        if (this.ball.x >= this.canvas.width - this.ball.width)
+        if (this.ball.x <= 0) {
+          console.log("will call resetTurn()");
+          Pong._resetTurn.call(this, this.rightPlayer);
+        }
+        if (this.ball.x >= this.canvas.width - this.ball.width) {
+          console.log("will call resetTurn()");
           Pong._resetTurn.call(this, this.leftPlayer);
+        }
         if (this.ball.y <= 0) this.ball.moveY = DIR.DOWN;
         if (this.ball.y >= this.canvas.height - this.ball.height)
           this.ball.moveY = DIR.UP;
@@ -302,11 +298,9 @@ export default function Board(info) {
     },
 
     remoteListen: function () {
-      // on message는 소켓 당 한 번만 하면 되나.....?
       socket.onmessage = (e) => {
         socket_res = JSON.parse(e.data);
-        console.log("game onmessage!!!!!!!!!!!!!!!");
-        console.log(socket_res);
+        console.log("game onmessage!!!", socket_res);
         // 키 눌렀을 때
         if (socket_res.status === "press_key") {
           // [TODO] status->action으로 수정
@@ -321,6 +315,17 @@ export default function Board(info) {
         // 게임 끝났을 때
         if (socket_res.status === "game_over") {
           console.log("game is over. will change url");
+
+          if (socket.readyState === WebSocket.OPEN) {
+            console.log("socket.close()");
+            socket.close();
+          } else {
+            console.log("WebSocket is already closing or closed.");
+          }
+
+          pongGame.gameOver = true;
+          console.log("gameOver = true");
+          setTimeout(() => Pong.changeUrl("/endgame"), 0);
         }
       };
     },
@@ -331,9 +336,10 @@ export default function Board(info) {
         (info.mode === "NORMAL" || info.mode === "TOURNAMENT") &&
         victor === this.rightPlayer
       ) {
+        console.log("you got point");
         socket.sendAction({ action: "round_win" });
-        // round win test
-        for (var i = 0; i < 9; i++) socket.sendAction({ action: "round_win" });
+      } else {
+        console.log("you lose point");
       }
 
       victor.score++;
@@ -343,9 +349,10 @@ export default function Board(info) {
         this.serve === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
       this.timer = new Date().getTime();
       if (
-        (info.mode !== "2P" && socket_res.status === "game_over") ||
-        this.leftPlayer.score === maxScore ||
-        this.rightPlayer.score === maxScore
+        (info.mode !== "2P" && socket_res.status === "game_over") || // 이거지우기..
+        (info.mode === "2P" &&
+          (this.leftPlayer.score === maxScore ||
+            this.rightPlayer.score === maxScore))
       ) {
         this.gameOver = true;
         console.log("hehehheheheheheheheheheh eheeh eh hehe ");

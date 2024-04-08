@@ -14,15 +14,17 @@ export default function EndGame({ info, result }) {
     leftScore = result.leftScore;
     rightScore = result.rightScore;
   } else {
-    if (result.game_status[0].user_id === getUserId()) {
-      // [0]이 본인
-      leftScore = result.game_status[0].score;
-      rightScore = result.game_status[1].score;
-      opponent_id = result.game_status[1].user_id;
-    } else {
-      // [1]이 본인
+    if (result.game_status[0].user_id === Number(getUserId())) {
+      // [1]상대 / [0]본인
+      console.log("same ", result.game_status[0].user_id, getUserId());
       leftScore = result.game_status[1].score;
       rightScore = result.game_status[0].score;
+      opponent_id = result.game_status[1].user_id;
+    } else {
+      // [0]상대 / [1]본인
+      console.log("diff ", result.game_status[0].user_id, getUserId());
+      leftScore = result.game_status[0].score;
+      rightScore = result.game_status[1].score;
       opponent_id = result.game_status[0].user_id;
     }
   }

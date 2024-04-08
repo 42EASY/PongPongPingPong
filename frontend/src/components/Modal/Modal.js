@@ -37,7 +37,8 @@ export default function Modal(modalName, argu) {
     if (modalName === "gameLeftServe" || modalName === "gameRightServe") {
       let sec = 3;
       setTimeout(() => {
-        $app.removeChild($modalWrapper);
+        if ($modalWrapper && $modalWrapper.parentNode)
+          $app.removeChild($modalWrapper);
         resolve(true);
       }, sec * 1000);
     }
