@@ -298,6 +298,18 @@ function get_enterFail_fullRoom() {
     "게임방이 꽉 차면 더이상 참여할 수 없습니다"
   );
 }
+function get_chatFail_offline() {
+  return getOnlyYesModal(
+    "채팅을 보낼 수 없습니다",
+    "오프라인 상태의 사용자에게 채팅을 보낼 수 없습니다"
+  );
+}
+function get_chatFail_blockedUser() {
+  return getOnlyYesModal(
+    "채팅을 보낼 수 없습니다",
+    "차단한 사용자에게 채팅을 보낼 수 없습니다"
+  );
+}
 
 //==============================================
 export default function getModalContent(modalName, argu) {
@@ -350,5 +362,9 @@ export default function getModalContent(modalName, argu) {
       return get_inviteFail_inGame();
     case "enterFaill_fullRoom":
       return get_enterFail_fullRoom();
+    case "chatFail_offline":
+      return get_chatFail_offline();
+    case "chatFail_blockedUser":
+      return get_chatFail_blockedUser();
   }
 }
