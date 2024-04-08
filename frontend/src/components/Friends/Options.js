@@ -31,7 +31,7 @@ export default function Options(user) {
   $gameOpt.innerHTML = "게임 초대하기";
   $Options.appendChild($gameOpt);
   $gameOpt.addEventListener("click", () => {
-    inviteGame(id, status);
+    inviteGame(user.user_id, user.status);
   });
 
   const $unfriendOpt = document.createElement("li");
