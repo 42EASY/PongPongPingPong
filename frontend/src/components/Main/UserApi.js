@@ -3,22 +3,29 @@ import { chatUserState } from "../../state/ChatUserState.js";
 
 const baseUrl = "http://localhost:8000";
 
-export async function getUserInfo(id) {
-  const url = baseUrl + `/api/v1/members/${id}`;
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
+export function getUserInfo(id) {
+  return new Promise((resolve) => {
+    const url = baseUrl + `/api/v1/members/${id}`;
+
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "content-Type": "application/json",
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code === 200) {
+          console.log(data);
+          resolve(data);
+        } else if (data.code === 401) {
+          setNewAccessToken().then((result) => {
+            if (result === true) resolve(getUserInfo(id));
+          });
+        }
+      });
   });
-  const json = await res.json();
-  if (json.code === 401) {
-    setNewAccessToken().then((result) => {
-      if (result === true) getUserInfo(id);
-    });
-  }
-  return json;
 }
 
 export async function postFriend(id) {

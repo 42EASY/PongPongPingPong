@@ -18,7 +18,8 @@ export default async function Main() {
   else id = getUserId();
 
   const userInfo = await getUserInfo(id);
-  const $profile = Profile(id, userInfo.result);
+  console.log(userInfo);
+  const $profile = await Profile(id, userInfo.result);
 
   $page.appendChild($profile);
   $page.classList.add("main");

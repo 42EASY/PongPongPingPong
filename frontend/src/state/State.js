@@ -63,7 +63,6 @@ const setNewAccessToken = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.code === 201 || data.code === 200) {
           setIsLogin(true);
           setAccessToken(data.result.access_token);
