@@ -22,7 +22,7 @@
 	border-radius: 8px;
 
 	text-align: center;
-	z-index: 10;
+	z-index: 1050;
     left: 50%;
     transform: translateX(-50%); /* 가운데 정렬을 위해 수정 */
     top: 50px;

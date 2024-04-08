@@ -106,9 +106,9 @@ class FriendsView(APIView):
 
             #keyword가 비어있는 경우 전체 리스트 반환
             if (keyword == None or keyword == ''):
-                block_list = Friend.objects.filter(user = base_user).order_by('target')
+                friend_list = Friend.objects.filter(user = base_user).order_by('target')
             else:
-                block_list = Friend.objects.filter(user = base_user, target__nickname__icontains = keyword).order_by('target')
+                friend_list = Friend.objects.filter(user = base_user, target__nickname__icontains = keyword).order_by('target')
 
         except:
             return JsonResponse({
@@ -117,7 +117,7 @@ class FriendsView(APIView):
 			}, status = 400)
 
         try :
-            paginator = Paginator(block_list, size)
+            paginator = Paginator(friend_list, size)
             total_page = paginator.num_pages
 
         except:

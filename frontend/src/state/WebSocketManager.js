@@ -42,6 +42,9 @@ var WebSocketManager = (function () {
               console.log(data);
               showToast('새로운 채팅이 왔습니다.');
             }
+            if (data.action === 'bot_notify') {
+                showToast('새로운 알림이 왔습니다.');
+            }
             if (data.action === 'notify_chat_partner_status') {
                 console.log(data);
                 const userId = data.partner_id;
