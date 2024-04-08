@@ -7,6 +7,7 @@ from games.models import Game, Participant
 from tournaments.models import Tournament
 from members.models import Members
 from games.distributed_lock import DistributedLock
+from utils import bot_notify_process, get_member_info
 
 prefix_normal = "normal_"
 prefix_tournament = "tournament_"
@@ -339,6 +340,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 'status': 'game create success',
                 'room_id': tournament.id
             })
+        
+        await self.notify_invite_tournament_game(invite_user_id, tournament.id)
         
 
 
@@ -900,7 +903,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 'status': 'game create success',
                 'game_id': game.id
             })
-
+        
+        await self.notify_invite_normal_game(invite_user_id, game.id, game_mode)
 
 
     #normal 모드에서 초대를 받은 경우
@@ -1226,3 +1230,19 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             "player_info": player_info
         })
 
+    async def notify_invite_normal_game(self, user_id, game_id, mode):
+        inviter = await get_member_info(self.user.id)
+        data = {
+            "game_id":game_id,
+            "mode":mode,
+            "inviter": inviter
+        }
+        await bot_notify_process(self, user_id, "bot_notify_invited_normal_game", data)
+
+    async def notify_invite_tournament_game(self, user_id, room_id):
+        inviter = await get_member_info(self.user.id)
+        data = {
+            "room_id":room_id,
+            "inviter": inviter
+        }
+        await bot_notify_process(self, user_id, "bot_notify_invited_tournament_game", data)
