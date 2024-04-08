@@ -10,6 +10,7 @@ export function joinNormalQueue(data) {
       if (res.status === "game_start_soon") {
         res["mode"] = "NORMAL";
         res["option"] = data.game_mode;
+        socket.close();
         changeUrl("/game", res);
       }
     };
@@ -25,6 +26,7 @@ export function joinInviteNormalQueue(data) {
       if (res.status === "game_start_soon") {
         res["mode"] = "NORMAL";
         res["option"] = data.game_mode;
+        socket.close();
         changeUrl("/game", res);
       }
       if (res.status === "fail") return false;
@@ -41,12 +43,13 @@ export function joinInviteTournamentQueue(data) {
       let res = JSON.parse(e.data);
       if (res.status === "success") {
         res["round"] = "SEMI_FINAL";
+        socket.close();
         changeUrl("/gameroom", res);
       }
-      if (res.status === "fail") return false;
+      if (res.status === "fail") return res;
     };
   }
-  return false;
+  return;
 }
 
 export function cancelNormalQueue(data) {
@@ -62,8 +65,9 @@ export function joinTournamentQueue(data) {
     socket.send(JSON.stringify(data));
     socket.onmessage = (e) => {
       let res = JSON.parse(e.data);
-      if (res.status === "success") {
+      if (res.status === "success" || res.status === "game create success") {
         res["round"] = "SEMI_FINAL";
+        socket.close();
         changeUrl("/gameroom", res);
       }
     };
