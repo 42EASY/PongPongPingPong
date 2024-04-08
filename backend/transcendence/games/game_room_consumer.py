@@ -466,6 +466,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 sorted_matching_value[0]["channel_id"],
                 {
                     'type': 'broadcast_game_start',
+                    'status': 'semi_final_game_start_soon',
                     'game_id': game1.id,
                     'player_info': {
                         "user_id": sorted_matching_value[1]["user_id"],
@@ -480,6 +481,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 sorted_matching_value[1]["channel_id"],
                 {
                     'type': 'broadcast_game_start',
+                    'status': 'semi_final_game_start_soon',
                     'game_id': game1.id,
                     'player_info': {
                         "user_id": sorted_matching_value[0]["user_id"],
@@ -494,6 +496,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 sorted_matching_value[2]["channel_id"],
                 {
                     'type': 'broadcast_game_start',
+                    'status': 'semi_final_game_start_soon',
                     'game_id': game2.id,
                     'player_info': {
                         "user_id": sorted_matching_value[3]["user_id"],
@@ -507,6 +510,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 sorted_matching_value[3]["channel_id"],
                 {
                     'type': 'broadcast_game_start',
+                    'status': 'semi_final_game_start_soon',
                     'game_id': game2.id,
                     'player_info': {
                         "user_id": sorted_matching_value[2]["user_id"],
@@ -682,6 +686,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 matching_value[0]["channel_id"],
                 {
                     'type': 'broadcast_game_start',
+                    'status': 'final_game_start_soon',
                     'game_id': game.id,
                     'player_info': {
                         "user_id": matching_value[1]["user_id"],
@@ -696,6 +701,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 matching_value[1]["channel_id"],
                 {
                     'type': 'broadcast_game_start',
+                    'status': 'final_game_start_soon',
                     'game_id': game.id,
                     'player_info': {
                         "user_id": matching_value[0]["user_id"],
@@ -709,9 +715,10 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
     async def broadcast_game_start(self, event):
         game_id = event["game_id"]
         player_info = event["player_info"]
+        status = event["status"]
 
         await self.send_json({
-            "status": "game_start_soon",
+            "status": status,
             "game_id": game_id,
             "player_info": player_info
         })

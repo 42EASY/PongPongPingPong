@@ -66,9 +66,11 @@ async def test_join_room_success():
             "action": "join_room"
         })
 
+        await communicator.receive_json_from() 
+
         response = await communicator.receive_json_from()    
 
-        assert response["status"] == "game_start_soon"
+        assert response["status"] == "semi_final_game_start_soon"
 
         await communicator.disconnect()
 
@@ -171,10 +173,11 @@ async def test_invite_and_join_room_success():
         
         join_response = await join_communicator.receive_json_from()    
        
+        await invite_communicator.receive_json_from()  
 
         invite_response = await invite_communicator.receive_json_from()  
 
-        assert invite_response["status"] == "game_start_soon"
+        assert invite_response["status"] == "semi_final_game_start_soon"
         
         await invite_communicator.disconnect()
         await join_communicator.disconnect()
@@ -248,7 +251,7 @@ async def test_join_final_room_success():
 
         response = await communicator.receive_json_from()    
 
-        assert response["status"] == "game_start_soon"
+        assert response["status"] == "final_game_start_soon"
 
         await communicator.disconnect()
 
@@ -392,7 +395,7 @@ async def test_join_final_room_disconnect():
 
         response = await communicator.receive_json_from()    
 
-        assert response["status"] == "game_start_soon"
+        assert response["status"] == "final_game_start_soon"
 
         await communicator.disconnect()
 
