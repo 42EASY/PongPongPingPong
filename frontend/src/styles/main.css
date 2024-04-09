@@ -258,7 +258,8 @@
   display: flex;
   border-radius: 12px;
   overflow: auto;
-  margin-bottom: 16px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .resultWrapperLose {
