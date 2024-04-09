@@ -17,8 +17,8 @@ def json_encode(data):
 
 def parse_timestamp_to_float(timestamp_str):
 	try:
-		# UTC Z 제거
-		timestamp_str = timestamp_str[:-1]
+		if timestamp_str.endswith('z') or timestamp_str.endswith('Z'):
+			timestamp_str = timestamp_str[:-1]
 		dt = datetime.fromisoformat(timestamp_str)
 		return dt.timestamp()
 	except ValueError as e:
@@ -54,7 +54,7 @@ async def bot_chat_send(self, user_id, data):
 				"data": data,
 			}
 		)
-  
+
 async def make_bot_notify_message(action, data):
 	return {
 		"action": action,
