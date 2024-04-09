@@ -40,6 +40,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.leave_chat_room(data)
 		elif action == 'fetch_bot_notify_messages':
 			await self.get_bot_notify_messages(data)
+		elif action == 'get_bot_info':
+			await self.get_bot_info(data)
 
 	async def fetch_chat_list(self):
 		user_id = self.user.id
@@ -71,10 +73,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		if await self.is_blocked(sender_id, receiver_id):
 			return await self.send_fail_message("blocked_chat_user", "차단한 유저에겐 메세지를 보낼 수 없습니다.")
-		
+
 		if not await is_user_online(receiver_id):
 			return await self.send_fail_message("offline_chat_user", "현재 오프라인 상태의 유저입니다.")
-		
+
 		await self.process_message_sending(sender_id, receiver_id, data)
 
 	async def send_fail_message(self, error_type, message):
@@ -86,9 +88,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def process_message_sending(self, sender_id, receiver_id, data):
 		room_name = await self.get_or_create_room(sender_id, receiver_id)
-		
+
 		await self.rejoin_chat_room(sender_id, room_name)
-		
+
 		sender_info = await get_member_info(sender_id)
 		receiver_info = await get_member_info(receiver_id)
 		message_data = self.create_message_data(sender_info, receiver_info, data)
@@ -114,7 +116,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			"message": data['message'],
 			"timestamp": data['timestamp'],
 		}
-		
+
 	async def receive_message(self, event):
 		message_data = event['message_data']
 
@@ -149,7 +151,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			"room_name": room_name,
 			"messages": messages,
 		}))
-	
+
 	async def update_read_time(self, data):
 		room_name = data['room_name']
 		timestamp = data['timestamp']
@@ -167,7 +169,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		# 모든 사용자가 채팅방을 나갔는지 확인
 		if await self.is_room_empty(room_name):
 			await self.delete_chat_history(room_name)
-			
+
 	@sync_to_async
 	def set_left_time(self, user_id, room_name, timestamp):
 		redis_client.set(f"left_time:{room_name}:{user_id}", timestamp)
@@ -215,7 +217,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		# 해당 시점 이후의 메시지만 필터링하여 불러오기
 		messages = redis_client.lrange(f"chat_messages:{room_name}", 0, -1)
 		filtered_messages = [
-			json.loads(message) for message in messages 
+			json.loads(message) for message in messages
 			if parse_timestamp_to_float(json.loads(message)['timestamp']) > left_time]
 
 		return filtered_messages
@@ -244,7 +246,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	@sync_to_async
 	def get_or_create_room(self, sender_id, receiver_id):
 		room_name = f"chat_{min(sender_id, receiver_id)}_{max(sender_id, receiver_id)}"
-		
+
 		# 채팅방이 존재하지 않으면 생성
 		if not redis_client.exists(room_name):
 			redis_client.set(room_name, json_encode([]))
@@ -258,7 +260,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	def store_message(self, room_name, message):
 		# Redis 리스트에 메시지 저장
 		redis_client.rpush(f"chat_messages:{room_name}", json_encode(message))
-		
+
 		# 메시지 리스트의 크기를 제한 (최신 500개의 메시지만 유지)
 		redis_client.ltrim(f"chat_messages:{room_name}", -500, -1)
 
@@ -316,7 +318,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'user_id': user_id,
 			'status': Members.Status.ONLINE,
 		}))
-	
+
 	async def user_offline(self, event):
 		user_id = event['user_id']
 
@@ -330,12 +332,32 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	# bot 메세지 리스트 가져오기
 	async def get_bot_notify_messages(self, data):
 		user_id = data["user_id"]
+		timestamp = data["timestamp"]
 
 		bot_notitfy_messages = redis_client.lrange(f"bot_notify_messages:{user_id}", 0, -1)
 		result = [json.loads(message) for message in bot_notitfy_messages]
+
+		await self.update_last_read_time(user_id, 'bot', timestamp)
 
 		await self.send(text_data=json_encode({
 			'action': 'fetch_bot_notify_messages',
 			'user_id': user_id,
 			'data': result,
+		}))
+
+	# bot 안 읽은 메세지 개수 확인
+	async def get_bot_info(self, data):
+		user_id = self.user.id
+
+		last_read_time = redis_client.get(f"last_read_time:bot:{user_id}")
+		if not last_read_time:
+			last_read_time = 0
+		else:
+			last_read_time = parse_timestamp_to_float(last_read_time.decode('utf-8'))
+
+		notifyList = redis_client.lrange(f"bot_notify_messages:{user_id}", 0, -1)
+		unread_count = sum(1 for notify in notifyList if parse_timestamp_to_float(json.loads(notify)['timestamp']) > last_read_time)
+		await self.send(text_data=json_encode({
+			'action': 'get_bot_info',
+			'unread_notify_count': unread_count
 		}))
