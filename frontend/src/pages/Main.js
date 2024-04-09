@@ -5,8 +5,6 @@ import { GameResultsScroll } from "../components/Main/GameResults.js";
 import { getUserId } from "../state/State.js";
 import { getUserInfo } from "../components/Main/UserApi.js";
 
-let scrollEvent;
-
 export default async function Main() {
   Nav();
 
@@ -32,21 +30,21 @@ export default async function Main() {
   $page.appendChild($history);
 
   //scroll event
-  if (scrollEvent) document.removeEventListener("scroll", scrollEvent);
-  scrollEvent = scrollEventHandler;
-  document.addEventListener("scroll", scrollEventHandler);
-}
+  document.addEventListener("scroll", async () => {
+    if (
+      window.innerHeight + window.scrollY + 0.5 >=
+      document.body.offsetHeight
+    ) {
+      let id;
+      const segPath = window.location.pathname.split("=").filter(Boolean);
+      if (segPath.length === 2) id = segPath[1];
+      else id = getUserId();
 
-async function scrollEventHandler() {
-  if (window.innerHeight + window.scrollY + 0.5 >= document.body.offsetHeight) {
-    let id;
-    const segPath = window.location.pathname.split("=").filter(Boolean);
-    if (segPath.length === 2) id = segPath[1];
-    else id = getUserId();
+      const $GameHistoryBtn = document.querySelector(".historyBtn");
+      const isGeneral =
+        $GameHistoryBtn.classList.contains("historyBtnSelected");
 
-    const $GameHistoryBtn = document.querySelector(".historyBtn");
-    const isGeneral = $GameHistoryBtn.classList.contains("historyBtnSelected");
-
-    await GameResultsScroll(id, isGeneral);
-  }
+      await GameResultsScroll(id, isGeneral);
+    }
+  });
 }

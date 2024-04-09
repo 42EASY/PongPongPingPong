@@ -27,30 +27,28 @@ export default async function GameHistory(user_id) {
   $TournamentHistoryBtn.classList.add("historyBtn");
   $TournamentHistoryBtn.appendChild($TournamentHistoryIcon);
   $TournamentHistoryBtn.append("토너먼트 전적");
-  const $HistoryBoard = await GameResults(user_id, true);
+  var $HistoryBoard = await GameResults(user_id, true);
   $GameHistoryWrapper.appendChild($HistoryBoard);
 
-  $GameHistoryBtn.onclick = () => {
-    if (!$GameHistoryBtn.classList.contains("historyBtnSelected")) {
-      $GameHistoryBtn.classList.add("historyBtnSelected");
-      $HistoryBoard.innerHTML = "";
-      if (!noHistory) $HistoryBoard.appendChild(GameResult(data));
-      else $HistoryBoard.appendChild(NoHistory());
-    }
-    $TournamentHistoryBtn.classList.remove("historyBtnSelected");
-  };
+  $GameHistoryBtn.addEventListener("click", async () => {
+    if ($GameHistoryBtn.classList.contains("historyBtnSelected")) return;
 
-  $TournamentHistoryBtn.onclick = () => {
-    if (!$TournamentHistoryBtn.classList.contains("historyBtnSelected")) {
-      $TournamentHistoryBtn.classList.add("historyBtnSelected");
-      $HistoryBoard.innerHTML = "";
-      if (!noHistory) {
-        $HistoryBoard.appendChild(TournamentResult(tdata));
-        $HistoryBoard.appendChild(TournamentResult(tdata));
-      } else $HistoryBoard.appendChild(NoHistory());
-    }
+    $GameHistoryBtn.classList.add("historyBtnSelected");
+    $TournamentHistoryBtn.classList.remove("historyBtnSelected");
+    $HistoryBoard.remove();
+    $HistoryBoard = await GameResults(user_id, true);
+    $GameHistoryWrapper.appendChild($HistoryBoard);
+  });
+
+  $TournamentHistoryBtn.addEventListener("click", async () => {
+    if ($TournamentHistoryBtn.classList.contains("historyBtnSelected")) return;
+
+    $TournamentHistoryBtn.classList.add("historyBtnSelected");
     $GameHistoryBtn.classList.remove("historyBtnSelected");
-  };
+    $HistoryBoard.remove();
+    $HistoryBoard = await GameResults(user_id, false);
+    $GameHistoryWrapper.appendChild($HistoryBoard);
+  });
 
   return $GameHistoryWrapper;
 }
