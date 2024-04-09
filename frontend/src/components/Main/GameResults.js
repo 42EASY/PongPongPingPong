@@ -1,6 +1,7 @@
 import { getAccessToken, setNewAccessToken } from "../../state/State.js";
 import GameResult from "./GameResult.js";
 import NoHistory from "./NoHistory.js";
+import TournamentResult from "./TournamentResult.js";
 
 let noHistory = false;
 let curPage = 1;
@@ -8,14 +9,15 @@ let dataSize = 9;
 let isFetching = false;
 let hasMore = true;
 
-export async function GameResults(user_id, isGeneral) {
+export async function GameResults(userId, isGeneral) {
   curPage = 1;
   noHistory = false;
   hasMore = true;
 
   const $HistoryBoard = document.createElement("div");
   $HistoryBoard.classList.add("historyBoard");
-  const results = await getGameResults(user_id, isGeneral);
+  const results = await getGameResults(userId, isGeneral);
+  console.log(results);
 
   if (results.length === 0) {
     noHistory = true;
@@ -23,31 +25,39 @@ export async function GameResults(user_id, isGeneral) {
     return $HistoryBoard;
   }
 
-  for (const result of results) {
-    const $tmp = await GameResult(result);
-    $HistoryBoard.appendChild($tmp);
+  if (isGeneral) {
+    for (const result of results) {
+      const $tmp = await GameResult(userId, result);
+      $HistoryBoard.appendChild($tmp);
+    }
+  } else {
+    const resultsTmp = results[0].tournament;
+    for (const result of resultsTmp) {
+      const $tmp = await TournamentResult(userId, result);
+      $HistoryBoard.appendChild($tmp);
+    }
   }
 
   return $HistoryBoard;
 }
 
-export async function GameResultsScroll(user_id, isGeneral) {
+export async function GameResultsScroll(userId, isGeneral) {
   if (isFetching || !hasMore) return;
 
   const $HistoryBoard = document.querySelector(".historyBoard");
-  const results = await getGameResults(user_id, isGeneral);
+  const results = await getGameResults(userId, isGeneral);
 
   for (const result of results) {
-    const $tmp = await GameResult(result);
+    const $tmp = await GameResult(userId, result);
     $HistoryBoard.appendChild($tmp);
   }
 }
 
-async function getGameResults(user_id, isGeneral) {
+async function getGameResults(userId, isGeneral) {
   return new Promise((resolve) => {
     isFetching = true;
     callGameHistoryApi(
-      user_id,
+      userId,
       isGeneral ? "NORMAL" : "TOURNAMENT",
       curPage,
       dataSize
@@ -67,9 +77,9 @@ async function getGameResults(user_id, isGeneral) {
   });
 }
 
-function callGameHistoryApi(user_id, mode, page, size) {
+function callGameHistoryApi(userId, mode, page, size) {
   return new Promise((resolve) => {
-    const url = `http://localhost:8000/api/v1/members/${user_id}/records?mode=${mode}&page=${page}&size=${size}`;
+    const url = `http://localhost:8000/api/v1/members/${userId}/records?mode=${mode}&page=${page}&size=${size}`;
 
     fetch(url, {
       method: "GET",
