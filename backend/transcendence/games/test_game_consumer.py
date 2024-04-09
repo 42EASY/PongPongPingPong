@@ -268,7 +268,7 @@ async def test_tournament_round_win():
 
         final_response = await final_communicator.receive_json_from()    
 
-        assert final_response["status"] == "game_start_soon"
+        assert final_response["status"] == "final_game_start_soon"
 
 
         fake_communicator = WebsocketCommunicator(GameConsumer.as_asgi(), "/ws/game/" + str(final_response["game_id"]) + "?token=" + fake_token)
