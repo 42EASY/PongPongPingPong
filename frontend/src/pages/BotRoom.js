@@ -3,6 +3,7 @@ import BotContent from "../components/Chat/ChatRoom/BotContent.js";
 import ChatInput from "../components/Chat/ChatRoom/ChatInput.js";
 import Title from "../components/Chat/Title.js";
 import { getUserId } from "../state/State.js";
+import { getTimestamp } from "../state/ChatState.js";
 
 const socket = ChatSocketManager.getInstance();
 
@@ -30,6 +31,7 @@ export default function BotRoom() {
     JSON.stringify({
       action: "fetch_bot_notify_messages",
       user_id: getUserId(),
+      timestamp: getTimestamp()
     })
   );
 
@@ -48,6 +50,15 @@ export default function BotRoom() {
       data.action === "bot_notify_tournament_game_opponent"
     ) {
       $botContentsWrapper.appendChild(BotContent(data));
+
+      socket.send(
+        JSON.stringify({
+          action: "update_read_time",
+          room_name: 'bot',
+          timestamp: getTimestamp(),
+        })
+      );
+
       $botRoomWrapper.scrollTop = $botRoomWrapper.scrollHeight;
     }
   };
