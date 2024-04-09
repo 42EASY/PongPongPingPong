@@ -43,174 +43,75 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         if (self.game_mode == Game.GameMode.NORMAL):
             self.key = prefix_normal + self.game_id
 
-            value = None
-            if self.lock.acquire_lock():
-                try:
-                    value = cache.get(self.key)
-                except:
-                    self.lock.release_lock()
-                    await self.send_json({
-                        "status": "fail",
-                        "message": "redis에 접근 중 오류가 발생했습니다"
-                    })
-                    return
-            
-                self.lock.release_lock()
-            else:
-                self.lock.release_lock()
-                await self.send_json({
-                    "status": "fail",
-                    "message": "lock 획득 중 오류가 발생했습니다"
-                })
-                return
-            
-            
-            parsed_value = json.loads(value)
-
-            registered_user = parsed_value["registered_user"]
-
-            #TODO: channel_id 갱신하는 부분 수정하기
-            flag = False
-            idx = -1
-            for user in registered_user:
-                idx += 1
-                if (user["user_id"] != self.user.id):
-                    try:
-                        self.opponent = Members.objects.get(id = user["user_id"])
-
-                        #user의 participant에 상대 id 값 추가
-                        self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
-                        self.user_participant.opponent_id = self.opponent.id
-                        self.user_participant.save()
-
-                        self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent.id), game_id = self.game)
-
-                    except:
-                        await self.send_json({
-                            "status": "fail",
-                            "message": "상대 플레이어가 존재하지 않습니다"
-                        })
-                        return
-
-                else:
-                    #channel_id 갱신
-                    parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
-                    flag = True
-                
-                    
-            if (flag == False):
-                await self.send_json({
-                    "status": "fail",
-                    "message": "등록되지 않은 유저입니다"
-                })
-                return
-            
-            updated_value = json.dumps(parsed_value)
-
-            if self.lock.acquire_lock():
-                try:
-                    cache.set(self.key, updated_value)
-                except:
-                    self.lock.release_lock()
-                    await self.send_json({
-                        "status": "fail",
-                        "message": "redis에 접근 중 오류가 발생했습니다"
-                    })
-                    return  
-            
-                self.lock.release_lock()
-            else:
-                self.lock.release_lock()
-                await self.send_json({
-                    "status": "fail",
-                    "message": "lock 획득 중 오류가 발생했습니다"
-                })
-                return
-
         #토너먼트인 경우
-        if (self.game_mode == Game.GameMode.TOURNAMENT):
+        elif (self.game_mode == Game.GameMode.TOURNAMENT):
             self.tournament_game = TournamentGame.objects.get(game_id = self.game)
 
             self.key = prefix_tournament + str(self.tournament_game.tournament_id.id)
 
-            value = None
-            if self.lock.acquire_lock():
-                try:
-                    value = cache.get(self.key)
-                except:
-                    self.lock.release_lock()
-                    await self.send_json({
-                        "status": "fail",
-                        "message": "redis에 접근 중 오류가 발생했습니다"
-                    })
-                    return  
             
-                self.lock.release_lock()
-            else:
-                self.lock.release_lock()
-                await self.send_json({
-                    "status": "fail",
-                    "message": "lock 획득 중 오류가 발생했습니다"
-                })
-                return
-
-
-            parsed_value = json.loads(value)
-
-            registered_user = parsed_value["registered_user"]
-
+        value = None
+        if self.lock.acquire_lock():
             try:
-                self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
-                self.opponent = Members.objects.get(id = self.user_participant.opponent_id)
-                self.opponent_participant = Participant.objects.get(user_id = Members.objects.get(id = self.opponent.id), game_id = self.game)            
+                value = cache.get(self.key)
             except:
-                await self.send_json({
-                    "status": "fail",
-                    "message": "db에서 오류가 발생했습니다"
-                })
-                return
-
-            flag = False
-            idx = -1
-            for user in registered_user:
-                idx += 1
-                if (user["user_id"] != self.user.id):
-                    #channel_id 갱신
-                    parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
-                    flag = True
-                    break
-
-                    
-            if (flag == False):
-                await self.send_json({
-                    "status": "fail",
-                    "message": "등록되지 않은 유저입니다"
-                })
-                return
-            
-            updated_value = json.dumps(parsed_value)
-
-            if self.lock.acquire_lock():
-                try:
-                    cache.set(self.key, updated_value)
-                except:
-                    self.lock.release_lock()
-                    await self.send_json({
-                        "status": "fail",
-                        "message": "redis에 접근 중 오류가 발생했습니다"
-                    })
-                    return  
-            
-                self.lock.release_lock()
-            else:
                 self.lock.release_lock()
                 await self.send_json({
                     "status": "fail",
-                    "message": "lock 획득 중 오류가 발생했습니다"
+                    "message": "redis에 접근 중 오류가 발생했습니다"
                 })
                 return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+            
+            
+        parsed_value = json.loads(value)
 
-        self.opponent_channel_name = -1
+        #게임에 입장한 user id와 channel_name 저장
+        self.json_key = 'join_game' + str(self.game_id)
+
+        if self.json_key not in parsed_value or not isinstance(parsed_value[self.json_key], list):
+            parsed_value[self.json_key] = []
+                
+        data = {
+            'user_id': self.user.id,
+            'channel_name': self.channel_name
+        }
+
+        parsed_value[self.json_key].append(data)
+
+            
+        updated_value = json.dumps(parsed_value)
+
+        if self.lock.acquire_lock():
+            try:
+                cache.set(self.key, updated_value)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return  
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+
+        
+        self.opponent_channel_name = "-1"
         await self.accept()
 
 
@@ -230,7 +131,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             self.game.save()
 
             #상대에게 게임이 끝냈다고 방송
-            if (self.opponent_channel_name != -1):
+            if (self.opponent_channel_name != "-1"):
                 await self.channel_layer.send(
                     self.opponent_channel_name,
                     {
@@ -246,7 +147,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
     async def receive(self, text_data):
 
         #상대의 channel_name 저장
-        if (self.opponent_channel_name == -1):
+        if (self.opponent_channel_name == "-1"):
 
             value = None
             if self.lock.acquire_lock():
@@ -270,12 +171,36 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                 return
 
             parsed_value = json.loads(value)
+            
+            join_game_info = parsed_value[self.json_key]
 
-            registered_user = parsed_value["registered_user"]
+            flag = False
+            for info in join_game_info:
+                if (info['user_id'] != self.user.id):
+                    flag = True
+                    try:
+                        self.opponent = Members.objects.get(id = info["user_id"])
 
-            for info in registered_user:
-                if (info["user_id"] == self.opponent.id):
-                    self.opponent_channel_name = info["channel_id"]
+                        #user의 participant에 상대 id 값 추가
+                        self.user_participant = Participant.objects.get(user_id = self.user, game_id = self.game)
+                        self.user_participant.opponent_id = self.opponent.id
+                        self.user_participant.save()
+
+                        self.opponent_participant = Participant.objects.get(user_id = self.opponent.id, game_id = self.game)
+                        self.opponent_channel_name = info['channel_name']
+
+                    except:
+                        await self.send_json({
+                            "status": "fail",
+                            "message": "상대 플레이어가 존재하지 않습니다"
+                        })
+                        return
+
+            if (flag == False):
+                await self.send_json({
+                    "status": "fail",
+                    "message": "아직 상대가 입장하지 않았습니다"
+                })
 
 
         text_data_json = json.loads(text_data)
