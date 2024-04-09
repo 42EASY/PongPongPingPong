@@ -22,32 +22,17 @@ export default function Bot(cnt) {
     $chatStatus.innerHTML = cnt;
   }
 
-  const $closeButton = document.createElement("i");
-  $closeButton.classList.add("closeButton", "bi", "bi-x-lg", "hide");
-
   $profileInfo.appendChild($profileImg);
   $profileInfo.appendChild($profileName);
 
   $botWrapper.appendChild($profileInfo);
   $botWrapper.appendChild($chatStatus);
-  $botWrapper.appendChild($closeButton);
-
-  $closeButton.addEventListener("click", () => {
-    Modal("exitChatting", "announcement_bot").then((result) => {
-      if (result.isPositive) {
-        // todo: delBotContent();
-        $botWrapper.style.display = "none";
-      }
-    });
-  });
 
   $botWrapper.addEventListener("mouseover", () => {
-    $closeButton.classList.remove("hide");
     $chatStatus.style.display = "none";
   });
 
   $botWrapper.addEventListener("mouseout", () => {
-    $closeButton.classList.add("hide");
     $chatStatus.style.display = "inherit";
   });
 
