@@ -8,9 +8,9 @@ let dataSize = 9;
 let isFetching = false;
 let hasMore = true;
 
-export default async function GameResults(user_id, isGeneral) {
-  noHistory = false;
+export async function GameResults(user_id, isGeneral) {
   curPage = 1;
+  noHistory = false;
   hasMore = true;
 
   const $HistoryBoard = document.createElement("div");
@@ -28,25 +28,19 @@ export default async function GameResults(user_id, isGeneral) {
     $HistoryBoard.appendChild($tmp);
   }
 
-  //scroll event
-  //todo: main 페이지로 빼기
-  document.addEventListener("scroll", async function scrollHandler() {
-    const $HistoryBoardTmp = document.querySelector(".historyBoard");
-    console.log(user_id);
-    if (isFetching || !hasMore) return;
-    if (
-      window.innerHeight + window.scrollY + 0.5 >=
-      document.body.offsetHeight
-    ) {
-      const newResults = await getGameResults(user_id, isGeneral);
-      for (const result of newResults) {
-        const $tmp = await GameResult(result);
-        $HistoryBoardTmp.appendChild($tmp);
-      }
-    }
-  });
-
   return $HistoryBoard;
+}
+
+export async function GameResultsScroll(user_id, isGeneral) {
+  if (isFetching || !hasMore) return;
+
+  const $HistoryBoard = document.querySelector(".historyBoard");
+  const results = await getGameResults(user_id, isGeneral);
+
+  for (const result of results) {
+    const $tmp = await GameResult(result);
+    $HistoryBoard.appendChild($tmp);
+  }
 }
 
 async function getGameResults(user_id, isGeneral) {
@@ -58,7 +52,6 @@ async function getGameResults(user_id, isGeneral) {
       curPage,
       dataSize
     ).then((result) => {
-      console.log(result);
       isFetching = false;
       if (
         result.total_page === curPage ||
@@ -75,7 +68,6 @@ async function getGameResults(user_id, isGeneral) {
 }
 
 function callGameHistoryApi(user_id, mode, page, size) {
-  console.log(page);
   return new Promise((resolve) => {
     const url = `http://localhost:8000/api/v1/members/${user_id}/records?mode=${mode}&page=${page}&size=${size}`;
 
@@ -89,7 +81,6 @@ function callGameHistoryApi(user_id, mode, page, size) {
       .then((res) => res.json())
       .then((data) => {
         if (data.code === 200) {
-          console.log(data);
           resolve(data.result);
         } else if (data.code === 401) {
           setNewAccessToken().then((result) => {

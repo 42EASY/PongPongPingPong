@@ -1,7 +1,7 @@
 import GameResult from "./GameResult.js";
 import NoHistory from "./NoHistory.js";
 import TournamentResult from "./TournamentResult.js";
-import GameResults from "./GameResults.js";
+import { GameResults } from "./GameResults.js";
 
 const noHistory = false;
 
