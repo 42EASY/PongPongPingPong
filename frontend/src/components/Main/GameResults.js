@@ -5,9 +5,10 @@ import TournamentResult from "./TournamentResult.js";
 
 let noHistory = false;
 let curPage = 1;
-let dataSize = 9;
 let isFetching = false;
 let hasMore = true;
+const dataSize = 9;
+const tournamentDataSize = 3;
 
 export async function GameResults(userId, isGeneral) {
   curPage = 1;
@@ -17,7 +18,6 @@ export async function GameResults(userId, isGeneral) {
   const $HistoryBoard = document.createElement("div");
   $HistoryBoard.classList.add("historyBoard");
   const results = await getGameResults(userId, isGeneral);
-  console.log(results);
 
   if (results.length === 0) {
     noHistory = true;
@@ -31,8 +31,7 @@ export async function GameResults(userId, isGeneral) {
       $HistoryBoard.appendChild($tmp);
     }
   } else {
-    const resultsTmp = results[0].tournament;
-    for (const result of resultsTmp) {
+    for (const result of results) {
       const $tmp = await TournamentResult(userId, result);
       $HistoryBoard.appendChild($tmp);
     }
@@ -43,13 +42,21 @@ export async function GameResults(userId, isGeneral) {
 
 export async function GameResultsScroll(userId, isGeneral) {
   if (isFetching || !hasMore) return;
+  if (!isGeneral) console.log("here");
 
   const $HistoryBoard = document.querySelector(".historyBoard");
   const results = await getGameResults(userId, isGeneral);
 
-  for (const result of results) {
-    const $tmp = await GameResult(userId, result);
-    $HistoryBoard.appendChild($tmp);
+  if (isGeneral) {
+    for (const result of results) {
+      const $tmp = await GameResult(userId, result);
+      $HistoryBoard.appendChild($tmp);
+    }
+  } else {
+    for (const result of results) {
+      const $tmp = await TournamentResult(userId, result);
+      $HistoryBoard.appendChild($tmp);
+    }
   }
 }
 
@@ -60,19 +67,34 @@ async function getGameResults(userId, isGeneral) {
       userId,
       isGeneral ? "NORMAL" : "TOURNAMENT",
       curPage,
-      dataSize
+      isGeneral ? dataSize : tournamentDataSize
     ).then((result) => {
       isFetching = false;
-      if (
-        result.total_page === curPage ||
-        result.data.length === 0 ||
-        result.data.length < dataSize
-      ) {
-        hasMore = false;
+      console.log(result);
+
+      if (isGeneral) {
+        if (
+          result.total_page === curPage ||
+          result.data.length === 0 ||
+          result.data.length < dataSize
+        ) {
+          hasMore = false;
+        } else {
+          curPage++;
+        }
+        resolve(result.data);
       } else {
-        curPage++;
+        if (
+          result.total_page === curPage ||
+          result.data[0].tournament.length === 0 ||
+          result.data[0].tournament.length < dataSize
+        ) {
+          hasMore = false;
+        } else {
+          curPage++;
+        }
+        resolve(result.data[0].tournament);
       }
-      resolve(result.data);
     });
   });
 }

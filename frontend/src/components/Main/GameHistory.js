@@ -30,6 +30,7 @@ export default async function GameHistory(user_id) {
   var $HistoryBoard = await GameResults(user_id, true);
   $GameHistoryWrapper.appendChild($HistoryBoard);
 
+  //경기 전적 클릭이벤트
   $GameHistoryBtn.addEventListener("click", async () => {
     if ($GameHistoryBtn.classList.contains("historyBtnSelected")) return;
 
@@ -40,6 +41,7 @@ export default async function GameHistory(user_id) {
     $GameHistoryWrapper.appendChild($HistoryBoard);
   });
 
+  //토너먼트 전적 클릭이벤트
   $TournamentHistoryBtn.addEventListener("click", async () => {
     if ($TournamentHistoryBtn.classList.contains("historyBtnSelected")) return;
 
