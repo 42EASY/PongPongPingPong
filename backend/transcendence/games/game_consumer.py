@@ -9,6 +9,7 @@ from urllib.parse import parse_qs
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
 from django.conf import settings
 from games.distributed_lock import DistributedLock
+from utils import get_member_info, bot_notify_process
 from datetime import datetime, timezone
 from channels.db import database_sync_to_async
 
@@ -292,9 +293,6 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                 'key': key 
             })
         
-
-
-    
     #한 라운드가 끝난 경우(round_win이라는 action 보낸 사람이 1점을 얻은 경우)
     async def round_over(self):
         self.user_participant.score = self.user_participant.score + 1
@@ -343,7 +341,10 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                     })
 
             #normal 게임이거나, tournament 결승 게임인 경우 redis 삭제
-            if (self.game_mode == Game.GameMode.NORMAL or self.tournament_game.round == TournamentGame.Round.FINAL):                
+            if (self.game_mode == Game.GameMode.NORMAL or self.tournament_game.round == TournamentGame.Round.FINAL):
+                if (self.tournament_game.round == TournamentGame.Round.FINAL):
+                    players = await self.get_tournament_players(self.tournament_game.tournament_id.id)
+                    await bot_notify_process(self, self.user.id, "bot_notify_tournament_game_result", players)
                 if self.lock.acquire_lock():
                     try:
                         cache.delete(self.key)
@@ -396,7 +397,32 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             "game_status": event["game_status"]
         })
 
-        #press key 알림
+        
+    async def get_tournament_players(self, tournament_id):
+        tournament_games = TournamentGame.objects.filter(tournament_id=tournament_id)
+        
+        players = set()
+        
+        for game in tournament_games:
+            participants = Participant.objects.filter(game_id=game.game_id)
+            for participant in participants:
+                player = await get_member_info(participant.user_id)
+                ranking = 0
+                if game.round == TournamentGame.Round.SEMI_FINAL:
+                    if participant.result == Participant.Result.LOSE:
+                        ranking = 3
+                if game.round == TournamentGame.Round.FINAL:
+                    if participant.result == Participant.Result.WIN:
+                        ranking = 1
+                    elif participant.result == Participant.Result.LOSE:
+                        ranking = 2
+                players.add({
+                    **player,
+                    "ranking": ranking,
+                })
+        return players
+
+
     async def broadcast_press_key(self, event):
 
         await self.send_json({
