@@ -5,7 +5,7 @@ import { chatUserState } from "./ChatUserState.js";
 var WebSocketManager = (function () {
     var instance;
     var reconnectInterval = 1000; // 재연결 시도 간격 초기값
-    var maxReconnectAttempts = 5; // 최대 재연결 시도 횟수
+    var maxReconnectAttempts = 10; // 최대 재연결 시도 횟수
     var reconnectAttempts = 0; // 현재 재연결 시도 횟수
 
     function init() {
@@ -39,14 +39,12 @@ var WebSocketManager = (function () {
         ws.onmessage = function(event) {
             const data = JSON.parse(event.data);
             if (data.action === "notify_new_chat") {
-              console.log(data);
               showToast('새로운 채팅이 왔습니다.');
             }
             if (data.action === 'bot_notify') {
                 showToast('새로운 알림이 왔습니다.');
             }
             if (data.action === 'notify_chat_partner_status') {
-                console.log(data);
                 const userId = data.partner_id;
                 const isOnline = data.is_online;
                 const isBlocked = data.is_blocked;
