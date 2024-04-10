@@ -8,6 +8,7 @@ from tournaments.models import Tournament
 from members.models import Members
 from games.distributed_lock import DistributedLock
 from utils import bot_notify_process, get_member_info
+from datetime import datetime, timezone
 
 prefix_normal = "normal_"
 prefix_tournament = "tournament_"
@@ -797,7 +798,9 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         #flag == false면은 새롭게 게임을 만들어서 redis에 저장
         else:
-            new_game = Game.objects.create(game_option=game_mode, game_mode='NORMAL')
+            game_time = datetime.now(timezone.utc)
+
+            new_game = Game.objects.create(game_option=game_mode, game_mode='NORMAL', start_time = game_time, end_time = game_time)
             new_game_value = {
                 "registered_user": [{
                     "user_id" : self.user.id,
@@ -854,7 +857,9 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
 
-        game = Game.objects.create(game_option=game_mode, game_mode='NORMAL')
+        game_time = datetime.now(timezone.utc)
+
+        game = Game.objects.create(game_option=game_mode, game_mode='NORMAL', start_time = game_time, end_time = game_time)
 
         value = {
             "registered_user": [{
