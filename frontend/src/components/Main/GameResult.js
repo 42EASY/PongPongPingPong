@@ -1,5 +1,4 @@
-export default function GameResult(data) {
-  const cur_user_id = 1;
+export default async function GameResult(userId, data) {
   const $ResultWrapper = document.createElement("div");
   const $ResultMark = document.createElement("div");
 
@@ -51,10 +50,7 @@ export default function GameResult(data) {
   const date = data.game_date.split("-");
   $ResultInfoDate.innerHTML = `${date[0][2]}${date[0][3]}.${date[1]}.${date[2]}`;
   $ResultInfoDivLine.classList.add("divLine");
-  if (
-    data.player_one.user_id !== cur_user_id &&
-    data.player_two.user_id !== cur_user_id
-  ) {
+  if (data.player_one.user_id != userId && data.player_two.user_id != userId) {
     $ResultWrapper.classList.add("resultWrapperNotMe");
     $ResultMark.classList.add("resultMarkNotMe");
     $ResultInfoResult.innerHTML = "";

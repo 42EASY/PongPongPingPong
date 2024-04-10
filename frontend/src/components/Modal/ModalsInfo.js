@@ -202,7 +202,7 @@ function get_gameStartSoon(argu) {
     title: "게임이 곧 시작됩니다",
     hideCloseButton: true,
     backdropCloseDisabled: true,
-    bodyContent: [TournamentTable(argu.players)],
+    bodyContent: [TournamentTable(argu.player_info)],
     footerContent: [TimerBar()],
   };
 }
@@ -360,7 +360,7 @@ export default function getModalContent(modalName, argu) {
       return get_inviteFail_offline();
     case "inviteFail_inGame":
       return get_inviteFail_inGame();
-    case "enterFaill_fullRoom":
+    case "enterFail_fullRoom":
       return get_enterFail_fullRoom();
     case "chatFail_offline":
       return get_chatFail_offline();

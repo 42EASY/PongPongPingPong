@@ -12,6 +12,7 @@ const JoinSocketManager = (() => {
 
     ws.onopen = () => {
       console.log("[joingame - open]");
+      reconnectAttempts = 0; // 연결 성공 시 재연결 시도 횟수 초기화
     };
 
     ws.onclose = (e) => {

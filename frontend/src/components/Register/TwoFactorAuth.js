@@ -135,8 +135,9 @@ function call2faQrApi() {
             }
           });
         } else if (data.code === 401) {
-          setNewAccessToken();
-          call2faQrApi();
+          setNewAccessToken().then((result) => {
+            if (result === true) resolve(call2faQrApi());
+          });
         }
       });
   });
@@ -189,8 +190,9 @@ function call2faOtqApi(otpNum) {
             resolve(false);
           });
         } else if (data.code === 401) {
-          setNewAccessToken();
-          call2faOtqApi();
+          setNewAccessToken().then((result) => {
+            if (result === true) resolve(call2faOtqApi());
+          });
         } else {
           Modal("tfaFail").then((result) => {
             resolve(false);
