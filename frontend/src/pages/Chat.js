@@ -1,7 +1,6 @@
 import Title from "../components/Chat/Title.js";
 import ChatSocketManager from "../state/ChatSocketManager.js";
 import ChatRoom from "../components/Chat/Chat.js";
-import NoChat from "../components/Chat/NoChat.js";
 import Bot from "../components/Chat/Bot.js";
 import { setBotNotifyCount, incrementBotNotifyCount } from "../components/Chat/Bot.js";
 import { createRoomName } from "./ChatRoom.js"
@@ -11,17 +10,12 @@ function fetchChats(data) {
 
   const len = data.length;
 
-  if (len === 0) {
-    const $noChat = NoChat();
-    $chatRoomListWrapper.appendChild($noChat);
-  } else {
-    for (let i = 0; i < len; i++) {
-      const user = data[i].user_info;
-      const cnt = data[i].unread_messages_count;
-      const roomName = data[i].room_name;
-      const $chat = ChatRoom(user, cnt, roomName);
-      $chatRoomListWrapper.appendChild($chat);
-    }
+  for (let i = 0; i < len; i++) {
+    const user = data[i].user_info;
+    const cnt = data[i].unread_messages_count;
+    const roomName = data[i].room_name;
+    const $chat = ChatRoom(user, cnt, roomName);
+    $chatRoomListWrapper.appendChild($chat);
   }
 }
 
