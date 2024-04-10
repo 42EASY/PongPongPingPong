@@ -8,6 +8,7 @@ from django.db.models import Count, Q
 from games.distributed_lock import DistributedLock
 from utils import get_member_info, bot_notify_process
 import time
+from datetime import datetime, timezone
 
 prefix_normal = "normal_"
 prefix_tournament = "tournament_"
@@ -97,6 +98,14 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     Participant.objects.create(user_id = self.user.id, game_id = game, score = 0, opponent_id = opponent.id, result = Participant.Result.LOSE)
                     Participant.objects.create(user_id = opponent.id, game_id = game, score = 0, opponent_id = self.user.id, result = Participant.Result.WIN)
 
+                    game_time = datetime.now(timezone.utc)
+                    
+                    game.start_time = game_time
+                    game.end_time = game_time
+
+                    game.save()
+
+
                 #결승에 대한 게임 db가 있으면 승패 업데이트
                 else:
                     game_ids = TournamentGame.objects.filter(tournament_id = self.tournament).values_list('game_id', flat = True)
@@ -111,6 +120,19 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
                     user_participants.save()
                     opponent_participants.save()
+
+
+                    game = Game.objects.get(id = user_participants.game_id)
+                    
+                    game_time = datetime.now(timezone.utc)
+                    
+                    game.start_time = game_time
+                    game.end_time = game_time
+
+                    game.save()
+
+
+                    #TODO: 게임 start_time, end_time 업데이트
                     
             except:
                 await self.send_json({
