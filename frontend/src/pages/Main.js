@@ -31,10 +31,7 @@ export default async function Main() {
 
   //scroll event
   document.addEventListener("scroll", async () => {
-    if (
-      window.innerHeight + window.scrollY + 0.5 >=
-      document.body.offsetHeight
-    ) {
+    if (window.innerHeight + window.scrollY + 2 >= document.body.offsetHeight) {
       let id;
       const segPath = window.location.pathname.split("=").filter(Boolean);
       if (segPath.length === 2) id = segPath[1];
