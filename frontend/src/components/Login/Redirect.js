@@ -4,16 +4,23 @@ import WebSocketManager from "../../state/WebSocketManager.js";
 import { call2faOtpModal } from "../Register/TwoFactorAuth.js";
 import Modal from "../Modal/Modal.js";
 import JoinSocketManager from "../../state/JoinSocketManager.js";
+import TimerRing from "../GameRoom/TimerRing.js";
 
 export default function Redirect() {
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 
-  const $loading = document.createElement("div");
-  $loading.classList.add("loading");
-  $loading.innerHTML = "로그인 중입니다...";
+  const $text1 = document.createElement("div");
+  $text1.classList.add("title");
+  $text1.innerHTML = "🧽 로그인 중 입니다 🧽";
+  const $text2 = document.createElement("div");
+  $text2.classList.add("text");
+  $text2.innerHTML = "잠시만 기다려 주세요!";
+  const $timer = TimerRing();
 
-  $app.appendChild($loading);
+  $app.appendChild($text1);
+  $app.appendChild($text2);
+  $app.appendChild($timer);
 
   const authCode = new URL(location.href).searchParams.get("code");
   const url = "http://localhost:8000/api/v1/auth/login";
