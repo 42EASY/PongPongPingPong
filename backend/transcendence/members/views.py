@@ -370,7 +370,7 @@ class MemberGameView(APIView):
 			tournaments = []
 
 			try:
-				for tournament_id in tournament_games:
+				for tournament_id in page_obj:
 					tournament_all_game_list = TournamentGame.objects.filter(tournament_id = tournament_id).order_by('tournament_id')
 					tournaments_game_ids = tournament_all_game_list.values_list('game_id', flat = True)
 		
