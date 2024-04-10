@@ -41,10 +41,12 @@ export async function GameResults(userId, isGeneral) {
 }
 
 export async function GameResultsScroll(userId, isGeneral) {
+  console.log(isFetching, hasMore);
   if (isFetching || !hasMore) return;
 
   const $HistoryBoard = document.querySelector(".historyBoard");
   const results = await getGameResults(userId, isGeneral);
+  console.log(results);
 
   if (isGeneral) {
     for (const result of results) {
@@ -86,7 +88,7 @@ async function getGameResults(userId, isGeneral) {
         if (
           result.total_page === curPage ||
           result.data[0].tournament.length === 0 ||
-          result.data[0].tournament.length < dataSize
+          result.data[0].tournament.length < tournamentDataSize
         ) {
           hasMore = false;
         } else {
