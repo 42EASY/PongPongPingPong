@@ -4,7 +4,7 @@ import MyBtn from "./MyBtn.js";
 import OtherBtn from "./OtherBtn.js";
 import { getUserId } from "../../state/State.js";
 
-export default function MyProfile(id, user) {
+export default async function MyProfile(id, user) {
   let isMe = false;
   if (id === getUserId()) isMe = true;
 
