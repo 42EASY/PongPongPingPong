@@ -91,7 +91,9 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 
                 #결승에 대한 게임 db가 만들어져있지 않다면 새롭게 만들어서 승패 처리
                 if (len(TournamentGame.objects.filter(tournament_id = self.tournament)) < 3):
-                    game = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
+                    game_time = datetime.now(timezone.utc)
+
+                    game = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT, start_time = game_time, end_time = game_time)
             
                     TournamentGame.objects.create(game_id = game, tournament_id = self.tournament, round = TournamentGame.Round.FINAL)
 
@@ -542,7 +544,8 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             #game과 participant, tournamentgame 생성
             try:
                 #승률을 기준으로 정렬한 sorted_matching_value[0]과 sorted_matching_value[1]이 서로 한 게임을 하도록 game, participant, tournament 테이블 생성
-                game1 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
+                game_time = datetime.now(timezone.utc)
+                game1 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT, start_time = game_time, end_time = game_time)
 
                 Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[0]["user_id"]), game_id = game1, score = 0, opponent_id = sorted_matching_value[1]["user_id"])
                 Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[1]["user_id"]), game_id = game1, score = 0, opponent_id = sorted_matching_value[0]["user_id"])
@@ -550,7 +553,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 TournamentGame.objects.create(game_id = game1, tournament_id = self.tournament, round = TournamentGame.Round.SEMI_FINAL)
 
                 #승률을 기준으로 정렬한 sorted_matching_value[2]과 sorted_matching_value[3]이 서로 한 게임을 하도록 game, participant, tournament 테이블 생성
-                game2 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
+                game2 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT, start_time = game_time, end_time = game_time)
 
                 Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[2]["user_id"]), game_id = game2, score = 0, opponent_id = sorted_matching_value[3]["user_id"])
                 Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[3]["user_id"]), game_id = game2, score = 0, opponent_id = sorted_matching_value[2]["user_id"])
@@ -776,7 +779,8 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
 
             try:
-                game = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT)
+                game_time = datetime.now(timezone.utc)
+                game = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT, start_time = game_time, end_time = game_time)
             
                 TournamentGame.objects.create(game_id = game, tournament_id = self.tournament, round = TournamentGame.Round.FINAL)
 
