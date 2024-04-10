@@ -11,11 +11,6 @@ function chatting() {
 }
 
 export default function EndBtn(mode, opponent, hasGameLeft) {
-  console.log("in EndBtn: ");
-  console.log(mode);
-  console.log(opponent);
-  console.log(hasGameLeft);
-
   const $btnWrapper = document.createElement("div");
   $btnWrapper.classList.add("btnWrapper");
   const $exitBtn = document.createElement("button");
@@ -47,8 +42,6 @@ export default function EndBtn(mode, opponent, hasGameLeft) {
   $chatTxt.innerHTML = "채팅";
   $chatBtn.appendChild($chatTxt);
   $chatBtn.appendChild($chatIcn);
-
-  if (mode !== "2P") console.log("relation: ", opponent.relation);
 
   if (mode === "2P") $btnWrapper.appendChild($exitBtn);
   else if (mode === "NORMAL") {

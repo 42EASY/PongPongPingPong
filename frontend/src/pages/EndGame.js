@@ -17,20 +17,16 @@ export default async function EndGame({ info, result }) {
   } else {
     if (result.game_status[0].user_id === Number(getUserId())) {
       // [1]상대 / [0]본인
-      console.log("same ", result.game_status[0].user_id, getUserId());
       leftScore = result.game_status[1].score;
       rightScore = result.game_status[0].score;
       opponent = await getUserInfo(result.game_status[1].user_id);
     } else {
       // [0]상대 / [1]본인
-      console.log("diff ", result.game_status[0].user_id, getUserId());
       leftScore = result.game_status[0].score;
       rightScore = result.game_status[1].score;
       opponent = await getUserInfo(result.game_status[0].user_id);
     }
   }
-  console.log("score : ", leftScore, rightScore);
-
   const hasWon = leftScore < rightScore ? true : false;
   const hasGameLeft =
     info.mode === "TOURNAMENT" && info.round === "SEMI_FINAL" && hasWon
@@ -41,9 +37,6 @@ export default async function EndGame({ info, result }) {
   $printBox.classList.add("printBox");
   $app.appendChild($printBox);
   $printBox.appendChild(Result(info.mode, leftScore, rightScore));
-  console.log("-------");
-  console.log(opponent);
-  console.log("-------");
   $printBox.appendChild(EndBtn(info.mode, opponent.result, hasGameLeft));
   if (hasWon || info.mode === "2P") EndConfetti();
 }
