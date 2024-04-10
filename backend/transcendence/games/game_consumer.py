@@ -414,7 +414,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             })
 
     #round_start 알림
-    async def broadcast_round_win(self, event):
+    async def broadcast_round_start(self, event):
         await self.send_json({
             "status": event["status"],
             "action": event["action"],
