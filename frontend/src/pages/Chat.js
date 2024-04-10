@@ -88,7 +88,6 @@ export default function Chat() {
 
   socket.send(JSON.stringify({ action : "get_bot_info"}));
 
-  // todo: bot 위치 수정
   $chatRoomListWrapper.appendChild(Bot(0));
 
   socket.send(JSON.stringify({ action: "fetch_chat_list" }));
