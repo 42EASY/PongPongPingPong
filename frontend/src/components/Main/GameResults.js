@@ -42,7 +42,6 @@ export async function GameResults(userId, isGeneral) {
 
 export async function GameResultsScroll(userId, isGeneral) {
   if (isFetching || !hasMore) return;
-  if (!isGeneral) console.log("here");
 
   const $HistoryBoard = document.querySelector(".historyBoard");
   const results = await getGameResults(userId, isGeneral);
