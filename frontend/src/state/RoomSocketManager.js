@@ -15,8 +15,8 @@ const RoomSocketManager = (() => {
     };
 
     ws.onerror = (e) => {
-      console.log("[gameroom - error]");
-      console.log(e);
+      console.log("[gameroom - error]: ", e);
+      ws.close();
     };
 
     return ws;
@@ -32,6 +32,9 @@ const RoomSocketManager = (() => {
         instance = init(room_id);
       }
       return instance;
+    },
+    close: function () {
+      if (instance) instance.close();
     },
   };
 })();
