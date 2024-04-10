@@ -1,5 +1,8 @@
 import changeUrl from "../Router.js";
 
+export const baseUrl = "http://localhost:8000";
+export const socketBaseUrl = "ws://localhost:8000";
+
 //set
 const setLoginState = (
   state,
@@ -52,7 +55,7 @@ const setImage = (image) => {
 //access token 만료 시 로그인 연장 처리
 const setNewAccessToken = () => {
   return new Promise((resolve) => {
-    const url = "http://localhost:8000/api/v1/token/refresh";
+    const url = `${baseUrl}/api/v1/token/refresh`;
 
     fetch(url, {
       method: "POST",
@@ -115,7 +118,7 @@ const getMyInfo = () => {
 
 const logout = () => {
   return new Promise((resolve) => {
-    const url = "http://localhost:8000/api/v1/auth/logout";
+    const url = `${baseUrl}/api/v1/auth/logout`;
 
     fetch(url, {
       method: "POST",
