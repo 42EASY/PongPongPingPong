@@ -2,10 +2,10 @@ import EndGame from "../../pages/EndGame.js";
 import Modal from "../../components/Modal/Modal.js";
 import GameSocketManager from "../../state/GameSocketManager.js";
 
-export default function Board(info) {
+export default function Board(info, rightUser_id) {
   var socket;
   var socket_res;
-  console.log("BOARD ARGU : ", info);
+  console.log("BOARD ARGU : ", info, rightUser_id);
   if (info.mode !== "2P") {
     socket = GameSocketManager.getInstance(info.game_id);
     console.log("start!");
@@ -33,7 +33,7 @@ export default function Board(info) {
         y: canvas.height / 2 - 9,
         moveX: DIR.IDLE,
         moveY: DIR.IDLE,
-        speed: info.option === "SPEED" ? 10 : 3,
+        speed: info.option === "SPEED" ? 10 : 2,
       };
     },
   };
@@ -112,25 +112,37 @@ export default function Board(info) {
         if (this.ball.y >= this.canvas.height - this.ball.height)
           this.ball.moveY = DIR.UP;
 
-        // 서브할 때 공 방향 랜덤으로 설정
+        // 서브할 때 공 방향 랜덤으로 설정 -> 한 사람만 send해야 함
         if (Pong._turnDelayIsOver.call(this) && this.turnOver) {
-          // left or right
+          // (1) left or right
           this.ball.moveX =
             this.serve === this.leftPlayer ? DIR.LEFT : DIR.RIGHT;
-          if (info.mode === "2P" || this.serve === this.rightPlayer) {
-            // up or down
+          if (
+            info.mode === "2P" ||
+            info.player_info[0].user_id === rightUser_id
+          ) {
+            // (2) up or down
             this.ball.moveY = Math.random() < 0.5 ? DIR.UP : DIR.DOWN;
-            // 공의 초기 y 위치
+            // (3) 공의 초기 y 위치
             this.ball.y =
               Math.floor(Math.random() * this.canvas.height - 200) + 200;
-            // if (info.mode !== "2P")
-            //   socket.sendAction({ moveY: this.ball.moveY, y: this.ball.y });
-          } else {
-            // socket.onmessage = (e) => {
-            //   const res = JSON.parse(e.data);
-            //   this.ball.moveY = res.moveY;
-            //   this.ball.y = res.y;
-            // };
+            if (info.mode !== "2P") {
+              console.log("will send init ball");
+              socket.sendAction({
+                action: "round_start",
+                ball_position: {
+                  moveX: this.ball.moveX, //필요x
+                  moveY: this.ball.moveY,
+                  y: this.ball.y,
+                },
+              });
+            }
+            console.log(
+              "ball random setting success : ",
+              this.ball.moveX,
+              this.ball.moveY,
+              this.ball.y
+            );
           }
           this.turnOver = false; //turnOver, gameOver
         }
@@ -263,6 +275,7 @@ export default function Board(info) {
       if (!pongGame.gameOver) requestAnimationFrame(pongGame.loop);
     },
 
+    // 이름 바꾸기
     listen: function () {
       // 키 눌렸을 때
       document.addEventListener("keydown", (key) => {
@@ -291,29 +304,34 @@ export default function Board(info) {
           this.leftPlayer.move = DIR.IDLE;
         if (key.key === "ArrowUp" || key.key === "ArrowDown") {
           this.rightPlayer.move = DIR.IDLE;
-          // if (info.mode === "NORMAL" || info.mode === "TOURNAMENT")
-          //   socket.sendAction({ action: "release_key" });
-        } //sendAction 추가 필요
+          if (info.mode === "NORMAL" || info.mode === "TOURNAMENT")
+            socket.sendAction({ action: "unpress_key", key: 1 });
+        }
       });
     },
 
+    // 이름 바꾸기
     remoteListen: function () {
       socket.onmessage = (e) => {
         socket_res = JSON.parse(e.data);
         console.log("game onmessage!!!", socket_res);
-        // 키 눌렀을 때
-        if (socket_res.status === "press_key") {
-          // [TODO] status->action으로 수정
+        // 1. 키 눌렀을 때
+        if (socket_res.action === "press_key") {
           if (socket_res.key === 1) this.leftPlayer.move = DIR.UP;
           if (socket_res.key === 0) this.leftPlayer.move = DIR.DOWN;
         }
-        // 키 뗐을 때
-        // if (res.status === "release_key") {
-        //   // [TODO] status->action으로 수정
-        //   this.leftPlayer.move = DIR.IDLE;
-        // }
-        // 게임 끝났을 때
+        // 2. 키 뗐을 때
+        if (socket_res.action === "unpress_key") {
+          this.leftPlayer.move = DIR.IDLE;
+        }
+        // 3. 공 초기화
+        if (socket_res.action === "round_start") {
+          this.ball.moveY = socket_res.ball_position.moveY;
+          this.ball.y = socket_res.ball_position.y;
+        }
+        // 4. 게임 끝났을 때
         if (socket_res.status === "game_over") {
+          // 이거맞나?????? normal_game_over..??????
           console.log("game is over. will change url");
 
           if (socket.readyState === WebSocket.OPEN) {
@@ -349,10 +367,10 @@ export default function Board(info) {
         this.serve === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
       this.timer = new Date().getTime();
       if (
-        (info.mode !== "2P" && socket_res.status === "game_over") || // 이거지우기..
-        (info.mode === "2P" &&
-          (this.leftPlayer.score === maxScore ||
-            this.rightPlayer.score === maxScore))
+        // (info.mode !== "2P" && socket_res.status === "game_over") || // 이거지우기..
+        info.mode === "2P" &&
+        (this.leftPlayer.score === maxScore ||
+          this.rightPlayer.score === maxScore)
       ) {
         this.gameOver = true;
         console.log("hehehheheheheheheheheheh eheeh eh hehe ");
