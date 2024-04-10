@@ -4,6 +4,7 @@ import WebSocketManager from "../../state/WebSocketManager.js";
 import { call2faOtpModal } from "../Register/TwoFactorAuth.js";
 import Modal from "../Modal/Modal.js";
 import JoinSocketManager from "../../state/JoinSocketManager.js";
+import { baseUrl } from "../../state/State.js";
 
 export default function Redirect() {
   const $app = document.querySelector(".App");
@@ -16,7 +17,7 @@ export default function Redirect() {
   $app.appendChild($loading);
 
   const authCode = new URL(location.href).searchParams.get("code");
-  const url = "http://localhost:8000/api/v1/auth/login";
+  const url = `${baseUrl}/api/v1/auth/login`;
 
   fetch(url, {
     method: "POST",

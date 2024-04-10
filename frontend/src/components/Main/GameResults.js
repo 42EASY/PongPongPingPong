@@ -2,6 +2,7 @@ import { getAccessToken, setNewAccessToken } from "../../state/State.js";
 import GameResult from "./GameResult.js";
 import NoHistory from "./NoHistory.js";
 import TournamentResult from "./TournamentResult.js";
+import { baseUrl } from "../../state/State.js";
 
 let noHistory = false;
 let curPage = 1;
@@ -101,7 +102,7 @@ async function getGameResults(userId, isGeneral) {
 
 function callGameHistoryApi(userId, mode, page, size) {
   return new Promise((resolve) => {
-    const url = `http://localhost:8000/api/v1/members/${userId}/records?mode=${mode}&page=${page}&size=${size}`;
+    const url = `${baseUrl}/api/v1/members/${userId}/records?mode=${mode}&page=${page}&size=${size}`;
 
     fetch(url, {
       method: "GET",
