@@ -1,8 +1,24 @@
 import BotRoom from "../../pages/BotRoom.js";
 
-export default function Bot(cnt) {
+let botNotifyCount = 0;
+
+export function setBotNotifyCount(newBotNotifyCount) {
+  botNotifyCount = newBotNotifyCount;
+}
+
+export function getBotNotifyCount() {
+  return botNotifyCount;
+}
+
+export function incrementBotNotifyCount() {
+  botNotifyCount += 1;
+}
+
+export default function Bot(BotNotifyCount) {
+  setBotNotifyCount(BotNotifyCount);
+
   const $botWrapper = document.createElement("div");
-  $botWrapper.classList.add("chatWrapper");
+  $botWrapper.classList.add("chatWrapper", "botChatWrapper");
 
   const $profileInfo = document.createElement("div");
   $profileInfo.classList.add("profileInfo");
@@ -17,10 +33,9 @@ export default function Bot(cnt) {
   $profileName.innerHTML = "announcement_bot";
 
   const $chatStatus = document.createElement("div");
-  if (cnt !== 0 && cnt !== undefined && cnt !== null) {
-    $chatStatus.classList.add("chatStatus");
-    $chatStatus.innerHTML = cnt;
-  }
+  $chatStatus.classList.add("chatStatus");
+  $chatStatus.innerText = getBotNotifyCount();
+  $chatStatus.style.display = getBotNotifyCount() > 0 ? "block" : "none";
 
   $profileInfo.appendChild($profileImg);
   $profileInfo.appendChild($profileName);
@@ -33,7 +48,7 @@ export default function Bot(cnt) {
   });
 
   $botWrapper.addEventListener("mouseout", () => {
-    $chatStatus.style.display = "inherit";
+    $chatStatus.style.display = getBotNotifyCount() > 0 ? "block" : "none";
   });
 
   $botWrapper.addEventListener("click", () => {
