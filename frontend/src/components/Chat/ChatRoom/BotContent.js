@@ -63,15 +63,14 @@ export default function BotContent(data) {
     $botContentBox.appendChild($botContentBtn);
 
     $botContentBtn.onclick = () => {
-      if (
-        !joinInviteNormalQueue({
-          action: "join_invite_normal_queue",
-          game_id: data.game_id,
-        })
-      ) {
-        Modal("invalidGame");
-        $botContentBtn.classList.add("invalidBtn");
-      }
+      const res = joinInviteTournamentQueue({
+        action: "join_invite_tournament_queue",
+        room_id: data.game_id,
+      });
+      if (res.message === "인원이 다 찬 게임방입니다")
+        Modal("enterFail_fullRoom");
+      else Modal("invalidGame");
+      $botContentBtn.classList.add("invalidBtn");
     };
   }
   if (data.action === "bot_notify_invited_tournament_game") {
