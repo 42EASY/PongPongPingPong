@@ -570,8 +570,8 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     }
                 })
 
-            await self.notify_tournament_game_opponent(game1.id, sorted_matching_value[0]["user_id"])
-            await self.notify_tournament_game_opponent(game1.id, sorted_matching_value[1]["user_id"])
+            await self.notify_tournament_game_opponent(game1.id, sorted_matching_value[0]["user_id"], sorted_matching_value[1]["user_id"])
+            await self.notify_tournament_game_opponent(game1.id, sorted_matching_value[1]["user_id"], sorted_matching_value[0]["user_id"])
 
             #인덱스 2에게 정보 알리기
             await self.channel_layer.send(
@@ -601,8 +601,8 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     }
                 })
 
-            await self.notify_tournament_game_opponent(game2.id, sorted_matching_value[2]["user_id"])
-            await self.notify_tournament_game_opponent(game2.id, sorted_matching_value[3]["user_id"])
+            await self.notify_tournament_game_opponent(game2.id, sorted_matching_value[2]["user_id"], sorted_matching_value[3]["user_id"])
+            await self.notify_tournament_game_opponent(game2.id, sorted_matching_value[3]["user_id"], sorted_matching_value[2]["user_id"])
 
 
     #결승 게임 시작 대기
@@ -825,10 +825,10 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         })
 
         
-    async def notify_tournament_game_opponent(self, game_id, opponent_id):
+    async def notify_tournament_game_opponent(self, game_id, user_id, opponent_id):
         opponent = await get_member_info(opponent_id)
         data = {
             "game_id": game_id,
             "opponent": opponent
         }
-        await bot_notify_process(self, opponent_id, "bot_notify_tournament_game_opponent", data)
+        await bot_notify_process(self, user_id, "bot_notify_tournament_game_opponent", data)
