@@ -71,7 +71,6 @@ function callApi(nickname, is2fa) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.code === 200) {
           setIs2fa(data.result.is_2fa);
           setNickname(data.result.nickname);

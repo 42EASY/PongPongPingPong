@@ -41,12 +41,10 @@ export async function GameResults(userId, isGeneral) {
 }
 
 export async function GameResultsScroll(userId, isGeneral) {
-  console.log(isFetching, hasMore);
   if (isFetching || !hasMore) return;
 
   const $HistoryBoard = document.querySelector(".historyBoard");
   const results = await getGameResults(userId, isGeneral);
-  console.log(results);
 
   if (isGeneral) {
     for (const result of results) {
@@ -71,7 +69,6 @@ async function getGameResults(userId, isGeneral) {
       isGeneral ? dataSize : tournamentDataSize
     ).then((result) => {
       isFetching = false;
-      console.log(result);
 
       if (isGeneral) {
         if (

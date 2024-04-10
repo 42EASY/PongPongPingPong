@@ -37,7 +37,6 @@ export default function Redirect() {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       WebSocketManager.getInstance();
       JoinSocketManager.getInstance();
       if (data.code === 200) {
@@ -76,7 +75,6 @@ function login2fa() {
   Modal("otp").then(async (result) => {
     if (result.isPositive === true) {
       const status = await call2faOtqApi(result.input);
-      console.log(status);
       if (status === true) {
         console.log("2차 인증 성공");
         changeUrl("/main");
