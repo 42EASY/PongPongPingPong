@@ -1,4 +1,6 @@
 import Chat from "../../pages/Chat.js";
+import changeUrl from "../../Router.js";
+import { postFriend } from "../Main/UserApi.js";
 
 function chatting() {
   Chat();
@@ -8,13 +10,12 @@ function chatting() {
   $overlay.classList.add("showOverlay");
 }
 
-//exit button : main으로->로그인 안해서 테스트 엌케하지..
-function exit() {}
+export default function EndBtn(mode, opponent, hasGameLeft) {
+  console.log("in EndBtn: ");
+  console.log(mode);
+  console.log(opponent);
+  console.log(hasGameLeft);
 
-//friend button : 모달->친구추가
-function friend() {}
-
-export default function EndBtn(mode, hasGameLeft) {
   const $btnWrapper = document.createElement("div");
   $btnWrapper.classList.add("btnWrapper");
   const $exitBtn = document.createElement("button");
@@ -47,20 +48,23 @@ export default function EndBtn(mode, hasGameLeft) {
   $chatBtn.appendChild($chatTxt);
   $chatBtn.appendChild($chatIcn);
 
-  if (mode === "2p") $btnWrapper.appendChild($exitBtn);
-  else if (mode === "normal") {
-    $btnWrapper.appendChild($friendBtn);
+  if (mode !== "2P") console.log("relation: ", opponent.relation);
+
+  if (mode === "2P") $btnWrapper.appendChild($exitBtn);
+  else if (mode === "NORMAL") {
+    if (opponent.relation === "NONE") $btnWrapper.appendChild($friendBtn); // block이면 안뜸
     $btnWrapper.appendChild($exitBtn);
-  } else if (mode === "tournament") {
-    $btnWrapper.appendChild($friendBtn);
+  } else if (mode === "TOURNAMENT") {
+    if (opponent.relation === "NONE") $btnWrapper.appendChild($friendBtn);
     $btnWrapper.appendChild(hasGameLeft ? $chatBtn : $exitBtn);
   }
 
   $exitBtn.addEventListener("click", () => {
-    exit();
+    changeUrl("/main");
   });
   $friendBtn.addEventListener("click", () => {
-    friend();
+    postFriend(opponent.user_id);
+    $friendBtn.disabled = true;
   });
   $chatBtn.addEventListener("click", () => {
     chatting();

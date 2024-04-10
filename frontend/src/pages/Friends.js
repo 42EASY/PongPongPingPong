@@ -6,7 +6,7 @@ import { getFriends, getBlockeds } from "../components/Friends/ListApi.js";
 
 let isFriends = true;
 let curPage = 1;
-let dataSize = 20;
+let dataSize = 30;
 let isFetching = false;
 let hasMore = true;
 

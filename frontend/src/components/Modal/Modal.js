@@ -33,19 +33,16 @@ export default function Modal(modalName, argu) {
       });
     }
 
-    // gameServe modal 자동 닫힘 예외처리
-    if (modalName === "gameLeftServe" || modalName === "gameRightServe") {
+    // gameServe, gameStartSoon 자동 닫힘 예외처리
+    if (
+      modalName === "gameLeftServe" ||
+      modalName === "gameRightServe" ||
+      modalName === "gameStartSoon"
+    ) {
       let sec = 3;
       setTimeout(() => {
-        $app.removeChild($modalWrapper);
-        resolve(true);
-      }, sec * 1000);
-    }
-    if (modalName === "waitingInvitation") {
-      let sec = 60;
-      startCount($modalWrapper, sec);
-      setTimeout(() => {
-        $app.removeChild($modalWrapper);
+        if ($modalWrapper && $modalWrapper.parentNode)
+          $app.removeChild($modalWrapper);
         resolve(true);
       }, sec * 1000);
     }
@@ -78,8 +75,3 @@ export default function Modal(modalName, argu) {
     return false;
   }
 }
-
-// [v] todo: waitingPlayer, waitingInvitation 예외처리
-// [v] tood: ㄴ css 수정
-// [v] todo: serve timer 추가
-// [v] todo: ㄴ css 수정

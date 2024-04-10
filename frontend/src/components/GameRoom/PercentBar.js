@@ -8,6 +8,21 @@ export default function PercentBar({ win, lose }) {
   win = Math.round(win);
   lose = 100 - win;
 
+  if (win == 100) {
+    $BarWrapper.className = "percentageBar";
+    $BarWrapper.style.backgroundColor = "#e1effe";
+    $BarWrapper.style.color = "#1c64f2";
+    $BarWrapper.innerHTML = "100%";
+    return $BarWrapper;
+  }
+  if (win == 0) {
+    $BarWrapper.className = "percentageBar";
+    $BarWrapper.style.backgroundColor = "#fde8e8";
+    $BarWrapper.style.color = "#e02424";
+    $BarWrapper.innerHTML = "100%";
+    return $BarWrapper;
+  }
+
   const $winBar = document.createElement("div");
   const $loseBar = document.createElement("div");
   $winBar.className = "percentageBar";
