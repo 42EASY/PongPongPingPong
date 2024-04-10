@@ -43,7 +43,6 @@ export async function GameResults(userId, isGeneral) {
 
 export async function GameResultsScroll(userId, isGeneral) {
   if (isFetching || !hasMore) return;
-  if (!isGeneral) console.log("here");
 
   const $HistoryBoard = document.querySelector(".historyBoard");
   const results = await getGameResults(userId, isGeneral);
@@ -71,7 +70,6 @@ async function getGameResults(userId, isGeneral) {
       isGeneral ? dataSize : tournamentDataSize
     ).then((result) => {
       isFetching = false;
-      console.log(result);
 
       if (isGeneral) {
         if (
@@ -88,7 +86,7 @@ async function getGameResults(userId, isGeneral) {
         if (
           result.total_page === curPage ||
           result.data[0].tournament.length === 0 ||
-          result.data[0].tournament.length < dataSize
+          result.data[0].tournament.length < tournamentDataSize
         ) {
           hasMore = false;
         } else {

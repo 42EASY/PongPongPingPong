@@ -8,6 +8,10 @@
     text-align: center;
 }
 
-.loading {
-    font-size: 28px;
+.title {
+    font-size: 36px;
+}
+
+.text {
+    font-size: 24px;
 }

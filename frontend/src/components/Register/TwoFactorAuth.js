@@ -65,7 +65,6 @@ export default function TwoFactorAuth(is2fa) {
       return;
     $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
-    console.log(is2fa);
 
     if (is2fa === "true") {
       call2faOtpModal().then((result) => {
@@ -85,7 +84,6 @@ export default function TwoFactorAuth(is2fa) {
     $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
 
     call2faQrApi().then((result) => {
-      console.log(result);
       if (result === true) {
         call2faOtpModal().then((result) => {
           if (result === true) {
@@ -123,7 +121,6 @@ function call2faQrApi() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.code === 200) {
           Modal(
             "tfa",
