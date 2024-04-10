@@ -1,4 +1,4 @@
-export default function Title() {
+export default async function Title() {
   const $title = document.createElement("div");
   $title.classList.add("title");
   let letters = "PONG PONG PING PONG".split("");

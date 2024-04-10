@@ -1,4 +1,4 @@
-export default function LoginButton() {
+export default async function LoginButton() {
   const $loginButton = document.createElement("div");
   $loginButton.classList.add("loginButton");
 
