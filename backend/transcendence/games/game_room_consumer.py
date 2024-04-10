@@ -140,7 +140,22 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 })
                 return
             
-            #TODO: 게임 결과 방송
+            #게임 결과 방송
+
+            opponent_channel_name = "-1"
+
+            for info in registered_info:
+                if (parsed_value["join_final_user"][0] == info['user_id']):
+                    opponent_channel_name = info["channel_id"] 
+
+            await self.channel_layer.send(
+                opponent_channel_name,
+                {
+                    'type': 'broadcast_game_status',
+                    'message': 'game_over',
+                    'game_status': [{ "user_id" : self.user.id, "score": user_participants.score }, 
+                                { "user_id" : opponent.id, "score" : opponent_participants.score}]
+                })
 
 
         else:
@@ -795,4 +810,13 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             "status": "player_entrance",
             "player_info": player_info
         })
+
+     #game status 알림
+    async def broadcast_game_status(self, event):
+
+        await self.send_json({
+            "status": event["message"],
+            "game_status": event["game_status"]
+        })
+
         
