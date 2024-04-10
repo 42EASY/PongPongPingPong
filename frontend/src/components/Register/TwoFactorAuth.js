@@ -3,6 +3,7 @@ import {
   getAccessToken,
   setIs2fa,
   getIs2fa,
+  baseUrl
 } from "../../state/State.js";
 import Modal from "../Modal/Modal.js";
 
@@ -111,7 +112,7 @@ export default function TwoFactorAuth(is2fa) {
 //2차 인증 QR코드 API 호출
 function call2faQrApi() {
   return new Promise((resolve) => {
-    const url = "http://localhost:8000/api/v1/auth/2fa/";
+    const url = `${baseUrl}/api/v1/auth/2fa/`;
 
     fetch(url, {
       method: "GET",
@@ -167,7 +168,7 @@ export function call2faOtpModal() {
 //2차 인증 OTP API 호출
 function call2faOtqApi(otpNum) {
   return new Promise((resolve) => {
-    const url = "http://localhost:8000/api/v1/auth/2fa/";
+    const url = `${baseUrl}/api/v1/auth/2fa/`;
 
     fetch(url, {
       method: "POST",

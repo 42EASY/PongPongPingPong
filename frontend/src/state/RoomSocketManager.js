@@ -1,4 +1,4 @@
-import { getAccessToken } from "./State.js";
+import { getAccessToken, socketBaseUrl } from "./State.js";
 
 const RoomSocketManager = (() => {
   let instance;
@@ -6,7 +6,7 @@ const RoomSocketManager = (() => {
 
   function init(room_id) {
     roomNumber = room_id;
-    const socketUrl = `ws://localhost:8000/ws/join_room/${room_id}/?token=${getAccessToken()}`;
+    const socketUrl = `${socketBaseUrl}/ws/join_room/${room_id}/?token=${getAccessToken()}`;
     const ws = new WebSocket(socketUrl);
 
     ws.onclose = (e) => {
