@@ -139,9 +139,27 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     "message": "lock 획득 중 오류가 발생했습니다"
                 })
                 return
+            
+            #게임 결과 방송
 
-        #redis값 갱신
+            opponent_channel_name = "-1"
+
+            for info in registered_info:
+                if (parsed_value["join_final_user"][0] == info['user_id']):
+                    opponent_channel_name = info["channel_id"] 
+
+            await self.channel_layer.send(
+                opponent_channel_name,
+                {
+                    'type': 'broadcast_game_status',
+                    'message': 'game_over',
+                    'game_status': [{ "user_id" : self.user.id, "score": user_participants.score }, 
+                                { "user_id" : opponent.id, "score" : opponent_participants.score}]
+                })
+
+
         else:
+            #redis값 갱신
             updated_value = json.dumps(parsed_value)
             if self.lock.acquire_lock():
                 try:
@@ -165,7 +183,68 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 return
 
 
-        #TODO: 게임 결과 방송
+        #남아있는 사람들에게 유저 info 방송
+        #TODO: 함수로 나누기
+        new_value = None
+        if self.lock.acquire_lock():
+            try:
+                new_value = cache.get(prefix_tournament + self.room_id)
+            except:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "redis에 접근 중 오류가 발생했습니다"
+                })
+                return
+            
+            self.lock.release_lock()
+        else:
+            self.lock.release_lock()
+            await self.send_json({
+                "status": "fail",
+                "message": "lock 획득 중 오류가 발생했습니다"
+            })
+            return
+        
+        #플레이어 info 가져오기
+        new_parsed_value = json.loads(new_value)
+        new_registered_user = new_parsed_value["registered_user"]
+        new_join_user = new_parsed_value["join_user"]
+        
+        try:
+            player_entrance_info = []
+
+            for user_id in new_join_user:
+                user_model = Members.objects.get(id = int(user_id))
+
+                player_info = {
+                    "user_id": user_id,
+                    "image_url": user_model.image_url,
+                    "nickname": user_model.nickname
+                }
+
+                player_entrance_info.append(player_info)
+        except:
+            await self.send_json({
+                "status": "fail",
+                "message": "db 접근 중 오류가 발생했습니다"
+            })
+            return
+
+
+        #방에 이미 입장해있는 사람들한테 정보 방송하기
+        for user_id in new_join_user:
+            
+            for user_value in new_registered_user:
+                
+                if (user_value["user_id"] == user_id):
+                    await self.channel_layer.send(
+                        user_value["channel_id"],
+                        {
+                            'type': 'broadcast_player_entrance',
+                            'player_info': player_entrance_info
+                        })
+
         
 
     async def receive(self, text_data):
@@ -731,4 +810,13 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             "status": "player_entrance",
             "player_info": player_info
         })
+
+     #game status 알림
+    async def broadcast_game_status(self, event):
+
+        await self.send_json({
+            "status": event["message"],
+            "game_status": event["game_status"]
+        })
+
         
