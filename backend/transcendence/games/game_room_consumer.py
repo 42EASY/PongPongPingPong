@@ -98,6 +98,8 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     Participant.objects.create(user_id = self.user.id, game_id = game, score = 0, opponent_id = opponent.id, result = Participant.Result.LOSE)
                     Participant.objects.create(user_id = opponent.id, game_id = game, score = 0, opponent_id = self.user.id, result = Participant.Result.WIN)
 
+
+                    #게임의 start_time, end_time 갱신
                     game_time = datetime.now(timezone.utc)
                     
                     game.start_time = game_time
@@ -122,6 +124,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     opponent_participants.save()
 
 
+                    #게임의 start_time, end_time 갱신
                     game = Game.objects.get(id = user_participants.game_id)
                     
                     game_time = datetime.now(timezone.utc)
@@ -132,7 +135,6 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     game.save()
 
 
-                    #TODO: 게임 start_time, end_time 업데이트
                     
             except:
                 await self.send_json({

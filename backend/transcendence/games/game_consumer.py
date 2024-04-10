@@ -117,7 +117,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         
         self.opponent_channel_name = "-1"
         self.user_participant = await self.get_participant(self.user, self.game)
-        self.opponent_participant =""
+        self.opponent_participant = ""
         await self.accept()
 
 
@@ -201,7 +201,6 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                         self.opponent = await self.get_members(info["user_id"])
 
                         #user의 participant에 상대 id 값 추가
-                        # self.user_participant = await self.get_participant(self.user, self.game)
                         self.user_participant.opponent_id = self.opponent.id
                         await self.save_participant(self.user_participant)
                         self.user_participant = await self.get_participant(self.user, self.game)
