@@ -362,7 +362,7 @@ export default function getModalContent(modalName, argu) {
       return get_inviteFail_inGame();
     case "enterFail_fullRoom":
       return get_enterFail_fullRoom();
-    case "chatFail_offline":
+    case "chatFail_offlineUser":
       return get_chatFail_offline();
     case "chatFail_blockedUser":
       return get_chatFail_blockedUser();

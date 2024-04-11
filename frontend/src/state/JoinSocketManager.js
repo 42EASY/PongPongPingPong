@@ -33,8 +33,8 @@ const JoinSocketManager = (() => {
     };
 
     ws.onerror = (e) => {
-      console.log("[joingame - error]");
-      console.log(e);
+      console.log("[joingame - error]: ", e);
+      ws.close();
     };
 
     return ws;
