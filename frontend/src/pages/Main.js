@@ -8,6 +8,7 @@ import { getUserInfo } from "../components/Main/UserApi.js";
 export default async function Main() {
   Nav();
 
+  document.body.style.overflow = "auto";
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
   const $page = document.createElement("div");
