@@ -16,9 +16,8 @@ export default function Modal(modalName, argu) {
       .addEventListener("click", (event) => {
         event.stopPropagation();
       });
-    $modalWrapper.addEventListener("mouseover", () => {
-      document.body.style.overflow = "hidden";
-    });
+
+    document.body.style.overflow = "hidden";
 
     // [모달 창 닫는 부분]
     const $closeButtons = document.getElementsByClassName("close");
