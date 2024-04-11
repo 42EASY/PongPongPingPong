@@ -117,7 +117,62 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         
         self.opponent_channel_name = "-1"
         self.user_participant = await self.get_participant(self.user, self.game)
-        self.opponent_participant = ""
+
+
+         #상대의 channel_name 저장
+        if (self.opponent_channel_name == "-1"):
+
+            value = None
+            if self.lock.acquire_lock():
+                try:
+                    value = cache.get(self.key)
+                except:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    })
+                    return  
+            
+                self.lock.release_lock()
+            else:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "lock 획득 중 오류가 발생했습니다"
+                })
+                return
+
+            parsed_value = json.loads(value)
+            
+            join_game_info = parsed_value[self.json_key]
+
+
+            for info in join_game_info:
+                if (info['user_id'] != self.user.id):
+                    try:
+                        self.opponent = await self.get_members(info["user_id"])
+
+                        #user의 participant에 상대 id 값 추가
+                        self.user_participant.opponent_id = self.opponent.id
+                        await self.save_participant(self.user_participant)
+                        self.user_participant = await self.get_participant(self.user, self.game)
+
+                        #상대 particiaptn 객체와 channel_name 저장
+                        self.opponent_participant = await self.get_participant(self.opponent, self.game)
+                        self.opponent_channel_name = info['channel_name']
+                        await self.save_participant(self.opponent_participant)
+                        self.opponent_participant = await self.get_participant(self.opponent, self.game)
+
+                    except:
+                        await self.send_json({
+                            "status": "fail",
+                            "message": "db접근 중 오류가 발생했습니다"
+                        })
+                        return
+
+
+
         await self.accept()
 
 
@@ -224,8 +279,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                     "message": "아직 상대가 입장하지 않았습니다"
                 })
                 return
-
-
+    
         text_data_json = json.loads(text_data)
 
         action = text_data_json["action"]
