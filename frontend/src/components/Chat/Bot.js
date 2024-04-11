@@ -35,7 +35,7 @@ export default function Bot(BotNotifyCount) {
   const $chatStatus = document.createElement("div");
   $chatStatus.classList.add("chatStatus");
   $chatStatus.innerText = getBotNotifyCount();
-  $chatStatus.style.display = getBotNotifyCount() > 0 ? "block" : "none";
+  $chatStatus.style.display = getBotNotifyCount() > 0 ? "flex" : "none";
 
   $profileInfo.appendChild($profileImg);
   $profileInfo.appendChild($profileName);
@@ -48,7 +48,7 @@ export default function Bot(BotNotifyCount) {
   });
 
   $botWrapper.addEventListener("mouseout", () => {
-    $chatStatus.style.display = getBotNotifyCount() > 0 ? "block" : "none";
+    $chatStatus.style.display = getBotNotifyCount() > 0 ? "flex" : "none";
   });
 
   $botWrapper.addEventListener("click", () => {

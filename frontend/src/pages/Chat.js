@@ -2,8 +2,11 @@ import Title from "../components/Chat/Title.js";
 import ChatSocketManager from "../state/ChatSocketManager.js";
 import ChatRoom from "../components/Chat/Chat.js";
 import Bot from "../components/Chat/Bot.js";
-import { setBotNotifyCount, incrementBotNotifyCount } from "../components/Chat/Bot.js";
-import { createRoomName } from "./ChatRoom.js"
+import {
+  setBotNotifyCount,
+  incrementBotNotifyCount,
+} from "../components/Chat/Bot.js";
+import { createRoomName } from "./ChatRoom.js";
 
 function fetchChats(data) {
   const $chatRoomListWrapper = document.querySelector(".chatRoomListWrapper");
@@ -27,8 +30,8 @@ function setUnreadNotifyCount(count) {
     const botStatusElement = document.querySelector(".chatStatus");
     if (botStatusElement) {
       botStatusElement.innerText = count;
-      botStatusElement.style.display = count > 0 ? "block" : "none";
-    }    
+      botStatusElement.style.display = count > 0 ? "flex" : "none";
+    }
   }
 }
 
@@ -37,19 +40,19 @@ function updateUnreadNotifyCount() {
   incrementBotNotifyCount();
   const botElement = document.querySelector(".chatWrapper.botChatWrapper");
   if (botElement) {
-      const botStatusElement = document.querySelector(".chatStatus");
-      if (botStatusElement) {
-        let currentCount = parseInt(botStatusElement.textContent, 10) || 0;
-        botStatusElement.textContent = currentCount + 1; // 안 읽은 메시지 수 증가
-      }
+    const botStatusElement = document.querySelector(".chatStatus");
+    if (botStatusElement) {
+      let currentCount = parseInt(botStatusElement.textContent, 10) || 0;
+      botStatusElement.textContent = currentCount + 1; // 안 읽은 메시지 수 증가
     }
+  }
 }
 
 function updateUnreadMessageCount(user, roomName) {
   // 채팅방 요소 선택
   const chatRoomElement = document.querySelector(`[roomName="${roomName}"]`);
   if (chatRoomElement) {
-    const unreadCountElement = chatRoomElement.querySelector('.chatStatus');
+    const unreadCountElement = chatRoomElement.querySelector(".chatStatus");
     if (unreadCountElement) {
       let currentCount = parseInt(unreadCountElement.textContent, 10) || 0;
       unreadCountElement.textContent = currentCount + 1; // 안 읽은 메시지 수 증가
@@ -86,7 +89,7 @@ export default function Chat() {
   $chatRoomListWrapper.classList.add("chatRoomListWrapper");
   $chatsWrapper.appendChild($chatRoomListWrapper);
 
-  socket.send(JSON.stringify({ action : "get_bot_info"}));
+  socket.send(JSON.stringify({ action: "get_bot_info" }));
 
   $chatRoomListWrapper.appendChild(Bot(0));
 
@@ -97,7 +100,7 @@ export default function Chat() {
     if (data.action === "fetch_chat_list") {
       const list = data.data;
       fetchChats(list);
-    } 
+    }
     if (data.action === "receive_message") {
       const sender = data.sender;
       const receiver = data.receiver;
