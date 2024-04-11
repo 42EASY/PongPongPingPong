@@ -117,7 +117,6 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
         
         self.opponent_channel_name = "-1"
         self.user_participant = await self.get_participant(self.user, self.game)
-        # self.opponent_participant = ""
 
 
          #상대의 channel_name 저장
