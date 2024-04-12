@@ -34,10 +34,9 @@ server {
     server_name localhost;
 
 	ssl_protocols TLSv1.2 TLSv1.3;
-	ssl_certificate /etc/ssl/certs/transcendence.localhost.crt;
- 	ssl_certificate_key /etc/ssl/private/transcendence.localhost.key;# 	ssl_protocols TLSv1.2 TLSv1.3;
-# 	ssl_certificate /etc/ssl/certs/transcendence.localhost.crt;
-#  	ssl_certificate_key /etc/ssl/private/transcendence.localhost.key;
+	ssl_certificate /etc/ssl/certs/localhost.pem;
+ 	ssl_certificate_key /etc/ssl/private/localhost-key.pem;# 	ssl_protocols TLSv1.2 TLSv1.3;
+
 # # 	
 # 	# Note: You should disable gzip for SSL traffic.
 # 	# See: https://bugs.debian.org/773332
@@ -64,7 +63,7 @@ server {
     # 백엔드 API 프록시
     location /api {
     # 백엔드 API 프록시
-        proxy_pass http://backend:8000; # 백엔드 서버로 요청 전달
+        proxy_pass https://backend:8443; # 백엔드 서버로 요청 전달
         # include /etc/nginx/proxy_params;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
@@ -80,7 +79,7 @@ server {
     }
 
     location /ws {
-        proxy_pass http://backend:8000; # Daphne 서버 주소
+        proxy_pass https://backend:8443; # Daphne 서버 주소
 
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
