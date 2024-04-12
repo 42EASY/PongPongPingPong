@@ -1,4 +1,5 @@
-export default function Info(leftUserInfo, rightUserInfo) {
+export default function Info(leftInfo, rightInfo) {
+  console.log("INFO: ", leftInfo, rightInfo);
   const $infoWrapper = document.createElement("div");
   const $leftBox = document.createElement("div");
   const $leftProfileImage = document.createElement("img");
@@ -8,9 +9,9 @@ export default function Info(leftUserInfo, rightUserInfo) {
   const $rightProfileImage = document.createElement("img");
   const $rightName = document.createElement("div");
 
-  $leftProfileImage.setAttribute("src", leftUserInfo.image_url);
+  $leftProfileImage.setAttribute("src", leftInfo.image_url);
   $leftProfileImage.setAttribute("alt", "profile image");
-  $rightProfileImage.setAttribute("src", rightUserInfo.image_url);
+  $rightProfileImage.setAttribute("src", rightInfo.image_url);
   $rightProfileImage.setAttribute("alt", "profile image");
 
   $infoWrapper.classList.add("gameInfoWrapper");
@@ -30,9 +31,9 @@ export default function Info(leftUserInfo, rightUserInfo) {
   $rightBox.appendChild($rightProfileImage);
   $rightBox.appendChild($rightName);
 
-  $leftName.innerHTML = leftUserInfo.nickname;
+  $leftName.innerHTML = leftInfo.nickname;
   $versus.innerHTML = "vs";
-  $rightName.innerHTML = rightUserInfo.nickname;
+  $rightName.innerHTML = rightInfo.nickname;
 
   return $infoWrapper;
 }

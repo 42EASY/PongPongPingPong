@@ -51,7 +51,7 @@ function getYesOrNoModal(titleText, bodyText, yesButtonText) {
   };
 }
 //------------------------------
-function get_otp(argu) {
+function get_tfa(argu) {
   return {
     title: "2차 인증 설정",
     bodyContent: [
@@ -74,7 +74,7 @@ function get_otp(argu) {
     ],
   };
 }
-function get_tfa() {
+function get_otp() {
   return {
     title: "OTP 인증번호 입력",
     bodyContent: [
@@ -298,7 +298,7 @@ function get_enterFail_fullRoom() {
     "게임방이 꽉 차면 더이상 참여할 수 없습니다"
   );
 }
-function get_chatFail_offline() {
+function get_chatFail_offlineUser() {
   return getOnlyYesModal(
     "채팅을 보낼 수 없습니다",
     "오프라인 상태의 사용자에게 채팅을 보낼 수 없습니다"
@@ -363,7 +363,7 @@ export default function getModalContent(modalName, argu) {
     case "enterFail_fullRoom":
       return get_enterFail_fullRoom();
     case "chatFail_offlineUser":
-      return get_chatFail_offline();
+      return get_chatFail_offlineUser();
     case "chatFail_blockedUser":
       return get_chatFail_blockedUser();
   }

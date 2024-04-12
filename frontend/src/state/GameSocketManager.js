@@ -9,7 +9,6 @@ var GameSocketManager = (function () {
 
     gs.onopen = function () {
       console.log("[game - open]");
-      gs.sendAction({ action: "press_key", key: 1 }); // test : for status undefined
     };
 
     gs.onclose = (e) => {
