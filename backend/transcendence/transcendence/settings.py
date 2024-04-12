@@ -38,10 +38,11 @@ DEFAULT_IMAGE_URL = './src/images/none_profile.png'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+HOST = os.environ.get('HOST')
 
+ALLOWED_HOSTS = [ 'localhost' ]
 
 # Application definition
 
@@ -65,6 +66,7 @@ INSTALLED_APPS = [
     'django_otp',
     'django_otp.plugins.otp_totp',
     'corsheaders',
+    'sslserver',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -83,6 +85,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 
 ROOT_URLCONF = 'transcendence.urls'
@@ -216,7 +219,7 @@ CACHES = {
     }
 }
 
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:8000','http://localhost:8000','http://127.0.0.1','http://localhost']
+CORS_ORIGIN_WHITELIST = [HOST]
 
 CORS_ALLOW_METHODS = (
     "DELETE",
@@ -239,4 +242,13 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
 )
 
-CORS_ALLOW_CREDENTIALS=True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# 모든 요청을 https로 리다이렉트
+SECURE_SSL_REDIRECT = True
+
+# 쿠키 https로만 전송
+SESSION_COOKIE_SECURE = True
+
+# csrf 쿠키 https로 전송
+CSRF_COOKIE_SECURE = True

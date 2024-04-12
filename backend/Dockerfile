@@ -28,7 +28,10 @@ RUN pip install --upgrade pip && \
     pip install daphne && \
 
     pip install django-cors-headers && \
-    pip install pytest-asyncio
+    pip install pytest-asyncio && \
+    pip install django-sslserver && \
+    pip install "Twisted[tls,http2]" && \
+    pip install django-csp
 
 # TODO: 개발용 추후 삭제
 RUN pip install watchgod
@@ -38,6 +41,9 @@ RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/ap
 ENV DOCKERIZE_VERSION v0.2.0
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+RUN mkdir -p /app/keys/certs && \
+    mkdir -p /app/keys/private
 
 #RUN django-admin startproject transcendence
 
