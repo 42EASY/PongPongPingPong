@@ -505,29 +505,30 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
     #game을 가져오는 비동기 함수
     @database_sync_to_async
-    def get_game(self, game_id):
+    async def get_game(self, game_id):
         return Game.objects.get(id = game_id)
 
     #game을 저장하는 비동기 함수
     @database_sync_to_async
-    def save_game(self, game):
+    async def save_game(self, game):
         game.save()
 
     #participant을 가져오는 비동기 함수
     @database_sync_to_async
-    def get_participant(self, user_id, game_id):
+    async def get_participant(self, user_id, game_id):
         return Participant.objects.get(user_id = user_id, game_id = game_id)
     
     #participant을 저장하는 비동기 함수
     @database_sync_to_async
-    def save_participant(self, participant):
+    async def save_participant(self, participant):
         participant.save()
 
     #members을 가져오는 비동기 함수
     @database_sync_to_async
-    def get_members(self, id):
+    async def get_members(self, id):
         return Members.objects.get(id = id)
     
     #tournament game을 가져오는 비동기함수
-    def get_tournament_game(self, game_id):
+    @database_sync_to_async
+    async def get_tournament_game(self, game_id):
         return TournamentGame.objects.get(game_id = game_id)

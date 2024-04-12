@@ -9,6 +9,7 @@ from members.models import Members
 from games.distributed_lock import DistributedLock
 from utils import bot_notify_process, get_member_info
 from datetime import datetime, timezone
+from channels.db import database_sync_to_async
 
 prefix_normal = "normal_"
 prefix_tournament = "tournament_"
@@ -102,7 +103,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             tournament_id = key[11:]
 
             #존재하지 않는 tournament_id이면 삭제
-            if (Tournament.objects.filter(id = int(tournament_id)).exists() == False):
+            if (await self.exists_tournament(int(tournament_id)) == False):
                 cache.delete(key)
                 continue
 
@@ -139,7 +140,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 idx = idx + 1
                 user_id = user_json["user_id"]
 
-                if (Members.objects.filter(id = user_id).exists() == False):
+                if (await self.exists_members(user_id) == False):
                     parsed_value["registered_user"].pop(idx)
 
             
@@ -149,7 +150,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 idx = idx + 1
                 user_id = invite_user["user_id"]
 
-                if (Members.objects.filter(id = user_id).exists() == False):
+                if (self.exists_members(user_id) == False):
                     parsed_value["invited_info"].pop(idx)
 
 
@@ -246,7 +247,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         #flag == false면은 새롭게 토너먼트를 만들어서 redis에 저장
         if (flag == False):
-            new_tournament = Tournament.objects.create()
+            new_tournament = await self.create_tournament()
             new_tournament_value = {
                 "registered_user": [{
                     "user_id" : self.user.id,
@@ -291,7 +292,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def invite_tournament(self, text_data_json):
         invite_user_id = text_data_json["invite_user_id"]
 
-        if (Members.objects.filter(id = invite_user_id).exists() == False):
+        if (await self.exists_members(invite_user_id) == False):
             await self.send_json({
                 "status": "fail",
                 "message": "잘못된 invite user id 입니다"
@@ -299,7 +300,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             return
 
 
-        tournament = Tournament.objects.create()
+        tournament = await self.create_tournament()
 
         value = {
             "registered_user": [{
@@ -350,7 +351,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def join_invite_tournament(self, text_data_json):
         tournament_id = text_data_json["room_id"]
 
-        if (Tournament.objects.filter(id = tournament_id).exists() == False):
+        if (await self.exists_tournament(tournament_id) == False):
             await self.send_json({
                 "status": "fail",
                 "message": "잘못된 room_id 입니다"
@@ -399,7 +400,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             idx = idx + 1
             user_id = user_json["user_id"]
 
-            if (Members.objects.filter(id = user_id).exists() == False):
+            if (await self.exists_members(user_id) == False):
                 parsed_value["registered_user"].pop(idx)
 
 
@@ -409,7 +410,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             idx = idx + 1
             user_id = invite_user["user_id"]
 
-            if (Members.objects.filter(id = user_id).exists() == False):
+            if (await self.exists_members(user_id) == False):
                 parsed_value["invited_info"].pop(idx)
 
         #정보 갱신하기
@@ -576,11 +577,11 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             game_id = key[7:]
             
             #존재하지 않는 game_id이면 삭제
-            if (Game.objects.filter(id = int(game_id)).exists() == False):
+            if (await self.exists_game(int(game_id)) == False):
                 cache.delete(key)
                 continue
             
-            game = Game.objects.get(id = int(game_id))
+            game = await self.get_game(int(game_id)) 
 
             if (game.game_option.lower() != game_mode.lower()):
                 continue
@@ -619,7 +620,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 idx = idx + 1
                 user_id = user_json["user_id"]
 
-                if (Members.objects.filter(id = user_id).exists() == False):
+                if (await self.exists_members(user_id) == False):
                     parsed_value["registered_user"].pop(idx)
 
             
@@ -629,7 +630,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 idx = idx + 1
                 user_id = invite_user["user_id"]
 
-                if (Members.objects.filter(id = user_id).exists() == False):
+                if (await self.exists_members(user_id) == False):
                     parsed_value["invited_info"].pop(idx)
 
             #정보 갱신하기
@@ -722,7 +723,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             join_game_key = key
 
             try:
-                Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
+                await self.create_participant(self.user.id, game)
             except:
                 await self.send_json({
                     "status": "fail",
@@ -768,7 +769,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 id = user_info["user_id"]
 
                 try:
-                    user = Members.objects.get(id = id)
+                    user = await self.get_members(id)
                 except:
                     await self.send_json({
                         "status": "fail",
@@ -859,8 +860,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         game_time = datetime.now(timezone.utc)
 
-        game = Game.objects.create(game_option=game_mode, game_mode='NORMAL', start_time = game_time, end_time = game_time)
-
+        game = await self.create_game(game_mode, Game.GameMode.NORMAL, game_time)
+        
         value = {
             "registered_user": [{
                 "user_id" : self.user.id,
@@ -894,7 +895,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             return
         
         try:
-            Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
+            await self.create_participant(self.user.id, game)
         except:
             await self.send_json({
                 "status": "fail",
@@ -916,7 +917,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def join_invite_normal(self, text_data_json):
         game_id = text_data_json["game_id"]
 
-        if (Game.objects.filter(id = game_id).exists() == False):
+        if (await self.exists_game(game_id) == False):
             await self.send_json({
                 "status": "fail",
                 "message": "잘못된 game id 입니다"
@@ -964,7 +965,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             idx = idx + 1
             user_id = user_json["user_id"]
 
-            if (Members.objects.filter(id = user_id).exists() == False):
+            if (await self.exists_members(user_id) == False):
                 parsed_value["registered_user"].pop(idx)
 
         #invited_info에 존재하지 않는 사용자가 있는지 확인
@@ -973,7 +974,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             idx = idx + 1
             user_id = invite_user["user_id"]
 
-            if (Members.objects.filter(id = user_id).exists() == False):
+            if (await self.exists_members(user_id) == False):
                 parsed_value["invited_info"].pop(idx)
 
         #정보 갱신하기
@@ -1082,7 +1083,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             return
 
         try:
-            Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = Game.objects.get(id = game_id), score = 0)
+            game_id = await self.get_game(game_id)
+            await self.create_participant(self.user.id, game_id)
         except:
             await self.send_json({
                 "status": "fail",
@@ -1123,7 +1125,7 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             id = user_info["user_id"]
 
             try:
-                user = Members.objects.get(id = id)
+                user = await self.get_members(id)
             except:
                 await self.send_json({
                     "status": "fail",
@@ -1251,3 +1253,37 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             "inviter": inviter
         }
         await bot_notify_process(self, user_id, "bot_notify_invited_tournament_game", data)
+
+
+
+    @database_sync_to_async
+    def exists_tournament(self, id):
+        return Tournament.objects.filter(id = id).exists()
+    
+    @database_sync_to_async
+    def exists_members(self, id):
+        return Members.objects.filter(id = id).exists()
+
+    @database_sync_to_async
+    def exists_game(self, id):
+        return Game.objects.filter(id = id).exists()
+    
+    @database_sync_to_async
+    def create_tournament(self):
+        return Tournament.objects.create()
+    
+    @database_sync_to_async
+    def create_participant(self, user_id, game_id):
+        return Participant.objects.create(user_id = user_id, game_id = game_id, score = 0)
+    
+    @database_sync_to_async
+    def create_game(self, game_option, game_mode, game_time):
+        return Game.objects.create(game_option = game_option, game_mode = game_mode, start_time = game_time, end_time = game_time)
+
+    @database_sync_to_async
+    def get_game(self, id):
+        return Game.objects.get(id = id)
+    
+    @database_sync_to_async
+    def get_members(self, id):
+        return Members.objects.get(id = id)
