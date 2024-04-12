@@ -26,14 +26,16 @@ async function sendMessage(user, me, roomName) {
   // 사용자 상태 확인
   const userStatus = chatUserState.getUserState()[user.user_id];
   if (userStatus) {
-      // isBlocked가 true이거나 isOnline이 false일 경우 메시지 전송 방지
-      if (!userStatus.isOnline) {
-        Modal("chatFail_offlineUser");
-        return ;
-      } else if (userStatus.isBlocked) {
-        Modal("chatFail_blockedUser");
-        return ;
-      }
+    // isBlocked가 true이거나 isOnline이 false일 경우 메시지 전송 방지
+    if (!userStatus.isOnline) {
+      Modal("chatFail_offlineUser");
+      $chatInput.blur();
+      return;
+    } else if (userStatus.isBlocked) {
+      Modal("chatFail_blockedUser");
+      $chatInput.blur();
+      return;
+    }
   }
 
   const data = {
@@ -62,6 +64,7 @@ async function sendMessage(user, me, roomName) {
 }
 
 async function receiveMessage(user, data, roomName) {
+  if (data.sender.user_id !== user.user_id) return;
   const $chatContents = document.querySelector("#chatContents");
 
   $chatContents.appendChild(ChatContent(user, data));
@@ -115,7 +118,7 @@ export default function ChatRoom(user) {
   socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
     console.log(data);
-    
+
     if (data.action === "fetch_messages") {
       const messages = data.messages;
       fetchMessages(messages);
@@ -131,17 +134,16 @@ export default function ChatRoom(user) {
     } else if (data.action === "update_user_status") {
       const userId = data.user_id;
       const isOnline = data.status === "ONLINE";
-      chatUserState.setUserState(userId, {isOnline : isOnline});
+      chatUserState.setUserState(userId, { isOnline: isOnline });
     }
 
     if (data.status === "fail") {
       if (data.type === "blocked_chat_user") {
         Modal("chatFail_blockedUser");
-        chatUserState.setUserState(user.user_id, {isBlocked : true});
-      }
-      else if (data.type === "offline_chat_user")
+        chatUserState.setUserState(user.user_id, { isBlocked: true });
+      } else if (data.type === "offline_chat_user")
         Modal("chatFail_offlineUser");
-        chatUserState.setUserState(user.user_id, {isOnline : false});
+      chatUserState.setUserState(user.user_id, { isOnline: false });
     }
   };
 

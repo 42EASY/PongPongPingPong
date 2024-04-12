@@ -8,6 +8,7 @@ import { getUserInfo } from "../components/Main/UserApi.js";
 export default async function Main() {
   Nav();
 
+  document.body.style.overflow = "auto";
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
   const $page = document.createElement("div");
@@ -20,7 +21,6 @@ export default async function Main() {
   else id = getUserId();
 
   const userInfo = await getUserInfo(id);
-  console.log(userInfo);
   const $profile = await Profile(id, userInfo.result);
 
   $page.appendChild($profile);

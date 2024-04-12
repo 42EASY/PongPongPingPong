@@ -1,11 +1,10 @@
 import { getAccessToken, setNewAccessToken } from "../../state/State.js";
 import { chatUserState } from "../../state/ChatUserState.js";
-
-const baseUrl = "http://localhost:8000";
+import { baseUrl } from "../../state/State.js";
 
 export function getUserInfo(id) {
   return new Promise((resolve) => {
-    const url = baseUrl + `/api/v1/members/${id}`;
+    const url = `${baseUrl}/api/v1/members/${id}`;
 
     fetch(url, {
       method: "GET",
@@ -30,7 +29,7 @@ export function getUserInfo(id) {
 
 export function postFriend(id) {
   return new Promise((resolve) => {
-    const url = baseUrl + `/api/v1/friends/${id}`;
+    const url = `${baseUrl}/api/v1/friends/${id}`;
     fetch(url, {
       method: "POST",
       headers: {
@@ -54,7 +53,7 @@ export function postFriend(id) {
 
 export async function deleteFriend(id) {
   return new Promise((resolve) => {
-    const url = baseUrl + `/api/v1/friends/${id}`;
+    const url = `${baseUrl}/api/v1/friends/${id}`;
     fetch(url, {
       method: "DELETE",
       headers: {
@@ -78,7 +77,7 @@ export async function deleteFriend(id) {
 
 export function postBlock(id) {
   return new Promise((resolve) => {
-    const url = baseUrl + `/api/v1/block/${id}`;
+    const url = `${baseUrl}/api/v1/block/${id}`;
     fetch(url, {
       method: "POST",
       headers: {
@@ -102,7 +101,7 @@ export function postBlock(id) {
 
 export function deleteBlock(id) {
   return new Promise((resolve) => {
-    const url = baseUrl + `/api/v1/block/${id}`;
+    const url = `${baseUrl}/api/v1/block/${id}`;
     fetch(url, {
       method: "DELETE",
       headers: {

@@ -1,10 +1,10 @@
-import { getAccessToken } from "./State.js";
+import { getAccessToken, socketBaseUrl } from "./State.js";
 
 var GameSocketManager = (function () {
   var instance = null;
 
   function init(game_id) {
-    const socketUrl = `ws://localhost:8000/ws/game/${game_id}/?token=${getAccessToken()}`;
+    const socketUrl = `${socketBaseUrl}/ws/game/${game_id}/?token=${getAccessToken()}`;
     var gs = new WebSocket(socketUrl);
 
     gs.onopen = function () {

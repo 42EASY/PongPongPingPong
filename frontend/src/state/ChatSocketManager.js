@@ -1,4 +1,5 @@
 import { getAccessToken } from "./State.js";
+import { socketBaseUrl } from "./State.js";
 
 var ChatSocketManager = (function () {
     var instance;
@@ -8,7 +9,7 @@ var ChatSocketManager = (function () {
 
     function init() {
         // 실제 웹 소켓 연결을 생성하고 관리하는 로직
-        const socketUrl = `ws://localhost:8000/ws/chat/?token=${getAccessToken()}`;
+        const socketUrl = `${socketBaseUrl}/ws/chat/?token=${getAccessToken()}`;
         var ws = new WebSocket(socketUrl);
 
         ws.onopen = function () {

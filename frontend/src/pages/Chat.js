@@ -1,8 +1,8 @@
 import Title from "../components/Chat/Title.js";
 import ChatSocketManager from "../state/ChatSocketManager.js";
 import ChatRoom from "../components/Chat/Chat.js";
-import NoChat from "../components/Chat/NoChat.js";
 import Bot from "../components/Chat/Bot.js";
+import { setBotNotifyCount, incrementBotNotifyCount } from "../components/Chat/Bot.js";
 import { createRoomName } from "./ChatRoom.js"
 
 function fetchChats(data) {
@@ -10,18 +10,39 @@ function fetchChats(data) {
 
   const len = data.length;
 
-  if (len === 0) {
-    const $noChat = NoChat();
-    $chatRoomListWrapper.appendChild($noChat);
-  } else {
-    for (let i = 0; i < len; i++) {
-      const user = data[i].user_info;
-      const cnt = data[i].unread_messages_count;
-      const roomName = data[i].room_name;
-      const $chat = ChatRoom(user, cnt, roomName);
-      $chatRoomListWrapper.appendChild($chat);
-    }
+  for (let i = 0; i < len; i++) {
+    const user = data[i].user_info;
+    const cnt = data[i].unread_messages_count;
+    const roomName = data[i].room_name;
+    const $chat = ChatRoom(user, cnt, roomName);
+    $chatRoomListWrapper.appendChild($chat);
   }
+}
+
+function setUnreadNotifyCount(count) {
+  // Bot 컴포넌트 내 chatStatus 요소 선택
+  setBotNotifyCount(count);
+  const botElement = document.querySelector(".chatWrapper.botChatWrapper");
+  if (botElement) {
+    const botStatusElement = document.querySelector(".chatStatus");
+    if (botStatusElement) {
+      botStatusElement.innerText = count;
+      botStatusElement.style.display = count > 0 ? "block" : "none";
+    }    
+  }
+}
+
+function updateUnreadNotifyCount() {
+  // 채팅방 요소 선택
+  incrementBotNotifyCount();
+  const botElement = document.querySelector(".chatWrapper.botChatWrapper");
+  if (botElement) {
+      const botStatusElement = document.querySelector(".chatStatus");
+      if (botStatusElement) {
+        let currentCount = parseInt(botStatusElement.textContent, 10) || 0;
+        botStatusElement.textContent = currentCount + 1; // 안 읽은 메시지 수 증가
+      }
+    }
 }
 
 function updateUnreadMessageCount(user, roomName) {
@@ -65,7 +86,8 @@ export default function Chat() {
   $chatRoomListWrapper.classList.add("chatRoomListWrapper");
   $chatsWrapper.appendChild($chatRoomListWrapper);
 
-  // todo: bot 위치 수정
+  socket.send(JSON.stringify({ action : "get_bot_info"}));
+
   $chatRoomListWrapper.appendChild(Bot(0));
 
   socket.send(JSON.stringify({ action: "fetch_chat_list" }));
@@ -82,6 +104,19 @@ export default function Chat() {
       const roomName = createRoomName(receiver.user_id, sender.user_id);
 
       updateUnreadMessageCount(sender, roomName);
+    }
+    if (data.action === "get_bot_info") {
+      const count = data.unread_notify_count;
+
+      setUnreadNotifyCount(count);
+    }
+    if (
+      data.action === "bot_notify_tournament_game_result" ||
+      data.action === "bot_notify_invited_normal_game" ||
+      data.action === "bot_notify_invited_tournament_game" ||
+      data.action === "bot_notify_tournament_game_opponent"
+    ) {
+      updateUnreadNotifyCount();
     }
   };
 

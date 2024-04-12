@@ -1,4 +1,8 @@
-@import url("https://fonts.googleapis.com/css?family=Baloo+Bhaijaan&display=swap");
+@font-face {
+    font-family: "Baloo";
+    src: url("./font/BalooBhaijaan2-Bold.ttf");
+    font-display: swap;
+  }
 
 .App {
     height: 100vh;
@@ -13,7 +17,7 @@
 .title {
     display: flex;
     font-size: 6rem;
-    font-family: "Baloo Bhaijaan", cursive;
+    font-family: "Baloo";
     color: #3EC70B;
 }
 

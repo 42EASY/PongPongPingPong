@@ -1,4 +1,4 @@
-import { getAccessToken } from "./State.js";
+import { getAccessToken, socketBaseUrl } from "./State.js";
 
 const JoinSocketManager = (() => {
   let instance;
@@ -7,7 +7,7 @@ const JoinSocketManager = (() => {
   let reconnectAttempts = 0; // 현재 재연결 시도 횟수
 
   function init() {
-    const socketUrl = `ws://localhost:8000/ws/join_queue/?token=${getAccessToken()}`;
+    const socketUrl = `${socketBaseUrl}/ws/join_queue/?token=${getAccessToken()}`;
     const ws = new WebSocket(socketUrl);
 
     ws.onopen = () => {
@@ -33,8 +33,8 @@ const JoinSocketManager = (() => {
     };
 
     ws.onerror = (e) => {
-      console.log("[joingame - error]");
-      console.log(e);
+      console.log("[joingame - error]: ", e);
+      ws.close();
     };
 
     return ws;

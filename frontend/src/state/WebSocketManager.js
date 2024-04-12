@@ -1,4 +1,4 @@
-import { getAccessToken } from "./State.js";
+import { getAccessToken, socketBaseUrl } from "./State.js";
 import showToast from '../components/Toast/Toast.js';
 import { chatUserState } from "./ChatUserState.js";
 
@@ -10,7 +10,7 @@ var WebSocketManager = (function () {
 
     function init() {
         // 실제 웹 소켓 연결을 생성하고 관리하는 로직
-        const socketUrl = `ws://localhost:8000/ws/notify/?token=${getAccessToken()}`;
+        const socketUrl = `${socketBaseUrl}/ws/notify/?token=${getAccessToken()}`;
         var ws = new WebSocket(socketUrl);
 
         ws.onopen = function () {

@@ -7,6 +7,8 @@ from games.models import Game, Participant
 from tournaments.models import Tournament
 from members.models import Members
 from games.distributed_lock import DistributedLock
+from utils import bot_notify_process, get_member_info
+from datetime import datetime, timezone
 
 prefix_normal = "normal_"
 prefix_tournament = "tournament_"
@@ -339,6 +341,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 'status': 'game create success',
                 'room_id': tournament.id
             })
+        
+        await self.notify_invite_tournament_game(invite_user_id, tournament.id)
         
 
 
@@ -794,7 +798,9 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
 
         #flag == false면은 새롭게 게임을 만들어서 redis에 저장
         else:
-            new_game = Game.objects.create(game_option=game_mode, game_mode='NORMAL')
+            game_time = datetime.now(timezone.utc)
+
+            new_game = Game.objects.create(game_option=game_mode, game_mode='NORMAL', start_time = game_time, end_time = game_time)
             new_game_value = {
                 "registered_user": [{
                     "user_id" : self.user.id,
@@ -851,7 +857,9 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
 
-        game = Game.objects.create(game_option=game_mode, game_mode='NORMAL')
+        game_time = datetime.now(timezone.utc)
+
+        game = Game.objects.create(game_option=game_mode, game_mode='NORMAL', start_time = game_time, end_time = game_time)
 
         value = {
             "registered_user": [{
@@ -900,7 +908,8 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
                 'status': 'game create success',
                 'game_id': game.id
             })
-
+        
+        await self.notify_invite_normal_game(invite_user_id, game.id, game_mode)
 
 
     #normal 모드에서 초대를 받은 경우
@@ -1226,3 +1235,19 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             "player_info": player_info
         })
 
+    async def notify_invite_normal_game(self, user_id, game_id, mode):
+        inviter = await get_member_info(self.user.id)
+        data = {
+            "game_id":game_id,
+            "mode":mode,
+            "inviter": inviter
+        }
+        await bot_notify_process(self, user_id, "bot_notify_invited_normal_game", data)
+
+    async def notify_invite_tournament_game(self, user_id, room_id):
+        inviter = await get_member_info(self.user.id)
+        data = {
+            "room_id":room_id,
+            "inviter": inviter
+        }
+        await bot_notify_process(self, user_id, "bot_notify_invited_tournament_game", data)

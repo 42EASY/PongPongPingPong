@@ -17,10 +17,7 @@ export default async function Nav() {
   //로고 클릭이벤트
   const $navBrand = document.querySelector(".navBrand");
   $navBrand.addEventListener("click", () => {
-    if (window.location.pathname === "/gameroom") {
-      const socket = RoomSocketManager.getInstance();
-      if (socket) socket.close();
-    }
+    if (window.location.pathname === "/gameroom") RoomSocketManager.close();
     changeUrl("/main");
   });
 
@@ -69,10 +66,7 @@ export default async function Nav() {
       $item = document.getElementById("navSearchItem" + idx);
       $item.classList.add("navSearchItemSelected");
     } else if (e.key === "Enter") {
-      if (window.location.pathname === "/gameroom") {
-        const socket = RoomSocketManager.getInstance();
-        if (socket) socket.close();
-      }
+      if (window.location.pathname === "/gameroom") RoomSocketManager.close();
       if (idx !== -1)
         changeUrl(
           `/main=${arr.get(
@@ -94,10 +88,8 @@ export default async function Nav() {
             $searchList.appendChild($searchItem);
             arr.set($searchItem.innerHTML, list.result.data[i].user_id);
             $searchItem.onclick = (e) => {
-              if (window.location.pathname === "/gameroom") {
-                const socket = RoomSocketManager.getInstance();
-                if (socket) socket.close();
-              }
+              if (window.location.pathname === "/gameroom")
+                RoomSocketManager.close();
               changeUrl(`/main=${arr.get(e.target.innerHTML)}`);
             };
           }

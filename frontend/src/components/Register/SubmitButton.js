@@ -7,6 +7,7 @@ import {
   setNewAccessToken,
   setNickname,
   setImage,
+  baseUrl
 } from "../../state/State.js";
 
 function checkNickname(isDuplicate = false) {
@@ -48,7 +49,7 @@ function callApi(nickname, is2fa) {
   return new Promise((resolve) => {
     if (nickname === "") resolve();
 
-    const url = "http://localhost:8000/api/v1/members";
+    const url = `${baseUrl}/api/v1/members`;
     const $uproadImageInput =
       document.getElementsByClassName("uproadImageInput")[0];
 
@@ -71,7 +72,6 @@ function callApi(nickname, is2fa) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.code === 200) {
           setIs2fa(data.result.is_2fa);
           setNickname(data.result.nickname);

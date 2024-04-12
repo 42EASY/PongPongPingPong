@@ -57,7 +57,6 @@ export default function GameRoom(data) {
         changeUrl("/game", res);
       });
     }
-
     if (res.status === "player_entrance") {
       let i;
       for (i = 0; i < res.player_info.length; i++) {
@@ -68,6 +67,14 @@ export default function GameRoom(data) {
         waitingPlayersArr[j].innerHTML = "";
         waitingPlayersArr[j].appendChild(WaitingPlayer());
       }
+    }
+    if (res.status === "game_over") {
+      Modal("invalidGame");
+      const modalTitle = document.querySelector(".modalTitle");
+      modalTitle.innerHTML = "게임이 종료되었습니다";
+      const modalText = document.querySelector(".modalText");
+      modalText.innerHTML = "게임 상대의 연결이 끊어졌습니다";
+      changeUrl("/main");
     }
   };
 }

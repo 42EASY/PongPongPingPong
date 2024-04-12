@@ -3,6 +3,7 @@ import {
   getAccessToken,
   setIs2fa,
   getIs2fa,
+  baseUrl
 } from "../../state/State.js";
 import Modal from "../Modal/Modal.js";
 
@@ -64,7 +65,6 @@ export default function TwoFactorAuth(is2fa) {
       return;
     $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
     $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
-    console.log(is2fa);
 
     if (is2fa === "true") {
       call2faOtpModal().then((result) => {
@@ -84,7 +84,6 @@ export default function TwoFactorAuth(is2fa) {
     $twoFactorAuthDeactive.classList.remove("twoFactorAuthSelect");
 
     call2faQrApi().then((result) => {
-      console.log(result);
       if (result === true) {
         call2faOtpModal().then((result) => {
           if (result === true) {
@@ -111,7 +110,7 @@ export default function TwoFactorAuth(is2fa) {
 //2차 인증 QR코드 API 호출
 function call2faQrApi() {
   return new Promise((resolve) => {
-    const url = "http://localhost:8000/api/v1/auth/2fa/";
+    const url = `${baseUrl}/api/v1/auth/2fa/`;
 
     fetch(url, {
       method: "GET",
@@ -122,7 +121,6 @@ function call2faQrApi() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.code === 200) {
           Modal(
             "tfa",
@@ -167,7 +165,7 @@ export function call2faOtpModal() {
 //2차 인증 OTP API 호출
 function call2faOtqApi(otpNum) {
   return new Promise((resolve) => {
-    const url = "http://localhost:8000/api/v1/auth/2fa/";
+    const url = `${baseUrl}/api/v1/auth/2fa/`;
 
     fetch(url, {
       method: "POST",

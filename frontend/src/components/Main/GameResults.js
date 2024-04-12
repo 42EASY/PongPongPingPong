@@ -2,6 +2,7 @@ import { getAccessToken, setNewAccessToken } from "../../state/State.js";
 import GameResult from "./GameResult.js";
 import NoHistory from "./NoHistory.js";
 import TournamentResult from "./TournamentResult.js";
+import { baseUrl } from "../../state/State.js";
 
 let noHistory = false;
 let curPage = 1;
@@ -42,7 +43,6 @@ export async function GameResults(userId, isGeneral) {
 
 export async function GameResultsScroll(userId, isGeneral) {
   if (isFetching || !hasMore) return;
-  if (!isGeneral) console.log("here");
 
   const $HistoryBoard = document.querySelector(".historyBoard");
   const results = await getGameResults(userId, isGeneral);
@@ -70,7 +70,6 @@ async function getGameResults(userId, isGeneral) {
       isGeneral ? dataSize : tournamentDataSize
     ).then((result) => {
       isFetching = false;
-      console.log(result);
 
       if (isGeneral) {
         if (
@@ -87,7 +86,7 @@ async function getGameResults(userId, isGeneral) {
         if (
           result.total_page === curPage ||
           result.data[0].tournament.length === 0 ||
-          result.data[0].tournament.length < dataSize
+          result.data[0].tournament.length < tournamentDataSize
         ) {
           hasMore = false;
         } else {
@@ -101,7 +100,7 @@ async function getGameResults(userId, isGeneral) {
 
 function callGameHistoryApi(userId, mode, page, size) {
   return new Promise((resolve) => {
-    const url = `http://localhost:8000/api/v1/members/${userId}/records?mode=${mode}&page=${page}&size=${size}`;
+    const url = `${baseUrl}/api/v1/members/${userId}/records?mode=${mode}&page=${page}&size=${size}`;
 
     fetch(url, {
       method: "GET",

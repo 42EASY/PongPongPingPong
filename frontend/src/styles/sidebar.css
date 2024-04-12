@@ -124,6 +124,7 @@ input:disabled {
   padding-bottom: 12px;
   padding-left: 16px;
   padding-right: 16px;
+  cursor: pointer;
 }
 
 .chatWrapper:hover {
@@ -301,6 +302,10 @@ input:disabled {
 
 .options {
   font-size: 12px;
+}
+
+.optionsItem {
+  cursor: pointer;
 }
 
 .optionsItem:hover {

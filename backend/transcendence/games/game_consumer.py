@@ -9,6 +9,7 @@ from urllib.parse import parse_qs
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
 from django.conf import settings
 from games.distributed_lock import DistributedLock
+from utils import get_member_info, bot_notify_process
 from datetime import datetime, timezone
 from channels.db import database_sync_to_async
 
@@ -115,6 +116,63 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
 
         
         self.opponent_channel_name = "-1"
+        self.user_participant = await self.get_participant(self.user, self.game)
+
+
+         #상대의 channel_name 저장
+        if (self.opponent_channel_name == "-1"):
+
+            value = None
+            if self.lock.acquire_lock():
+                try:
+                    value = cache.get(self.key)
+                except:
+                    self.lock.release_lock()
+                    await self.send_json({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    })
+                    return  
+            
+                self.lock.release_lock()
+            else:
+                self.lock.release_lock()
+                await self.send_json({
+                    "status": "fail",
+                    "message": "lock 획득 중 오류가 발생했습니다"
+                })
+                return
+
+            parsed_value = json.loads(value)
+            
+            join_game_info = parsed_value[self.json_key]
+
+
+            for info in join_game_info:
+                if (info['user_id'] != self.user.id):
+                    try:
+                        self.opponent = await self.get_members(info["user_id"])
+
+                        #user의 participant에 상대 id 값 추가
+                        self.user_participant.opponent_id = self.opponent.id
+                        await self.save_participant(self.user_participant)
+                        self.user_participant = await self.get_participant(self.user, self.game)
+
+                        #상대 particiaptn 객체와 channel_name 저장
+                        self.opponent_participant = await self.get_participant(self.opponent, self.game)
+                        self.opponent_channel_name = info['channel_name']
+                        await self.save_participant(self.opponent_participant)
+                        self.opponent_participant = await self.get_participant(self.opponent, self.game)
+
+                    except:
+                        await self.send_json({
+                            "status": "fail",
+                            "message": "db접근 중 오류가 발생했습니다"
+                        })
+                        return
+
+
+
         await self.accept()
 
 
@@ -198,7 +256,6 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                         self.opponent = await self.get_members(info["user_id"])
 
                         #user의 participant에 상대 id 값 추가
-                        self.user_participant = await self.get_participant(self.user, self.game)
                         self.user_participant.opponent_id = self.opponent.id
                         await self.save_participant(self.user_participant)
                         self.user_participant = await self.get_participant(self.user, self.game)
@@ -222,8 +279,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                     "message": "아직 상대가 입장하지 않았습니다"
                 })
                 return
-
-
+    
         text_data_json = json.loads(text_data)
 
         action = text_data_json["action"]
@@ -292,9 +348,6 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                 'key': key 
             })
         
-
-
-    
     #한 라운드가 끝난 경우(round_win이라는 action 보낸 사람이 1점을 얻은 경우)
     async def round_over(self):
         self.user_participant.score = self.user_participant.score + 1
@@ -343,7 +396,10 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                     })
 
             #normal 게임이거나, tournament 결승 게임인 경우 redis 삭제
-            if (self.game_mode == Game.GameMode.NORMAL or self.tournament_game.round == TournamentGame.Round.FINAL):                
+            if (self.game_mode == Game.GameMode.NORMAL or self.tournament_game.round == TournamentGame.Round.FINAL):
+                if (self.tournament_game.round == TournamentGame.Round.FINAL):
+                    players = await self.get_tournament_players(self.tournament_game.tournament_id.id)
+                    await bot_notify_process(self, self.user.id, "bot_notify_tournament_game_result", players)
                 if self.lock.acquire_lock():
                     try:
                         cache.delete(self.key)
@@ -396,7 +452,32 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
             "game_status": event["game_status"]
         })
 
-        #press key 알림
+        
+    async def get_tournament_players(self, tournament_id):
+        tournament_games = TournamentGame.objects.filter(tournament_id=tournament_id)
+        
+        players = set()
+        
+        for game in tournament_games:
+            participants = Participant.objects.filter(game_id=game.game_id)
+            for participant in participants:
+                player = await get_member_info(participant.user_id)
+                ranking = 0
+                if game.round == TournamentGame.Round.SEMI_FINAL:
+                    if participant.result == Participant.Result.LOSE:
+                        ranking = 3
+                if game.round == TournamentGame.Round.FINAL:
+                    if participant.result == Participant.Result.WIN:
+                        ranking = 1
+                    elif participant.result == Participant.Result.LOSE:
+                        ranking = 2
+                players.add({
+                    **player,
+                    "ranking": ranking,
+                })
+        return players
+
+
     async def broadcast_press_key(self, event):
 
         await self.send_json({
