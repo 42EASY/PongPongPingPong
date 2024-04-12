@@ -1,7 +1,7 @@
 import changeUrl from "../Router.js";
 
-export const baseUrl = "http://localhost:8000";
-export const socketBaseUrl = "ws://localhost:8000";
+export const baseUrl = "https://localhost";
+export const socketBaseUrl = "wss://localhost";
 
 //set
 const setLoginState = (

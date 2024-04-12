@@ -85,7 +85,7 @@ class LoginView(APIView):
 		})
 
 		#TODO: 개발 환경 설정 변경
-		res.set_cookie('refresh_token', refresh_token, httponly=True, samesite='Strict', secure=False, max_age=refresh_token_lifetime) #secure 옵션 -> 개발환경에서는 False
+		res.set_cookie('refresh_token', refresh_token, httponly=True, samesite='Strict', secure=True, max_age=refresh_token_lifetime) #secure 옵션 -> 개발환경에서는 False
 
 		return res
 

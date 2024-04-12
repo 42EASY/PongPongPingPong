@@ -4,7 +4,7 @@ import { socketBaseUrl } from "./State.js";
 var ChatSocketManager = (function () {
     var instance;
     var reconnectInterval = 1000; // 재연결 시도 간격 초기값
-    var maxReconnectAttempts = 5; // 최대 재연결 시도 횟수
+    var maxReconnectAttempts = 10; // 최대 재연결 시도 횟수
     var reconnectAttempts = 0; // 현재 재연결 시도 횟수
 
     function init() {

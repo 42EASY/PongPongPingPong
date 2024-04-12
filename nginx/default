@@ -20,16 +20,23 @@
 #
 
 server {
-    listen 443 ssl; # 또는 SSL/TLS를 사용하는 경우 443
-    listen [::]:443 ssl;
     listen 80;
     server_name localhost;
 
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl; # 또는 SSL/TLS를 사용하는 경우 443
+    listen [::]:443 ssl;
+    server_name localhost;
+
 	ssl_protocols TLSv1.2 TLSv1.3;
-	ssl_certificate /etc/ssl/certs/transcendence.localhost.crt;
- 	ssl_certificate_key /etc/ssl/private/transcendence.localhost.key;# 	ssl_protocols TLSv1.2 TLSv1.3;
-# 	ssl_certificate /etc/ssl/certs/transcendence.localhost.crt;
-#  	ssl_certificate_key /etc/ssl/private/transcendence.localhost.key;
+	ssl_certificate /etc/ssl/certs/localhost.pem;
+ 	ssl_certificate_key /etc/ssl/private/localhost-key.pem;# 	ssl_protocols TLSv1.2 TLSv1.3;
+
 # # 	
 # 	# Note: You should disable gzip for SSL traffic.
 # 	# See: https://bugs.debian.org/773332
@@ -55,20 +62,32 @@ server {
 
     # 백엔드 API 프록시
     location /api {
-        proxy_pass http://localhost:8000; # 백엔드 서버로 요청 전달
+    # 백엔드 API 프록시
+        proxy_pass https://backend:8443; # 백엔드 서버로 요청 전달
+        # include /etc/nginx/proxy_params;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
+        proxy_set_header Connection "Upgrade";
         proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-        # CORS 헤더 추가 (필요한 경우)
-        add_header 'Access-Control-Allow-Origin' '*' always;
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
-        add_header 'Access-Control-Allow-Headers' 'X-Requested-With, Content-Type, Authorization' always;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
     location /media {
         alias /app/backend/transcendence/media;
+    }
+
+    location /ws {
+        proxy_pass https://backend:8443; # Daphne 서버 주소
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
 }

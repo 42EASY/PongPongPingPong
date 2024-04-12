@@ -4,7 +4,7 @@ from subprocess import Popen
 import os
 
 def runserver():
-    cmd = ['daphne', 'transcendence.asgi:application', '-b', '0.0.0.0', '-p', '8000']
+    cmd = ['daphne', '-e', 'ssl:8443:privateKey=/app/keys/private/localhost-key.pem:certKey=/app/keys/certs/localhost.pem', 'transcendence.asgi:application']
     process = Popen(cmd)
     try:
         for changes in watch('/app/transcendence'):

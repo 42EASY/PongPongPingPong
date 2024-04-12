@@ -3,7 +3,7 @@ import { getAccessToken, socketBaseUrl } from "./State.js";
 const JoinSocketManager = (() => {
   let instance;
   let reconnectInterval = 1000; // 재연결 시도 간격 초기값
-  let maxReconnectAttempts = 5; // 최대 재연결 시도 횟수
+  let maxReconnectAttempts = 10; // 최대 재연결 시도 횟수
   let reconnectAttempts = 0; // 현재 재연결 시도 횟수
 
   function init() {
