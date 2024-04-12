@@ -219,7 +219,7 @@ CACHES = {
     }
 }
 
-CORS_ORIGIN_WHITELIST = [HOST]
+CORS_ALLOWED_ORIGINS = [ 'https://localhost' ]
 
 CORS_ALLOW_METHODS = (
     "DELETE",
