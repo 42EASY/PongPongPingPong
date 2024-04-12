@@ -68,16 +68,20 @@ function remoteListen(pongGame, socket) {
   socket.onmessage = (e) => {
     socket_res = JSON.parse(e.data);
     console.log("game onmessage!!!", socket_res);
+    if (socket_res.action === "round_start") {
+      pongGame.ball.serve =
+        socket_res.ball_position.moveX === DIR.LEFT
+          ? pongGame.rightPlayer
+          : pongGame.leftPlayer;
+      pongGame.ball.moveY = socket_res.ball_position.moveY;
+      pongGame.ball.y = socket_res.ball_position.y;
+    }
     if (socket_res.action === "press_key") {
       if (socket_res.key === 1) pongGame.leftPlayer.move = DIR.UP;
       if (socket_res.key === 0) pongGame.leftPlayer.move = DIR.DOWN;
     }
     if (socket_res.action === "unpress_key")
       pongGame.leftPlayer.move = DIR.IDLE;
-    if (socket_res.action === "round_start") {
-      pongGame.ball.moveY = socket_res.ball_position.moveY;
-      pongGame.ball.y = socket_res.ball_position.y;
-    }
     if (socket_res.status === "game_over") {
       console.log("socket.close()");
       socket.close();
@@ -107,16 +111,15 @@ export default function Board_remote(info, rightUser_id) {
       this.serve = Math.random() < 0.5 ? this.leftPlayer : this.rightPlayer;
       this.timer = this.round = 0;
 
+      listen(this, socket);
+      remoteListen(this, socket);
       Modal(
         this.serve === this.leftPlayer ? "gameLeftServe" : "gameRightServe"
       ).then((result) => {
         this.running = true;
         window.requestAnimationFrame(() => this.loop());
       });
-
       this.draw();
-      listen(this, socket);
-      remoteListen(this, socket);
     },
 
     changeUrl: function (requestedUrl) {
@@ -151,7 +154,7 @@ export default function Board_remote(info, rightUser_id) {
             socket.sendAction({
               action: "round_start",
               ball_position: {
-                moveX: this.ball.moveX, //필요x
+                moveX: this.ball.moveX,
                 moveY: this.ball.moveY,
                 y: this.ball.y,
               },
