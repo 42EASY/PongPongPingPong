@@ -92,6 +92,10 @@ const getUserId = () => {
   return localStorage.getItem("userId");
 };
 
+const getNumberUserId = () => {
+  return Number(localStorage.getItem("userId"));
+}
+
 const getEmail = () => {
   return localStorage.getItem("email");
 };
@@ -148,6 +152,7 @@ export {
   setImage,
   getIsLogin,
   getUserId,
+  getNumberUserId,
   getAccessToken,
   getEmail,
   getIs2fa,
