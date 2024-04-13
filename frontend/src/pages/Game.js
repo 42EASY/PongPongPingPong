@@ -3,6 +3,7 @@ import { getUserInfo } from "../components/Main/UserApi.js";
 import Info from "../components/Game/Info.js";
 import Board from "../components/Game/Board.js";
 import Board_remote from "../components/Game/Board_remote.js";
+import RemoteBoard from "../components/Game/RemoteBoard.js";
 
 export default async function Game(data) {
   console.log("GAME: ", data);
@@ -27,7 +28,7 @@ export default async function Game(data) {
         : data.player_info[0].user_id;
     const leftInfo = await getUserInfo(leftUserId);
     $info = await Info(leftInfo.result, rightInfo.result);
-    $board = Board_remote(data, rightUserId);
+    $board = RemoteBoard(data, rightUserId);
   }
 
   $page.appendChild($info);
