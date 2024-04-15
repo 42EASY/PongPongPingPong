@@ -188,8 +188,8 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
                             'type': 'broadcast_game_status',
                             'message': 'game_over',
                             'game_status': [
-                                {"user_id": loser, "score": self.game_board.scores['player1']},
-                                {"user_id": winner, "score": self.game_board.scores['player2']}
+                                {"user_id": loser, "score": self.game_board.scores['player1'], "result": Participant.Result.LOSE},
+                                {"user_id": winner, "score": self.game_board.scores['player2'], "result": Participant.Result.WIN}
                             ]
                         }
                     )
@@ -261,8 +261,8 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         game_over_message = {
         'action': 'game_over',
         'game_status': [
-            {"user_id": self.player1_id, "score": self.game_board.scores['player1']},
-            {"user_id": self.player2_id, "score": self.game_board.scores['player2']}
+            {"user_id": self.player1_id, "score": self.game_board.scores['player1'], "result": player1_result},
+            {"user_id": self.player2_id, "score": self.game_board.scores['player2'], "result": player2_result}
             ]
         }
 
