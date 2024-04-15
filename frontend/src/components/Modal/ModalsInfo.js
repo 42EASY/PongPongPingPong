@@ -50,6 +50,22 @@ function getYesOrNoModal(titleText, bodyText, yesButtonText) {
     ],
   };
 }
+
+function getOnlyButtonModal(buttonText) {
+  return {
+    title: buttonText,
+    hideCloseButton: true, // 엑스(닫기) 버튼 숨기기
+    backdropCloseDisabled: true, // 모달 외부 클릭으로 닫히지 않도록 설정
+    bodyContent: [
+      {
+        type: "primaryButton",
+        text: 'OK',
+        class: "btn primaryButton close positive",
+      },
+    ],
+  };
+}
+
 //------------------------------
 function get_tfa(argu) {
   return {
@@ -225,6 +241,18 @@ function get_gameRightServe() {
   };
 }
 
+function get_readyGame() {
+  return getOnlyButtonModal(
+    "준비"
+  );
+}
+
+function get_startGame() {
+  return getOnlyButtonModal(
+    "게임 시작"
+  );
+}
+
 function get_deleteFriend(argu) {
   return getYesOrNoModal(
     `${argu} 님과 친구를 끊으시겠습니까?`,
@@ -232,6 +260,7 @@ function get_deleteFriend(argu) {
     "친구끊기"
   );
 }
+
 function get_blockFriend(argu) {
   return getYesOrNoModal(
     `${argu} 님을 차단하시겠습니까?`,
@@ -366,5 +395,9 @@ export default function getModalContent(modalName, argu) {
       return get_chatFail_offlineUser();
     case "chatFail_blockedUser":
       return get_chatFail_blockedUser();
+    case "readyGame":
+        return get_readyGame();
+    case "startGame":
+        return get_startGame();
   }
 }
