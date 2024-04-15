@@ -1,10 +1,12 @@
 import { getAccessToken, socketBaseUrl } from "./State.js";
 
 var GameBoardSocketManager = (function () {
-  var instance = null;
+  let instance;
+  let gameNumber;
 
   function init(game_id) {
-    const socketUrl = `${socketBaseUrl}/ws/game-board/${game_id}/?token=${getAccessToken()}`;
+    gameNumber = game_id;
+    const socketUrl = `${socketBaseUrl}/ws/game-board/${gameNumber}/?token=${getAccessToken()}`;
     var gs = new WebSocket(socketUrl);
 
     gs.onopen = function () {
@@ -38,10 +40,12 @@ var GameBoardSocketManager = (function () {
 
   return {
     getInstance: function (game_id) {
-      if (!instance) {
+      if (!instance || gameNumber !== game_id) {
+        if (instance) instance.close();
         instance = init(game_id);
+        gameNumber = game_id;
+        return instance;
       }
-      return instance;
     },
   };
 })();

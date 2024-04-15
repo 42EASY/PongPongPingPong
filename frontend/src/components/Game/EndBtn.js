@@ -49,7 +49,7 @@ export default function EndBtn(mode, opponent, hasGameLeft) {
     $btnWrapper.appendChild($exitBtn);
   } else if (mode === "TOURNAMENT") {
     if (opponent.relation === "NONE") $btnWrapper.appendChild($friendBtn);
-    $btnWrapper.appendChild(hasGameLeft ? $chatBtn : $exitBtn);
+    if (!hasGameLeft) $btnWrapper.appendChild($exitBtn);
   }
 
   $exitBtn.addEventListener("click", () => {

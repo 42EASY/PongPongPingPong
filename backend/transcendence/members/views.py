@@ -243,8 +243,7 @@ class MemberGameView(APIView):
 		if (mode == Game.GameMode.NORMAL):
 
 			try:
-				game_list = Participant.objects.filter(user_id = user_id, game_id__game_mode=Game.GameMode.NORMAL).order_by('user_id')
-
+				game_list = Participant.objects.filter(user_id = user_id, game_id__game_mode = Game.GameMode.NORMAL).order_by('-game_id__start_time')
 			except:
 				return JsonResponse({
 					'code': 400,
@@ -283,10 +282,10 @@ class MemberGameView(APIView):
 			try: 
 				for participant in page_obj:
 					game = participant.game_id
-	
+
 					participants_in_game = Participant.objects.filter(game_id = game) 
 					user_ids_in_game = participants_in_game.values_list('user_id', flat = True)
-				
+			
 					opponent_player = Members.objects.exclude(id=user_id).get(id__in=user_ids_in_game)
 
 					participant_opponent_player = Participant.objects.get(game_id = game, user_id = opponent_player)
@@ -332,7 +331,7 @@ class MemberGameView(APIView):
 			try:
 				game_list = Participant.objects.filter(user_id = user, game_id__game_mode=Game.GameMode.TOURNAMENT).order_by('user_id')
 				game_ids = game_list.values_list('game_id', flat = True)
-				tournament_games_list= TournamentGame.objects.filter(game_id__in = game_ids).order_by('tournament_id')
+				tournament_games_list= TournamentGame.objects.filter(game_id__in = game_ids).order_by('-game_id__start_time')
 				tournament_games = tournament_games_list.values_list('tournament_id', flat = True).distinct()
 	
 			except:

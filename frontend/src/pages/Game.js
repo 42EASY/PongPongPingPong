@@ -1,8 +1,6 @@
-import { getUserId } from "../state/State.js";
-import { getUserInfo } from "../components/Main/UserApi.js";
+import { getMyInfo } from "../state/State.js";
 import Info from "../components/Game/Info.js";
 import Board from "../components/Game/Board.js";
-import Board_remote from "../components/Game/Board_remote.js";
 import RemoteBoard from "../components/Game/RemoteBoard.js";
 
 export default async function Game(data) {
@@ -14,21 +12,16 @@ export default async function Game(data) {
   $page.classList.add("page");
 
   // 본인
-  const rightUserId = Number(getUserId());
-  const rightInfo = await getUserInfo(rightUserId);
+  const rightInfo = getMyInfo();
 
   var $info, $board;
   if (data.mode === "2P") {
-    $info = await Info(rightInfo.result, rightInfo.result);
-    $board = Board(data, rightUserId);
+    $info = Info(rightInfo, rightInfo);
+    $board = Board(data, rightInfo.user_id);
   } else {
-    const leftUserId =
-      data.player_info[0].user_id === Number(getUserId())
-        ? data.player_info[1].user_id
-        : data.player_info[0].user_id;
-    const leftInfo = await getUserInfo(leftUserId);
-    $info = await Info(leftInfo.result, rightInfo.result);
-    $board = RemoteBoard(data, rightUserId);
+    const leftInfo = data.player_info;
+    $info = Info(leftInfo, rightInfo);
+    $board = RemoteBoard(data);
   }
 
   $page.appendChild($info);
