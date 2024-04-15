@@ -59,7 +59,7 @@ function getOnlyButtonModal(buttonText) {
     bodyContent: [
       {
         type: "primaryButton",
-        text: 'OK',
+        text: "OK",
         class: "btn primaryButton close positive",
       },
     ],
@@ -240,17 +240,21 @@ function get_gameRightServe() {
     footerContent: [TimerBar()],
   };
 }
+function get_gameRoom() {
+  return {
+    title: "곧 게임방으로 이동합니다",
+    hideCloseButton: true,
+    backdropCloseDisabled: true,
+    footerContent: [TimerBar()],
+  };
+}
 
 function get_readyGame() {
-  return getOnlyButtonModal(
-    "준비"
-  );
+  return getOnlyButtonModal("준비");
 }
 
 function get_startGame() {
-  return getOnlyButtonModal(
-    "게임 시작"
-  );
+  return getOnlyButtonModal("게임 시작");
 }
 
 function get_deleteFriend(argu) {
@@ -396,8 +400,10 @@ export default function getModalContent(modalName, argu) {
     case "chatFail_blockedUser":
       return get_chatFail_blockedUser();
     case "readyGame":
-        return get_readyGame();
+      return get_readyGame();
     case "startGame":
-        return get_startGame();
+      return get_startGame();
+    case "gameRoom":
+      return get_gameRoom();
   }
 }
