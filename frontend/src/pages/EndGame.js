@@ -27,18 +27,20 @@ export default async function EndGame({ info, result }) {
       opponent = await getUserInfo(result.game_status[0].user_id);
     }
   }
-  const hasWon = leftScore < rightScore ? true : false;
-  const hasGameLeft =
-    info.mode === "TOURNAMENT" && info.round === "SEMI_FINAL" && hasWon
-      ? true
-      : false;
 
+  var hasGameLeft = false;
+  if (info.mode === "TOURNAMENT") {
+    hasGameLeft =
+      info.round === "SEMI_FINAL" && result.result === "win" ? true : false;
+  }
   const $printBox = document.createElement("div");
   $printBox.classList.add("printBox");
   $app.appendChild($printBox);
-  $printBox.appendChild(Result(info.mode, leftScore, rightScore));
+  $printBox.appendChild(
+    Result(info.mode, result.result, leftScore, rightScore)
+  );
   $printBox.appendChild(EndBtn(info.mode, opponent.result, hasGameLeft));
-  if (hasWon || info.mode === "2P") EndConfetti();
+  if (info.mode === "2P" || result.result === "win") EndConfetti();
 }
 
 //  mode | txt         | btn                   | modal
@@ -47,7 +49,7 @@ export default async function EndGame({ info, result }) {
 // ----------------------------------------------------------
 //  norm | win / lose  | friend,exit           |
 // ----------------------------------------------------------
-//  tour | win / lose  | R1 win  : friend,chat | table,timer
-//                     | R1 lose : friend,exit |
-//                     | R2      : friend,exit | table
+//  tour | win / lose  | SF win  : friend,chat | table,timer
+//                     | FN lose : friend,exit |
+//                     | FN      : friend,exit | table
 // ==========================================================
