@@ -722,7 +722,12 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             join_game_key = key
 
             try:
-                Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
+                user1 = Members.objects.get(id = new_parsed_value['registered_user'][0]['user_id'])
+                user2 = Members.objects.get(id = new_parsed_value['registered_user'][1]['user_id'])
+
+                Participant.objects.create(user_id = user1, opponent_id = user2.id, game_id = game, score = 0)
+                Participant.objects.create(user_id = user2, opponent_id = user1.id, game_id = game, score = 0)
+
             except:
                 await self.send_json({
                     "status": "fail",
@@ -834,14 +839,14 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
            
             self.key = prefix_normal + str(new_game.id)
 
-            try:
-                Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = new_game, score = 0)
-            except:
-                await self.send_json({
-                    "status": "fail",
-                    "message": "db에서 오류가 발생했습니다"
-                })
-                return
+            # try:
+            #     Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = new_game, score = 0)
+            # except:
+            #     await self.send_json({
+            #         "status": "fail",
+            #         "message": "db에서 오류가 발생했습니다"
+            #     })
+            #     return
 
 
 
@@ -893,14 +898,14 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
         
-        try:
-            Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
-        except:
-            await self.send_json({
-                "status": "fail",
-                "message": "db에서 오류가 발생했습니다"
-            })
-            return
+        # try:
+        #     Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
+        # except:
+        #     await self.send_json({
+        #         "status": "fail",
+        #         "message": "db에서 오류가 발생했습니다"
+        #     })
+        #     return
         
         self.key = prefix_normal + str(game.id)
 
@@ -1082,7 +1087,10 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             return
 
         try:
-            Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = Game.objects.get(id = game_id), score = 0)
+            opponent_user = Members.objects.get(id = int(new_parsed_value['registered_user'][0]["user_id"]))
+            game = Game.objects.get(id = game_id)
+            Participant.objects.create(user_id = opponent_user, opponent_id = self.user.id, game_id = game, score = 0)
+            Participant.objects.create(user_id = self.user, opponent_id = opponent_user.id, game_id = game, score = 0)
         except:
             await self.send_json({
                 "status": "fail",
