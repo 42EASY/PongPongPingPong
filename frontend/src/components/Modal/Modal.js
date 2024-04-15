@@ -40,7 +40,8 @@ export default function Modal(modalName, argu) {
     if (
       modalName === "gameLeftServe" ||
       modalName === "gameRightServe" ||
-      modalName === "gameStartSoon"
+      modalName === "gameStartSoon" ||
+      modalName === "gameRoom"
     ) {
       let sec = 3;
       setTimeout(() => {
