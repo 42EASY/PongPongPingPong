@@ -157,12 +157,10 @@ function changeUrl(info, result, requestedUrl) {
   EndGame({ info: info, result: result });
 }
 
-export default function RemoteBoard(info, rightUser_id) {
+export default function RemoteBoard(info) {
   console.log("REMOTE BOARD: ", info);
   const socket = GameBoardSocketManager.getInstance(info.game_id);
-  const opponentInfo = info.player_info.find(
-    (player) => player.user_id !== rightUser_id
-  );
+  const opponentInfo = info.player_info;
 
   canvas.height = 550;
   canvas.width = canvas.height * 1.45;
