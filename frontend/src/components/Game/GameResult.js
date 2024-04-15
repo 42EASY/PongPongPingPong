@@ -1,4 +1,4 @@
-export default function GameResult(mode, result, leftScore, rightScore) {
+export default function GameResult(mode, isWin, leftScore, rightScore) {
   const $resultWrapper = document.createElement("div");
   $resultWrapper.classList.add("resultWrapper");
 
@@ -13,7 +13,7 @@ export default function GameResult(mode, result, leftScore, rightScore) {
 
   if (mode === "2P")
     $winOrLose.innerHTML = leftScore > rightScore ? "1p WIN" : "2p WIN";
-  else $winOrLose.innerHTML = result === "win" ? "WIN" : "LOSE";
+  else $winOrLose.innerHTML = isWin ? "WIN" : "LOSE";
   $scores.innerHTML =
     leftScore.toString().padStart(2, "0") +
     " - " +

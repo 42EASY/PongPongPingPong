@@ -11,7 +11,7 @@ export default async function EndGame({ info, result }) {
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 
-  var leftScore, rightScore, opponent;
+  var leftScore, rightScore, opponent, isWin;
   if (info.mode === "2P") {
     leftScore = result.leftScore;
     rightScore = result.rightScore;
@@ -21,11 +21,13 @@ export default async function EndGame({ info, result }) {
       // [1]상대 / [0]본인
       leftScore = result.game_status[1].score;
       rightScore = result.game_status[0].score;
+      isWin = result.game_status[0].result === "WIN";
       opponent = await getUserInfo(result.game_status[1].user_id);
     } else {
       // [0]상대 / [1]본인
       leftScore = result.game_status[0].score;
       rightScore = result.game_status[1].score;
+      isWin = result.game_status[1].result === "WIN";
       opponent = await getUserInfo(result.game_status[0].user_id);
     }
   }
@@ -33,16 +35,16 @@ export default async function EndGame({ info, result }) {
   var hasGameLeft = false;
   if (info.mode === "TOURNAMENT") {
     hasGameLeft =
-      info.round === "SEMI_FINAL" && result.result === "win" ? true : false;
+      info.round === "SEMI_FINAL" && isWin;
   }
   const $printBox = document.createElement("div");
   $printBox.classList.add("printBox");
   $app.appendChild($printBox);
   $printBox.appendChild(
-    Result(info.mode, result.result, leftScore, rightScore)
+    Result(info.mode, isWin, leftScore, rightScore)
   );
   $printBox.appendChild(EndBtn(info.mode, opponent.result, hasGameLeft));
-  if (info.mode === "2P" || result.result === "win") EndConfetti();
+  if (info.mode === "2P" || isWin ) EndConfetti();
 
   if (hasGameLeft) {
     let sec = 5;
