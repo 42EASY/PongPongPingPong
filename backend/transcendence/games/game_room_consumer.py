@@ -9,6 +9,7 @@ from games.distributed_lock import DistributedLock
 from utils import get_member_info, bot_notify_process
 import time
 from datetime import datetime, timezone
+from channels.db import database_sync_to_async
 
 prefix_normal = "normal_"
 prefix_tournament = "tournament_"
@@ -21,7 +22,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         self.lock = DistributedLock()
 
         try:
-            self.tournament = Tournament.objects.get(id = self.room_id)
+            self.tournament = await self.get_tournament(self.room_id)
         except:
             await self.send_json({
                 "status": "fail",
@@ -87,54 +88,57 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         #만일 결승 진행중에 disconnect가 된 거면, 게임 종료 처리 
         if (flag == True):
             try:
-                opponent = Members.objects.get(id = parsed_value["join_final_user"][0])
+                opponent = await self.get_member(parsed_value["join_final_user"][0])
                 
                 #결승에 대한 게임 db가 만들어져있지 않다면 새롭게 만들어서 승패 처리
-                if (len(TournamentGame.objects.filter(tournament_id = self.tournament)) < 3):
-                    game_time = datetime.now(timezone.utc)
+                tournaments = await self.get_tournament_games(self.tournament)
+                if (len(tournaments) < 3):
 
-                    game = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT, start_time = game_time, end_time = game_time)
-            
-                    TournamentGame.objects.create(game_id = game, tournament_id = self.tournament, round = TournamentGame.Round.FINAL)
+                    game = await self.create_game(Game.GameMode.TOURNAMENT)
+                    
+                    await self.create_tournament_game(game, self.tournament, TournamentGame.Round.FINAL)
 
-                    Participant.objects.create(user_id = self.user.id, game_id = game, score = 0, opponent_id = opponent.id, result = Participant.Result.LOSE)
-                    Participant.objects.create(user_id = opponent.id, game_id = game, score = 0, opponent_id = self.user.id, result = Participant.Result.WIN)
-
-
+                    await self.create_participant_result(self.user, game, opponent.id, Participant.Result.LOSE)
+                    await self.create_participant_result(opponent, game, self.user.id, Participant.Result.WIN)
+                    
                     #게임의 start_time, end_time 갱신
                     game_time = datetime.now(timezone.utc)
                     
                     game.start_time = game_time
                     game.end_time = game_time
 
-                    game.save()
+                    await self.update_game(game)
 
 
                 #결승에 대한 게임 db가 있으면 승패 업데이트
                 else:
-                    game_ids = TournamentGame.objects.filter(tournament_id = self.tournament).values_list('game_id', flat = True)
-                    
-                    # 가져온 game_id 리스트를 이용하여 Participant 모델에서 해당하는 레코드들을 필터
+                    #가져온 game_id 리스트를 이용하여 Participant 모델에서 해당하는 레코드들을 필터
+                    games = await self.get_tournament_games(self.tournament)
+                    game_ids = games.values_list('game_id', flat = True)
         
-                    user_participants = Participant.objects.get(user_id = self.user, opponent_id = opponent.id, game_id__in = game_ids)
-                    opponent_participants = Participant.objects.get(user_id = opponent, opponent_id = self.user.id, game_id__in = game_ids)
-            
+                    user_participants = await self.get_participant_by_game(self.user, opponent.id, game_ids)
+                    opponent_participants = await self.get_participant_by_game(opponent, self.user.id, game_ids)
+        
+                    #결과값 갱신
                     user_participants.result = Participant.Result.LOSE
                     opponent_participants.result = Participant.Result.WIN
 
-                    user_participants.save()
-                    opponent_participants.save()
-
+                    await self.update_participant(user_participants)
+                    await self.update_participant(opponent_participants)
+                    
+                    user_participants = await self.get_participant_by_game(self.user, opponent.id, game_ids)
+                    opponent_participants = await self.get_participant_by_game(opponent, self.user.id, game_ids)
+        
 
                     #게임의 start_time, end_time 갱신
-                    game = Game.objects.get(id = user_participants.game_id)
-                    
+                    game = await self.get_game(user_participants.game_id)
+
                     game_time = datetime.now(timezone.utc)
                     
                     game.start_time = game_time
                     game.end_time = game_time
 
-                    game.save()
+                    await self.update_game(game)
 
 
                     
@@ -242,7 +246,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             player_entrance_info = []
 
             for user_id in new_join_user:
-                user_model = Members.objects.get(id = int(user_id))
+                user_model = await self.get_member(int(user_id))
 
                 player_info = {
                     "user_id": user_id,
@@ -467,8 +471,8 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             player_entrance_info = []
 
             for user_id in new_join_user:
-                user_model = Members.objects.get(id = int(user_id))
-
+                user_model = await self.get_member(int(user_id))
+ 
                 player_info = {
                     "user_id": user_id,
                     "image_url": user_model.image_url,
@@ -506,12 +510,9 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             #등록된 유저의 정보와 승률을 list에 저장
             for player in registered_value:
                 try:
-                    user_model = Members.objects.get(id = player["user_id"])
-                
-                    game_stats = Participant.objects.filter(user_id=user_model).aggregate(
-				        total_games=Count('id'),  # 'id' 필드를 기준으로 총 게임 수 집계
-				        win_count=Count('id', filter=Q(result=Participant.Result.WIN)),  # 승리한 게임 수
-			        )
+                    user_model = await self.get_member(player['user_id'])
+ 
+                    game_stats = await self.get_participants_by_aggregate(user_model)
                 except:
                     await self.send_json({
                         "status": "fail",
@@ -544,21 +545,21 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             #game과 participant, tournamentgame 생성
             try:
                 #승률을 기준으로 정렬한 sorted_matching_value[0]과 sorted_matching_value[1]이 서로 한 게임을 하도록 game, participant, tournament 테이블 생성
-                game_time = datetime.now(timezone.utc)
-                game1 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT, start_time = game_time, end_time = game_time)
+                game1 = await self.create_game(Game.GameMode.TOURNAMENT)
 
-                Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[0]["user_id"]), game_id = game1, score = 0, opponent_id = sorted_matching_value[1]["user_id"])
-                Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[1]["user_id"]), game_id = game1, score = 0, opponent_id = sorted_matching_value[0]["user_id"])
+                await self.create_participant(Members.objects.get(id=sorted_matching_value[0]["user_id"]), game1, sorted_matching_value[1]["user_id"])
+                await self.create_participant(Members.objects.get(id=sorted_matching_value[1]["user_id"]), game1, sorted_matching_value[0]["user_id"])
 
-                TournamentGame.objects.create(game_id = game1, tournament_id = self.tournament, round = TournamentGame.Round.SEMI_FINAL)
+                await self.create_tournament_game(game1, self.tournament, TournamentGame.Round.SEMI_FINAL)
 
                 #승률을 기준으로 정렬한 sorted_matching_value[2]과 sorted_matching_value[3]이 서로 한 게임을 하도록 game, participant, tournament 테이블 생성
-                game2 = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT, start_time = game_time, end_time = game_time)
+                game2 = await self.create_game(Game.GameMode.TOURNAMENT)
 
-                Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[2]["user_id"]), game_id = game2, score = 0, opponent_id = sorted_matching_value[3]["user_id"])
-                Participant.objects.create(user_id = Members.objects.get(id=sorted_matching_value[3]["user_id"]), game_id = game2, score = 0, opponent_id = sorted_matching_value[2]["user_id"])
+                await self.create_participant(Members.objects.get(id=sorted_matching_value[2]["user_id"]), game2, sorted_matching_value[3]["user_id"])
+                await self.create_participant(Members.objects.get(id=sorted_matching_value[3]["user_id"]), game2, sorted_matching_value[2]["user_id"])
 
-                TournamentGame.objects.create(game_id = game2, tournament_id = self.tournament, round = TournamentGame.Round.SEMI_FINAL)
+                await self.create_tournament_game(game2, self.tournament, TournamentGame.Round.SEMI_FINAL)
+
             except:
                 await self.send_json({
                     "status": "fail",
@@ -746,12 +747,9 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             for player in registered_value:
                 if (player["user_id"] in new_parsed_value["join_final_user"]):
                     try:
-                        user_model = Members.objects.get(id = player["user_id"])
-            
-                        game_stats = Participant.objects.filter(user_id=user_model).aggregate(
-				            total_games=Count('id'),  # 'id' 필드를 기준으로 총 게임 수 집계
-				            win_count=Count('id', filter=Q(result=Participant.Result.WIN)),  # 승리한 게임 수
-			            )
+                        user_model = await self.get_member(player['user_id'])
+
+                        game_stats = await self.get_participants_by_aggregate(user_model)
                     except:
                         await self.send_json({
                             "status": "fail",
@@ -779,13 +777,12 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
 
             try:
-                game_time = datetime.now(timezone.utc)
-                game = Game.objects.create(game_mode = Game.GameMode.TOURNAMENT, start_time = game_time, end_time = game_time)
-            
-                TournamentGame.objects.create(game_id = game, tournament_id = self.tournament, round = TournamentGame.Round.FINAL)
+                game = await self.create_game(Game.GameMode.TOURNAMENT)
+                
+                await self.create_tournament_game(game, self.tournament, TournamentGame.Round.FINAL)
 
-                Participant.objects.create(user_id = Members.objects.get(id = matching_value[0]["user_id"]), game_id = game, score = 0, opponent_id = matching_value[1]["user_id"])
-                Participant.objects.create(user_id = Members.objects.get(id = matching_value[1]["user_id"]), game_id = game, score = 0, opponent_id = matching_value[0]["user_id"])
+                await self.create_participant(Members.objects.get(id = matching_value[0]["user_id"]), game, matching_value[1]["user_id"])
+                await self.create_participant(Members.objects.get(id = matching_value[1]["user_id"]), game, matching_value[0]["user_id"])
             except:
                 await self.send_json({
                     "status": "fail",
@@ -860,3 +857,56 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             "opponent": opponent
         }
         await bot_notify_process(self, user_id, "bot_notify_tournament_game_opponent", data)
+
+    @database_sync_to_async
+    def get_game(self, game_id):
+        return Game.objects.get(id = game_id)
+
+    @database_sync_to_async
+    def get_participant_by_game(self, user_id, opponent_id, game_ids):
+        return Participant.objects.get(user_id = user_id, opponent_id = opponent_id, game_id__in = game_ids)
+
+    @database_sync_to_async
+    def get_tournament(self, tournament_id):
+        return Tournament.objects.get(id = tournament_id)
+    
+    @database_sync_to_async
+    def get_member(self, user_id):
+        return Members.objects.get(id = user_id)
+    
+    @database_sync_to_async
+    def get_participants_by_aggregate(self, user_id):
+        return Participant.objects.filter(user_id = user_id).aggregate(
+				        total_games=Count('id'),  # 'id' 필드를 기준으로 총 게임 수 집계
+				        win_count=Count('id', filter=Q(result=Participant.Result.WIN)),  # 승리한 게임 수
+			        )
+
+    @database_sync_to_async
+    def get_tournament_games(self, tournament_id):
+        return TournamentGame.objects.filter(tournament_id = tournament_id)
+    
+    @database_sync_to_async
+    def create_game(self, game_mode):
+        game_time = datetime.now(timezone.utc)
+        return Game.objects.create(game_mode = game_mode, start_time = game_time, end_time = game_time)
+            
+    @database_sync_to_async
+    def create_tournament_game(self, game_id, tournament_id, round):
+        return TournamentGame.objects.create(game_id = game_id, tournament_id = tournament_id, round = round)
+    
+    @database_sync_to_async
+    def create_participant_result(self, user_id, game_id, opponent_id, result):
+        return Participant.objects.create(user_id = user_id, opponent_id = opponent_id, game_id = game_id, score = 0, result = result)
+    
+    @database_sync_to_async
+    def create_participant(self, user_id, game_id, opponent_id):
+        return Participant.objects.create(user_id = user_id, opponent_id = opponent_id, game_id = game_id, score = 0)
+    
+
+    @database_sync_to_async
+    def update_game(self, game):
+        game.save()
+    
+    @database_sync_to_async
+    def update_participant(self, participant):
+        participant.save()
