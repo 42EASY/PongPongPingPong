@@ -547,16 +547,22 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 #승률을 기준으로 정렬한 sorted_matching_value[0]과 sorted_matching_value[1]이 서로 한 게임을 하도록 game, participant, tournament 테이블 생성
                 game1 = await self.create_game(Game.GameMode.TOURNAMENT)
 
-                await self.create_participant(Members.objects.get(id=sorted_matching_value[0]["user_id"]), game1, sorted_matching_value[1]["user_id"])
-                await self.create_participant(Members.objects.get(id=sorted_matching_value[1]["user_id"]), game1, sorted_matching_value[0]["user_id"])
+                user1 = await self.get_member(sorted_matching_value[0]["user_id"])
+                user2 = await self.get_member(sorted_matching_value[1]["user_id"])
+
+                await self.create_participant(user1, game1, sorted_matching_value[1]["user_id"])
+                await self.create_participant(user2, game1, sorted_matching_value[0]["user_id"])
 
                 await self.create_tournament_game(game1, self.tournament, TournamentGame.Round.SEMI_FINAL)
 
                 #승률을 기준으로 정렬한 sorted_matching_value[2]과 sorted_matching_value[3]이 서로 한 게임을 하도록 game, participant, tournament 테이블 생성
                 game2 = await self.create_game(Game.GameMode.TOURNAMENT)
 
-                await self.create_participant(Members.objects.get(id=sorted_matching_value[2]["user_id"]), game2, sorted_matching_value[3]["user_id"])
-                await self.create_participant(Members.objects.get(id=sorted_matching_value[3]["user_id"]), game2, sorted_matching_value[2]["user_id"])
+                user3 = await self.get_member(sorted_matching_value[2]["user_id"])
+                user4 = await self.get_member(sorted_matching_value[3]["user_id"])
+
+                await self.create_participant(user3, game2, sorted_matching_value[3]["user_id"])
+                await self.create_participant(user4, game2, sorted_matching_value[2]["user_id"])
 
                 await self.create_tournament_game(game2, self.tournament, TournamentGame.Round.SEMI_FINAL)
 
@@ -781,8 +787,11 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 
                 await self.create_tournament_game(game, self.tournament, TournamentGame.Round.FINAL)
 
-                await self.create_participant(Members.objects.get(id = matching_value[0]["user_id"]), game, matching_value[1]["user_id"])
-                await self.create_participant(Members.objects.get(id = matching_value[1]["user_id"]), game, matching_value[0]["user_id"])
+                user1 = await self.get_member(matching_value[0]["user_id"])
+                user2 = await self.get_member(matching_value[1]["user_id"])
+
+                await self.create_participant(user1, game, matching_value[1]["user_id"])
+                await self.create_participant(user2, game, matching_value[0]["user_id"])
             except:
                 await self.send_json({
                     "status": "fail",

@@ -733,15 +733,11 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             join_game_key = key
 
             try:
+                user1 = await self.get_member(new_parsed_value['registered_user'][0]['user_id'])
+                user2 = await self.get_member(new_parsed_value['registered_user'][1]['user_id'])
 
-                #TODO: participant는 pr merge 후 변경
-
-                user1 = Members.objects.get(id = new_parsed_value['registered_user'][0]['user_id'])
-                user2 = Members.objects.get(id = new_parsed_value['registered_user'][1]['user_id'])
-
-                Participant.objects.create(user_id = user1, opponent_id = user2.id, game_id = game, score = 0)
-                Participant.objects.create(user_id = user2, opponent_id = user1.id, game_id = game, score = 0)
-
+                await self.create_participant(user1, user2.id, game)
+                await self.create_participant(user2, user1.id, game)
 
             except:
                 await self.send_json({
@@ -1087,11 +1083,12 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             return
 
         try:
+            
+            opponent_user = await self.get_member(int(new_parsed_value['registered_user'][0]["user_id"]))
+            game = await self.get_game(game_id)
 
-            opponent_user = Members.objects.get(id = int(new_parsed_value['registered_user'][0]["user_id"]))
-            game = Game.objects.get(id = game_id)
-            Participant.objects.create(user_id = opponent_user, opponent_id = self.user.id, game_id = game, score = 0)
-            Participant.objects.create(user_id = self.user, opponent_id = opponent_user.id, game_id = game, score = 0)
+            await self.create_participant(opponent_user, self.user.id, game)
+            await self.create_participant(self.user, opponent_user.id, game)
 
         except:
             await self.send_json({
