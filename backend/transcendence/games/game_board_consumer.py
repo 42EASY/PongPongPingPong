@@ -21,8 +21,15 @@ height = 550
 width = height * 1.45
 
 class GameBoard:
-    def __init__(self, consumer, player1_id, player2_id):
-        self.ball = {'x': width / 2, 'y': height / 2, 'vx': 3, 'vy': 2, 'width': 18, 'height': 18}
+    def __init__(self, consumer, player1_id, player2_id, option):
+        # 옵션에 따른 속도 설정
+        vx = 3
+        vy = 2
+        if option == Game.GameOption.SPEED:
+            vx *= 2
+            vy *= 2
+
+        self.ball = {'x': width / 2, 'y': height / 2, 'vx': vx, 'vy': vy, 'width': 18, 'height': 18}
         self.paddles = {
             'player1': {'user_id': player1_id, 'x': 40, 'y': height / 2 - 35, 'width': 10, 'height': 100, 'score': 0, 'speed': 10},
             'player2': {'user_id': player2_id, 'x': width - 50, 'y': height / 2 - 35, 'width': 10, 'height': 100, 'score': 0, 'speed': 10}
@@ -47,16 +54,15 @@ class GameBoard:
             await self.handle_wall_collision()
 
     async def reset_ball(self):
-        # 공의 속도를 랜덤하게 설정
-        vx = random.choice([-1, 1]) * random.uniform(2, 4)  # -4 to -2 또는 2 to 4 사이의 값
-        vy = random.choice([-1, 1]) * random.uniform(2, 4)  # -4 to -2 또는 2 to 4 사이의 값
+        # 공의 방향 랜덤, 속도 고정
+        vx_sign = random.choice([-1, 1])  # -1 또는 1
+        vy_sign = random.choice([-1, 1])  # -1 또는 1
 
-        # 공의 초기 위치와 크기를 설정
         self.ball = {
             'x': width / 2,
             'y': height / 2,
-            'vx': vx,
-            'vy': vy,
+            'vx': self.ball['vx'] * vx_sign,
+            'vy': self.ball['vy'] * vy_sign,
             'width': 18,
             'height': 18
         }
@@ -113,6 +119,8 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
 
         print(f"User {self.user.id} added to group {self.room_group_name} channel_name : {self.channel_name}")
 
+        game_instance = await self.get_game(self.game_id)
+        option = game_instance.game_option if game_instance else Game.GameOption.CLASSIC
         # 게임 참여자 정보 저장
         participants = await self.get_participants(self.game_id)
         
@@ -121,7 +129,7 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         # 보드상 오른쪽에 위치
         self.player2_id = participants[1].user_id.id
 
-        self.game_board = GameBoard(self, self.player1_id, self.player2_id)
+        self.game_board = GameBoard(self, self.player1_id, self.player2_id, option)
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -339,12 +347,9 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_game(self, game_id):
         try:
-            return Game.objects.get(id = game_id)
-        except:
-            return JsonResponse({
-                'code': 404,
-                'message': 'Not Found'
-            }, status = 404)
+            return Game.objects.get(id=game_id)
+        except Game.DoesNotExist:
+            return None
 
 
     #game을 저장하는 비동기 함수
