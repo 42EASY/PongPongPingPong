@@ -839,15 +839,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
            
             self.key = prefix_normal + str(new_game.id)
 
-            # try:
-            #     Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = new_game, score = 0)
-            # except:
-            #     await self.send_json({
-            #         "status": "fail",
-            #         "message": "db에서 오류가 발생했습니다"
-            #     })
-            #     return
-
 
 
     #normal 모드에서 초대를 한 경우
@@ -898,14 +889,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             })
             return
         
-        # try:
-        #     Participant.objects.create(user_id = Members.objects.get(id = self.user.id), game_id = game, score = 0)
-        # except:
-        #     await self.send_json({
-        #         "status": "fail",
-        #         "message": "db에서 오류가 발생했습니다"
-        #     })
-        #     return
         
         self.key = prefix_normal + str(game.id)
 
