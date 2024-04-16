@@ -69,9 +69,10 @@ var WebSocketManager = (function () {
     },
     startInterval: function () {
       if (interval) clearTimeout(interval);
+      const self = this;
       function scheduleNext() {
         interval = setTimeout(() => {
-          this.getInstance();
+          instance = self.getInstance();
           scheduleNext();
         }, reconnectInterval);
       }
@@ -82,8 +83,7 @@ var WebSocketManager = (function () {
         clearTimeout(interval);
         interval = null;
       }
-      if (instance || instance.readyState === WebSocket.CLOSED)
-        instance.close();
+      if (instance) instance.close();
     },
   };
 })();
