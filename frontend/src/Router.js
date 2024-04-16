@@ -37,6 +37,7 @@ function checkUrl(requestedUrl) {
 
 export default function changeUrl(requestedUrl, element) {
   //화면 초기화
+  document.body.style.display = "none";
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
   const $nav = document.querySelector(".nav");
@@ -67,8 +68,8 @@ export default function changeUrl(requestedUrl, element) {
     }
   }
 
+  if (match.page === Register) match.page(element);
   if (
-    match.page === Register ||
     match.page === GameRoom ||
     match.page === Game ||
     match.page === EndGame

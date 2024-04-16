@@ -5,6 +5,7 @@ import Modal from "../components/Modal/Modal.js";
 import RoomSocketManager from "../state/RoomSocketManager.js";
 
 export default function GameRoom(data) {
+  document.body.style.display = "block";
   if (!data) {
     changeUrl("/main");
     return;

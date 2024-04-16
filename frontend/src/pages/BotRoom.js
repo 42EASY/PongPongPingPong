@@ -31,7 +31,7 @@ export default function BotRoom() {
     JSON.stringify({
       action: "fetch_bot_notify_messages",
       user_id: getUserId(),
-      timestamp: getTimestamp()
+      timestamp: getTimestamp(),
     })
   );
 
@@ -54,7 +54,7 @@ export default function BotRoom() {
       socket.send(
         JSON.stringify({
           action: "update_read_time",
-          room_name: 'bot',
+          room_name: "bot",
           timestamp: getTimestamp(),
         })
       );
@@ -67,4 +67,8 @@ export default function BotRoom() {
   $botRoomWrapper.appendChild(ChatInput());
   const $chatInput = document.querySelector(".chatInput");
   $chatInput.disabled = true;
+
+  window.onload = function () {
+    document.body.style.display = "block";
+  };
 }
