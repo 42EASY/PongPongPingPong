@@ -33,14 +33,13 @@ class MemberView(APIView):
 				relation = Relation.FRIEND._name_
 
 			game_stats = Participant.objects.filter(user_id=user.id).aggregate(
-				total_games=Count('id'),  # 'id' 필드를 기준으로 총 게임 수 집계
 				win_count=Count('id', filter=Q(result=Participant.Result.WIN)),  # 승리한 게임 수
-				lose_count=Count('id', filter=Q(result=Participant.Result.LOSE))  # 패배한 게임 수
+				lose_count=Count('id', filter=Q(result=Participant.Result.LOSE)),  # 패배한 게임 수
 			)
 
-			total_games = game_stats['total_games']
 			win_count = game_stats['win_count']
 			lose_count = game_stats['lose_count']
+			total_games = win_count + lose_count
 
 			return JsonResponse({
 				'code': 200,
@@ -243,7 +242,11 @@ class MemberGameView(APIView):
 		if (mode == Game.GameMode.NORMAL):
 
 			try:
-				game_list = Participant.objects.filter(user_id = user_id, game_id__game_mode = Game.GameMode.NORMAL).order_by('-game_id__start_time')
+				game_list = Participant.objects.filter(
+						    user_id=user_id, 
+   							game_id__game_mode=Game.GameMode.NORMAL).exclude(result="").order_by('-game_id__start_time')
+
+				# game_list = Participant.objects.filter(user_id = user_id, game_id__game_mode = Game.GameMode.NORMAL).order_by('-game_id__start_time')
 			except:
 				return JsonResponse({
 					'code': 400,
