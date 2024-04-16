@@ -8,7 +8,6 @@ const RoomSocketManager = (() => {
   let reconnectAttempts = 0; // 현재 재연결 시도 횟수
 
   function init(room_id) {
-    console.log("init: ", room_id);
     roomNumber = room_id;
     const socketUrl = `${socketBaseUrl}/ws/join_room/${room_id}/?token=${getAccessToken()}`;
     const ws = new WebSocket(socketUrl);
