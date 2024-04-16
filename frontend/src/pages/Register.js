@@ -12,13 +12,8 @@ import {
   getImage,
   getNickname,
 } from "../state/State.js";
-import changeUrl from "../Router.js";
 
 export default function Register(isInit = false) {
-  if (getIsLogin() === false) {
-    changeUrl("/"); //로그인 안되어있으면 로그인 페이지로 이동
-    return;
-  }
   Nav();
 
   const $app = document.querySelector(".App");
