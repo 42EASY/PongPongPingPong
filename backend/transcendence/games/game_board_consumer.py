@@ -173,38 +173,39 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
             self.game_loop_task.cancel()
         # 게임이 완전히 끝나지 않았다면, 점수가 10 미만인 경우
         if self.game_board.scores['player1'] < 10 and self.game_board.scores['player2'] < 10:
-            try:
-                # 먼저 접속이 끊긴 쪽이 패배로 처리
-                loser = self.user.id
-                winner = self.player2_id if loser == self.player1_id else self.player1_id
+            if await self.already_game_over() != True:
+                try:
+                    # 먼저 접속이 끊긴 쪽이 패배로 처리
+                    loser = self.user.id
+                    winner = self.player2_id if loser == self.player1_id else self.player1_id
 
-                # 결과 업데이트
-                await self.update_participant_result(loser, Participant.Result.LOSE)
-                await self.update_participant_result(winner, Participant.Result.WIN)
+                    # 결과 업데이트
+                    await self.update_participant_result(loser, Participant.Result.LOSE)
+                    await self.update_participant_result(winner, Participant.Result.WIN)
 
-                # 게임 종료 시간 저장
-                await self.update_game_end_time(self.game_id)
+                    # 게임 종료 시간 저장
+                    await self.update_game_end_time(self.game_id)
 
-                game_over_message = {
-                    'action': 'game_over',
-                    'game_status': [
-                        {"user_id": loser, "score": self.game_board.scores['player1'], "result": Participant.Result.LOSE},
-                        {"user_id": winner, "score": self.game_board.scores['player2'], "result": Participant.Result.WIN}
-                        ]
-                    }
+                    game_over_message = {
+                        'action': 'game_over',
+                        'game_status': [
+                            {"user_id": loser, "score": self.game_board.scores['player1'], "result": Participant.Result.LOSE},
+                            {"user_id": winner, "score": self.game_board.scores['player2'], "result": Participant.Result.WIN}
+                            ]
+                        }
 
-                await self.channel_layer.group_send(
-                        self.room_group_name,
-                        {
-                            'type': 'broadcast_game_status',
-                            'data': game_over_message
-                        })
-            except Exception as e:
-                await self.send(text_data=json_encode({
-                    "status": "fail",
-                    "message": "redis에 접근 중 오류가 발생했습니다"
-                }))
-                return
+                    await self.channel_layer.group_send(
+                            self.room_group_name,
+                            {
+                                'type': 'broadcast_game_status',
+                                'data': game_over_message
+                            })
+                except Exception as e:
+                    await self.send(text_data=json_encode({
+                        "status": "fail",
+                        "message": "redis에 접근 중 오류가 발생했습니다"
+                    }))
+                    return
         tournament_entry = await self.get_tournament_games_first(self.game_id)
         if tournament_entry:
             players = await self.get_tournament_players(self.tournament_game.tournament_id.id)
@@ -421,3 +422,13 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         game = Game.objects.get(id=game_id)
         game.end_time = datetime.now(timezone.utc)
         game.save()
+
+    @database_sync_to_async
+    def already_game_over(self):
+        participant = Participant.objects.filter(game_id=self.game_id)
+        if participant[0].result is None and participant[1].result is None:
+            return False
+        elif participant[0].result is "" and participant[1].result is "":
+            return False
+        else:
+            return True
