@@ -205,7 +205,7 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
                     "message": "redis에 접근 중 오류가 발생했습니다"
                 }))
                 return
-        tournament_entry = Tournament.objects.filter(game_id=self.game_id, round='FINAL').first()
+        tournament_entry = await self.get_tournament_games_first(self.game_id)
         if tournament_entry:
             players = await self.get_tournament_players(self.tournament_game.tournament_id.id)
             await bot_notify_process(self, self.user.id, "bot_notify_tournament_game_result", players)
@@ -291,12 +291,11 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json_encode(event['data']))
 
     async def get_tournament_players(self, tournament_id):
-        tournament_games = TournamentGame.objects.filter(tournament_id=tournament_id)
-        
+        tournament_games = await self.get_tournament_games(tournament_id)
         players = set()
         
         for game in tournament_games:
-            participants = Participant.objects.filter(game_id=game.game_id)
+            participants = await self.get_participants(game.game_id)
             for participant in participants:
                 player = await get_member_info(participant.user_id)
                 ranking = 0
@@ -383,8 +382,19 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         return Members.objects.get(id = id)
 
     #tournament game을 가져오는 비동기함수
+    @database_sync_to_async
     def get_tournament_game(self, game_id):
         return TournamentGame.objects.get(game_id = game_id)
+    
+    #tournament id를 통해서 tournament game을 가져오는 비동기함수
+    @database_sync_to_async
+    def get_tournament_games(self, tournament_id):
+        return TournamentGame.objects.filter(tournament_id = tournament_id)
+    
+    #game id를 통해서 tournament game을 가져오는 비동기함수
+    @database_sync_to_async
+    def get_tournament_games_first(self, game_id):
+        return TournamentGame.objects.filter(game_id = game_id, round = TournamentGame.Round.FINAL).first()
 
     @database_sync_to_async
     def update_participant_results(self, user_id, game_id, opponent_id, result, score):
