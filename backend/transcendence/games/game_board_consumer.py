@@ -197,7 +197,10 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
                     "message": "redis에 접근 중 오류가 발생했습니다"
                 }))
                 return
-
+        tournament_entry = Tournament.objects.filter(game_id=self.game_id, round='FINAL').first()
+        if tournament_entry:
+            players = await self.get_tournament_players(self.tournament_game.tournament_id.id)
+            await bot_notify_process(self, self.user.id, "bot_notify_tournament_game_result", players)
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     #game status 알림
