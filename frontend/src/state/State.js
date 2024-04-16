@@ -127,6 +127,10 @@ const logout = () => {
   return new Promise((resolve) => {
     const url = `${baseUrl}/api/v1/auth/logout`;
 
+    WebSocketManager.endInterval();
+    JoinSocketManager.endInterval();
+    ChatSocketManager.endInterval();
+
     fetch(url, {
       method: "POST",
       credentials: "include",
@@ -147,10 +151,9 @@ const logout = () => {
 };
 
 const checkSocketConnection = () => {
-  WebSocketManager.getInstance();
-  JoinSocketManager.getInstance();
-  WebSocketManager.getInstance();
-  ChatSocketManager.getInstance();
+  WebSocketManager.startInterval();
+  JoinSocketManager.startInterval();
+  ChatSocketManager.startInterval();
 };
 
 export {
