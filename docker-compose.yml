@@ -33,8 +33,6 @@ services:
       - transcendence
     volumes:
       - ./backend/transcendence:/app/transcendence
-      - ./ssl/certs/localhost.pem:/app/keys/certs/localhost.pem
-      - ./ssl/private/localhost-key.pem:/app/keys/private/localhost-key.pem
     depends_on:
       - db
       - redis
@@ -57,8 +55,6 @@ services:
     volumes:
       - ./frontend:/app/frontend
       - ./backend/transcendence/media:/app/backend/transcendence/media
-      - ./ssl/certs/localhost.pem:/etc/ssl/certs/localhost.pem
-      - ./ssl/private/localhost-key.pem:/etc/ssl/private/localhost-key.pem
     
   redis:
     image: redis:7.2-bookworm
