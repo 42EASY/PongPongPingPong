@@ -19,6 +19,19 @@ const RoomSocketManager = (() => {
       ws.close();
     };
 
+    window.addEventListener("beforeunload", function () {
+      console.log("Trying to leave the page");
+      ws.close();
+    });
+
+    // 추가: popstate 이벤트 리스너를 초기화 함수에 포함
+    window.addEventListener("popstate", function () {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+        console.log("WebSocket connection closed due to navigation");
+      }
+    });
+
     return ws;
   }
 

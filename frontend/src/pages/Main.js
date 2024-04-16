@@ -2,11 +2,13 @@ import Nav from "./Nav.js";
 import Profile from "../components/Main/Profile.js";
 import GameHistory from "../components/Main/GameHistory.js";
 import { GameResultsScroll } from "../components/Main/GameResults.js";
-import { getUserId } from "../state/State.js";
+import { getUserId, checkSocketConnection } from "../state/State.js";
 import { getUserInfo } from "../components/Main/UserApi.js";
 
 export default async function Main() {
   Nav();
+
+  checkSocketConnection();
 
   document.body.style.overflow = "auto";
   const $app = document.querySelector(".App");
