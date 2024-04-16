@@ -699,6 +699,16 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             if (len(new_invited_info) >= 1 or len(new_registered_user) >= 2):
                 continue
 
+            #만일 본인이 있으면 넘어가기
+            user_flag = False
+            for register in new_registered_user:
+                if (register["user_id"] == self.user.id):
+                    user_flag = True
+                    continue
+            if (user_flag == True):
+                continue
+
+
             new_parsed_value['registered_user'].append({
                 "user_id": self.user.id,
                 "channel_id": self.channel_name
