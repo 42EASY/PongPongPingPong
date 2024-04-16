@@ -16,4 +16,4 @@ cd /app/transcendence
 # TODO: 개발용 추후 삭제
 python /app/transcendence/run_daphne.py
 
-# daphne -e ssl:8443:privateKey=/app/keys/private/localhost-key.pem:certKey=/app/keys/certs/localhost.pem transcendence.asgi:application
+# daphne -e ssl:8443:privateKey=/etc/ssl/private/localhost.key:certKey=/etc/ssl/certs/localhost.pem transcendence.asgi:application

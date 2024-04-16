@@ -5,11 +5,7 @@ from members.models import Members
 from games.models import Game, Participant
 from django.http import JsonResponse
 from tournaments.models import Tournament, TournamentGame
-from django.core.cache import cache
-from urllib.parse import parse_qs
 from jwt import decode as jwt_decode, exceptions as jwt_exceptions
-from django.conf import settings
-from games.distributed_lock import DistributedLock
 from utils import get_member_info, bot_notify_process, json_encode
 from datetime import datetime, timezone
 from channels.db import database_sync_to_async
@@ -21,8 +17,15 @@ height = 550
 width = height * 1.45
 
 class GameBoard:
-    def __init__(self, consumer, player1_id, player2_id):
-        self.ball = {'x': width / 2, 'y': height / 2, 'vx': 3, 'vy': 2, 'width': 18, 'height': 18}
+    def __init__(self, consumer, player1_id, player2_id, option):
+        # 옵션에 따른 속도 설정
+        vx = 3
+        vy = 2
+        if option == Game.GameOption.SPEED:
+            vx *= 2
+            vy *= 2
+
+        self.ball = {'x': width / 2, 'y': height / 2, 'vx': vx, 'vy': vy, 'width': 18, 'height': 18}
         self.paddles = {
             'player1': {'user_id': player1_id, 'x': 40, 'y': height / 2 - 35, 'width': 10, 'height': 100, 'score': 0, 'speed': 10},
             'player2': {'user_id': player2_id, 'x': width - 50, 'y': height / 2 - 35, 'width': 10, 'height': 100, 'score': 0, 'speed': 10}
@@ -47,16 +50,15 @@ class GameBoard:
             await self.handle_wall_collision()
 
     async def reset_ball(self):
-        # 공의 속도를 랜덤하게 설정
-        vx = random.choice([-1, 1]) * random.uniform(2, 4)  # -4 to -2 또는 2 to 4 사이의 값
-        vy = random.choice([-1, 1]) * random.uniform(2, 4)  # -4 to -2 또는 2 to 4 사이의 값
+        # 공의 방향 랜덤, 속도 고정
+        vx_sign = random.choice([-1, 1])  # -1 또는 1
+        vy_sign = random.choice([-1, 1])  # -1 또는 1
 
-        # 공의 초기 위치와 크기를 설정
         self.ball = {
             'x': width / 2,
             'y': height / 2,
-            'vx': vx,
-            'vy': vy,
+            'vx': self.ball['vx'] * vx_sign,
+            'vy': self.ball['vy'] * vy_sign,
             'width': 18,
             'height': 18
         }
@@ -85,21 +87,21 @@ class GameBoard:
                 break  # 하나의 패들과만 충돌 가능하므로 추가 검사 불필요
 
     async def handle_wall_collision(self):
+        score_updated = False
         if self.ball['x'] <= 0:
             self.scores['player2'] += 1
-            if self.scores['player2'] == 10:
-                player1_score = self.scores['player1']
-                player2_score = self.scores['player2']
-                await self.consumer.game_over(player1_score, player2_score)
-                return
-        else:
+            score_updated = True
+        elif self.ball['x'] >= width:
             self.scores['player1'] += 1
-            if self.scores['player1'] == 10:
-                player1_score = self.scores['player1']
-                player2_score = self.scores['player2']
+            score_updated = True
+
+        if score_updated:
+            player1_score = self.scores['player1']
+            player2_score = self.scores['player2']
+            if player1_score >= 10 or player2_score >= 10:
                 await self.consumer.game_over(player1_score, player2_score)
-                return
-        await self.reset_ball()
+            else:
+                await self.reset_ball()
 
 
 class GameBoardConsumer(AsyncWebsocketConsumer):
@@ -108,11 +110,14 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         self.room_group_name = 'game_%s' % self.game_id
         self.game_loop_task = None
+        self.game_over_flag = False
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
         print(f"User {self.user.id} added to group {self.room_group_name} channel_name : {self.channel_name}")
 
+        game_instance = await self.get_game(self.game_id)
+        option = game_instance.game_option if game_instance else Game.GameOption.CLASSIC
         # 게임 참여자 정보 저장
         participants = await self.get_participants(self.game_id)
         
@@ -121,7 +126,7 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         # 보드상 오른쪽에 위치
         self.player2_id = participants[1].user_id.id
 
-        self.game_board = GameBoard(self, self.player1_id, self.player2_id)
+        self.game_board = GameBoard(self, self.player1_id, self.player2_id, option)
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -163,6 +168,7 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         )
 
     async def disconnect(self, close_code):
+        await self.broadcast_game_state()
         if self.game_loop_task and not self.game_loop_task.done():
             self.game_loop_task.cancel()
         # 게임이 완전히 끝나지 않았다면, 점수가 10 미만인 경우
@@ -179,27 +185,30 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
                 # 게임 종료 시간 저장
                 await self.update_game_end_time(self.game_id)
 
-                # 상대방에게 게임 종료 메시지 전송
-                opponent_channel_name = self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-                if opponent_channel_name:
-                    await self.channel_layer.send(
-                        opponent_channel_name,
+                game_over_message = {
+                    'action': 'game_over',
+                    'game_status': [
+                        {"user_id": loser, "score": self.game_board.scores['player1'], "result": Participant.Result.LOSE},
+                        {"user_id": winner, "score": self.game_board.scores['player2'], "result": Participant.Result.WIN}
+                        ]
+                    }
+
+                await self.channel_layer.group_send(
+                        self.room_group_name,
                         {
                             'type': 'broadcast_game_status',
-                            'message': 'game_over',
-                            'game_status': [
-                                {"user_id": loser, "score": self.game_board.scores['player1'], "result": Participant.Result.LOSE},
-                                {"user_id": winner, "score": self.game_board.scores['player2'], "result": Participant.Result.WIN}
-                            ]
-                        }
-                    )
+                            'data': game_over_message
+                        })
             except Exception as e:
                 await self.send(text_data=json_encode({
                     "status": "fail",
                     "message": "redis에 접근 중 오류가 발생했습니다"
                 }))
                 return
-
+        tournament_entry = Tournament.objects.filter(game_id=self.game_id, round='FINAL').first()
+        if tournament_entry:
+            players = await self.get_tournament_players(self.tournament_game.tournament_id.id)
+            await bot_notify_process(self, self.user.id, "bot_notify_tournament_game_result", players)
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     #game status 알림
@@ -240,6 +249,11 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         }))
     
     async def game_over(self, player1_score, player2_score):
+        # 게임 종료 상태를 체크하여 중복 종료를 방지
+        if self.game_over_flag:
+            return
+        self.game_over_flag = True
+        
         await self.broadcast_game_state()
 
         # 결과 판정
@@ -338,12 +352,9 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_game(self, game_id):
         try:
-            return Game.objects.get(id = game_id)
-        except:
-            return JsonResponse({
-                'code': 404,
-                'message': 'Not Found'
-            }, status = 404)
+            return Game.objects.get(id=game_id)
+        except Game.DoesNotExist:
+            return None
 
 
     #game을 저장하는 비동기 함수
