@@ -1,4 +1,7 @@
 import changeUrl from "../Router.js";
+import ChatSocketManager from "./ChatSocketManager.js";
+import JoinSocketManager from "./JoinSocketManager.js";
+import WebSocketManager from "./WebSocketManager.js";
 
 export const baseUrl = "https://localhost";
 export const socketBaseUrl = "wss://localhost";
@@ -94,7 +97,7 @@ const getUserId = () => {
 
 const getNumberUserId = () => {
   return Number(localStorage.getItem("userId"));
-}
+};
 
 const getEmail = () => {
   return localStorage.getItem("email");
@@ -143,6 +146,13 @@ const logout = () => {
   });
 };
 
+const checkSocketConnection = () => {
+  WebSocketManager.getInstance();
+  JoinSocketManager.getInstance();
+  WebSocketManager.getInstance();
+  ChatSocketManager.getInstance();
+};
+
 export {
   setLoginState,
   setAccessToken,
@@ -160,4 +170,5 @@ export {
   getImage,
   getMyInfo,
   logout,
+  checkSocketConnection,
 };

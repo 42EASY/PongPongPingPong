@@ -6,13 +6,10 @@ import { getUserList } from "../components/Nav/NavApi.js";
 import FastGameStart from "../components/Nav/FastGameStart.js";
 import { logout } from "../state/State.js";
 import RoomSocketManager from "../state/RoomSocketManager.js";
-import JoinSocketManager from "../state/JoinSocketManager.js";
 
 export default async function Nav() {
   const $navbar = document.querySelector(".nav");
   $navbar.innerHTML = NavBar().innerHTML;
-
-  JoinSocketManager.getInstance();
 
   //로고 클릭이벤트
   const $navBrand = document.querySelector(".navBrand");
