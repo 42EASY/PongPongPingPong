@@ -3,8 +3,13 @@ import { getUserInfo } from "../components/Main/UserApi.js";
 import Info from "../components/Game/Info.js";
 import Board from "../components/Game/Board.js";
 import RemoteBoard from "../components/Game/RemoteBoard.js";
+import changeUrl from "../Router.js";
 
 export default async function Game(data) {
+  if (!data) {
+    changeUrl("/main");
+    return;
+  }
   console.log("GAME: ", data);
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
