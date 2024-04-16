@@ -5,6 +5,10 @@ import Modal from "../components/Modal/Modal.js";
 import RoomSocketManager from "../state/RoomSocketManager.js";
 
 export default function GameRoom(data) {
+  if (!data) {
+    changeUrl("/main");
+    return;
+  }
   Nav();
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
