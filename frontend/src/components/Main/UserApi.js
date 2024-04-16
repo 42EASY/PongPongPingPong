@@ -1,6 +1,7 @@
 import { getAccessToken, setNewAccessToken } from "../../state/State.js";
 import { chatUserState } from "../../state/ChatUserState.js";
 import { baseUrl } from "../../state/State.js";
+import changeUrl from "../../Router.js";
 
 export function getUserInfo(id) {
   return new Promise((resolve) => {
@@ -22,7 +23,12 @@ export function getUserInfo(id) {
           setNewAccessToken().then((result) => {
             if (result === true) resolve(getUserInfo(id));
           });
+        } else if (data.code === 404) {
+          changeUrl("/404");
         }
+      })
+      .catch(() => {
+        changeUrl("/404");
       });
   });
 }

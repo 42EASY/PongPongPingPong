@@ -1,7 +1,7 @@
 import { getAccessToken, socketBaseUrl } from "./State.js";
 
 const JoinSocketManager = (() => {
-  let instance;
+  let instance, interval;
   let reconnectInterval = 1000; // 재연결 시도 간격 초기값
   let maxReconnectAttempts = 10; // 최대 재연결 시도 횟수
   let reconnectAttempts = 0; // 현재 재연결 시도 횟수
@@ -42,10 +42,28 @@ const JoinSocketManager = (() => {
 
   return {
     getInstance: function () {
-      if (!instance) {
+      if (!instance || instance.readyState === WebSocket.CLOSED) {
         instance = init();
       }
       return instance;
+    },
+    startInterval: function () {
+      if (interval) clearTimeout(interval);
+      const self = this;
+      function scheduleNext() {
+        interval = setTimeout(() => {
+          instance = self.getInstance();
+          scheduleNext();
+        }, reconnectInterval);
+      }
+      scheduleNext();
+    },
+    endInterval: function () {
+      if (interval) {
+        clearTimeout(interval);
+        interval = null;
+      }
+      if (instance) instance.close();
     },
   };
 })();

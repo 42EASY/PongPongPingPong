@@ -9,6 +9,7 @@ export default function GameRoom(data) {
     changeUrl("/main");
     return;
   }
+  console.log(data);
   Nav();
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
@@ -49,6 +50,7 @@ export default function GameRoom(data) {
       res["mode"] = "TOURNAMENT";
       res["option"] = "CLASSIC";
       res["round"] = "SEMI_FINAL";
+      res["room_id"] = data.room_id;
       Modal("gameStartSoon", res).then(() => {
         changeUrl("/game", res);
       });
@@ -57,6 +59,7 @@ export default function GameRoom(data) {
       res["mode"] = "TOURNAMENT";
       res["option"] = "CLASSIC";
       res["round"] = "FINAL";
+      res["room_id"] = data.room_id;
       Modal("gameStartSoon", res).then(() => {
         changeUrl("/game", res);
       });

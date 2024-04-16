@@ -79,11 +79,10 @@ export default function BotContent(data) {
     $botContent.innerHTML = msg;
     $botContentBtn.innerHTML = "게임하러 가기";
     $botContentBox.appendChild($botContentBtn);
-
     $botContentBtn.onclick = () => {
       const res = joinInviteTournamentQueue({
         action: "join_invite_tournament_queue",
-        room_id: data.game_id,
+        room_id: data.room_id,
       });
       if (res.message === "인원이 다 찬 게임방입니다")
         Modal("enterFail_fullRoom");
