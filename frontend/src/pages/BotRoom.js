@@ -67,8 +67,4 @@ export default function BotRoom() {
   $botRoomWrapper.appendChild(ChatInput());
   const $chatInput = document.querySelector(".chatInput");
   $chatInput.disabled = true;
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
 }

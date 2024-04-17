@@ -6,7 +6,6 @@ import { getUserId, checkSocketConnection } from "../state/State.js";
 import { getUserInfo } from "../components/Main/UserApi.js";
 
 export default async function Main() {
-  document.body.style.display = "block";
   Nav();
 
   checkSocketConnection();

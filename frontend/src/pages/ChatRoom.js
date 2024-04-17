@@ -171,8 +171,4 @@ export default function ChatRoom(user) {
       $chatsWrapper.scrollTop = $chatsWrapper.scrollHeight;
     }
   });
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
 }

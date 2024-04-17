@@ -6,7 +6,6 @@ import RoomSocketManager from "../state/RoomSocketManager.js";
 import TimerRing from "../components/GameRoom/TimerRing.js";
 
 export default function GameRoom(data) {
-  document.body.style.display = "block";
   if (!data) {
     changeUrl("/main");
     return;

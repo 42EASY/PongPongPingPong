@@ -13,8 +13,4 @@ export default async function Login() {
 
   $app.appendChild($title);
   $app.appendChild($loginButton);
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
 }

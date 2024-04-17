@@ -19,8 +19,4 @@ export default async function Profile(user) {
   //전적 정보
   const $gameInfo = GameInfo(userInfo.result);
   $chatsWrapper.appendChild($gameInfo);
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
 }

@@ -52,11 +52,7 @@ export default async function EndGame({ info, result }) {
     setTimeout(() => {
       changeUrl("/gameroom", { round: "FINAL", room_id: info.room_id });
     }, sec * 1000);
-  }
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
+  }   
 }
 
 //  mode | txt         | btn                   | modal
