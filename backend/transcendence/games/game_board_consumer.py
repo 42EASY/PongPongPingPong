@@ -215,8 +215,8 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
                     return
         tournament_entry = await self.get_tournament_games_first(self.game_id)
         if tournament_entry:
-            players = await self.get_tournament_players(self.tournament_game.tournament_id.id)
-            await bot_notify_process(self, self.user.id, "bot_notify_tournament_game_result", players)
+            players = await self.get_tournament_players(tournament_entry)
+            await bot_notify_process(self, self.user.id, "bot_notify_tournament_game_result", {"players":players})
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     #game status 알림
@@ -298,24 +298,26 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
     async def broadcast_game_over(self, event):
         await self.send(text_data=json_encode(event['data']))
 
-    async def get_tournament_players(self, tournament_id):
-        tournament_games = await self.get_tournament_games(tournament_id)
-        players = set()
+    async def get_tournament_players(self, tournament_game):
+        tournament_games = await self.get_tournament_games(tournament_game.tournament_id)
+        players = []
         
         for game in tournament_games:
             participants = await self.get_participants(game.game_id)
             for participant in participants:
-                player = await get_member_info(participant.user_id)
+                player = await get_member_info(participant.user_id_id)
                 ranking = 0
                 if game.round == TournamentGame.Round.SEMI_FINAL:
                     if participant.result == Participant.Result.LOSE:
                         ranking = 3
+                    else:
+                        continue
                 if game.round == TournamentGame.Round.FINAL:
                     if participant.result == Participant.Result.WIN:
                         ranking = 1
                     elif participant.result == Participant.Result.LOSE:
                         ranking = 2
-                players.add({
+                players.append({
                     **player,
                     "ranking": ranking,
                 })
@@ -402,7 +404,7 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
     #game id를 통해서 tournament game을 가져오는 비동기함수
     @database_sync_to_async
     def get_tournament_games_first(self, game_id):
-        return TournamentGame.objects.filter(game_id = game_id, round = TournamentGame.Round.FINAL).first()
+        return TournamentGame.objects.filter(game_id = Game.objects.get(id = game_id), round = TournamentGame.Round.FINAL).first()
 
     @database_sync_to_async
     def update_participant_results(self, user_id, game_id, opponent_id, result, score):
