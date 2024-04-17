@@ -38,7 +38,6 @@ export default function Chat(user, cnt, roomName) {
     Modal("exitChatting", user.nickname).then((result) => {
       if (result.isPositive) {
         delChatContent(user.user_id);
-        const socket = ChatSocketManager.getInstance();
         socket.send(JSON.stringify({
           action: "leave_chat_room",
           room_name: roomName,

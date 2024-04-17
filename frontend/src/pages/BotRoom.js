@@ -5,9 +5,9 @@ import Title from "../components/Chat/Title.js";
 import { getUserId } from "../state/State.js";
 import { getTimestamp } from "../state/ChatState.js";
 
-const socket = ChatSocketManager.getInstance();
-
 export default function BotRoom() {
+  const socket = ChatSocketManager.getInstance();
+
   const $botRoomWrapper = document.querySelector(".sidebarArea");
   $botRoomWrapper.innerHTML = "";
 
