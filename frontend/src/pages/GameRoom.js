@@ -6,12 +6,10 @@ import RoomSocketManager from "../state/RoomSocketManager.js";
 import TimerRing from "../components/GameRoom/TimerRing.js";
 
 export default function GameRoom(data) {
-  document.body.style.display = "block";
   if (!data) {
     changeUrl("/main");
     return;
   }
-  console.log(data);
   Nav();
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
@@ -58,7 +56,6 @@ export default function GameRoom(data) {
 
   socket.onmessage = (e) => {
     let res = JSON.parse(e.data);
-    console.log(res);
     if (res.status === "semi_final_game_start_soon") {
       res["mode"] = "TOURNAMENT";
       res["option"] = "CLASSIC";

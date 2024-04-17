@@ -7,7 +7,6 @@ import { getUserInfo } from "../components/Main/UserApi.js";
 import Modal from "../components/Modal/Modal.js";
 
 export default async function EndGame({ info, result }) {
-  console.log("END GAME: ", info, result);
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 
@@ -52,11 +51,7 @@ export default async function EndGame({ info, result }) {
     setTimeout(() => {
       changeUrl("/gameroom", { round: "FINAL", room_id: info.room_id });
     }, sec * 1000);
-  }
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
+  }   
 }
 
 //  mode | txt         | btn                   | modal

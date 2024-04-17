@@ -2,7 +2,6 @@ import EndGame from "../../pages/EndGame.js";
 import Modal from "../../components/Modal/Modal.js";
 
 export default function Board(info, rightUser_id) {
-  console.log("BOARD ARGU : ", info, rightUser_id);
 
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
@@ -15,7 +14,7 @@ export default function Board(info, rightUser_id) {
     RIGHT: 4,
   };
 
-  const maxScore = 1;
+  const maxScore = 10;
 
   const Ball = {
     new: function () {
@@ -75,7 +74,6 @@ export default function Board(info, rightUser_id) {
       const path = `./src/styles${requestedUrl}.css`;
       document.getElementById("styles").setAttribute("href", path);
       history.pushState(null, null, window.location.pathname);
-      console.log("change url @@@@@@@@@@@@@@@@@@@@");
       EndGame({
         info: info,
         result: {

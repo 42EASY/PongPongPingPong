@@ -81,8 +81,6 @@ function updateGame(pongGame, info) {
   const userId = getNumberUserId(); // 현재 사용자의 ID
   const { paddles, ball } = data;
 
-  // console.log(data);
-
   // 패들 위치 결정
   const myPaddle =
     paddles.player1.user_id === userId ? paddles.player1 : paddles.player2;
@@ -145,12 +143,10 @@ function changeUrl(info, result, requestedUrl) {
   const path = `./src/styles${requestedUrl}.css`;
   document.getElementById("styles").setAttribute("href", path);
   history.pushState(null, null, window.location.pathname);
-  console.log("change url @@@@@@@@@@@@@@@@@@@@");
   EndGame({ info: info, result: result });
 }
 
 export default function RemoteBoard(info, rightUser_id) {
-  console.log("REMOTE BOARD: ", info);
   const socket = GameBoardSocketManager.getInstance(info.game_id);
   let opponentInfo;
   if (rightUser_id)

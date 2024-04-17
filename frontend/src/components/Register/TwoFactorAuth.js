@@ -148,10 +148,8 @@ export function call2faOtpModal() {
       if (result.isPositive === true) {
         call2faOtqApi(result.input).then((status) => {
           if (status === true) {
-            console.log("2차 인증 성공");
             resolve(true);
           } else if (status === false) {
-            console.log("2차 인증 실패");
             resolve(false);
           }
         });

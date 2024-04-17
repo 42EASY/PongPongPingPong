@@ -43,8 +43,4 @@ export default function NotFound() {
   });
 
   $page.appendChild($homeButton);
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
 }

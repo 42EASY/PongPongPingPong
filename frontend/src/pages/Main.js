@@ -6,7 +6,6 @@ import { getUserId, checkSocketConnection } from "../state/State.js";
 import { getUserInfo } from "../components/Main/UserApi.js";
 
 export default async function Main() {
-  document.body.style.display = "block";
   Nav();
 
   checkSocketConnection();
@@ -47,8 +46,4 @@ export default async function Main() {
       await GameResultsScroll(id, isGeneral);
     }
   });
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
 }

@@ -6,12 +6,10 @@ import RemoteBoard from "../components/Game/RemoteBoard.js";
 import changeUrl from "../Router.js";
 
 export default async function Game(data) {
-  document.body.style.display = "block";
   if (!data) {
     changeUrl("/main");
     return;
   }
-  console.log("GAME: ", data);
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 

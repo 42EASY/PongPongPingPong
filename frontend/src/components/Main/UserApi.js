@@ -17,7 +17,6 @@ export function getUserInfo(id) {
       .then((res) => res.json())
       .then((data) => {
         if (data.code === 200) {
-          console.log(data);
           resolve(data);
         } else if (data.code === 401) {
           setNewAccessToken().then((result) => {
@@ -46,7 +45,6 @@ export function postFriend(id) {
       .then((res) => res.json())
       .then((data) => {
         if (data.code === 200) {
-          console.log(data);
           resolve(data);
         } else if (data.code === 401) {
           setNewAccessToken().then((result) => {
@@ -70,7 +68,6 @@ export async function deleteFriend(id) {
       .then((res) => res.json())
       .then((data) => {
         if (data.code === 200) {
-          console.log(data);
           resolve(data);
         } else if (data.code === 401) {
           setNewAccessToken().then((result) => {
@@ -94,7 +91,6 @@ export function postBlock(id) {
       .then((res) => res.json())
       .then((data) => {
         if (data.code === 200) {
-          console.log(data);
           resolve(chatUserState.setUserState(id, { isBlocked: true }));
         } else if (data.code === 401) {
           setNewAccessToken().then((result) => {
@@ -118,7 +114,6 @@ export function deleteBlock(id) {
       .then((res) => res.json())
       .then((data) => {
         if (data.code === 200) {
-          console.log(data);
           resolve(chatUserState.setUserState(id, { isBlocked: false }));
         } else if (data.code === 401) {
           setNewAccessToken().then((result) => {

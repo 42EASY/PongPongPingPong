@@ -66,6 +66,11 @@
   font-size: 16px;
 }
 
+.labelAlign {
+  text-align: start;
+  width: 100%;
+}
+
 .modalText {
   margin: 5px 0px;
 }
