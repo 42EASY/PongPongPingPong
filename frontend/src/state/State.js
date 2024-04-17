@@ -127,9 +127,9 @@ const logout = () => {
   return new Promise((resolve) => {
     const url = `${baseUrl}/api/v1/auth/logout`;
 
-    NotifySocketManager.endInterval();
-    JoinSocketManager.endInterval();
-    ChatSocketManager.endInterval();
+    NotifySocketManager.closeInstance();
+    JoinSocketManager.closeInstance();
+    ChatSocketManager.closeInstance();
 
     fetch(url, {
       method: "POST",
