@@ -121,7 +121,6 @@ export default function ChatRoom(user) {
 
   socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
-    console.log(data);
 
     if (data.action === "fetch_messages") {
       const messages = data.messages;

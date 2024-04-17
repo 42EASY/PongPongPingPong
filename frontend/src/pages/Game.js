@@ -10,7 +10,6 @@ export default async function Game(data) {
     changeUrl("/main");
     return;
   }
-  console.log("GAME: ", data);
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 

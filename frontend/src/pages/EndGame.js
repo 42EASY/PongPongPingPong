@@ -7,7 +7,6 @@ import { getUserInfo } from "../components/Main/UserApi.js";
 import Modal from "../components/Modal/Modal.js";
 
 export default async function EndGame({ info, result }) {
-  console.log("END GAME: ", info, result);
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
 

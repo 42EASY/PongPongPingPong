@@ -2,7 +2,6 @@ import { deleteBlock } from "../Main/UserApi.js";
 import Modal from "../Modal/Modal.js";
 
 export default function Blocked(user) {
-  console.log(user);
   const $blockedWrapper = document.createElement("div");
   $blockedWrapper.classList.add("friendWrapper");
 

@@ -15,7 +15,6 @@ export function getUserList(keyword, page, size) {
       .then((res) => res.json())
       .then((data) => {
         if (data.code === 200) {
-          console.log(data);
           resolve(data);
         } else if (data.code === 401) {
           setNewAccessToken().then((result) => {
