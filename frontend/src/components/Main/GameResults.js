@@ -115,7 +115,8 @@ function callGameHistoryApi(userId, mode, page, size) {
           resolve(data.result);
         } else if (data.code === 401) {
           setNewAccessToken().then((result) => {
-            if (result === true) resolve(callGameHistoryApi());
+            if (result === true)
+              resolve(callGameHistoryApi(userId, mode, page, size));
           });
         }
       });
