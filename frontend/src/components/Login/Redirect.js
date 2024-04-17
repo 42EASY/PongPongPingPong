@@ -1,9 +1,7 @@
 import { setLoginState } from "../../state/State.js";
 import changeUrl from "../../Router.js";
-import WebSocketManager from "../../state/WebSocketManager.js";
 import { call2faOtpModal } from "../Register/TwoFactorAuth.js";
 import Modal from "../Modal/Modal.js";
-import JoinSocketManager from "../../state/JoinSocketManager.js";
 import TimerRing from "../GameRoom/TimerRing.js";
 import { baseUrl } from "../../state/State.js";
 
@@ -38,8 +36,6 @@ export default function Redirect() {
   })
     .then((res) => res.json())
     .then((data) => {
-      WebSocketManager.getInstance();
-      JoinSocketManager.getInstance();
       if (data.code === 200) {
         setLoginState(
           true,
