@@ -1268,6 +1268,15 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
             "inviter": inviter
         }
         await bot_notify_process(self, user_id, "bot_notify_invited_tournament_game", data)
+    
+    #플레이어 입장 방송
+    async def broadcast_player_entrance(self, event):
+        player_info = event["player_info"]
+
+        await self.send_json({
+            "status": "player_entrance",
+            "player_info": player_info
+        })
 
 
     @database_sync_to_async
@@ -1302,4 +1311,3 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     def create_game(self, game_option, game_mode):
         game_time = datetime.now(timezone.utc)
         return Game.objects.create(game_option = game_option, game_mode = game_mode, start_time = game_time, end_time = game_time)
-            

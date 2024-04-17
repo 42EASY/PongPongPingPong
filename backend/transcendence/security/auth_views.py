@@ -26,22 +26,27 @@ class LoginView(APIView):
 				'code': 400,
 				'message': 'Bad request'
 			}, status=400)
+		try:
+			token_response = requests.post('https://api.intra.42.fr/oauth/token', data={
+				'grant_type': 'authorization_code',
+				'client_id': settings.SOCIAL_AUTH_42_KEY,
+				'client_secret': settings.SOCIAL_AUTH_42_SECRET,
+				'code': code,
+				'redirect_uri': settings.LOGIN_CALLBACK_URI,
+			})
 
-		token_response = requests.post('https://api.intra.42.fr/oauth/token', data={
-			'grant_type': 'authorization_code',
-			'client_id': settings.SOCIAL_AUTH_42_KEY,
-			'client_secret': settings.SOCIAL_AUTH_42_SECRET,
-			'code': code,
-			'redirect_uri': settings.LOGIN_CALLBACK_URI,
-		})
-
-		ft_access_token = token_response.json().get('access_token')
-		if not ft_access_token:
+			ft_access_token = token_response.json().get('access_token')
+			if not ft_access_token:
+				return JsonResponse({
+					'code': 400,
+					'message': 'Bad request'
+				}, status=400)
+		except Exception as e:
 			return JsonResponse({
-				'code': 400,
-				'message': 'Bad request'
-			}, status=400)
-
+					'code': 400,
+					'message': 'Bad request'
+				}, status=400)
+		
 		user_info_response = requests.get('https://api.intra.42.fr/v2/me', headers={
 		'Authorization': f'Bearer {ft_access_token}'
 		})
@@ -59,8 +64,14 @@ class LoginView(APIView):
 			'deleted_at': None,
 		}
 
-		member, created = Members.objects.get_or_create(email=user_data['email'], defaults=user_data)
-
+		try:
+			member, created = Members.objects.get_or_create(email=user_data['email'], defaults=user_data)
+		except:
+			return JsonResponse({
+				'code': 400,
+				'message':'Bad Request'
+			}, status=400)
+			
 		refresh = RefreshToken.for_user(member)
 
 		refresh_token = str(refresh)
@@ -68,8 +79,13 @@ class LoginView(APIView):
 
 		refresh_token_lifetime = int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds())
 
-		cache.set(refresh_token, member.id, timeout=refresh_token_lifetime)
-
+		try:
+			cache.set(refresh_token, member.id, timeout=refresh_token_lifetime)
+		except Exception as e:
+			return JsonResponse({
+				'code': 400,
+				'message':'Bad Request'
+			}, status=400)
 		res = JsonResponse({
 			'code': 201 if created else 200,
 			'message': 'created' if created else 'ok',
@@ -84,7 +100,6 @@ class LoginView(APIView):
 			}
 		})
 
-		#TODO: 개발 환경 설정 변경
 		res.set_cookie('refresh_token', refresh_token, httponly=True, samesite='Strict', secure=True, max_age=refresh_token_lifetime) #secure 옵션 -> 개발환경에서는 False
 
 		return res

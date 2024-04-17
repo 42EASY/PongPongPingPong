@@ -112,7 +112,6 @@ class MemberView(APIView):
 				'message':'Bad Request'
 			}, status=400)
 		
-		# TODO: image_url 반환까진 성공하였으나, 저장된 이미지를 보여주는 방법에 대해 고려
 		return JsonResponse({
 			'code':200,
 			'message':'ok',

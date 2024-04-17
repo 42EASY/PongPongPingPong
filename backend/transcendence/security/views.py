@@ -47,8 +47,13 @@ def login_required(func):
 				'message':'Unauthorized'},
 				status=401
 			)
-		
-		token = header.split()[1]
+		try:
+			token = header.split()[1]
+		except Exception as e:
+			return JsonResponse({
+				'code': 400,
+				'message':'Bad Request'
+			}, status=400)
 		try:
 			payload = jwt.decode(token, settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=['HS256'])
 			user_id = payload.get('user_id')
