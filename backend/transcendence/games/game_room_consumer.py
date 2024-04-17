@@ -89,13 +89,13 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         if (flag == True):
             try:
                 opponent = await self.get_member(parsed_value["join_final_user"][0])
-                
+            
                 #결승에 대한 게임 db가 만들어져있지 않다면 새롭게 만들어서 승패 처리
                 tournaments = await self.get_tournament_games(self.tournament)
                 if (len(tournaments) < 3):
 
                     game = await self.create_game(Game.GameMode.TOURNAMENT)
-                    
+                
                     await self.create_tournament_game(game, self.tournament, TournamentGame.Round.FINAL)
 
                     await self.create_participant_result(self.user, game, opponent.id, Participant.Result.LOSE)
@@ -110,7 +110,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     await self.update_game(game)
 
 
-                #결승에 대한 게임 db가 있으면 승패 업데이트
+                    #결승에 대한 게임 db가 있으면 승패 업데이트
                 else:
                     #가져온 game_id 리스트를 이용하여 Participant 모델에서 해당하는 레코드들을 필터
                     games = await self.get_tournament_games(self.tournament)
@@ -175,9 +175,9 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
             opponent_channel_name = "-1"
 
-            for info in registered_info:
-                if (parsed_value["join_final_user"][0] == info['user_id']):
-                    opponent_channel_name = info["channel_id"] 
+            for info in parsed_value["join_final_user"]:
+                if (info['user_id'] != self.user.id):
+                    opponent_channel_name = info["channel_name"] 
 
             await self.channel_layer.send(
                 opponent_channel_name,
@@ -246,7 +246,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             player_entrance_info = []
 
             for user_id in new_join_user:
-                user_model = await self.get_member(int(user_id))
+                user_model = await self.get_member(int(user_id['user_id']))
 
                 player_info = {
                     "user_id": user_id,
@@ -412,9 +412,16 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             })
             return
 
-
         #join_user에 유저 등록
-        parsed_value["join_user"].append(self.user.id)
+        data = {
+            'user_id': self.user.id,
+            'channel_name': self.channel_name
+        }
+
+        parsed_value["join_user"].append(data)
+        print('join')
+        print(parsed_value)
+        print('----------')
 
         updated_value = json.dumps(parsed_value)
 
@@ -471,7 +478,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             player_entrance_info = []
 
             for user_id in new_join_user:
-                user_model = await self.get_member(int(user_id))
+                user_model = await self.get_member(int(user_id['user_id']))
  
                 player_info = {
                     "user_id": user_id,
@@ -487,19 +494,19 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             })
             return
 
-
+        print('--------------')
+        print(self.channel_name)
         #방에 이미 입장해있는 사람들한테 정보 방송하기
-        for user_id in new_join_user:
-            
-            for user_value in new_registered_user:
-                
-                if (user_value["user_id"] == user_id):
-                    await self.channel_layer.send(
-                        user_value["channel_id"],
-                        {
-                            'type': 'broadcast_player_entrance',
-                            'player_info': player_entrance_info
-                        })
+        for join_data in new_join_user:
+            print(join_data)
+            if (join_data["user_id"] == self.user.id):
+                print(join_data["channel_name"])
+                await self.channel_layer.send(
+                    join_data["channel_name"],
+                    {
+                        'type': 'broadcast_player_entrance',
+                        'player_info': player_entrance_info
+                    })
 
 
         #만일 4명이 방에 다 들어오면 방에 있는 모두에게 게임 시작 알림
@@ -508,7 +515,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             matching_value = []
 
             #등록된 유저의 정보와 승률을 list에 저장
-            for player in registered_value:
+            for player in new_parsed_value["join_user"]:
                 try:
                     user_model = await self.get_member(player['user_id'])
  
@@ -516,7 +523,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 except:
                     await self.send_json({
                         "status": "fail",
-                        "message": "db에서 오류가 발생했습니다"
+                        "message": "db에서 오류가 발생했습니다1"
                     })
                     return
 
@@ -531,7 +538,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                 player_info_json = {
                     "win_rate": win_rate,
                     "user_id": player["user_id"],
-                    "channel_id": player["channel_id"],
+                    "channel_id": player["channel_name"],
                     "nickname": user_model.nickname,
                     "image_url": user_model.image_url
                 }
@@ -569,7 +576,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             except:
                 await self.send_json({
                     "status": "fail",
-                    "message": "db에서 오류가 발생했습니다"
+                    "message": "db에서 오류가 발생했습니다2"
                 })
                 return
 
@@ -696,7 +703,11 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
 
         #join_user에 유저 등록
-        parsed_value["join_final_user"].append(self.user.id)
+        data = {
+            'user_id': self.user.id,
+            'channel_name': self.channel_name
+        }
+        parsed_value["join_final_user"].append(data)
 
         updated_value = json.dumps(parsed_value)
 
@@ -750,7 +761,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             matching_value = []
 
             #등록된 유저의 정보와 승률을 list에 저장
-            for player in registered_value:
+            for player in new_parsed_value["join_final_user"]:
                 if (player["user_id"] in new_parsed_value["join_final_user"]):
                     try:
                         user_model = await self.get_member(player['user_id'])
@@ -759,7 +770,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     except:
                         await self.send_json({
                             "status": "fail",
-                            "message": "db에서 오류가 발생했습니다"
+                            "message": "db에서 오류가 발생했습니다3"
                         })
                         return
 
@@ -774,7 +785,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
                     player_info_json = {
                         "win_rate": win_rate,
                         "user_id": player["user_id"],
-                        "channel_id": player["channel_id"],
+                        "channel_id": player["channel_name"],
                         "nickname": user_model.nickname,
                         "image_url": user_model.image_url
                     }
@@ -795,7 +806,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             except:
                 await self.send_json({
                     "status": "fail",
-                    "message": "db에서 오류가 발생했습니다"
+                    "message": "db에서 오류가 발생했습니다4"
                 })
                 return
 
