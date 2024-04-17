@@ -2,7 +2,7 @@ import { getAccessToken, socketBaseUrl } from "./State.js";
 import showToast from "../components/Toast/Toast.js";
 import { chatUserState } from "./ChatUserState.js";
 
-var WebSocketManager = (function () {
+var NotifySocketManager = (function () {
   var instance, interval;
   var reconnectInterval = 1000; // 재연결 시도 간격 초기값
   var maxReconnectAttempts = 10; // 최대 재연결 시도 횟수
@@ -14,12 +14,12 @@ var WebSocketManager = (function () {
     var ws = new WebSocket(socketUrl);
 
     ws.onopen = function () {
-      console.log("WebSocket 연결 성공");
+      console.log("NotifySocket 연결 성공");
       reconnectAttempts = 0; // 연결 성공 시 재연결 시도 횟수 초기화
     };
 
     ws.onclose = function (e) {
-      console.log("WebSocket 연결 끊김, 재연결 시도:", e);
+      console.log("NotifySocket 연결 끊김, 재연결 시도:", e);
       if (reconnectAttempts < maxReconnectAttempts) {
         setTimeout(function () {
           instance = init(); // 재연결 시도
@@ -32,7 +32,7 @@ var WebSocketManager = (function () {
     };
 
     ws.onerror = function (err) {
-      console.error("WebSocket 에러 발생:", err);
+      console.error("NotifySocket 에러 발생:", err);
       ws.close(); // 에러 발생 시 연결을 명시적으로 닫음
     };
 
@@ -62,8 +62,10 @@ var WebSocketManager = (function () {
 
   return {
     getInstance: function () {
-      if (!instance || instance.readyState === WebSocket.CLOSED) {
-        instance = init();
+      if (!instance || instance.readyState === WebSocket.CLOSED || instance.readyState === WebSocket.CLOSING) {
+        if (reconnectAttempts < maxReconnectAttempts) {
+          instance = init();
+        }
       }
       return instance;
     },
@@ -88,4 +90,4 @@ var WebSocketManager = (function () {
   };
 })();
 
-export default WebSocketManager;
+export default NotifySocketManager;
