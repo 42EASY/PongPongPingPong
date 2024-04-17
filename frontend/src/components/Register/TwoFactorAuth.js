@@ -189,7 +189,7 @@ function call2faOtqApi(otpNum) {
           });
         } else if (data.code === 401) {
           setNewAccessToken().then((result) => {
-            if (result === true) resolve(call2faOtqApi());
+            if (result === true) resolve(call2faOtqApi(otpNum));
           });
         } else {
           Modal("tfaFail").then((result) => {
