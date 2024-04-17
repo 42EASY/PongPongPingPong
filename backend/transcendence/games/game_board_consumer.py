@@ -223,10 +223,10 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
     #game status 알림
     async def broadcast_game_status(self, event):
 
-        await self.send_safe(text_data=json_encode({
+        await self.send_safe({
             "action": event["data"]["action"],
             "game_status": event["data"]["game_status"]
-        }))
+        })
 
     async def press_ready(self):
         await self.channel_layer.group_send(
