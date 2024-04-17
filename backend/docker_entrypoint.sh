@@ -13,7 +13,7 @@ python /app/transcendence/manage.py loaddata /app/transcendence/members/fixtures
 
 cd /app/transcendence
 
-# TODO: 개발용 추후 삭제
-python /app/transcendence/run_daphne.py
+# MEMO: 개발용
+# python /app/transcendence/run_daphne.py
 
-# daphne -e ssl:8443:privateKey=/etc/ssl/private/localhost.key:certKey=/etc/ssl/certs/localhost.pem transcendence.asgi:application
+daphne -e ssl:8443:privateKey=/etc/ssl/private/localhost.key:certKey=/etc/ssl/certs/localhost.pem transcendence.asgi:application
