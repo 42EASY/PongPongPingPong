@@ -114,6 +114,8 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts" : [('redis', 6379)],
             # "hosts" : [('localhost', 6379)], #MEMO: 로컬에서 돌리기 위해 localhost로 변경
+            "capacity": 1000, # 저장될 수 있는 최대 메세지 개수
+            "expiry": 10, # 저장된 메세지 만료 시간 관리 (초)
         },
     },
 }
