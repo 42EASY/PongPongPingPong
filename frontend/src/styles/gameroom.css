@@ -27,7 +27,21 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 100px;
+  padding-top: 84px;
+}
+
+#waitingFinalPlayers {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.waitingText {
+  height: 50px;
+  font-size: 30px;
+  font-weight: 500;
 }
 
 #waitingPlayers {
@@ -39,16 +53,16 @@ main {
 }
 
 #waitingPlayer0 {
-  border-right: 1px solid var(--lightGray);
-  border-bottom: 1px solid var(--lightGray);
+  border-right: 2px solid var(--darkGray);
+  border-bottom: 2px solid var(--darkGray);
 }
 
 #waitingPlayer1 {
-  border-bottom: 1px solid var(--lightGray);
+  border-bottom: 2px solid var(--darkGray);
 }
 
 #waitingPlayer2 {
-  border-right: 1px solid var(--lightGray);
+  border-right: 2px solid var(--darkGray);
 }
 
 .waitingPlayer {

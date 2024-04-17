@@ -3,6 +3,7 @@ import WaitingPlayer from "../components/GameRoom/WaitingPlayer.js";
 import changeUrl from "../Router.js";
 import Modal from "../components/Modal/Modal.js";
 import RoomSocketManager from "../state/RoomSocketManager.js";
+import TimerRing from "../components/GameRoom/TimerRing.js";
 
 export default function GameRoom(data) {
   document.body.style.display = "block";
@@ -14,22 +15,33 @@ export default function GameRoom(data) {
   Nav();
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
-  const $page = document.createElement("div");
-  $app.appendChild($page);
   const $gameRoom = document.createElement("div");
-  $page.appendChild($gameRoom);
+  $app.appendChild($gameRoom);
   $gameRoom.id = "gameRoom";
   const $waitingPlayers = document.createElement("div");
   $waitingPlayers.id = "waitingPlayers";
   $gameRoom.appendChild($waitingPlayers);
 
   let playerLength = 4;
-  if (data.round === "FINAL") playerLength = 2;
+
   const waitingPlayersArr = [];
-  for (let i = 0; i < playerLength; i++) {
-    waitingPlayersArr[i] = document.createElement("div");
-    waitingPlayersArr[i].id = "waitingPlayer" + i;
-    $waitingPlayers.appendChild(waitingPlayersArr[i]);
+  if (data.round === "FINAL") {
+    $waitingPlayers.id = "waitingFinalPlayers";
+    const textbox1 = document.createElement("div");
+    const textbox2 = document.createElement("div");
+    textbox1.classList.add("waitingText");
+    textbox2.classList.add("waitingText");
+    textbox1.innerHTML = "상대방이 아직 게임 중입니다";
+    textbox2.innerHTML = "🧽 잠시만 기다려 주세요 🧽";
+    $waitingPlayers.append(textbox1);
+    $waitingPlayers.append(textbox2);
+    $waitingPlayers.appendChild(TimerRing());
+  } else {
+    for (let i = 0; i < playerLength; i++) {
+      waitingPlayersArr[i] = document.createElement("div");
+      waitingPlayersArr[i].id = "waitingPlayer" + i;
+      $waitingPlayers.appendChild(waitingPlayersArr[i]);
+    }
   }
 
   const socket = RoomSocketManager.getInstance(data.room_id);
@@ -67,7 +79,7 @@ export default function GameRoom(data) {
         changeUrl("/game", res);
       });
     }
-    if (res.status === "player_entrance") {
+    if (res.status === "player_entrance" && data.round === "SEMI_FINAL") {
       let i;
       for (i = 0; i < res.player_info.length; i++) {
         waitingPlayersArr[i].innerHTML = "";
