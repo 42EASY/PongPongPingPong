@@ -14,22 +14,30 @@ export default function GameRoom(data) {
   Nav();
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
-  const $page = document.createElement("div");
-  $app.appendChild($page);
   const $gameRoom = document.createElement("div");
-  $page.appendChild($gameRoom);
+  $app.appendChild($gameRoom);
   $gameRoom.id = "gameRoom";
   const $waitingPlayers = document.createElement("div");
   $waitingPlayers.id = "waitingPlayers";
   $gameRoom.appendChild($waitingPlayers);
 
   let playerLength = 4;
-  if (data.round === "FINAL") playerLength = 2;
+
   const waitingPlayersArr = [];
-  for (let i = 0; i < playerLength; i++) {
-    waitingPlayersArr[i] = document.createElement("div");
-    waitingPlayersArr[i].id = "waitingPlayer" + i;
-    $waitingPlayers.appendChild(waitingPlayersArr[i]);
+  if (data.round === "FINAL") {
+    $waitingPlayers.id = "waitingFinalPlayers";
+    playerLength = 2;
+    for (let i = 0; i < playerLength; i++) {
+      waitingPlayersArr[i] = document.createElement("div");
+      $waitingPlayers.appendChild(waitingPlayersArr[i]);
+    }
+    waitingPlayersArr[0].id = "waitingPlayer2";
+  } else {
+    for (let i = 0; i < playerLength; i++) {
+      waitingPlayersArr[i] = document.createElement("div");
+      waitingPlayersArr[i].id = "waitingPlayer" + i;
+      $waitingPlayers.appendChild(waitingPlayersArr[i]);
+    }
   }
 
   const socket = RoomSocketManager.getInstance(data.room_id);
