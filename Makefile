@@ -1,8 +1,5 @@
 
 all :
-	mkdir -p ./volume/postgres-data
-	mkdir -p ./volume/nginx-data
-	mkdir -p ./backend/transcendence/media
 	docker-compose up -d --build
 
 clean :

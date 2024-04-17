@@ -4,15 +4,13 @@ services:
   db:
     image: postgres:15-bullseye
     container_name: postgresql
-    volumes:
-      - type: bind
-        source: ./volume/postgres-data
-        target: /var/lib/postgresql/data
     environment:
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ./volume/postgres-data:/var/lib/postgresql/data
     networks:
       - transcendence
     ports:
