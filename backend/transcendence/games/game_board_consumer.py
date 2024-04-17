@@ -21,14 +21,18 @@ class GameBoard:
         # 옵션에 따른 속도 설정
         vx = 3
         vy = 2
+
+        paddle_speed = 15
+
         if option == Game.GameOption.SPEED:
-            vx *= 2
-            vy *= 2
+            vx *= 3
+            vy *= 3
+            paddle_speed = 20
 
         self.ball = {'x': width / 2, 'y': height / 2, 'vx': vx, 'vy': vy, 'width': 18, 'height': 18}
         self.paddles = {
-            'player1': {'user_id': player1_id, 'x': 40, 'y': height / 2 - 35, 'width': 10, 'height': 100, 'score': 0, 'speed': 10},
-            'player2': {'user_id': player2_id, 'x': width - 50, 'y': height / 2 - 35, 'width': 10, 'height': 100, 'score': 0, 'speed': 10}
+            'player1': {'user_id': player1_id, 'x': 40, 'y': height / 2 - 35, 'width': 10, 'height': 100, 'score': 0, 'speed': paddle_speed},
+            'player2': {'user_id': player2_id, 'x': width - 50, 'y': height / 2 - 35, 'width': 10, 'height': 100, 'score': 0, 'speed': paddle_speed}
         }
         self.scores = {'player1': 0, 'player2': 0}
         self.consumer = consumer
@@ -179,9 +183,12 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
                     loser = self.user.id
                     winner = self.player2_id if loser == self.player1_id else self.player1_id
 
+                    loser_score = self.game_board.scores['player1'] if loser == self.player1_id else self.game_board.scores['player2']
+                    winner_score = self.game_board.scores['player2'] if winner == self.player2_id else self.game_board.scores['player1']
+
                     # 결과 업데이트
-                    await self.update_participant_result(loser, Participant.Result.LOSE)
-                    await self.update_participant_result(winner, Participant.Result.WIN)
+                    await self.update_participant_result(loser, Participant.Result.LOSE, loser_score)
+                    await self.update_participant_result(winner, Participant.Result.WIN, winner_score)
 
                     # 게임 종료 시간 저장
                     await self.update_game_end_time(self.game_id)
@@ -189,8 +196,8 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
                     game_over_message = {
                         'action': 'game_over',
                         'game_status': [
-                            {"user_id": loser, "score": self.game_board.scores['player1'], "result": Participant.Result.LOSE},
-                            {"user_id": winner, "score": self.game_board.scores['player2'], "result": Participant.Result.WIN}
+                            {"user_id": loser, "score": loser_score, "result": Participant.Result.LOSE},
+                            {"user_id": winner, "score": winner_score, "result": Participant.Result.WIN}
                             ]
                         }
 
@@ -412,9 +419,10 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
             return participant
 
     @database_sync_to_async
-    def update_participant_result(self, user_id, result):
+    def update_participant_result(self, user_id, result, score):
         participant = Participant.objects.get(user_id=user_id, game_id=self.game_id)
         participant.result = result
+        participant.score = score
         participant.save()
 
     @database_sync_to_async
@@ -426,9 +434,9 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def already_game_over(self):
         participant = Participant.objects.filter(game_id=self.game_id)
-        if participant[0].result is None and participant[1].result is None:
+        if participant[0].result == None and participant[1].result == None:
             return False
-        elif participant[0].result is "" and participant[1].result is "":
+        elif participant[0].result == "" and participant[1].result == "":
             return False
         else:
             return True
