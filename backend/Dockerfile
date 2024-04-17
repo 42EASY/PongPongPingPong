@@ -33,8 +33,8 @@ RUN pip install --upgrade pip && \
     pip install "Twisted[tls,http2]" && \
     pip install django-csp
 
-# TODO: 개발용 추후 삭제
-RUN pip install watchgod
+# 개발용
+# RUN pip install watchgod
 
 RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
 

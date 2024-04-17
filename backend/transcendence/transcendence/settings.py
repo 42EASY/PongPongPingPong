@@ -201,7 +201,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
 
     'TOKEN_USER_CLASS': 'members.Member', # Token을 만들때 사용할 모델 설정
-    'USER_ID_FIELD': 'id', # TODO: payload에 넣을 고유값에 대해 고민
+    'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
 

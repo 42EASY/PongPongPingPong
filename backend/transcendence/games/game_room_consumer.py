@@ -146,7 +146,6 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
 
 
         #남아있는 사람들에게 유저 info 방송
-        #TODO: 함수로 나누기
         new_value = None
         if self.lock.acquire_lock():
             try:
@@ -331,7 +330,6 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             idx += 1
             if (user_value["user_id"] == self.user.id):
                 #channel_id 갱신
-                #TODO: 추후에 registered_user에 channel_id를 갱신하는 것이 아니라, join_user에 channel_name 저장하도록 하기
                 parsed_value["registered_user"][idx]["channel_id"] = self.channel_name
                 flag = True
                 break

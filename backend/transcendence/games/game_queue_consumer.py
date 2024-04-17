@@ -17,7 +17,6 @@ prefix_tournament = "tournament_"
 class GameQueueConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
 
-        #TODO: group 활용하기
         self.game_group_id = "10"
 
         self.user = self.scope['user']
@@ -36,11 +35,6 @@ class GameQueueConsumer(AsyncJsonWebsocketConsumer):
         await self.channel_layer.group_discard(
             self.game_group_id, self.channel_name
         )
-        
-        #TODO: 토너먼트인 경우 여기서 disconnect를 하고 room으로 넘어갈 경우 여기서 정보를 삭제해버리기 떄문에 오류 발생함
-
-        #TODO: 일반적인 상황에서 disconnect가 되는 경우와, disconnect가 되면 안되는 상황에서 되는 경우(cancle_queue 메소드 불러오기)를 생각해서 구현하기
-        
         
     
     async def receive(self, text_data):
