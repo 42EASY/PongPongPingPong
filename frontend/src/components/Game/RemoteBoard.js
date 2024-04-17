@@ -22,9 +22,6 @@ const Ball = {
       height: 18,
       x: canvas.width / 2 - 9,
       y: canvas.height / 2 - 9,
-      moveX: DIR.IDLE,
-      moveY: DIR.IDLE,
-      speed: option === "SPEED" ? 10 : 2,
     };
   },
 };
@@ -37,8 +34,6 @@ const Paddle = {
       x: side === "left" ? 40 : canvas.width - 40 - 10,
       y: canvas.height / 2 - 35,
       score: 0,
-      move: DIR.IDLE,
-      speed: 10,
     };
   },
 };
@@ -47,11 +42,9 @@ function listen(pongGame, socket) {
   document.addEventListener("keydown", (key) => {
     if (pongGame.running) {
       if (key.key === "ArrowUp") {
-        // pongGame.rightPlayer.move = DIR.UP;
         socket.sendAction({ action: "press_key", key: 1 });
       }
       if (key.key === "ArrowDown") {
-        // pongGame.rightPlayer.move = DIR.DOWN;
         socket.sendAction({ action: "press_key", key: 0 });
       }
     }
@@ -59,7 +52,6 @@ function listen(pongGame, socket) {
 
   document.addEventListener("keyup", (key) => {
     if (key.key === "ArrowUp" || key.key === "ArrowDown") {
-      // pongGame.rightPlayer.move = DIR.IDLE;
       socket.sendAction({ action: "unpress_key", key: 1 });
     }
   });
