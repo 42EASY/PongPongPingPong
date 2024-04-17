@@ -7,14 +7,14 @@ import { chatUserState } from "../state/ChatUserState.js";
 import Modal from "../components/Modal/Modal.js";
 import { getTimestamp } from "../state/ChatState.js";
 
-const socket = ChatSocketManager.getInstance();
-
 export function createRoomName(meId, userId) {
   const roomName = `chat_${Math.min(meId, userId)}_${Math.max(meId, userId)}`;
   return roomName;
 }
 
 async function sendMessage(user, me, roomName) {
+  const socket = ChatSocketManager.getInstance();
+
   const $chatInput = document.querySelector(".chatInput");
   const $chatContents = document.querySelector("#chatContents");
 
@@ -65,6 +65,8 @@ async function sendMessage(user, me, roomName) {
 
 async function receiveMessage(user, data, roomName) {
   if (data.sender.user_id !== user.user_id) return;
+  const socket = ChatSocketManager.getInstance();
+
   const $chatContents = document.querySelector("#chatContents");
 
   $chatContents.appendChild(ChatContent(user, data));
@@ -87,6 +89,8 @@ function fetchMessages(list) {
 }
 
 export default function ChatRoom(user) {
+  const socket = ChatSocketManager.getInstance();
+  
   const $chatsWrapper = document.querySelector(".sidebarArea");
   $chatsWrapper.innerHTML = "";
 

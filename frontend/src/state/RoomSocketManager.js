@@ -53,7 +53,7 @@ const RoomSocketManager = (() => {
   return {
     getInstance: function (room_id) {
       if (room_id === undefined) return instance;
-      if (!instance || instance.readyState === WebSocket.CLOSED) {
+      if (!instance || instance.readyState === WebSocket.CLOSED || instance.readyState === WebSocket.CLOSING) {
         instance = init(room_id);
       } else if (roomNumber !== room_id) {
         instance.close();

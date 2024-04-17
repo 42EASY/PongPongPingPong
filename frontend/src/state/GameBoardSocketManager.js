@@ -51,7 +51,7 @@ var GameBoardSocketManager = (function () {
 
   return {
     getInstance: function (game_id) {
-      if (!instance || gameNumber !== game_id) {
+      if (!instance || gameNumber !== game_id || instance.readyState === WebSocket.CLOSED || instance.readyState === WebSocket.CLOSING) {
         if (instance) {
           instance.close();
           console.log("[game - close] - instance closed due to new game init");

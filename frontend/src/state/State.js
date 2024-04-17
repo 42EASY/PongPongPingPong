@@ -1,7 +1,7 @@
 import changeUrl from "../Router.js";
 import ChatSocketManager from "./ChatSocketManager.js";
 import JoinSocketManager from "./JoinSocketManager.js";
-import WebSocketManager from "./WebSocketManager.js";
+import NotifySocketManager from "./NotifySocketManager.js";
 
 export const baseUrl = "https://localhost";
 export const socketBaseUrl = "wss://localhost";
@@ -127,9 +127,9 @@ const logout = () => {
   return new Promise((resolve) => {
     const url = `${baseUrl}/api/v1/auth/logout`;
 
-    WebSocketManager.endInterval();
-    JoinSocketManager.endInterval();
-    ChatSocketManager.endInterval();
+    NotifySocketManager.closeInstance();
+    JoinSocketManager.closeInstance();
+    ChatSocketManager.closeInstance();
 
     fetch(url, {
       method: "POST",
@@ -151,9 +151,9 @@ const logout = () => {
 };
 
 const checkSocketConnection = () => {
-  WebSocketManager.startInterval();
-  JoinSocketManager.startInterval();
-  ChatSocketManager.startInterval();
+  NotifySocketManager.getInstance();
+  JoinSocketManager.getInstance();
+  ChatSocketManager.getInstance();
 };
 
 export {
