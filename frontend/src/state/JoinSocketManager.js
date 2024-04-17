@@ -42,8 +42,10 @@ const JoinSocketManager = (() => {
 
   return {
     getInstance: function () {
-      if (!instance || instance.readyState === WebSocket.CLOSED) {
-        instance = init();
+      if (!instance || instance.readyState === WebSocket.CLOSED || instance.readyState === WebSocket.CLOSING) {
+        if (reconnectAttempts < maxReconnectAttempts) {
+          instance = init();
+        }
       }
       return instance;
     },
