@@ -41,13 +41,14 @@ export default function GameResultTable(data) {
   const $tableWrapper = document.createElement("div");
   $tableWrapper.classList.add("tableWrapper");
 
-  if (data.some((item) => item.ranking === 1))
-    $tableWrapper.appendChild(PlayerRanking(1, data[0].nickname));
-  if (data.some((item) => item.ranking === 2))
-    $tableWrapper.appendChild(PlayerRanking(2, data[1].nickname));
-  if (data.some((item) => item.ranking === 3))
+  const ranking1 = data.find((item) => item.ranking === 1);
+  if (ranking1) $tableWrapper.appendChild(PlayerRanking(1, ranking1.nickname));
+  const ranking2 = data.find((item) => item.ranking === 2);
+  if (ranking2) $tableWrapper.appendChild(PlayerRanking(2, ranking2.nickname));
+  const ranking3 = data.filter((item) => item.ranking === 3);
+  if (ranking3 && ranking3.length === 2)
     $tableWrapper.appendChild(
-      PlayerRanking(3, data[2].nickname, data[3].nickname)
+      PlayerRanking(3, ranking3[0].nickname, ranking3[1].nickname)
     );
 
   return $tableWrapper;
