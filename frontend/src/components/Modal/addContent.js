@@ -35,6 +35,7 @@ export default function addContentElement(content) {
       $radioBox.appendChild($radioButton);
 
       const $label = document.createElement("label");
+      $label.classList.add("labelAlign");
       $label.textContent = content.text;
       $radioBox.appendChild($label);
 

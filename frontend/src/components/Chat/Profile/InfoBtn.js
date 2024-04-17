@@ -42,7 +42,6 @@ export default function InfoBtn(user) {
   $blockingButton.appendChild($blockingButtonIcon);
   $blockingButton.appendChild($blockingButtonText);
 
-  console.log(user.relation === "NONE");
   if (user.relation === "NONE") {
     $infoButtonWrapper.appendChild($requestGameButton);
     $infoButtonWrapper.appendChild($addFriendButton);

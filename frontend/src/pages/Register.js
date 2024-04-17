@@ -44,6 +44,4 @@ export default function Register(isInit = false) {
   $registerWrapper.appendChild($submitButton);
 
   $app.appendChild($registerWrapper);
-
-  document.body.style.display = "block";
 }

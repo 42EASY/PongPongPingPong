@@ -830,7 +830,6 @@ async def test_invalid_action():
 
 #-------------------------------------------------------------------------------
 
-#TODO: disconnect 버그 발생으로 임시 주석 처리
 # #normal에서 초대를 하고 disconnect 테스트코드
 # @pytest.mark.asyncio
 # async def test_invite_normal_disconnect():

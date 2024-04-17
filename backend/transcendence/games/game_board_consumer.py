@@ -116,6 +116,7 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         self.game_loop_task = None
         self.game_over_flag = False
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        self.connected = True
         await self.accept()
 
         print(f"User {self.user.id} added to group {self.room_group_name} channel_name : {self.channel_name}")
@@ -208,21 +209,21 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
                                 'data': game_over_message
                             })
                 except Exception as e:
-                    await self.send(text_data=json_encode({
+                    await self.send_safe({
                         "status": "fail",
                         "message": "redis에 접근 중 오류가 발생했습니다"
-                    }))
+                    })
                     return
         tournament_entry = await self.get_tournament_games_first(self.game_id)
         if tournament_entry:
             players = await self.get_tournament_players(tournament_entry)
             await bot_notify_process(self, self.user.id, "bot_notify_tournament_game_result", {"players":players})
+        self.disconnect = False
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-
     #game status 알림
     async def broadcast_game_status(self, event):
 
-        await self.send(text_data=json_encode({
+        await self.send_safe(text_data=json_encode({
             "action": event["data"]["action"],
             "game_status": event["data"]["game_status"]
         }))
@@ -238,10 +239,10 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
 
     async def user_ready(self, event):
         # 클라이언트에게 준비 상태 방송
-        await self.send(text_data=json_encode({
+        await self.send_safe({
             "action": "user_ready",
             "user_id": event["user_id"]
-        }))
+        })
 
     async def update_board_state(self, event):
         data = event['data']
@@ -251,10 +252,10 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
         self.game_board.paddles['player2'].update(data['paddles']['player2'])
         self.game_board.scores['player1'] = data['paddles']['player1']['score']
         self.game_board.scores['player2'] = data['paddles']['player2']['score']
-        await self.send(text_data=json_encode({
+        await self.send_safe({
             "action": "update_board_state",
             "data": event['data']
-        }))
+        })
     
     async def game_over(self, player1_score, player2_score):
         # 게임 종료 상태를 체크하여 중복 종료를 방지
@@ -296,7 +297,7 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
                 })
 
     async def broadcast_game_over(self, event):
-        await self.send(text_data=json_encode(event['data']))
+        await self.send_safe(event['data'])
 
     async def get_tournament_players(self, tournament_game):
         tournament_games = await self.get_tournament_games(tournament_game.tournament_id)
@@ -325,11 +326,11 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
 
     async def broadcast_press_key(self, event):
 
-        await self.send(text_data=json_encode({
+        await self.send_safe({
                 "status": event["status"],
                 "action": event["action"],
                 "key": event["key"]
-            }))
+            })
 
     async def move_paddle(self, data):
         user_id = self.user.id
@@ -344,18 +345,18 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
     #unpress key 알림
     async def broadcast_unpress_key(self, event):
 
-        await self.send(text_data=json_encode({
+        await self.send_safe({
                 "status": event["status"],
                 "action": event["action"]
-            }))
+            })
 
     #round_start 알림
     async def broadcast_round_start(self, event):
-        await self.send(text_data=json_encode({
+        await self.send_safe({
             "status": event["status"],
             "action": event["action"],
             "ball_position" : event["ball_posit)ion"]
-        }))
+        })
 
 
     #game을 가져오는 비동기 함수
@@ -442,3 +443,10 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
             return False
         else:
             return True
+
+    async def send_safe(self, data):
+        try:
+            await self.send(text_data=json.dumps(data))
+        except Exception as e:
+            print(f"Failed to send data: {str(e)}")
+            self.connected = False  # 연결 상태 업데이트

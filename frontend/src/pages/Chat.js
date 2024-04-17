@@ -132,8 +132,4 @@ export default function Chat() {
     $overlay.classList.remove("showOverlay");
   });
   $sidebar.appendChild($overlay);
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
 }

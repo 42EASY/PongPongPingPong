@@ -73,11 +73,9 @@ function login2fa() {
     if (result.isPositive === true) {
       const status = await call2faOtqApi(result.input);
       if (status === true) {
-        console.log("2차 인증 성공");
         changeUrl("/main");
         return;
       } else if (status === false) {
-        console.log("2차 인증 실패");
         return;
       }
     }

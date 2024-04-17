@@ -171,8 +171,4 @@ export default async function Friends() {
       $listWrapper.appendChild(data);
     }
   });
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
 }

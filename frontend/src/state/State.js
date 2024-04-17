@@ -142,7 +142,6 @@ const logout = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setLogoutState();
         changeUrl("/");
         resolve();

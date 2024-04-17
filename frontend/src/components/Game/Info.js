@@ -1,5 +1,4 @@
 export default function Info(leftInfo, rightInfo) {
-  console.log("INFO: ", leftInfo, rightInfo);
   const $infoWrapper = document.createElement("div");
   const $leftBox = document.createElement("div");
   const $leftProfileImage = document.createElement("img");

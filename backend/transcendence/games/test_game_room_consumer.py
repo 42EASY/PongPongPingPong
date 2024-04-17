@@ -154,7 +154,6 @@ async def test_invite_and_join_room_success():
 
         assert invite_queue_response['status'] == "success"
     
-        #TODO: game_queue에서 disconnect 처리 후 넘어가면 오류 발생하는 버그때문에 잠시 주석 처리
         # await invite_queue_communicator.disconnect()
 
 
