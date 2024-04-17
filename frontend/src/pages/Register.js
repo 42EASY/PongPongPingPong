@@ -45,7 +45,5 @@ export default function Register(isInit = false) {
 
   $app.appendChild($registerWrapper);
 
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
+  document.body.style.display = "block";
 }
