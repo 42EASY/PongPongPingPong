@@ -15,7 +15,7 @@ export default function Board(info, rightUser_id) {
     RIGHT: 4,
   };
 
-  const maxScore = 1;
+  const maxScore = 10;
 
   const Ball = {
     new: function () {
