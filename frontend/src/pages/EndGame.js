@@ -34,17 +34,14 @@ export default async function EndGame({ info, result }) {
 
   var hasGameLeft = false;
   if (info.mode === "TOURNAMENT") {
-    hasGameLeft =
-      info.round === "SEMI_FINAL" && isWin;
+    hasGameLeft = info.round === "SEMI_FINAL" && isWin;
   }
   const $printBox = document.createElement("div");
   $printBox.classList.add("printBox");
   $app.appendChild($printBox);
-  $printBox.appendChild(
-    Result(info.mode, isWin, leftScore, rightScore)
-  );
+  $printBox.appendChild(Result(info.mode, isWin, leftScore, rightScore));
   $printBox.appendChild(EndBtn(info.mode, opponent.result, hasGameLeft));
-  if (info.mode === "2P" || isWin ) EndConfetti();
+  if (info.mode === "2P" || isWin) EndConfetti();
 
   if (hasGameLeft) {
     let sec = 5;
@@ -56,6 +53,10 @@ export default async function EndGame({ info, result }) {
       changeUrl("/gameroom", { round: "FINAL", room_id: info.room_id });
     }, sec * 1000);
   }
+
+  window.onload = function () {
+    document.body.style.display = "block";
+  };
 }
 
 //  mode | txt         | btn                   | modal

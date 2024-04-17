@@ -3,7 +3,7 @@ import {
   getAccessToken,
   setIs2fa,
   getIs2fa,
-  baseUrl
+  baseUrl,
 } from "../../state/State.js";
 import Modal from "../Modal/Modal.js";
 
@@ -89,14 +89,14 @@ export default function TwoFactorAuth(is2fa) {
           if (result === true) {
             setIs2fa(true);
           } else {
-            if (getIs2fa() === false) {
+            if (getIs2fa() === "false") {
               $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
               $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
             }
           }
         });
       } else {
-        if (getIs2fa() === false) {
+        if (getIs2fa() === "false") {
           $twoFactorAuthActive.classList.remove("twoFactorAuthSelect");
           $twoFactorAuthDeactive.classList.add("twoFactorAuthSelect");
         }

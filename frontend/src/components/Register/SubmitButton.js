@@ -7,7 +7,7 @@ import {
   setNewAccessToken,
   setNickname,
   setImage,
-  baseUrl
+  baseUrl,
 } from "../../state/State.js";
 
 function checkNickname(isDuplicate = false) {
@@ -76,9 +76,12 @@ function callApi(nickname, is2fa) {
           setIs2fa(data.result.is_2fa);
           setNickname(data.result.nickname);
           setImage(data.result.image_url);
-          changeUrl("/main"); //todo: 메인 페이지 이동 불필요. 닉네임 에러 삭제 필요
+          changeUrl("/main");
           resolve();
-        } else if (data.code === 409) {
+        } else if (
+          data.code === 400 &&
+          data.message === "members with this nickname already exists."
+        ) {
           //중복된 닉네임
           resolve(checkNickname(true));
         } else if (data.code === 401) {

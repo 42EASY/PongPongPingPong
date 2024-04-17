@@ -5,20 +5,9 @@ import Email from "../components/Register/Email.js";
 import Nickname from "../components/Register/Nickname.js";
 import TwoFactorAuth from "../components/Register/TwoFactorAuth.js";
 import SubmitButton from "../components/Register/SubmitButton.js";
-import {
-  getIsLogin,
-  getEmail,
-  getIs2fa,
-  getImage,
-  getNickname,
-} from "../state/State.js";
-import changeUrl from "../Router.js";
+import { getEmail, getIs2fa, getImage, getNickname } from "../state/State.js";
 
 export default function Register(isInit = false) {
-  if (getIsLogin() === false) {
-    changeUrl("/"); //로그인 안되어있으면 로그인 페이지로 이동
-    return;
-  }
   Nav();
 
   const $app = document.querySelector(".App");
@@ -55,4 +44,8 @@ export default function Register(isInit = false) {
   $registerWrapper.appendChild($submitButton);
 
   $app.appendChild($registerWrapper);
+
+  window.onload = function () {
+    document.body.style.display = "block";
+  };
 }

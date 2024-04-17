@@ -6,7 +6,7 @@ import GameRoom from "./pages/GameRoom.js";
 import Register from "./pages/Register.js";
 import Redirect from "./components/Login/Redirect.js";
 import NotFound from "./pages/NotFound.js";
-import { getUserId } from "./state/State.js";
+import { getUserId, getIsLogin } from "./state/State.js";
 
 const routes = [
   { path: "/", page: Login, style: "login" },
@@ -37,6 +37,7 @@ function checkUrl(requestedUrl) {
 
 export default function changeUrl(requestedUrl, element) {
   //화면 초기화
+  document.body.style.display = "none";
   const $app = document.querySelector(".App");
   $app.innerHTML = "";
   const $nav = document.querySelector(".nav");
@@ -55,13 +56,27 @@ export default function changeUrl(requestedUrl, element) {
   // if (match.page === EndGame) match.page("tournament", 1, 3, 1);
 
   if (
+    match.page === Main ||
     match.page === Register ||
     match.page === GameRoom ||
     match.page === Game ||
     match.page === EndGame
-  )
-    match.page(element);
-  else match.page();
+  ) {
+    if (getIsLogin() === null) {
+      changeUrl("/"); //로그인하지 않은 경우 로그인 페이지로 이동
+      return;
+    }
+  }
+
+  if (match.page === Register) match.page(element);
+  if (
+    match.page === GameRoom ||
+    match.page === Game ||
+    match.page === EndGame
+  ) {
+    if (element) match.page(element);
+    else changeUrl("/main");
+  } else match.page();
 }
 
 window.addEventListener("popstate", () => {
