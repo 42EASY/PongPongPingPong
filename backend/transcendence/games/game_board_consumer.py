@@ -215,7 +215,7 @@ class GameBoardConsumer(AsyncWebsocketConsumer):
                     return
         tournament_entry = await self.get_tournament_games_first(self.game_id)
         if tournament_entry:
-            players = await self.get_tournament_players(self.tournament_game.tournament_id.id)
+            players = await self.get_tournament_players(tournament_entry.tournament_id)
             await bot_notify_process(self, self.user.id, "bot_notify_tournament_game_result", players)
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
