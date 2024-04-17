@@ -62,12 +62,6 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
         join_info = parsed_value["join_user"]
         join_final_info = parsed_value["join_final_user"]
 
-        #registered_user 값 제거
-        idx = -1
-        for info in registered_info:
-            idx = idx + 1
-            if (info["user_id"] == int(self.user.id)):
-                parsed_value["registered_user"].pop(idx)
 
         #join_user 값 제거
         idx = -1
