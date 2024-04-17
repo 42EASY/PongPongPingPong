@@ -46,8 +46,4 @@ export default async function Main() {
       await GameResultsScroll(id, isGeneral);
     }
   });
-
-  window.onload = function () {
-    document.body.style.display = "block";
-  };
 }
