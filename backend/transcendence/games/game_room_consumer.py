@@ -78,70 +78,7 @@ class GameRoomConsumer(AsyncJsonWebsocketConsumer):
             if (info == int(self.user.id)):
                 parsed_value["join_final_user"].pop(idx)
                 flag = True
-            
-        #만일 결승 진행중에 disconnect가 된 거면, 게임 종료 처리 
-        if (flag == True):
-            try:
-                opponent = await self.get_member(parsed_value["join_final_user"][0])
-                
-                #결승에 대한 게임 db가 만들어져있지 않다면 새롭게 만들어서 승패 처리
-                tournaments = await self.get_tournament_games(self.tournament)
-                if (len(tournaments) < 3):
-
-                    game = await self.create_game(Game.GameMode.TOURNAMENT)
-                    
-                    await self.create_tournament_game(game, self.tournament, TournamentGame.Round.FINAL)
-
-                    await self.create_participant_result(self.user, game, opponent.id, Participant.Result.LOSE)
-                    await self.create_participant_result(opponent, game, self.user.id, Participant.Result.WIN)
-                    
-                    #게임의 start_time, end_time 갱신
-                    game_time = datetime.now(timezone.utc)
-                    
-                    game.start_time = game_time
-                    game.end_time = game_time
-
-                    await self.update_game(game)
-
-
-                #결승에 대한 게임 db가 있으면 승패 업데이트
-                else:
-                    #가져온 game_id 리스트를 이용하여 Participant 모델에서 해당하는 레코드들을 필터
-                    games = await self.get_tournament_games(self.tournament)
-                    game_ids = games.values_list('game_id', flat = True)
         
-                    user_participants = await self.get_participant_by_game(self.user, opponent.id, game_ids)
-                    opponent_participants = await self.get_participant_by_game(opponent, self.user.id, game_ids)
-        
-                    #결과값 갱신
-                    user_participants.result = Participant.Result.LOSE
-                    opponent_participants.result = Participant.Result.WIN
-
-                    await self.update_participant(user_participants)
-                    await self.update_participant(opponent_participants)
-                    
-                    user_participants = await self.get_participant_by_game(self.user, opponent.id, game_ids)
-                    opponent_participants = await self.get_participant_by_game(opponent, self.user.id, game_ids)
-        
-
-                    #게임의 start_time, end_time 갱신
-                    game = await self.get_game(user_participants.game_id)
-
-                    game_time = datetime.now(timezone.utc)
-                    
-                    game.start_time = game_time
-                    game.end_time = game_time
-
-                    await self.update_game(game)
-
-
-                    
-            except:
-                await self.send_json({
-                    "status": "fail",
-                    "message": "db에 접근 중 오류가 발생했습니다"
-                })
-                return
             
             #redis 값 삭제
             if self.lock.acquire_lock():
