@@ -19,8 +19,8 @@ width = height * 1.45
 class GameBoard:
     def __init__(self, consumer, player1_id, player2_id, option):
         # 옵션에 따른 속도 설정
-        vx = 30
-        vy = 20
+        vx = 3
+        vy = 2
 
         paddle_speed = 15
 
