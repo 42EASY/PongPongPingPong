@@ -2,7 +2,6 @@ import EndGame from "../../pages/EndGame.js";
 import Modal from "../../components/Modal/Modal.js";
 
 export default function Board(info, rightUser_id) {
-
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
@@ -246,6 +245,11 @@ export default function Board(info, rightUser_id) {
         if (key.key === "w" || key.key === "s") this.leftPlayer.move = DIR.IDLE;
         if (key.key === "ArrowUp" || key.key === "ArrowDown")
           this.rightPlayer.move = DIR.IDLE;
+      });
+
+      window.addEventListener("popstate", () => {
+        this.gameOver = true;
+        this.running = false;
       });
     },
 
