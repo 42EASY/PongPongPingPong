@@ -21,10 +21,10 @@
 ## 팀원 정보
 ### 👩‍💻 팀원 구성
 | 이하현 | 정성은 | 오현진 | 김은비 | 이주은 |
-|--|--|--|--|--|
-|  |  |	 |	 ||
+|:--:|:--:|:--:|:--:|:--:|
+| <img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/a018675e-55af-4f7e-b567-db96519d2539" width="200"> | <img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/0549d722-7047-41f1-9b26-ac29735a0ce0" width="200">  | <img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/832c9aa3-64fd-4edd-9346-592314435a01" width="200">  |<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/64ed2d22-4f48-4bbe-9268-08e41c8d7898" width="200"> |<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/4876034f-f23b-43f4-a1c8-418ab4ac8311" width="200"> |
 | Front-End | Front-End | Front-End | Back-End | Back-End |
-| | | | | |
+| [madylin](https://github.com/im-madylin) | [seongeun](https://github.com/eunn43) | [hyunjin](https://github.com/oh-hyunjin)| [eunbi](https://github.com/eunbi9n)| [jueun](https://github.com/dlwndms0812)|
 
 <br />
 
