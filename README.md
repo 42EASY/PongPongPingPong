@@ -55,21 +55,21 @@
 
 ## 서비스 기능
 ### [ 로그인 화면 ]
-
+![ts06](https://github.com/42EASY/PongPongPingPong/assets/85945788/e281e0af-e5a1-4022-9dfb-bb5aa270f8ed)
 
 -   **간편 로그인:**
     -   42서울의 계정을 이용하여 간편하고 안전하게 로그인할 수 있습니다.
 
 
 ### [ 설정 화면 ]
-
+<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/50f5a12f-d142-4465-ad9e-50b12881f5f9" width="500" > <img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/633795c4-fc32-4ad2-9e2c-2eb504de6752" width="500" > 
 
 -   **프로필 설정:**
     -   프로필 이미지, 닉네임, 2차인증 여부를 설정할 수 있습니다.
 
 
 ### [ 메인 화면 ]
-
+<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/a631dc32-246e-43c1-9206-be0807cf889e" width="500" > <img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/65882f98-a8b5-4fe7-ba5b-d2a23a345eb9" width="500" > 
 
 -   **사용자 정보:**
     -   사용자의 프로필 이미지, 닉네임, 게임 기록을 확인할 수 있으며, 친구 추가/차단, 게임 초대, 메세지 기능을 수행할 수 있습니다.
