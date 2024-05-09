@@ -69,7 +69,7 @@
 
 
 ### [ 메인 화면 ]
-<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/a631dc32-246e-43c1-9206-be0807cf889e" width="500" > <img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/65882f98-a8b5-4fe7-ba5b-d2a23a345eb9" width="500" > 
+<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/c9eb531c-469f-4d89-b92c-6260701b9ab5" width="500" > <img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/9bcc6e03-8fae-453c-b86c-51c1ca5af73a" width="500" > 
 
 -   **사용자 정보:**
     -   사용자의 프로필 이미지, 닉네임, 게임 기록을 확인할 수 있으며, 친구 추가/차단, 게임 초대, 메세지 기능을 수행할 수 있습니다.
@@ -80,6 +80,7 @@
 
 
 ### [ 채팅 화면 ]
+<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/af4466c1-9b97-4e0f-ad2d-cc8a9fee5a6e" width="500" > <img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/71e452b3-d8a4-4a30-a5a6-afeaab6f82cd" width="500" > 
 
 
 -   **채팅하기:**
@@ -89,7 +90,7 @@
 
 
 ### [ 친구 화면 ]
-
+<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/7d29b0ac-8e5f-4241-9cdd-b9581dda88de" width="500" > <img src="" width="500" > 
 
 -   **친구 목록:**
     -   친구 목록을 확인할 수 있고, 접속 여부를 확인할 수 있습니다.
