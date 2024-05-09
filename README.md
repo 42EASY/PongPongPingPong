@@ -90,7 +90,7 @@
 
 
 ### [ 친구 화면 ]
-<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/7d29b0ac-8e5f-4241-9cdd-b9581dda88de" width="500" > <img src="" width="500" > 
+<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/7d29b0ac-8e5f-4241-9cdd-b9581dda88de" width="500" > <img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/5d97e2b7-39bb-487c-ac53-faf36f3e56bb" width="500" > 
 
 -   **친구 목록:**
     -   친구 목록을 확인할 수 있고, 접속 여부를 확인할 수 있습니다.
@@ -101,7 +101,7 @@
 
 
 ### [ 일반 게임 매칭 화면 ]
-
+<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/48d1a349-5bb2-4a47-8cb7-9fcacfa3fc95" width="500" >
 
 -   **일반 게임:**
     -   게임하러 가기 버튼을 클릭 후 대전자를 찾습니다.
@@ -109,6 +109,8 @@
 
 
 ### [ 토너먼트 게임방 화면 ]
+<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/9c68575f-3a6f-4f29-8510-17e1329f5c13" width="500" > <img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/ab5892fb-867e-4bcf-813e-f477fa37f998" width="500" >
+
 
 -   **토너먼트 게임:**
     - 게임하러 가기 버튼을 클릭 후 대전자를 찾습니다.
@@ -116,7 +118,7 @@
     - 대전자들의 승률을 기준으로 상대가 매칭되고, 대진표를 확인할 수 있습니다.
 
 ### [ 게임 화면 ]
-
+<img src="https://github.com/42EASY/PongPongPingPong/assets/85945788/bd789c1a-a894-42fd-8eff-a4b77b53360f" width="500" >
 
 -   **게임:**
     -   클래식, 스피드 옵션에 따라 공의 속도를 다르게 즐길 수 있습니다.
