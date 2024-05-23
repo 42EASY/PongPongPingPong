@@ -1,12 +1,12 @@
+import Redirect from "./components/Login/Redirect.js";
+import EndGame from "./pages/EndGame.js";
+import Game from "./pages/Game.js";
+import GameRoom from "./pages/GameRoom.js";
 import Login from "./pages/Login.js";
 import Main from "./pages/Main.js";
-import Game from "./pages/Game.js";
-import EndGame from "./pages/EndGame.js";
-import GameRoom from "./pages/GameRoom.js";
-import Register from "./pages/Register.js";
-import Redirect from "./components/Login/Redirect.js";
 import NotFound from "./pages/NotFound.js";
-import { getUserId, getIsLogin } from "./state/State.js";
+import Register from "./pages/Register.js";
+import { getIsLogin, getUserId } from "./state/State.js";
 
 const routes = [
   { path: "/", page: Login, style: "login" },
@@ -75,7 +75,11 @@ export default function changeUrl(requestedUrl, element) {
   ) {
     if (element) match.page(element);
     else changeUrl("/main");
-  } else match.page();
+  } else if (match.page === Login) {
+    // $app.style.visibility = "hidden";
+    match.page();
+  }
+  else match.page();
 }
 
 window.addEventListener("popstate", () => {

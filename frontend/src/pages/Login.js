@@ -1,5 +1,5 @@
-import Title from "../components/Login/Title.js";
 import LoginButton from "../components/Login/LoginButton.js";
+import Title from "../components/Login/Title.js";
 
 export default async function Login() {
   const $app = document.querySelector(".App");

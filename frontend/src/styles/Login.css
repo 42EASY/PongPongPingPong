@@ -1,7 +1,7 @@
+
 @font-face {
-    font-family: "Baloo";
-    src: url("./font/BalooBhaijaan2-Bold.ttf");
-    font-display: swap;
+    font-family: "BalooBhaijaan2";
+    src: url("./font/subset-BalooBhaijaan2-Bold.woff2") format("woff2")
   }
 
 .App {
@@ -17,7 +17,7 @@
 .title {
     display: flex;
     font-size: 6rem;
-    font-family: "Baloo";
+    font-family: "BalooBhaijaan2";
     color: #3EC70B;
 }
 
