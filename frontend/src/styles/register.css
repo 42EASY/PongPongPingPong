@@ -1,0 +1,284 @@
+:root {
+  --green: #3ec70b;
+  --darkGray: #d1d5db;
+  --gray: #6b7280;
+  --lightGray: #e5e7eb;
+}
+
+.App {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.registerWrapper {
+  height: 522px;
+  width: 474px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-evenly;
+  align-items: center;
+  text-align: center;
+  padding: 32px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  width: 95%;
+  display: flex;
+  font-size: 20px;
+  justify-content: left;
+  margin-bottom: 25px;
+}
+
+.uproadImageWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.previewImage {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+}
+
+.uproadImageInput {
+  display: none;
+}
+
+.uproadImageButton {
+  witdh: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.uproadImageText {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.uproadImageNotice {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.emailWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.emailText {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.emailContentWrapper {
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  font-size: 14px;
+}
+
+.emailContent {
+  width: 100%;
+  height: 35px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  background-color: var(--darkGray);
+  border-radius: 5px;
+  text-align: center;
+}
+
+.emailContent i {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.nicknameWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.nickNameInputWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nicknameText {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.nicknameContentWrapper {
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  font-size: 14px;
+}
+
+.nicknameInput {
+  width: 100%;
+  height: 35px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  border-radius: 5px;
+  border: 1px solid var(--darkGray);
+  padding-left: 10px;
+}
+
+input:focus {
+  outline: none;
+}
+
+.nicknameCheck {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  color: var(--green);
+  font-size: 13px;
+}
+
+.submitButton {
+  height: 41px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--green);
+  color: #ffffff;
+  border-radius: 10px;
+  margin-top: 30px;
+  cursor: pointer;
+}
+
+.twoFactorAuthWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.twoFactorAuthText {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.twoFactorAuthContentWrapper {
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  font-size: 14px;
+}
+
+.twoFactorAuthContent {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  border-radius: 5px;
+  border: 1px solid var(--darkGray);
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.twoFactorAuthContentInfo {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.twoFactorAuthContentSelectBlock {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
+
+.twoFactorAuthDeactive {
+  width: 50%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px 0px 0px 8px;
+  cursor: pointer;
+  color: var(--gray);
+  background-color: var(--lightGray);
+}
+
+.twoFactorAuthActive {
+  width: 50%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0px 8px 8px 0px;
+  cursor: pointer;
+  color: var(--gray);
+  background-color: var(--lightGray);
+}
+
+.twoFactorAuthUnSelect {
+  color: var(--gray);
+  background-color: var(--lightGray);
+}
+
+.twoFactorAuthSelect {
+  color: #ffffff;
+  background-color: var(--green);
+}

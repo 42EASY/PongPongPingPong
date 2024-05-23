@@ -1,0 +1,205 @@
+:root {
+  --darkGray: #6b7280;
+  --lightGray: #e5e7eb;
+  --green: #3ec70b;
+  --lightGreen: #e2f7db;
+  --red: #f05252;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0px;
+}
+
+#navBar {
+  width: 100%;
+  height: 84px;
+  position: fixed;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8% 0 8%;
+  background-color: white;
+  z-index: 500;
+}
+
+.navBrand {
+  width: 300px;
+  color: black;
+  display: flex;
+  align-items: center;
+  font-size: 25px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navBrandImage {
+  width: 43px;
+  height: 47px;
+  margin-right: 8px;
+}
+
+.navBtns {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+.navSearchBox {
+  width: 100%;
+  padding-left: 20px;
+  position: relative;
+}
+
+.navSearch {
+  padding-left: 8px;
+  border: none;
+  caret-color: var(--green);
+  font-weight: 500;
+}
+
+.navSearch:focus {
+  outline: none;
+}
+
+.navSearchList {
+  position: absolute;
+  width: 300px;
+  display: none;
+  padding-top: 10px;
+  font-weight: 500;
+}
+
+.navSearchItem {
+  height: 45px;
+}
+
+.navSearchItemSelected {
+  background-color: var(--lightGreen);
+}
+
+.navSearchItem:hover {
+  background-color: var(--lightGreen);
+}
+
+.navProfileBox {
+  position: relative;
+}
+
+.navProfileBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 70%;
+  overflow: hidden;
+  background-color: var(--lightGray);
+  cursor: pointer;
+}
+
+.navProfileBtnImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  text-decoration: none;
+  color: black;
+}
+
+.profileMenuWrapper {
+  display: none;
+  width: 224px;
+  box-shadow: 3px 3px 3px var(--lightGray);
+  border-radius: 8px;
+  position: absolute;
+  background-color: white;
+  margin-top: 10px;
+}
+
+.profileMenu {
+  font-size: 14px;
+  color: var(--red);
+}
+
+.profileMenu:hover {
+  background-color: var(--lightGreen);
+}
+
+.profileMenuIcon {
+  font-size: 18px;
+  margin-right: 12px;
+}
+.navVerticalLine {
+  width: 1.2px;
+  height: 32px;
+  background-color: var(--lightGray);
+  margin: 0px 16px 0px 16px;
+}
+
+.navTextBtn {
+  color: var(--green);
+  font-size: 16px;
+  text-decoration: none;
+  margin-right: 16px;
+  cursor: pointer;
+}
+
+.navTextBtn:hover {
+  color: black;
+  transition: all 0.2s;
+}
+
+.navGameBtn {
+  width: 149px;
+  height: 40px;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: var(--green);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.navGameBtnIcon {
+  font-size: 24px;
+}
+
+.timerWrapper {
+  width: 144px;
+  height: 144px;
+  position: relative;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.timerRing {
+  width: 100%;
+  height: 100%;
+  border: 18px solid var(--lightGray);
+  border-top: 18px solid var(--green);
+  border-radius: 50%;
+  animation: spin 3.5s linear infinite;
+}
+
+.timerCnt {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 600;
+}

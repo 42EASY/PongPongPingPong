@@ -1,0 +1,165 @@
+:root {
+  --darkGray: #adadad;
+  --lightGray: #e5e7eb;
+  --loseBg: #fde8e8;
+  --loseTxt: #e02424;
+  --winBg: #e1effe;
+  --winTxt: #1c64f2;
+  --green: #3ec70b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0px;
+}
+
+html,
+body,
+main {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+#gameRoom {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 84px;
+}
+
+#waitingFinalPlayers {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.waitingText {
+  height: 50px;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+#waitingPlayers {
+  display: grid;
+  grid-template-rows: repeat(2, 349px);
+  grid-template-columns: repeat(2, 410px);
+  align-items: center;
+  justify-content: center;
+}
+
+#waitingPlayer0 {
+  border-right: 2px solid var(--darkGray);
+  border-bottom: 2px solid var(--darkGray);
+}
+
+#waitingPlayer1 {
+  border-bottom: 2px solid var(--darkGray);
+}
+
+#waitingPlayer2 {
+  border-right: 2px solid var(--darkGray);
+}
+
+.waitingPlayer {
+  width: 410px;
+  height: 349px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  padding: 0px 10px 0px 10px;
+}
+
+.waitingPlayerImageBox {
+  width: 144px;
+  height: 144px;
+  border-radius: 70%;
+  overflow: hidden;
+  background-color: var(--lightGray);
+}
+
+#waitingPlayerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#emptyPlayerName {
+  color: var(--darkGray);
+  margin: 8px 0px 8px 0px;
+}
+
+#waitingPlayerName {
+  color: black;
+  margin: 8px 0px 8px 0px;
+}
+
+#percentageBarWrapper {
+  width: 100%;
+  height: 31px;
+  display: flex;
+  background-color: var(--lightGray);
+  border-radius: 8px;
+}
+
+.percentageBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+#percentageBarWin {
+  background-color: var(--winBg);
+  color: var(--winTxt);
+  border-radius: 8px 0px 0px 8px;
+}
+
+#percentageBarLose {
+  background-color: var(--loseBg);
+  color: var(--loseTxt);
+  border-radius: 0px 8px 8px 0px;
+}
+
+.timerWrapper {
+  width: 144px;
+  height: 144px;
+  position: relative;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.timerRing {
+  width: 100%;
+  height: 100%;
+  border: 12px solid var(--lightGray);
+  border-top: 12px solid var(--green);
+  border-radius: 50%;
+  animation: spin 3.5s linear infinite;
+}
+
+.timerCnt {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 600;
+}

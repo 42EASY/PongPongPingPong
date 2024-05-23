@@ -1,0 +1,69 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:15-bullseye
+    container_name: postgresql
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ./volume/postgres-data:/var/lib/postgresql/data
+    networks:
+      - transcendence
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    command: -p "${POSTGRES_PORT}"
+
+  backend:
+    pull_policy: never
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+    networks:
+      - transcendence
+    volumes:
+      - ./backend/transcendence:/app/transcendence
+    depends_on:
+      - db
+      - redis
+
+  nginx:
+    pull_policy: never
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports: 
+      - 443:443
+      - 80:80
+    env_file:
+      - .env
+    networks:
+      - transcendence
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app/frontend
+      - ./backend/transcendence/media:/app/backend/transcendence/media
+    
+  redis:
+    image: redis:7.2-bookworm
+    container_name: redis
+    command: redis-server --port 6379
+    hostname: redis
+    ports:
+      - 6379:6379
+    networks:
+      - transcendence
+
+networks:
+  transcendence:
+    driver: bridge

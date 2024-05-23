@@ -1,0 +1,135 @@
+import Title from "../components/Chat/Title.js";
+import ChatSocketManager from "../state/ChatSocketManager.js";
+import ChatRoom from "../components/Chat/Chat.js";
+import Bot from "../components/Chat/Bot.js";
+import {
+  setBotNotifyCount,
+  incrementBotNotifyCount,
+} from "../components/Chat/Bot.js";
+import { createRoomName } from "./ChatRoom.js";
+
+function fetchChats(data) {
+  const $chatRoomListWrapper = document.querySelector(".chatRoomListWrapper");
+
+  const len = data.length;
+
+  for (let i = 0; i < len; i++) {
+    const user = data[i].user_info;
+    const cnt = data[i].unread_messages_count;
+    const roomName = data[i].room_name;
+    const $chat = ChatRoom(user, cnt, roomName);
+    $chatRoomListWrapper.appendChild($chat);
+  }
+}
+
+function setUnreadNotifyCount(count) {
+  // Bot 컴포넌트 내 chatStatus 요소 선택
+  setBotNotifyCount(count);
+  const botElement = document.querySelector(".chatWrapper.botChatWrapper");
+  if (botElement) {
+    const botStatusElement = document.querySelector(".chatStatus");
+    if (botStatusElement) {
+      botStatusElement.innerText = count;
+      botStatusElement.style.display = count > 0 ? "flex" : "none";
+    }
+  }
+}
+
+function updateUnreadNotifyCount() {
+  // 채팅방 요소 선택
+  incrementBotNotifyCount();
+  const botElement = document.querySelector(".chatWrapper.botChatWrapper");
+  if (botElement) {
+    const botStatusElement = document.querySelector(".chatStatus");
+    if (botStatusElement) {
+      let currentCount = parseInt(botStatusElement.textContent, 10) || 0;
+      botStatusElement.textContent = currentCount + 1; // 안 읽은 메시지 수 증가
+    }
+  }
+}
+
+function updateUnreadMessageCount(user, roomName) {
+  // 채팅방 요소 선택
+  const chatRoomElement = document.querySelector(`[roomName="${roomName}"]`);
+  if (chatRoomElement) {
+    const unreadCountElement = chatRoomElement.querySelector(".chatStatus");
+    if (unreadCountElement) {
+      let currentCount = parseInt(unreadCountElement.textContent, 10) || 0;
+      unreadCountElement.textContent = currentCount + 1; // 안 읽은 메시지 수 증가
+    }
+  } else {
+    // 채팅방이 존재하지 않는 경우, 새로운 채팅방을 생성하여 추가
+    const $chatRoomListWrapper = document.querySelector(".chatRoomListWrapper");
+    const $chat = ChatRoom(user, 1, roomName); // 새 채팅방 생성
+    $chatRoomListWrapper.appendChild($chat); // 채팅방 목록에 추가
+  }
+}
+
+export default function Chat() {
+  const $sidebar = document.querySelector(".sidebar");
+  $sidebar.innerHTML = "";
+
+  const socket = ChatSocketManager.getInstance();
+
+  //사이드바 영역
+  const $chatsWrapper = document.createElement("div");
+  $chatsWrapper.classList.add("sidebarArea");
+  $sidebar.appendChild($chatsWrapper);
+
+  const $titleBox = document.createElement("div");
+  $titleBox.classList.add("titleBox");
+  $chatsWrapper.appendChild($titleBox);
+
+  //타이틀
+  const $title = Title();
+  $titleBox.appendChild($title);
+
+  //채팅 목록
+  let $chatRoomListWrapper = document.createElement("div");
+  $chatRoomListWrapper.classList.add("chatRoomListWrapper");
+  $chatsWrapper.appendChild($chatRoomListWrapper);
+
+  socket.send(JSON.stringify({ action: "get_bot_info" }));
+
+  $chatRoomListWrapper.appendChild(Bot(0));
+
+  socket.send(JSON.stringify({ action: "fetch_chat_list" }));
+
+  socket.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    if (data.action === "fetch_chat_list") {
+      const list = data.data;
+      fetchChats(list);
+    }
+    if (data.action === "receive_message") {
+      const sender = data.sender;
+      const receiver = data.receiver;
+      const roomName = createRoomName(receiver.user_id, sender.user_id);
+
+      updateUnreadMessageCount(sender, roomName);
+    }
+    if (data.action === "get_bot_info") {
+      const count = data.unread_notify_count;
+
+      setUnreadNotifyCount(count);
+    }
+    if (
+      data.action === "bot_notify_tournament_game_result" ||
+      data.action === "bot_notify_invited_normal_game" ||
+      data.action === "bot_notify_invited_tournament_game" ||
+      data.action === "bot_notify_tournament_game_opponent"
+    ) {
+      updateUnreadNotifyCount();
+    }
+  };
+
+  //사이드바 외부 영역
+  const $overlay = document.createElement("div");
+  $overlay.classList.add("overlay");
+
+  $overlay.addEventListener("click", (e) => {
+    $chatsWrapper.classList.remove("showSidebar");
+    $overlay.classList.remove("showOverlay");
+  });
+  $sidebar.appendChild($overlay);
+}

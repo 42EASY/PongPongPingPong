@@ -1,0 +1,755 @@
+[
+    {
+        "model": "games.game",
+        "pk": 1,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 2,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 3,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 4,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 5,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 6,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 7,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 8,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 9,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 10,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 11,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 12,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 13,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 14,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 15,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 16,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 17,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 18,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 19,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 20,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 21,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 22,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 23,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 24,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 25,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 26,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 27,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 28,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 29,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 30,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "NORMAL",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 31,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 32,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 33,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 34,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 35,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 36,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 37,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 38,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 39,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 40,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 41,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 42,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 43,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 44,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04 11:12:14",
+            "end_time": "2024-04-04 11:13:12"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 45,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 46,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 47,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 48,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 49,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 50,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 51,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 52,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 53,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 54,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 55,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 56,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 57,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 58,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 59,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 60,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 61,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 62,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 63,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 64,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 65,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04 11:12:14",
+            "end_time": "2024-04-04 11:13:12"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 66,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 67,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 68,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 69,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 70,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 71,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 72,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 73,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 74,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    },
+    {
+        "model": "games.game",
+        "pk": 75,
+        "fields": {
+            "game_option": "CLASSIC",
+            "game_mode": "TOURNAMENT",
+            "start_time": "2024-04-04T11:12:14Z",
+            "end_time": "2024-04-04T11:13:12Z"
+        }
+    }
+
+
+
+]

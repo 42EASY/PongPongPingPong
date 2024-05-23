@@ -1,0 +1,258 @@
+:root {
+  --black: #000;
+  --white: #fff;
+  --lightGreen: #e2f7db;
+  --green: #3ec70b;
+  --darkGray: #6b7280;
+  --gray: #adadad;
+  --lightGray: #e5e7eb;
+  /* accent-color: var(--green); */
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modalWrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.8px;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modalTitle {
+  display: flex;
+  align-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 18px 20px;
+}
+
+#x {
+  display: flex;
+  font-size: 25px;
+  align-items: center;
+  margin: 18px 20px;
+  color: var(--gray);
+}
+
+#x:hover {
+  color: var(--darkGray);
+  cursor: pointer;
+}
+
+.modalBody {
+  display: flex;
+  color: var(--gray);
+  margin: 0px 20px;
+  flex-direction: column;
+  font-size: 16px;
+}
+
+.labelAlign {
+  text-align: start;
+  width: 100%;
+}
+
+.modalText {
+  margin: 5px 0px;
+}
+
+.radioBox {
+  display: flex;
+  width: 100%;
+  margin: 8px 3px;
+}
+
+[type="radio"] {
+  appearance: none;
+  margin-top: 6px;
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--darkGray);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+}
+
+[type="radio"]:checked {
+  background-color: var(--white);
+  border: 3.5px solid var(--green);
+}
+
+.radioBox > label {
+  margin: 0px 10px;
+  color: var(--black);
+}
+
+.explanation {
+  font-size: 14.5px;
+  color: var(--gray);
+}
+
+.footerBtnBox {
+  margin: 15px 20px;
+}
+
+.rightAlign {
+  float: right;
+}
+
+.centerAlign {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.secondaryButton {
+  border-color: var(--gray);
+  margin-left: 8px;
+}
+
+.primaryButton {
+  background-color: var(--green);
+  color: var(--white);
+  border-color: var(--green);
+  margin-left: 8px;
+}
+
+.singleButton {
+  background-color: var(--green);
+  color: var(--white);
+  width: 100%;
+}
+
+/* --- exception --- */
+/* gameServe */
+.modalBody > .bi-arrow-left {
+  font-size: 50px;
+  display: flex;
+  justify-content: center;
+  margin: 0px 27px 27px 27px;
+}
+.modalBody > .bi-arrow-right {
+  font-size: 50px;
+  display: flex;
+  justify-content: center;
+  margin: 0px 27px 27px 27px;
+}
+.modalFooter > .timerBar {
+  width: 100%;
+  height: 10px;
+  background-color: var(--green);
+  border-bottom-left-radius: 10px;
+  animation: fill 3s linear forwards;
+}
+
+@keyframes fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.timerWrapper {
+  margin: 30px 50px;
+}
+
+.tableWrapper {
+  width: 400px;
+  margin-bottom: 50px;
+}
+
+.matchedWrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 26px;
+}
+
+.playerBox {
+  width: 80%;
+  height: 64px;
+  background-color: var(--lightGreen);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 1.6px;
+}
+
+.versusBox {
+  margin: 0px 18px;
+}
+
+.playerBoxSelected {
+  background-color: var(--green);
+  color: var(--white);
+}
+
+.rankingWrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.rankingBox {
+  height: 64px;
+  font-size: 40px;
+  font-weight: bold;
+  color: var(--green);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 8px 0px 10px;
+}
+
+.ordinalNum {
+  height: 64px;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--green);
+  margin-left: 4px;
+}
+
+.playerBox3rd {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+.player3rd {
+  width: 48%;
+  height: 64px;
+  background-color: var(--lightGray);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

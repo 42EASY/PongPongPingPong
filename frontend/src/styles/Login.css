@@ -1,0 +1,66 @@
+
+@font-face {
+    font-family: "BalooBhaijaan2";
+    src: url("./font/subset-BalooBhaijaan2-Bold.woff2") format("woff2")
+  }
+
+.App {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.title {
+    display: flex;
+    font-size: 6rem;
+    font-family: "BalooBhaijaan2";
+    color: #3EC70B;
+}
+
+.letter {
+    text-shadow: 0 1px rgba(0, 0, 0, 0.1), 0 2px rgba(0, 0, 0, 0.1), 0 3px rgba(0, 0, 0, 0.1), 0 4px rgba(0, 0, 0, 0.1), 0 5px rgba(0, 0, 0, 0.1), 0 6px transparent, 0 7px transparent, 0 8px transparent, 0 9px transparent, 0 10px 10px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    animation: bounce 0.8s ease infinite alternate;
+}
+
+.white {
+    color: #FFB534;
+
+}
+
+.loginButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #3EC70B;
+    height: 44px;
+    width: 170px;
+    border-radius: 10px;
+    margin-top: 30px;
+    cursor: pointer;
+}
+
+.image42 {
+    display: flex;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.loginText {
+    display: flex;
+    font-size: 16px;
+    color: #FFFFFF;
+}
+
+
+@keyframes bounce {
+    to {
+      text-shadow: 0 1px #bbb, 0 2px #bbb, 0 3px #bbb, 0 4px #bbb, 0 5px #bbb, 0 6px #bbb, 0 7px #bbb, 0 8px #bbb, 0 9px #bbb, 0 50px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(-20px);
+    }
+  }

@@ -172,3 +172,10 @@ cython_debug/
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
+
+.DS_Store
+test.html
+test.js
+volume/
+
+ssl/

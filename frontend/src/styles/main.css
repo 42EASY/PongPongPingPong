@@ -1,0 +1,384 @@
+:root {
+  --darkGray: #6b7280;
+  --gray: #adadad;
+  --lightGray: #e5e7eb;
+  --green: #3ec70b;
+  --lightGreen: #e2f7db;
+  --red: #f05252;
+  --loseBg: #fde8e8;
+  --loseTxt: #e02424;
+  --winBg: #e1effe;
+  --winTxt: #1c64f2;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0px;
+}
+
+.main {
+  padding-top: 100px;
+  padding-bottom: 50px;
+  width: 100%;
+  height: 100%;
+}
+
+#profileWrapper {
+  width: 100%;
+  height: 194px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileImageBox {
+  width: 144px;
+  height: 144px;
+  border-radius: 70%;
+  overflow: hidden;
+  background-color: var(--lightGray);
+  margin: 0 5%;
+}
+
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileInfoBox {
+  width: 310px;
+  height: 144px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.mainProfileNameBox {
+  display: flex;
+}
+
+.mainProfileName {
+  font-size: 20px;
+  text-align: center;
+  padding-right: 16px;
+}
+
+.btnWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.mainBtn {
+  height: 34px;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: var(--lightGray);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-right: 8px;
+}
+
+.friendStatusIcon {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+.statusNotFriend {
+  color: white;
+  background-color: var(--green);
+}
+
+.statusBlocked {
+  color: white;
+  background-color: var(--red);
+}
+
+.moreFunctionBox {
+  position: relative;
+}
+
+.moreFunctionBtn {
+  font-size: 20px;
+  color: var(--gray);
+  background-color: white;
+  padding: 0px;
+}
+
+.moreMenuWrapper {
+  display: none;
+  width: 224px;
+  box-shadow: 3px 3px 3px var(--lightGray);
+  border-radius: 8px;
+  position: absolute;
+  background-color: white;
+}
+
+.moreMenu {
+  font-size: 14px;
+}
+
+.moreMenu:hover {
+  background-color: var(--lightGreen);
+}
+
+.moreMenuList {
+  cursor: pointer;
+}
+
+.moreMenuList:hover {
+  background-color: var(--lightGreen);
+}
+
+.menuListRed {
+  color: var(--red);
+}
+
+.menuIcon {
+  font-size: 18px;
+  margin-right: 12px;
+}
+
+#gameCountWrapper {
+  width: 100%;
+  height: 24px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+#percentageBarWrapper {
+  width: 100%;
+  height: 31px;
+  display: flex;
+  background-color: var(--lightGray);
+  border-radius: 8px;
+}
+
+.percentageBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+#percentageBarWin {
+  background-color: var(--winBg);
+  color: var(--winTxt);
+  border-radius: 8px 0px 0px 8px;
+}
+
+#percentageBarLose {
+  background-color: var(--loseBg);
+  color: var(--loseTxt);
+  border-radius: 0px 8px 8px 0px;
+}
+
+.historyWrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.historyNav {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px;
+  border-top: 1px solid var(--lightGray);
+}
+
+.historyBtn {
+  width: 120px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--dartGray);
+  font-size: 15px;
+  margin-top: -2px;
+  cursor: pointer;
+}
+
+.historyBtnSelected {
+  border-top: 3px solid var(--green);
+  color: var(--green);
+  border-radius: 2px 2px 0px 0px;
+}
+
+.historyIcon {
+  margin-right: 6px;
+}
+
+.historyBoard {
+  display: flex;
+  flex-direction: column;
+}
+
+.noHistoryWrapper {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 30px;
+  font-weight: 600;
+  margin-top: 40px;
+}
+
+.noHistoryIcon {
+  width: 96px;
+  height: 96px;
+  font-size: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  border: 3px solid black;
+  border-radius: 70%;
+}
+
+.noHistorySubTxt {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.resultWrapper {
+  width: 672px;
+  height: 120px;
+  background-color: var(--winBg);
+  display: flex;
+  border-radius: 12px;
+  overflow: auto;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.resultWrapperLose {
+  background-color: var(--loseBg);
+}
+
+.resultWrapperNotMe {
+  background-color: var(--lightGray);
+}
+
+.resultMark {
+  width: 10px;
+  height: 100%;
+  background-color: var(--winTxt);
+}
+
+.resultMarkLose {
+  background-color: var(--loseTxt);
+}
+
+.resultMarkNotMe {
+  background-color: var(--darkGray);
+}
+
+.resultInfoBox {
+  width: 76px;
+  height: 100%;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-evenly;
+  padding-left: 10px;
+}
+
+.resultInfoBold {
+  font-weight: bold;
+}
+
+.divLine {
+  width: 100%;
+  height: 0.8px;
+  background-color: var(--gray);
+}
+
+.resultPlayerBox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.resultPlayerName {
+  width: 120px;
+  font-size: 20px;
+}
+.resultPlayer1Name {
+  text-align: end;
+}
+
+.resultPlayerMedalBox {
+  position: relative;
+  margin: 0px 14px;
+}
+
+.resultPlayerImageBox {
+  width: 80px;
+  height: 80px;
+  border-radius: 70%;
+  overflow: hidden;
+  background-color: var(--lightGray);
+}
+
+.resultPlayerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.medalImageBox {
+  width: 48px;
+  height: 48px;
+  position: absolute;
+  top: -8px;
+  left: -16px;
+}
+
+.medalImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.resultPlayerScore {
+  width: 80px;
+  height: 34px;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  background-color: var(--green);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 10px;
+}
+
+.tournamentWrapper {
+  width: 100%;
+  height: 395px;
+  border: 2px solid var(--darkGray);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  border-radius: 12px;
+  padding: 5px 10px;
+  margin-bottom: 16px;
+}
